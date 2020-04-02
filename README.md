@@ -51,7 +51,7 @@ class Easy_neuron_collect_input(Neuron_Behaviour):
 
     def new_iteration(self, neurons):
         for s in neurons.afferent_synapses['GLUTAMATE']:
-            neurons.activation += s.W.dot(s.src.output)
+            neurons.activation += s.W.dot(s.src.output)*neurons.sensitivity
 
         neurons.activation += neurons.get_random_neuron_vec(density=0.1)
 ```
@@ -95,10 +95,8 @@ Easy_Network['Easy_neuron_collect_input']
 #returns a list of all behaviours tagged with "my_recorder" from Easy_Neurons
 Easy_Neurons['my_recorder']
 
-#returns one output recording and casts it to numpy array.
+#returns one output recording and casts it to numpy array. (equivalent to np.array(Easy_Network.NeuronGroups[0].behaviour[100].variables['n.output']))
 Easy_Neurons['n.output',0,'np']
-#equivalent to:
-np.array(Easy_Network.NeuronGroups[0].behaviour[100].variables['n.output'])
 
 #the commands can also be combined. Here the command returns output recording of the neuron group tagged with "neurons" and casts it to an numpy array.
 Easy_Network['neurons', 0]['n.output',0,'np'] 
