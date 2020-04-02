@@ -104,3 +104,18 @@ recorder['n.output',0,'np']
 #the commands can also be combined. Here the command returns output recording of the neuron group tagged with "neurons" and casts it to an numpy array.
 Easy_Network['neurons', 0]['n.output',0,'np'] 
 ```
+
+Requirements:
+
+Python 3
+
+Numpy                   (pip install numpy)
+QT5                     (pip install PyQt5)
+PyQtGraph               (pip install pyqtgraph)
+Matplotlib              (pip install matplotlib)
+Skipy                   (pip install skipy)
+Sklearn                 (pip install sklearn)
+ImageIO                 (pip install imageio)
+Pillow (PIL)            (pip install pillow)
+Pickle                  (pip install pickle)
+Pypianoroll             (pip install pypianoroll)
