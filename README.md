@@ -98,6 +98,9 @@ Easy_Neurons['my_recorder']
 #returns one output recording and casts it to numpy array. (equivalent to np.array(Easy_Network.NeuronGroups[0].behaviour[100].variables['n.output']))
 Easy_Neurons['n.output',0,'np']
 
+#returns one output recording and casts it to numpy array.
+recorder['n.output',0,'np']
+
 #the commands can also be combined. Here the command returns output recording of the neuron group tagged with "neurons" and casts it to an numpy array.
 Easy_Network['neurons', 0]['n.output',0,'np'] 
 ```
