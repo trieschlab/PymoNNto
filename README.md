@@ -105,17 +105,17 @@ recorder['n.output',0,'np']
 Easy_Network['neurons', 0]['n.output',0,'np'] 
 ```
 
-Requirements:
-
-Python 3
-
-Numpy                   (pip install numpy)
-QT5                     (pip install PyQt5)
-PyQtGraph               (pip install pyqtgraph)
-Matplotlib              (pip install matplotlib)
-Skipy                   (pip install skipy)
-Sklearn                 (pip install sklearn)
-ImageIO                 (pip install imageio)
-Pillow (PIL)            (pip install pillow)
-Pickle                  (pip install pickle)
+Requirements:<br>
+<br>
+Python 3<br>
+<br>
+Numpy                   (pip install numpy)<br>
+QT5                     (pip install PyQt5)<br>
+PyQtGraph               (pip install pyqtgraph)<br>
+Matplotlib              (pip install matplotlib)<br>
+Skipy                   (pip install skipy)<br>
+Sklearn                 (pip install sklearn)<br>
+ImageIO                 (pip install imageio)<br>
+Pillow (PIL)            (pip install pillow)<br>
+Pickle                  (pip install pickle)<br>
 Pypianoroll             (pip install pypianoroll)
