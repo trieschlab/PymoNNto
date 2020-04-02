@@ -65,11 +65,11 @@ network.simulate_iterations(iterations=1000)
 The Network activity and the Neurons positions can be plotted like this ("100: recorder" can alternatively be added when the Neuron Group object is initialized):
 
 ```python
-recorder=NeuronRecorder(['n.output'], tag='my_recorder')
+recorder=NeuronRecorder(['np.mean(n.output)'], tag='my_recorder')
 Easy_Network.add_behaviours_to_neuron_group({100: recorder}, Easy_Neurons)
 Easy_Network.simulate_iterations(iterations=1000)
 
-plt.plot(Easy_Network['n.output',0,'np'])
+plt.plot(Easy_Network['np.mean(n.output)',0,'np'])# 'np.mean(...)' code is also used as a tag
 plt.show()
 
 plt.scatter(Easy_Neurons.x, Easy_Neurons.y)
