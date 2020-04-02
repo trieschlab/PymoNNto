@@ -62,7 +62,7 @@ network.simulate_iteration()
 network.simulate_iterations(iterations=1000)
 ```
 
-The Network activity and the Neurons positions can be plotted like this:
+The Network activity and the Neurons positions can be plotted like this ("100: recorder" can alternatively be added when the Neuron Group object is initialized):
 
 ```python
 recorder=NeuronRecorder(['n.output'], tag='my_recorder')
