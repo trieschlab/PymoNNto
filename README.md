@@ -79,6 +79,12 @@ plt.show()
 The tagging system allows you to access all kinds of synases, neuron groups, behaviours and recorded values in an efficiant way with one  command:
 
 ```python
+#tags can be added to the constructor
+obj(tag='tag1,tag2,tag3')
+obj.add_tag('tag')
+
+#retruns a list of all the objects tags
+object.tags
 
 #returns a list of all neuron groups tagged with "neurons"
 Easy_Network['neurons']   
@@ -92,7 +98,7 @@ Easy_Network['neurons', 0]
 #returns a list of all behaviours tagged with "Easy_neuron_collect_input" from all neuron groups
 Easy_Network['Easy_neuron_collect_input'] 
 
-#returns a list of all behaviours tagged with "my_recorder" from Easy_Neurons
+#returns a list of all behaviours tagged with "my_recorder" in the object Easy_Neurons
 Easy_Neurons['my_recorder']
 
 #returns one output recording and casts it to numpy array. (equivalent to np.array(Easy_Network.NeuronGroups[0].behaviour[100].variables['n.output']))
