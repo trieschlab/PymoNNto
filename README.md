@@ -5,4 +5,4 @@ With this Simulator you can create all kinds of biological plausible networks, w
 
 The user interface allows you to display your network in an interactive way and you can add new visualization modules, too.
 
-![User interface example](https://raw.githubusercontent.com/Self-Organizing-Recurrent-Network-Simulator/Images/simple_UI_1.png)
+![User interface example](https://raw.githubusercontent.com/gitmv/Self-Organizing-Recurrent-Network-Simulator/Images/simple_UI_1.png)
