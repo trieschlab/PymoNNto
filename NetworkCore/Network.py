@@ -136,6 +136,7 @@ class Network(NetworkObjectBase):
             self.add_behaviours_to_neuron_group(copy.copy(behaviours), ng)
 
     def add_behaviours_to_neuron_group(self, behaviours, neuron_group):
+        self.clear_tag_cache()
         original = behaviours
         #if type(behaviours) == list:
         #    start_key = self.behaviour_timesteps[-1]
@@ -193,19 +194,23 @@ class Network(NetworkObjectBase):
 
     def set_synapses_to_neuron_groups(self):
         for ng in self.NeuronGroups:
-            syn = {}
-            syn['All'] = []
+
+            ng.afferent_synapses = {'All':[]}
+            ng.efferent_synapses = {'All':[]}
+
             for sg in self.SynapseGroups:
                 for tag in sg.tags:
-                    syn[tag]=[]
-            for sg in self.SynapseGroups:
-                #print(sg.dst)
-                if sg.dst.TRENNeuronGroup==ng:
-                    syn['All'].append(sg)
-                    for tag in sg.tags:
-                        syn[tag].append(sg)
-            ng.afferent_synapses=syn
+                    ng.afferent_synapses[tag] = []
+                    ng.efferent_synapses[tag] = []
 
+            for sg in self.SynapseGroups:
+                if sg.dst.BaseNeuronGroup == ng:
+                    for tag in sg.tags+['All']:
+                        ng.afferent_synapses[tag].append(sg)
+
+                if sg.src.BaseNeuronGroup == ng:
+                    for tag in sg.tags+['All']:
+                        ng.efferent_synapses[tag].append(sg)
 
     def simulate_iteration(self):
         self.iteration+=1

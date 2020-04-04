@@ -1,5 +1,5 @@
 from Exploration.Visualization.Reconstruct_Analyze_Label.Reconstruct_Analyze_Label import *
-from NetworkBehaviour.Recorder.StorageManager import *
+from Exploration.StorageManager.StorageManager import *
 
 #sm = StorageManager('X_1', 'X')
 #sm = StorageManager('RALN_Test_2_0', 'RALN_Test_2')

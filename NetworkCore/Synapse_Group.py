@@ -185,6 +185,6 @@ class SynapseGroup(NetworkObjectBase):
             if split_size[0]<3 and split_size[1]<3 and split_size[2]<3:
                 return
 
-        print('partition:', receptive_field_size, split_size)
+        #print('partition:', receptive_field_size, split_size)
 
         self.network.partition_Synapse_Group(self, receptive_field_size=receptive_field_size, split_size=split_size)

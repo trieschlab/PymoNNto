@@ -8,7 +8,7 @@ class NeuronGroup(NetworkObjectBase):
     def __init__(self, size, behaviour, net=None, tag=None):
         super().__init__(tag=tag)
 
-        self.TRENNeuronGroup = self#used for subgroup reconstruction
+        self.BaseNeuronGroup = self#used for subgroup reconstruction
 
         if isinstance(size, Neuron_Behaviour):
             if type(behaviour) is dict:
@@ -23,7 +23,8 @@ class NeuronGroup(NetworkObjectBase):
             net.NeuronGroups.append(self)
 
         self.size = size
-        self.afferent_synapses = {}#set by TRENet
+        self.afferent_synapses = {} #set by Network
+        self.efferent_synapses = {}
 
         self.mask = True#np.array([True for _ in range(size)]).astype(np.bool)#True#used for subgroup reconstruction
 
