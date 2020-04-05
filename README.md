@@ -3,9 +3,43 @@ The "Self Organizing Recurrent Network Simulator" allows you to create different
 
 With this Simulator you can create all kinds of biological plausible networks, which, for example, mimic the learning mechanisms of cortical structures.
 
+Requirements:<br>
+<br>
+Python 3<br>
+<br>
+Numpy                   (pip install numpy)<br>
+QT5                     (pip install PyQt5)<br>
+PyQtGraph               (pip install pyqtgraph)<br>
+Matplotlib              (pip install matplotlib)<br>
+Skipy                   (pip install skipy)<br>
+Sklearn                 (pip install sklearn)<br>
+ImageIO                 (pip install imageio)<br>
+Pillow (PIL)            (pip install pillow)<br>
+Pickle                  (pip install pickle)<br>
+Pypianoroll             (pip install pypianoroll)<br>
+<br>
+
+Execution:<br>
+
+To start an example you have to move to an example folder "Self-Organizing-Recurrent-Network-Simulator/Testing/*Example*/" and execture it with the following command: "python3 ...Main.py"<br><br>
+
+User Interface:<br>
+
 The user interface allows you to display your network in an interactive way and you can add new visualization modules, too.
+In the sidebar on the left hand side you can see the activiy of the selected neuron-group in the current timestep, as well as buttons to save, load, fast forward, pause and start the simulation. The tabs on the right hand side give you all kinds of visualizations and controlls to analyse the network.
 
 ![User interface example](https://raw.githubusercontent.com/gitmv/Self-Organizing-Recurrent-Network-Simulator/Images/simple_UI_1.png)
+
+The "Info:" tab gives you an overview over the behaviours and the corresponding parameters. Each behaviour can be enabeled or disabeled and its parameters can be changed in realtime by clicking on the underlined text, which opens and closes a submenu. By clicking "update" the "set_variables()" (infos below) function of the behaviour is called with the new parameters so the behaviour is reinitialized.
+
+![User interface example](https://raw.githubusercontent.com/gitmv/Self-Organizing-Recurrent-Network-Simulator/Images/UI_Info_Tab.png)
+
+If you have defined an input source and feed it to the network, the corresponding input module will occur in the sidebar. In this grammar example you can see which characters are currently feed into the network and you can train a readout classifier to predict the current and the next character to test how much temporal information is stored in the Network.
+
+![User interface example](https://raw.githubusercontent.com/gitmv/Self-Organizing-Recurrent-Network-Simulator/Images/UI_Grammar.png)
+
+
+<br>Code:<br>
 
 A basic network grid with three behaviours (index defines execution order), recurrent connections and local receptive fields can be created like this:
 
@@ -111,17 +145,55 @@ recorder['n.output',0,'np']
 Easy_Network['neurons', 0]['n.output',0,'np'] 
 ```
 
-Requirements:<br>
-<br>
-Python 3<br>
-<br>
-Numpy                   (pip install numpy)<br>
-QT5                     (pip install PyQt5)<br>
-PyQtGraph               (pip install pyqtgraph)<br>
-Matplotlib              (pip install matplotlib)<br>
-Skipy                   (pip install skipy)<br>
-Sklearn                 (pip install sklearn)<br>
-ImageIO                 (pip install imageio)<br>
-Pillow (PIL)            (pip install pillow)<br>
-Pickle                  (pip install pickle)<br>
-Pypianoroll             (pip install pypianoroll)
+To implement your own UI Tab you have to implement a class with three functions.
+"add_recorder_variables(...)" defines which variables you want to record. Here the Neurongroup.excitation variable is recorded and used in the following code. 
+"initialize(...)" initalizes your tab and places the ui elements. You can use all kinds of PyQt elements as well as pygraph plots.
+"update(...)" is called at every timestep and updates the UI elements based on the current network state.
+
+```python
+import pyqtgraph as pg
+import numpy as np
+
+class my_scatter_tab():
+
+    def add_recorder_variables(self, neuron_group, recorder):
+        if hasattr(neuron_group, 'excitation'):
+            recorder.add_varable('n.excitation')
+        if hasattr(neuron_group, 'inhibition'):
+            recorder.add_varable('n.inhibition')
+
+    def initialize(self, Network_UI):
+        self.my_scatter_tab = Network_UI.Next_Tab('my_scatter')
+
+        Network_UI.Add_element(QLabel('my_scatter_tab'))
+
+        Network_UI.Next_H_Block()
+
+        p = Network_UI.Add_plot(x_label='Excitation', y_label='Inhibition')
+        self.scatter = pg.ScatterPlotItem()
+        p.addItem(self.scatter)
+
+    def update(self, Network_UI):
+        if self.my_scatter_tab.isVisible():
+            group=Network_UI.network[Network_UI.neuron_select_group, 0]
+
+            if hasattr(group, 'excitation') and hasattr(group, 'inhibition'):
+                exc = np.array(group['n.excitation', 0][-1000:])
+                inh = np.array(group['n.inhibition', 0][-1000:])
+
+                exc = np.mean(exc, axis=0)
+                inh = np.mean(inh, axis=0)
+
+                self.scatter.setData(exc, inh)
+
+...
+
+NUI.Network_UI(my_Network, label='My Network', group_display_count=1, modules=[
+    UI_sidebar_activity_module(1),
+    my_scatter_tab(),#<---- add new tab object
+    info_tab(),
+    sidebar_fast_forward_module(),
+    sidebar_save_load_module()
+]).show()
+
+```
