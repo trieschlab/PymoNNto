@@ -16,6 +16,7 @@ class info_tab():
 
             element = QCheckBox()
             element.setChecked(behaviour.behaviour_enabled)
+            element.setText(text)
 
             def click(event):
                 behaviour.behaviour_enabled = element.isChecked()
@@ -68,8 +69,15 @@ class info_tab():
 
             if not 'structure' in behaviour.tags:
                 element2.mousePressEvent = hide_show
+                link_font = QFont()  # 'SansSerif', 12
+                link_font.setUnderline(True)
+                # palette = QPalette()
+                # palette.setColor(QPalette.Text, QtCore.Qt.blue)
+                # element2.setPalette(palette)
+                element2.setFont(link_font)
+                element2.setStyleSheet("color: rgb(0,0,200)")
 
-            element.setText(text)
+
             Network_UI.Add_element(element)
             Network_UI.Add_element(element2, stretch=5)
             Network_UI.Next_H_Block()
@@ -93,7 +101,7 @@ class info_tab():
             Network_UI.Next_H_Block()
             for key in group.behaviour:
                 behaviour = group.behaviour[key]
-                add_line(str(key) + ' ' + ' '.join(behaviour.tags[0]), behaviour, group)
+                add_line(str(key) + ' ' + ''.join(behaviour.tags[0]), behaviour, group)
                 h += 60
 
             infotab.setMaximumHeight(h)

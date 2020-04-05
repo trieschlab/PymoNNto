@@ -30,7 +30,7 @@ e_ng = NeuronGroup(net=SORN, tag='PC_Neurons,prediction_source', size=get_square
     17: SORN_fast_syn(transmitter='GABA', strength='-0.1', so=False),
     18: SORN_input_collect(),
 
-    19: SORN_Refractory(strength=1, factor='0.5;+-50%'),
+    19: SORN_Refractory(factor='0.5;+-50%'),
 
     21: SORN_STDP(eta_stdp='0.00015', prune_stdp=False),
     22: SORN_SN(syn_type='GLU', clip_max=None, init_norm_factor=1.0),
@@ -52,7 +52,7 @@ i_ng = NeuronGroup(net=SORN, tag='INH_Neurons', size=get_squared_dim(int(0.2 * N
     15: SORN_fast_syn(transmitter='GABA', strength='-0.08', so=False),
     18: SORN_input_collect(),
 
-    19: SORN_Refractory(strength=1, factor='0.2;0.7'),
+    19: SORN_Refractory(factor='0.2;0.7'),
     30: SORN_finish()
 })
 

@@ -42,7 +42,7 @@ class weight_tab():
         for transmitter in Network_UI.transmitters:
             self.transmitter_weight_images[transmitter] = []
             for _ in range(max_sgs):
-                self.transmitter_weight_images[transmitter].append(Network_UI.Add_Image_Item(True, False, title='Neuron ' + transmitter + ' W'))
+                self.transmitter_weight_images[transmitter].append(Network_UI.Add_Image_Item(True, False, title='Neuron ' + transmitter + ' W', tooltip_message='afferent synapse weights of selected neuron'))
             Network_UI.Next_H_Block()
 
         if not self.simple:

@@ -13,8 +13,8 @@ so = True
 
 n_Neurons = 900
 
-source = FDTGrammarActivator_New(tag='grammar_act', random_blocks=True, input_density=0.015)#.plot_char_input_statistics()#output_size=par['N_e']#15
-#source = LongDelayGrammar(tag='grammar_act', random_blocks=True, mode=['simple'], input_density=0.015)
+#source = FDTGrammarActivator_New(tag='grammar_act', random_blocks=True, input_density=0.015)#.plot_char_input_statistics()#output_size=par['N_e']#15
+source = LongDelayGrammar(tag='grammar_act', random_blocks=True, mode=['simple'], input_density=0.015)
 #source = Line_Patterns(tag='image_act', group_possibility=1.0, grid_width=30, grid_height=30, center_x=list(range(30)), center_y=30 / 2, degree=90, line_length=60)
 #source = Line_Patterns(tag='image_act', group_possibility=1.0, grid_width=30, grid_height=30, center_x=list(range(30)), center_y=30 / 2, degree=90, line_length=60)
 
@@ -35,7 +35,7 @@ PC = NeuronGroup(net=SORN, tag='Pyramidal,prediction_source', size=get_squared_d
     17.1: SORN_fast_syn(transmitter='GABA_AIS', strength='-0.1', so=False),
     19: SORN_input_collect(),
 
-    20: SORN_Refractory(strength=1, factor='0.5;+-50%'),
+    20: SORN_Refractory(factor='0.5;+-50%'),
     21: SORN_STDP_new(eta_stdp='0.0015', prune_stdp=False, excitation_punishment=0.0),#0.1#todo: test!!!
     22: SORN_SN(syn_type='GLU', clip_max=None, init_norm_factor=1.0),
 

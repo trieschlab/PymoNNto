@@ -21,7 +21,9 @@ class inh_exc_tab():
     def initialize(self, Network_UI):
         self.inh_exc_tab = Network_UI.Next_Tab('inh exc')
 
-        curves = Network_UI.Add_plot_curve('net exc vs inh', number_of_curves=5, lines=[0], names=['act', 'inh', 'exc', 'TH', 'inp'])
+        tooltip_text='black: Activity (I+E+Inp)\r\nred: Inhibition\r\nblue: Excitation\r\ngreen: Threshold\r\npink: External Input'
+
+        curves = Network_UI.Add_plot_curve('net exc vs inh', number_of_curves=5, lines=[0], names=['Activity (I+E+Inp)', 'Inhibition', 'Excitation', 'Threshold', 'External Input'], tooltip_message=tooltip_text, legend=False)
 
         self.net_exc_curve = curves[2]
         self.net_inh_curve = curves[1]
@@ -31,7 +33,7 @@ class inh_exc_tab():
 
         Network_UI.Next_H_Block()
 
-        curves = Network_UI.Add_plot_curve('neuron exc vs inh', number_of_curves=5, lines=[0], names=['act', 'inh', 'exc', 'TH', 'inp'])
+        curves = Network_UI.Add_plot_curve('neuron exc vs inh', number_of_curves=5, lines=[0], names=['Activity (I+E+Inp)', 'Inhibition', 'Excitation', 'Threshold', 'External Input'], tooltip_message=tooltip_text, legend=False)
         self.neuron_exc_curve = curves[2]
         self.neuron_inh_curve = curves[1]
         self.neuron_exc_inh_curve = curves[0]

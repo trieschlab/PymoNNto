@@ -140,7 +140,7 @@ class fourier_tab():
                     N = len(exc_act)
                     T = ms_per_cycle / 1000
                     yf = scipy.fftpack.fft(exc_act)
-                    xf = np.linspace(1.0 - N / 1000, 1.0 / (2.0 * T), N / 2)[cut:]
+                    xf = np.linspace(int(1.0 - N / 1000), int(1.0 / (2.0 * T)), int(N / 2))[cut:]
                     real = (2.0 / N * np.abs(yf[:N // 2]))[cut:]
                     self.exc_fft_curve.setData(xf, self.smooth(real))
 

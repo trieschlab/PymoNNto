@@ -18,7 +18,7 @@ class spiketrain_tab():
         for i, group_tag in enumerate(Network_UI.neuron_visible_groups):
             if i!=0:
                 Network_UI.Next_H_Block()
-            self.spiketrain_images.append(Network_UI.Add_Image_Item(False))
+            self.spiketrain_images.append(Network_UI.Add_Image_Item(False, tooltip_message='output of each neuron(rows) at each timestep(columns)'))
 
 
     def update(self, Network_UI):

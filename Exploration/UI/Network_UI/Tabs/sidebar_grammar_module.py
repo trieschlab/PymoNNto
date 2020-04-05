@@ -132,7 +132,7 @@ class sidebar_grammar_module():
                 else:
                     self.text.append('|')
 
-            if len(self.text) > 40: self.text.pop(0)
-            if len(self.pred_text) > 40: self.pred_text.pop(0)
-            if len(self.pred_simu_text) > 40: self.pred_simu_text.pop(0)
+            if len(self.text) > 35: self.text.pop(0)
+            if len(self.pred_text) > 35: self.pred_text.pop(0)
+            if len(self.pred_simu_text) > 35: self.pred_simu_text.pop(0)
 

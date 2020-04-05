@@ -47,10 +47,12 @@ class sidebar_activity_sub_module():
         Network_UI.group_sliders[-1].setMaximum(100)
         Network_UI.group_sliders[-1].setSliderPosition(100)
         Network_UI.group_sliders[-1].mouseReleaseEvent = Network_UI.static_update_func
+        Network_UI.group_sliders[-1].setToolTip('scale neuron-group plots up and down (only visualization)')
 
         Network_UI.sidebar_hblock.addWidget(Network_UI.group_sliders[-1])
 
-        self.image_item = Network_UI.Add_Image_Item(False, True)
+        self.image_item = Network_UI.Add_Image_Item(False, True, tooltip_message='white: active neurons\r\ndarker color: primary input neurons\r\ngreen: selected neuron')
+
         self.image_item.neuron_group_tag = Network_UI.group_tags[index]
         Network_UI.neuron_visible_groups.append(Network_UI.group_tags[index])
         self.image_item.mouseClickEvent = mce

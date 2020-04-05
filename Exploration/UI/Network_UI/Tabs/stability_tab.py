@@ -20,7 +20,7 @@ class stability_tab():
         for group_tag1 in Network_UI.neuron_visible_groups:
             self.image_items.append([])
             for group_tag2 in Network_UI.neuron_visible_groups:
-                self.image_items[-1].append(Network_UI.Add_Image_Item(False, False, title=group_tag1 + '(t) vs ' + group_tag2 + '(t+1)'))
+                self.image_items[-1].append(Network_UI.Add_Image_Item(False, False, title=group_tag1 + '(t) vs ' + group_tag2 + '(t+1)', tooltip_message='x-axis:network average activity at timestep t\r\ny-axis:corresponding network average activity at tiemstp t+1'))
             Network_UI.Next_H_Block()
 
 

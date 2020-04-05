@@ -41,9 +41,12 @@ class UI_Base(QApplication):
         else:
             self.current_H_block.addWidget(elem, stretch=stretch)
 
-    def Add_plot(self, title=None, sidebar=False, stretch=1, axisItems=None, x_label=None, y_label=None, always_show_axis_labels=False):
+    def Add_plot(self, title=None, sidebar=False, stretch=1, axisItems=None, x_label=None, y_label=None, always_show_axis_labels=False, tooltip_message=None):
         canvas = pg.GraphicsLayoutWidget()
         canvas.setBackground((255, 255, 255))
+
+        if tooltip_message is not None:
+            canvas.ci.setToolTip(tooltip_message)
 
         self.Add_element(canvas, sidebar, stretch)
 
@@ -59,8 +62,12 @@ class UI_Base(QApplication):
             plt.setLabels(title=title)
         return plt
 
-    def Add_Image_Item(self, return_plot=False, sidebar=False, stretch=1, title=None):
+    def Add_Image_Item(self, return_plot=False, sidebar=False, stretch=1, title=None, tooltip_message=None):
         canvas = pg.GraphicsLayoutWidget()
+
+        if tooltip_message is not None:
+            canvas.ci.setToolTip(tooltip_message)
+
         #canvas.ci.layout.setContentsMargins(0, 0, 0, 0)
         #canvas.ci.layout.setSpacing(0)
 
@@ -85,8 +92,8 @@ class UI_Base(QApplication):
             return image_item
 
 
-    def Add_plot_curve(self, title=None, return_plot=False, sidebar=False, stretch=1, number_of_curves=1, colors=[(0, 0, 0),(255, 0, 0),(0, 0, 255),(0, 250, 150),(255, 0, 255)], lines=[], names=[''], legend=True, x_label=None, y_label=None, return_list=False, always_show_axis_labels=False):
-        plt = self.Add_plot(title, sidebar, stretch)
+    def Add_plot_curve(self, title=None, return_plot=False, sidebar=False, stretch=1, number_of_curves=1, colors=[(0, 0, 0),(255, 0, 0),(0, 0, 255),(0, 250, 150),(255, 0, 255)], lines=[], names=[''], legend=False, x_label=None, y_label=None, return_list=False, always_show_axis_labels=False, tooltip_message=None):
+        plt = self.Add_plot(title, sidebar, stretch, tooltip_message=tooltip_message)
 
         if always_show_axis_labels or not self.reduced_layout:
             if x_label is not None:
@@ -94,8 +101,8 @@ class UI_Base(QApplication):
             if y_label is not None:
                 plt.getAxis('left').setLabel(text=y_label)
 
-        #if legend:
-        #    plt.addLegend()
+        if legend:
+            plt.addLegend()
 
         for line in lines:
             plt.addLine(y=line)
@@ -143,7 +150,7 @@ class UI_Base(QApplication):
 
 
     def Next_H_Block(self,stretch=1):
-        self.current_H_block = QHBoxLayout(self.main_window)
+        self.current_H_block = QHBoxLayout()
         self.visualization_layout.addLayout(self.current_H_block, stretch=stretch)
 
     def init_QT_Window(self, label):
@@ -155,12 +162,12 @@ class UI_Base(QApplication):
 
         self.main_h_layout = QHBoxLayout(self.main_window)
 
-        self.sidebar_column_layout = QHBoxLayout(self.main_window)
+        self.sidebar_column_layout = QHBoxLayout()
         self.main_h_layout.addLayout(self.sidebar_column_layout, stretch=2)
 
         self.Add_New_Sidebar_Column()
 
-        cont=QVBoxLayout(self.main_window)
+        cont=QVBoxLayout()
 
         self.tabs = QTabWidget()
         cont.addWidget(self.tabs)
@@ -175,7 +182,7 @@ class UI_Base(QApplication):
 
 
     def create_detail_label_pixmap(self):
-        self.detail_qlabel = QLabel(self.main_window)
+        self.detail_qlabel = QLabel()
         self.detail_qlabel.setScaledContents(True)
         self.Add_Sidebar_Element(self.detail_qlabel,stretch=10)
         self.update_detail_image()
@@ -193,7 +200,7 @@ class UI_Base(QApplication):
 
 
     def create_content_label_pixmap(self):
-        self.content_qlabel = QLabel(self.main_window)
+        self.content_qlabel = QLabel()
         self.content_qlabel.setScaledContents(True)
         self.visualization_layout.addWidget(self.content_qlabel, stretch=1)
         self.update_content_image()
@@ -212,19 +219,19 @@ class UI_Base(QApplication):
 
 
     def Add_New_Sidebar_Column(self):
-        self.sidebar_current_vertical_layout = QVBoxLayout(self.main_window)
+        self.sidebar_current_vertical_layout = QVBoxLayout()
         #self.sidebar_current_vertical_layout.setSpacing(0)
         #self.sidebar_current_vertical_layout.setContentsMargins(0, 0, 0, 0)
         self.sidebar_column_layout.addLayout(self.sidebar_current_vertical_layout, stretch=1)
 
     def Add_Sidebar_Spacing(self):
-        self.Add_Sidebar_Element(QLabel(self.main_window))
+        self.Add_Sidebar_Element(QLabel())
 
     def Add_Sidebar_Element(self, elements=[], percentages=None, stretch=1, return_h_layout=False):
         if type(elements) is not list: elements=[elements]
         if percentages is None: percentages=[1 for _ in elements]
 
-        self.sidebar_hblock = QHBoxLayout(self.main_window)
+        self.sidebar_hblock = QHBoxLayout()
         #block.setSpacing(0)
         #block.setMargin(0)
         #block.setContentsMargins(0, 0, 0, 0)
