@@ -15,7 +15,6 @@ Scipy                   (pip install scipy)<br>
 Sklearn                 (pip install scikit-learn)<br>
 ImageIO                 (pip install imageio)<br>
 Pillow (PIL)            (pip install pillow)<br>
-Pypianoroll             (pip install pypianoroll)<br>
 <br>
 
 Execution:<br>
