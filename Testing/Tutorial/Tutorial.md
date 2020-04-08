@@ -30,7 +30,8 @@ The "connectivity" parameter creates a mask stored in (synapse_group.enabled).
 To differentiate between different synapse types, you should define a tag (for example 'GLUTAMATE' or 'GABA') and set it to the SynapseGroup
 
 ```python
-SynapseGroup(net=My_Network, src=My_Neurons, dst=My_Neurons, tag='GLUTAMATE,recurrent', connectivity='(s_id!=d_id)*in_box(10)')
+sg=SynapseGroup(net=My_Network, src=My_Neurons, dst=My_Neurons, tag='GLUTAMATE,recurrent', connectivity='(s_id!=d_id)*in_box(10)')
+sg.W = sg.get_random_synapse_mat()
 ```
 
 5. After this, the Network has to be initialized.
