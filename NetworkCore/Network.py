@@ -302,10 +302,10 @@ class Network(NetworkObjectBase):
             dst_max = [dst.size, 0, 0]
 
         def get_start_end(step, dim, group='src'):
-            if group is 'src':
+            if group == 'src':
                 start=src_min[dim]+(src_max[dim]-src_min[dim])/split_size[dim]*step-receptive_field_size[dim]
                 end=src_min[dim]+(src_max[dim]-src_min[dim])/split_size[dim]*(step+1)+receptive_field_size[dim]
-            if group is 'dst':
+            if group == 'dst':
                 start=dst_min[dim]+(dst_max[dim]-dst_min[dim])/split_size[dim]*step
                 end=dst_min[dim]+(dst_max[dim]-dst_min[dim])/split_size[dim]*(step+1)
             return start, end

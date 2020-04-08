@@ -22,7 +22,7 @@ class Neuron_Behaviour(NetworkObjectBase):
 
     def diversity_string_to_vec(self, ds, neurons):
 
-        if 'same(' in ds and ds[-1] is ')':
+        if 'same(' in ds and ds[-1] == ')':
             params=ds[5:-1].replace(' ','').split(',')
             if len(params) == 2:
                 #print('same', params)

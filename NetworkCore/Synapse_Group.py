@@ -176,7 +176,7 @@ class SynapseGroup(NetworkObjectBase):
         if receptive_field_size == 'auto':
             receptive_field_size = self.get_max_receptive_field_size()
 
-        if split_size is 'auto':
+        if split_size == 'auto':
             best_block_size = 7
             w = int((self.src.width/best_block_size+self.dst.width/best_block_size)/2)
             h = int((self.src.height/best_block_size+self.dst.height/best_block_size)/2)
