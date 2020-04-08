@@ -20,6 +20,7 @@ The NeuronDimension class positions the neurons on a grid, which can later be ac
 It is possible create neurons without a x,y,z parameter by just passing size=number_of_neurons to the constructor, but x,y,z coordinates are an essential requirement for the UI.
 
 ```python
+number_of_neurons = 900
 My_Neurons = NeuronGroup(net=My_Network, tag='neuron_tag', size=get_squared_dim(number_of_neurons), behaviour={})
 ```
 
