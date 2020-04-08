@@ -1,0 +1,12 @@
+# https://pip.readthedocs.io/en/stable/user_guide/#requirements-files
+
+# to install required packages, run: pip install -r requirements.txt
+
+numpy
+PyQt5
+pyqtgraph
+matplotlib
+scipy
+scikit-learn
+imageio
+pillow
