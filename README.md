@@ -3,43 +3,53 @@ The "Self Organizing Recurrent Network Simulator" allows you to create different
 
 With this Simulator you can create all kinds of biological plausible networks, which, for example, mimic the learning mechanisms of cortical structures.
 
-Requirements:<br>
-<br>
-Python 3<br>
-<br>
-Numpy                   (pip install numpy)<br>
-QT5                     (pip install PyQt5)<br>
-PyQtGraph               (pip install pyqtgraph)<br>
-Matplotlib              (pip install matplotlib)<br>
-Scipy                   (pip install scipy)<br>
-Sklearn                 (pip install scikit-learn)<br>
-ImageIO                 (pip install imageio)<br>
-Pillow (PIL)            (pip install pillow)<br>
-<br>
+## Installation
 
-Execution:<br>
+Python 3 is required.
+Use `pip install -r requirements.txt` to install the following requirements:
 
-To start an example you have to move to an example folder "Self-Organizing-Recurrent-Network-Simulator/Testing/*Example*/" and execture it with the following command: "python3 ...Main.py"<br><br>
+Numpy  
+QT5  
+PyQtGraph  
+Matplotlib  
+Scipy  
+Sklearn  
+ImageIO  
+Pillow (PIL)  
 
-User Interface:<br>
+## Usage  
+
+To start an example you have to move to an example folder 
+"Self-Organizing-Recurrent-Network-Simulator/Testing/*Example*/" and execute it with the following command:
+`python3 ...Main.py`    
+
+## User Interface  
 
 The user interface allows you to display your network in an interactive way and you can add new visualization modules, too.
-In the sidebar on the left hand side you can see the activiy of the selected neuron-group in the current timestep, as well as buttons to save, load, fast forward, pause and start the simulation. The tabs on the right hand side give you all kinds of visualizations and controlls to analyse the network.
+In the sidebar on the left hand side you can see the activiy of the selected neuron-group in the current timestep,
+as well as buttons to save, load, fast forward, pause and start the simulation.
+The tabs on the right hand side give you all kinds of visualizations and controlls to analyse the network.
 
 ![User interface example](https://raw.githubusercontent.com/gitmv/Self-Organizing-Recurrent-Network-Simulator/Images/simple_UI_1.png)
 
-The "Info:" tab gives you an overview over the behaviours and the corresponding parameters. Each behaviour can be enabeled or disabeled and its parameters can be changed in realtime by clicking on the underlined text, which opens and closes a submenu. By clicking "update" the "set_variables()" (infos below) function of the behaviour is called with the new parameters so the behaviour is reinitialized.
+The "Info:" tab gives you an overview over the behaviours and the corresponding parameters. Each behaviour can be
+enabeled or disabeled and its parameters can be changed in realtime by clicking on the underlined text, which opens and
+closes a submenu. By clicking "update" the `set_variables()` (infos below) function of the behaviour is called with the
+new parameters so the behaviour is reinitialized.
 
 ![User interface example](https://raw.githubusercontent.com/gitmv/Self-Organizing-Recurrent-Network-Simulator/Images/UI_Info_Tab.png)
 
-If you have defined an input source and feed it to the network, the corresponding input module will occur in the sidebar. In this grammar example you can see which characters are currently feed into the network and you can train a readout classifier to predict the current and the next character to test how much temporal information is stored in the Network.
+If you have defined an input source and feed it to the network, the corresponding input module will occur in the sidebar.
+In this grammar example you can see which characters are currently feed into the network and you can train a readout
+classifier to predict the current and the next character to test how much temporal information is stored in the Network.
 
 ![User interface example](https://raw.githubusercontent.com/gitmv/Self-Organizing-Recurrent-Network-Simulator/Images/UI_Grammar.png)
 
 
-<br>Code:<br>
+## Code  
 
-A basic network grid with three behaviours (index defines execution order), recurrent connections and local receptive fields can be created like this:
+A basic network grid with three behaviours (index defines execution order), recurrent connections and local receptive
+fields can be created like this:
 
 ```python
 Easy_Network = Network()
@@ -55,7 +65,8 @@ SynapseGroup(net=Easy_Network, src=Easy_Neurons, dst=Easy_Neurons, tag='GLUTAMAT
 Easy_Network.initialize()
 ```
 
-Each Behaviour has the following layout where "set_variables" is called when the Neuron Group is initialized while "new_iteration" is called repeatedly every timestep. "neurons" points to the parent neuron group the behaviour belongs to.
+Each Behaviour has the following layout where `set_variables` is called when the Neuron Group is initialized while
+`new_iteration` is called repeatedly every timestep. `neurons` points to the parent neuron group the behaviour belongs to.
 
 ```python
 class Basic_Behaviour(Neuron_Behaviour):
@@ -67,7 +78,8 @@ class Basic_Behaviour(Neuron_Behaviour):
     return
 ```
 
-A behaviour that collects all the inputs from the Synapses tagged with "GLUTAMATE" and adds some random noise can looks like this:
+A behaviour that collects all the inputs from the Synapses tagged with "GLUTAMATE" and adds some random noise can look
+like this:
 
 ```python
 class Easy_neuron_collect_input(Neuron_Behaviour):
@@ -94,7 +106,8 @@ network.simulate_iteration()
 network.simulate_iterations(iterations=1000)
 ```
 
-The Network activity and the Neurons positions can be plotted like this ("100: recorder" can alternatively be added when the Neuron Group object is initialized):
+The Network activity and the Neurons positions can be plotted like this ("100: recorder" can alternatively be added when
+the Neuron Group object is initialized):
 
 ```python
 recorder=NeuronRecorder(['np.mean(n.output)'], tag='my_recorder')
@@ -108,7 +121,8 @@ plt.scatter(Easy_Neurons.x, Easy_Neurons.y)
 plt.show()
 ```
 
-The tagging system allows you to access all kinds of synases, neuron groups, behaviours and recorded values in an efficiant way with one  command:
+The tagging system allows you to access all kinds of synapses, neuron groups, behaviours and recorded values in an
+efficient way with one command:
 
 ```python
 #tags can be added to the constructor
@@ -144,9 +158,11 @@ Easy_Network['neurons', 0]['n.output',0,'np']
 ```
 
 To implement your own UI Tab you have to implement a class with three functions.
-"add_recorder_variables(...)" defines which variables you want to record. Here the Neurongroup.excitation variable is recorded and used in the following code. 
-"initialize(...)" initalizes your tab and places the ui elements. You can use all kinds of PyQt elements as well as pygraph plots.
-"update(...)" is called at every timestep and updates the UI elements based on the current network state.
+"add_recorder_variables(...)" defines which variables you want to record. Here the `Neurongroup.excitation` variable is
+recorded and used in the following code.  
+`initialize(...)` initalizes your tab and places the ui elements. You can use all kinds of PyQt elements as well as
+pygraph plots.  
+`update(...)` is called at every timestep and updates the UI elements based on the current network state.
 
 ```python
 import pyqtgraph as pg
@@ -193,5 +209,4 @@ NUI.Network_UI(my_Network, label='My Network', group_display_count=1, modules=[
     sidebar_fast_forward_module(),
     sidebar_save_load_module()
 ]).show()
-
 ```
