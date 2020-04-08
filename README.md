@@ -3,7 +3,7 @@ The "Self Organizing Recurrent Network Simulator" allows you to create different
 
 With this Simulator you can create all kinds of biological plausible networks, which, for example, mimic the learning mechanisms of cortical structures.
 
-## Requirements
+## Installation
 
 Python 3 is required.
 Use `pip install -r requirements.txt` to install the following requirements:
@@ -17,7 +17,7 @@ Sklearn
 ImageIO  
 Pillow (PIL)  
 
-## Execution  
+## Usage  
 
 To start an example you have to move to an example folder 
 "Self-Organizing-Recurrent-Network-Simulator/Testing/*Example*/" and execute it with the following command:
