@@ -10,9 +10,16 @@ from Testing.Common.Grammar_Helper import *
 
 class sidebar_grammar_module():
 
-    def add_recorder_variables(self, neuron_group, recorder):
-        if hasattr(neuron_group, 'output'):
-            recorder.add_varable('n.output')
+    def __init__(self, next_p=True, simu_p=True, text_length=35):
+        self.next_p=next_p
+        self.simu_p=simu_p
+        self.text_length=text_length
+
+
+    def add_recorder_variables(self, neuron_group, Network_UI):
+        return
+        #if hasattr(neuron_group, 'output'):
+        #    Network_UI.add_recording_variable(neuron_group, 'n.output', timesteps=100)
 
     def initialize(self, Network_UI):
         if Network_UI.network['grammar_act', 0] is not None:
@@ -39,11 +46,13 @@ class sidebar_grammar_module():
             self.input_select_box.addItem("Prediction")
             self.input_select_box.addItem("None")
             self.input_select_box.currentIndexChanged.connect(grammar_activator_on_off)
+            self.input_select_box.setToolTip('select which input is fed into the network')
             Network_UI.Add_Sidebar_Element(self.input_select_box)
 
             self.inp_text_label = QLabel(Network_UI.main_window)
             Network_UI.Add_Sidebar_Element(self.inp_text_label, stretch=0.2)
             self.inp_text_label.setText('')
+            self.inp_text_label.setToolTip('current network input')
             self.text = []
 
             def train_click(event):
@@ -65,8 +74,11 @@ class sidebar_grammar_module():
                 steps = 5000
                 Network_UI.network.simulate_iterations(steps, 100, measure_block_time=True)
 
-                self.readout = train(Network_UI.network['pediction_rec'], 'n.output', Network_UI.network['index_rec', 0], 'n.pattern_index', 0, steps, lag=1)
-                self.readout_simu = train_same_step(Network_UI.network['pediction_rec'], 'n.output', Network_UI.network['index_rec', 0], 'n.pattern_index', 0, steps)
+                if self.next_p:
+                    self.readout = train(Network_UI.network['pediction_rec'], 'n.output', Network_UI.network['index_rec', 0], 'n.pattern_index', 0, steps, lag=1)
+
+                if self.simu_p:
+                    self.readout_simu = train_same_step(Network_UI.network['pediction_rec'], 'n.output', Network_UI.network['index_rec', 0], 'n.pattern_index', 0, steps)
 
 
                 Network_UI.network.remove_behaviours_from_neuron_groups(Network_UI.network['prediction_source'], tags=['pediction_rec'])
@@ -83,17 +95,21 @@ class sidebar_grammar_module():
 
                 print('training_finished')
 
-            self.pred_text_label = QLabel(Network_UI.main_window)
-            Network_UI.Add_Sidebar_Element(self.pred_text_label, stretch=0.2)
-            self.pred_text_label.mousePressEvent = train_click
-            self.pred_text_label.setText('Click to Train...')
-            self.pred_text = list(self.pred_text_label.text())
+            if self.next_p:
+                self.pred_text_label = QLabel(Network_UI.main_window)
+                Network_UI.Add_Sidebar_Element(self.pred_text_label, stretch=0.2)
+                self.pred_text_label.mousePressEvent = train_click
+                self.pred_text_label.setText('Click to Train...')
+                self.pred_text = list(self.pred_text_label.text())
+                self.pred_text_label.setToolTip('classifiers prediction for next timesteps (can be fed back into the network)')
 
-            self.pred_simu_text_label = QLabel(Network_UI.main_window)
-            Network_UI.Add_Sidebar_Element(self.pred_simu_text_label, stretch=0.2)
-            self.pred_simu_text_label.mousePressEvent = train_click
-            self.pred_simu_text_label.setText('Click to Train...')
-            self.pred_simu_text = list(self.pred_simu_text_label.text())
+            if self.simu_p:
+                self.pred_simu_text_label = QLabel(Network_UI.main_window)
+                Network_UI.Add_Sidebar_Element(self.pred_simu_text_label, stretch=0.2)
+                self.pred_simu_text_label.mousePressEvent = train_click
+                self.pred_simu_text_label.setText('Click to Train...')
+                self.pred_simu_text = list(self.pred_simu_text_label.text())
+                self.pred_simu_text_label.setToolTip('classifiers prediction for current timestep')
 
 
 
@@ -110,13 +126,13 @@ class sidebar_grammar_module():
                     symbol_simu = predict_char(self.readout_simu, Network_UI.network['prediction_source'], 'n.output')
                     char = grammar_act.index_to_char(symbol_simu)
                     self.pred_simu_text += char
-                    self.pred_simu_text_label.setText('P_simu: ' + ''.join(self.pred_simu_text))
+                    self.pred_simu_text_label.setText('PC: ' + ''.join(self.pred_simu_text))
 
                 if self.readout is not None:
                     symbol = predict_char(self.readout, Network_UI.network['prediction_source'], 'n.output')
                     char = grammar_act.index_to_char(symbol)
                     self.pred_text += char
-                    self.pred_text_label.setText('P: ' + ''.join(self.pred_text))
+                    self.pred_text_label.setText('PN: ' + ''.join(self.pred_text))
 
                 if self.input_select_box.currentText() == 'Prediction':
                     if self.readout is not None:
@@ -132,7 +148,7 @@ class sidebar_grammar_module():
                 else:
                     self.text.append('|')
 
-            if len(self.text) > 35: self.text.pop(0)
-            if len(self.pred_text) > 35: self.pred_text.pop(0)
-            if len(self.pred_simu_text) > 35: self.pred_simu_text.pop(0)
+            if len(self.text) > self.text_length: self.text.pop(0)
+            if len(self.pred_text) > self.text_length: self.pred_text.pop(0)
+            if len(self.pred_simu_text) > self.text_length: self.pred_simu_text.pop(0)
 

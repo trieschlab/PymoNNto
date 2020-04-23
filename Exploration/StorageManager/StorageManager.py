@@ -1,25 +1,13 @@
 from configparser import ConfigParser
-import os
 import numpy as np
-import shutil
-
-import os
 import zipfile
 import time
-import scipy.misc
-
 from subprocess import call
-import io
 import os
-
 import pickle
-
 import imageio
 
-from PIL import Image
-
 #import matplotlib.pylab as plt
-
 #storage_manager_folder = '../../Data/StorageManager/'
 
 def get_data_folder():

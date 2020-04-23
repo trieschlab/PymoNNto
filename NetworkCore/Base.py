@@ -10,7 +10,6 @@ class NetworkObjectBase:
     def __init__(self, tag):
         self.tags = []
         self.clear_cache()
-        #self.add_tag(str(id(self)))
         if tag is not None:
             self.add_tag(tag)
 
@@ -71,6 +70,15 @@ class NetworkObjectBase:
             self.tags.append(subtag)
         return self
 
+    def buffer_roll(self, mat, new=None):
+        #return np.roll(mat, 1, axis=0)
+        mat[1:len(mat)] = mat[0:len(mat) - 1]
+
+        if new is not None:
+            mat[0]=new
+
+        return mat
+
     def get_nparray(self, dim):
         return np.zeros(dim).astype(t)
 
@@ -101,8 +109,3 @@ class NetworkObjectBase:
 
     def get_buffer(self, dim, size):
         return np.array([self.get_nparray(dim) for _ in range(size)])
-
-
-
-    #def get_2d_representation(self, array, dim):
-    #    return array.reshape(dim)

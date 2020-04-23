@@ -7,17 +7,13 @@ class Neuron_Behaviour(NetworkObjectBase):
     run_on_neuron_init_var = False
 
     def __init__(self, **kwargs):
-        #if 'tag' in self.init_kwargs:
-        #    self.add_tag(self.get_init_attr['tag'])
         self.init_kwargs = kwargs
+        self.used_attr_keys = []
         self.behaviour_enabled = self.get_init_attr('behaviour_enabled', True, None)
         super().__init__(tag=self.get_init_attr('tag', None, None))
 
-    #def add_tag(self, tag):
-    #    self.tags.append(tag)
-
     def run_on_neuron_init(self):
-        self.run_on_neuron_init_var=True
+        self.run_on_neuron_init_var = True
         return self
 
     def diversity_string_to_vec(self, ds, neurons):
@@ -86,9 +82,20 @@ class Neuron_Behaviour(NetworkObjectBase):
 
         return result
 
+    def check_unused_attrs(self):
+        for key in self.init_kwargs:
+            if not key in self.used_attr_keys:
+                print('Warning: "'+key+'" not used in set_variables of '+str(self)+' behaviour! Make sure that "'+key+'" is spelled correctly and get_init_attr('+key+',...) is called in set_variables. Valid attributes are:'+str(self.used_attr_keys))
 
-    def get_init_attr(self, key, default, neurons, do_not_diversify=False):
+    def get_init_attr(self, key, default, neurons=None, do_not_diversify=False, search_other_behaviours=False):
+        self.used_attr_keys.append(key)
+
         result = self.init_kwargs.get(key, default)
+
+        if key not in self.init_kwargs and neurons is not None and search_other_behaviours:
+            for b in neurons.behaviours:
+                if key in b.init_kwargs:
+                    result = b.init_kwargs.get(key, result)
 
         if not do_not_diversify and type(result) is str and neurons is not None:
             result = self.diversity_string_to_vec(result, neurons)
@@ -104,8 +111,8 @@ class Neuron_Behaviour(NetworkObjectBase):
     def new_iteration(self, neurons):
         return
 
-    def get_shared_variable(self, name):
-        return None
+    #def get_shared_variable(self, name):
+    #    return None
 
     def normalize_synapse_attr(self, src_attr, target_attr, target_value, neurons, synapse_type):
 

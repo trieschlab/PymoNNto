@@ -1,16 +1,22 @@
 import pypianoroll as piano
+from NetworkBehaviour.Recorder.Recorder import *
 from Testing.Common.Classifier_Helper import *
 from sklearn.multiclass import OneVsRestClassifier
+from sklearn.naive_bayes import ComplementNB
 
 def predict_note(linear_model, input_neuron_groups, inp_param_name):
     compiled_inp_param_name=compile(inp_param_name, '<string>', 'eval')
     inputs = [eval(compiled_inp_param_name) for n in input_neuron_groups]
-    return int(linear_model.predict(np.concatenate(inputs).reshape(1, -1)))
+    inputs = np.concatenate(inputs).reshape(1, -1)
+    #inputs = add_bias_neuron(inputs)
+    return int(linear_model.predict(inputs))
 
 def predict_vector(linear_model, input_neuron_groups, inp_param_name):
     compiled_inp_param_name=compile(inp_param_name, '<string>', 'eval')
     inputs = [eval(compiled_inp_param_name) for n in input_neuron_groups]
-    return linear_model.predict(np.concatenate(inputs).reshape(1, -1))  
+    inputs = np.concatenate(inputs).reshape(1, -1)
+    #inputs = add_bias_neuron(inputs)
+    return linear_model.predict(inputs)  
 
 def predict_music_sequence(linear_model, prediction_neuron_groups, inp_param_name, iterations, SORN, source, lag=1):
 
@@ -20,13 +26,21 @@ def predict_music_sequence(linear_model, prediction_neuron_groups, inp_param_nam
         return predict_vector_sequence(linear_model, prediction_neuron_groups, inp_param_name, iterations, SORN, source, lag=1)
 
 
+def add_bias_neuron(X):
+    return np.concatenate((X, np.ones((X.shape[0], 1))), axis=1) # add a bias neuron
+
 def predict_vector_sequence(linear_model, prediction_neuron_groups, inp_param_name, iterations, SORN, source, lag=1):
     spont_output = ''
     symbol = None
-    pianoroll = np.zeros((iterations, 128)).astype(np.bool_)
+
+    if source.is_drum:
+        pianoroll = np.zeros((iterations, len(source.alphabet))).astype(np.bool_) # we work with the drum beat matrix
+    else:
+        pianoroll = np.zeros((iterations, 128)).astype(np.bool_) # we have just one instrument, directly create MIDI pianoroll 
 
     for i in range(iterations):
         vector = predict_vector(linear_model, prediction_neuron_groups, inp_param_name)
+
         if np.any(vector): # vector is not all zeros
             indices = np.nonzero(vector)[1]
             if len(indices)==1: # predict only one note at this time step
@@ -45,7 +59,10 @@ def predict_vector_sequence(linear_model, prediction_neuron_groups, inp_param_na
 
             source.set_nextone(vector)
 
-            pianoroll[i, source.alphabet] = vector
+            if source.is_drum: 
+                pianoroll[i,:] = vector
+            else:
+                pianoroll[i, source.alphabet] = vector
 
         SORN.simulate_iteration()
 
@@ -117,7 +134,7 @@ def run_plastic_phase(SORN, steps_plastic, display=True, storage_manager=None):
     #SORN.recording_off()
     return SORN
 
-def train_readout(SORN, steps_train, steps_test, display=True, stdp_off=True, storage_manager=None,same_timestep_without_feedback_loop=False):
+def train_readout(SORN, steps_train, steps_test, source, display=True, stdp_off=True, storage_manager=None,same_timestep_without_feedback_loop=False):
 
     if display:
         print("\nRecord predictions...")
@@ -137,7 +154,7 @@ def train_readout(SORN, steps_train, steps_test, display=True, stdp_off=True, st
         train_same_step_music(SORN['prediction_rec'], 'n.output', SORN['index_rec', 0], 'n.pattern_index', 0, steps_train, steps_test)  # train
     else:
         readout_layer,X_train, Y_train, X_test, Y_test = \
-        train_music(SORN['prediction_rec'], 'n.output', SORN['index_rec', 0], 'n.pattern_index', 0, steps_train, steps_test, lag=1)  # steps_plastic, steps_plastic + steps_readout
+        train_music(SORN['prediction_rec'], 'n.output', SORN['index_rec', 0], 'n.pattern_index', 0, steps_train, steps_test, source, lag=1)  # steps_plastic, steps_plastic + steps_readout
 
     SORN.clear_recorder()
     SORN.recording_off()
@@ -154,20 +171,28 @@ def train_readout(SORN, steps_train, steps_test, display=True, stdp_off=True, st
 
     return readout_layer, X_train, Y_train, X_test, Y_test
 
-def train_music(output_recorders, out_param_name, input_recorder, inp_param_name, start, n_train, n_test, lag=1):
+def train_music(output_recorders, out_param_name, input_recorder, inp_param_name, start, n_train, n_test, source, lag=1):
     X_train, Y_train = getXY(output_recorders, out_param_name, input_recorder, inp_param_name, start, n_train, XYshift=lag-1, learn_shift=lag)
     #X_train, Y_train= remove_lag(X_train, Y_train, lag)
+    #X_train = add_bias_neuron(X_train)
+
     X_test, Y_test = getXY(output_recorders, out_param_name, input_recorder, inp_param_name, int(start+n_train), int(start+n_train+n_test), XYshift=lag-1, learn_shift=lag)
     #X_test, Y_test = remove_lag(X_test, Y_test, lag)
-    
+    #X_test = add_bias_neuron(X_test)
+
     if len(Y_train.shape) == 1: # monophonic input/output, we predict one note at a time
         if sys.version_info[1]>5:#3.5...
             lg = linear_model.LogisticRegression(solver='liblinear', multi_class='auto')
         else:
             lg = linear_model.LogisticRegression(solver='lbfgs', multi_class='ovr')#for older python version
     else: # multilabel classification for polyphonic music
-        lg = OneVsRestClassifier(linear_model.LogisticRegression(solver='saga', multi_class='auto'))
+        if source.A > len(source.alphabet): # we have inverted alphabet as additional input (activate set of neurons when symbol is absent)
+            Y_train = Y_train[:len(source.alphabet), :] # however, we only want to predict if note is present (0 vs 1)
+            Y_test = Y_test[:len(source.alphabet), :]
+        
+        lg = OneVsRestClassifier(linear_model.LogisticRegression(solver='saga', multi_class='auto', n_jobs=-1))
         # ComplementNB classifier may be more suited for imbalanced classes, also deals with 0 counts (by Laplace smoothing)
+        #lg = OneVsRestClassifier(ComplementNB())
     return lg.fit(X_train, Y_train.T), X_train, Y_train.T, X_test, Y_test.T
 
 
@@ -185,7 +210,7 @@ def train_same_step_music(output_recorders, out_param_name, input_recorders, inp
     return lg.fit(X_train, Y_train), X_train, Y_train, X_test, Y_test
 
 
-def get_score_predict_next_step(SORN, readout_layer, X_test, Y_test, lag=1, display=True, stdp_off=True, storage_manager=None):
+def get_score_predict_next_step(SORN, source, readout_layer, X_test, Y_test, lag=1, display=True, stdp_off=True, storage_manager=None):
     # lag describes # time steps it is asked to predict in the future, from current state onwards
     if display:
         print("\nTesting prediction performance...")
@@ -193,10 +218,10 @@ def get_score_predict_next_step(SORN, readout_layer, X_test, Y_test, lag=1, disp
     if stdp_off:
         SORN.deactivate_mechanisms('STDP')
 
-    source = SORN['music_act', 0]
-
     #SORN.clear_recorder()
     #SORN.recording_on()
+
+    # we have monotonic input/output
     if len(Y_test.shape)==1:
         spec_perf = {}
         for symbol in np.unique(Y_test):
@@ -205,22 +230,41 @@ def get_score_predict_next_step(SORN, readout_layer, X_test, Y_test, lag=1, disp
 
     #SORN.clear_recorder()
     #SORN.recording_off()
-
         score = spec_perf
 
-    else:
-        score= readout_layer.score(X_test, Y_test)
+    else: # polyphony
+        score = {}
+        score['accuracy'] = readout_layer.score(X_test, Y_test) # this is the accuracy, probably not a good measure for polyphonic music
+        
+        Y_output = readout_layer.predict(X_test)
 
+        # compute expected frame-level accuracy (ACC)
+        TP = 0
+        FP = 0
+        FN = 0
+        for ts in range(len(Y_output)):
+            for note in range(Y_output.shape[1]):
+                if Y_output[ts,note] and Y_test[ts, note]:
+                    TP+=1
+                if Y_output[ts,note] and not Y_test[ts, note]:
+                    FP+=1
+                if not Y_output[ts,note] and Y_test[ts, note]:
+                    FN+=1
+        
+        score['FP'] = FP
+        score['TP'] = TP
+        score['FN'] = FN
+        score['ACC'] = TP / float(TP+FP+FN) #ACC: sum(TP) / (sum(TP)+ sum(FN)+ sum(FP))
 
     return score
 
-def get_score_spontaneous_music(SORN, readout_layer, steps_spont, seen=None, steps_recovery=0, display=True, stdp_off=True, storage_manager=None, same_timestep_without_feedback_loop=False, create_MIDI=False):
+
+def get_score_spontaneous_music(SORN, source, readout_layer, steps_spont, split_tracks=False, seen=None, steps_recovery=0, display=True, stdp_off=True, storage_manager=None, same_timestep_without_feedback_loop=False, create_MIDI=False):
     #exc_neuron_tag, output_recorder_tag, input_recorder_tag
     #'main_exc_group', 'exc_out_rec', 'inp_rec'
     
     if display:
         print('\nGenerate spontaneous output...')
-    source = SORN['music_act', 0]
     
     if stdp_off:
         SORN.deactivate_mechanisms('STDP')
@@ -235,16 +279,125 @@ def get_score_spontaneous_music(SORN, readout_layer, steps_spont, seen=None, ste
     SORN.recording_on()
 
     if same_timestep_without_feedback_loop:
-        SORN['music_act', 0].active = False
+        source.active = False
         if steps_recovery > 0:
             SORN.simulate_iterations(steps_recovery, 100, measure_block_time=display,disable_recording=True)
-        spont_output, pianoroll = get_simu_music_sequence(SORN, SORN['prediction_source'], 'n.output', readout_classifyer=readout_layer, seq_length=steps_spont, source=SORN['music_act', 0])#output generation
+        spont_output, pianoroll = get_simu_music_sequence(SORN, SORN['prediction_source'], 'n.output', readout_classifyer=readout_layer, seq_length=steps_spont, source=source)#output generation
     else:
-        spont_output, pianoroll = predict_music_sequence(readout_layer, SORN['prediction_source'], 'n.output', steps_spont, SORN, SORN['music_act', 0], lag=1)
+        spont_output, pianoroll = predict_music_sequence(readout_layer, SORN['prediction_source'], 'n.output', steps_spont, SORN, source, lag=1)
 
-    SORN['music_act', 0].active = True
+    source.active = True
 
-    if create_MIDI:
+    if create_MIDI and source.is_drum: # create a percussion track!
+        # in this case pianoroll is a sequence of vectors of length alphabet, each letter in the alphabet stands for one instrument
+
+        if split_tracks == False and source.offtoken == False: # create one long track
+            instruments_non_zero = np.nonzero(pianoroll)
+            instruments_non_zero = list(set(instruments_non_zero[1])) # for them we have to create tracks          
+
+            tracks = []
+
+            for i in range(len(instruments_non_zero)):
+                track = np.zeros((len(pianoroll), 128))
+                track[:,source.alphabet[instruments_non_zero[i]]] = pianoroll[:,instruments_non_zero[i]]
+                track = piano.Track(track)
+                #track.program = source.alphabet[instruments_non_zero[i]]
+                track.binarize()
+                track.beat_resolution=4
+                track.is_drum  = True
+                tracks.append(track)
+
+            multitrack = piano.Multitrack(tracks=tracks, beat_resolution=4)
+
+            if storage_manager is not None: 
+                path = storage_manager.absolute_path
+                multitrack.write(path+'sample.mid')
+            else:
+                multitrack.write('sample.mid')
+                print('warning: no results path defined through storagemanager, MIDI will be saved in code repo')
+            
+        else: # create n tracks of length of input tracks (or diverse length if stop token is active)
+
+            if source.offtoken and not source.ontoken:
+                stop_tokens = np.nonzero(pianoroll[:,-1])[0] # time steps when track is finished
+                if stop_tokens.size==0: # if it never predicted a stop token
+                    start_tokens = [len(pianoroll)] # we just generate one long track
+                else:
+                    start_tokens = stop_tokens + 1 # so that indexing works
+
+                n_tracks = int(len(start_tokens))-1
+                #start_tokens = np.insert(start_tokens, 0, 0) # add first start token
+                # note that we do not generate a track from the time steps potentially generated after the last stop token and before first stop token
+
+            elif source.ontoken and not source.offtoken:
+                start_tokens = np.nonzero(pianoroll[:,-1])[0] # time steps when track starts
+                n_tracks = int(len(start_tokens))-1
+
+            elif source.ontoken and source.offtoken:
+                n_tracks=0
+                start_tokens = []
+                stop_tokens = []
+                start = False
+                stop = False
+                for i in range(len(pianoroll)):
+                    if pianoroll[i, -1]: # we have a start token
+                        start=i # we also overwrite start token if two appear without a stop token in between
+                        stop = False
+                    if pianoroll[i, -2]: # we have a stop token
+                        stop =i 
+
+                    if stop and not start: 
+                        stop = False
+
+                    if start and stop and stop > start: 
+                        start_tokens.append(start)
+                        stop_tokens.append(stop)
+                        n_tracks+=1 
+                        start = False
+                        stop = False
+                    
+                    if start and stop and stop <= start: 
+                        start = False
+                        stop = False 
+                #print(start_tokens)
+                #print(stop_tokens)
+                # we ignore parts when two stop tokens or two start tokens occur after another
+
+            else:  # else we split the generated output after 32 time steps each (length of one track in the corpus)
+                len_track = len(source.corpus_blocks[0])
+                n_tracks = int(len(pianoroll)/len_track)
+
+            for j in range(n_tracks):
+                if source.offtoken and source.ontoken: 
+                    curr_pianoroll = pianoroll[start_tokens[j]:stop_tokens[j], :int(source.A-2)] # ignore last two tokens in alphabet 
+                elif source.offtoken or source.ontoken:
+                    curr_pianoroll = pianoroll[start_tokens[j]:start_tokens[j+1], :int(source.A-1)] # ignore last token in alphabet (stop token)
+                else:    
+                    curr_pianoroll = pianoroll[j*len_track:(j*len_track)+len_track,:]
+                if np.any(curr_pianoroll): # only proceed if it would not be all silence
+                    instruments_non_zero = np.nonzero(curr_pianoroll)
+                    instruments_non_zero = list(set(instruments_non_zero[1])) # for them we have to create tracks          
+
+                    tracks = []
+                    for i in range(len(instruments_non_zero)):
+                        track = np.zeros((len(curr_pianoroll), 128))
+                        track[:,source.alphabet[instruments_non_zero[i]]] = curr_pianoroll[:,i]
+                        track = piano.Track(track)
+                        track.program = source.alphabet[instruments_non_zero[i]]
+                        track.binarize()
+                        track.beat_resolution=4
+                        track.is_drum  = True
+                        tracks.append(track)   
+
+                    multitrack = piano.Multitrack(tracks=tracks, beat_resolution=4)
+                    if storage_manager is not None: 
+                        path = storage_manager.absolute_path
+                        multitrack.write(path+'sample{}.mid'.format(j+1))
+                    else:
+                        multitrack.write('sample{}.mid'.format(j+1))
+                        print('warning: no results path defined through storagemanager, MIDI will be saved in code repo')
+                    
+    elif create_MIDI: # we create just one MIDI track of one instrument (if we have a MusicActivator)
         track = piano.Track(pianoroll)
         track.program = source.instrument
         track.binarize()
@@ -264,8 +417,7 @@ def get_score_spontaneous_music(SORN, readout_layer, steps_spont, seen=None, ste
     if stdp_off:
         SORN.activate_mechanisms('STDP') 
 
-    
-    score_dict = SORN['music_act', 0].get_music_score(spont_output, pianoroll, seen) 
+    score_dict = source.get_music_score(spont_output, pianoroll) 
     #print(score_dict)
     if storage_manager is not None:
         storage_manager.save_param_dict(score_dict)

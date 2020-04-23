@@ -8,7 +8,7 @@ from Exploration.Visualization.Reconstruct_Analyze_Label.Reconstruct_Analyze_Lab
 
 class sidebar_image_module():
 
-    def add_recorder_variables(self, neuron_group, recorder):
+    def add_recorder_variables(self, neuron_group, Network_UI):
         return
 
     def initialize(self, Network_UI):

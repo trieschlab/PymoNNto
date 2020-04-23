@@ -8,12 +8,15 @@ from Exploration.Visualization.Reconstruct_Analyze_Label.Reconstruct_Analyze_Lab
 
 class buffer_tab():
 
-    def add_recorder_variables(self, neuron_group, recorder):
+    def __init__(self, title='Buffer'):
+        self.title = title
+
+    def add_recorder_variables(self, neuron_group, Network_UI):
         return
 
     def initialize(self, Network_UI):
         if Network_UI.network['grammar_act', 0] is not None:
-            self.buffertab = Network_UI.Next_Tab('Buffer')
+            self.buffertab = Network_UI.Next_Tab(self.title)
 
             alphabet = Network_UI.network['grammar_act'][0].alphabet
             a_list = [alphabet[i] for i in range(len(alphabet))]

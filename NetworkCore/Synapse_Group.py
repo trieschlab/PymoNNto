@@ -9,6 +9,8 @@ class SynapseGroup(NetworkObjectBase):
     def __init__(self, src, dst, connectivity=None, net=None, tag=None, partition=False, partition_blocks='auto'):
         super().__init__(tag=tag)
 
+        self.add_tag(src.tags[0]+' => '+dst.tags[0])
+
         if net is not None:
             net.SynapseGroups.append(self)
             self.network = net
@@ -29,8 +31,6 @@ class SynapseGroup(NetworkObjectBase):
         src = self.src
         dst = self.dst
         self.enabled = self.get_synapse_mat()
-
-
 
         s_id = np.tile(np.arange(src.size), (1, dst.size)).reshape(dst.size, src.size)
 

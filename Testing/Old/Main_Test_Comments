@@ -1,0 +1,412 @@
+#import matplotlib.pyplot as plt
+
+    # import matplotlib.pyplot as plt
+    # from NetworkExplorationModules.Visualization.Visualization_Helper import *
+    # plt.imshow(get_reconstruction_activations(np.clip(np.array([MNIST_patterns.get_pattern() for i in range(10)]), 0, 1), 28,28*2), cmap=plt.cm.gist_gray, interpolation='nearest')
+    # plt.show()
+
+
+    # img_patches = TNAP_Image_Patches(group_possibility=1.0, image_path='../Data/Local/pexels-photo-275484.jpeg', grid_width=300, grid_height=300, dimensions=['on_center_red_green','off_center_red_green'], patch_norm=True)#'on_center_white', 'off_center_white'#'red', 'green', 'blue', 'gray', '255-red', '255-green', '255-blue', '255-gray'
+
+
+    # img_patches = TNAP_Foveation_Image_Patches(group_possibility=1.0, foveation_upscale=1.5, image_path='../Data/Local/pexels-photo-275484.jpeg', grid_width=300, grid_height=300, dimensions=['white','on_center_white'], patch_norm=True)#'on_center_white', 'off_center_white'#'red', 'green', 'blue', 'gray', '255-red', '255-green', '255-blue', '255-gray'
+
+    # d=img_patches.get_pattern_dimension()
+    # pat=img_patches.get_pattern().reshape((300*2, 300))
+    # recon=img_patches.reconstruct_pattern(pat).reshape(img_patches.get_vstackpattern_dimension())
+    # blur_recon=img_patches.fill_gaps_simple(recon)
+
+
+    # plt.matshow(img_patches.patterns[0][0], cmap=plt.cm.gist_gray)
+    # plt.matshow(img_patches.patterns[0][1], cmap=plt.cm.gist_gray)
+
+    # plt.matshow(img_patches.get_retina_pic(), cmap=plt.cm.gist_gray)
+    # plt.matshow(pat, cmap=plt.cm.gist_gray)
+    # plt.matshow(recon, cmap=plt.cm.gist_gray)
+    # plt.matshow(blur_recon , cmap=plt.cm.gist_gray)
+
+    # plt.show()
+
+
+    #behaviour1 = {
+    #    1: InterGammaGlutamate(GLU_density=1.0),
+    #    2: IntraGammaGlutamate(),
+    #    3: IntraGammaGABA(GABA_density=1.0, GABA_random_factor=10.0, GABA_Norm='[3.4#0]'),#3.4 #
+    #    4: ActivityBuffering(activity_multiplyer=0.0, firetreshold=0.1),
+    #    5: STDP_simple(exponent='[4.4#1],+-10%', post_learn_value='[1.0#2],+-10%'),#8.92 #6.55
+    #    6: TemporalWeightCache(decay=1, strength=1),
+    #    #7: RandomWeightFluctuation(beta=4*0.2, gamma=3*0.2),
+    #    8: HomeostaticMechanism(range_end='[550#3],+-10%', inc='[1.84#4],+-10%', dec='[4.92#5],+-10%', pattern_chance='[0.0086#6],+-10%'),#0.0086 #,'
+    #    9: GlutamateCacheConvergeAndNormalization(norm_value='0.001,40.0')#20.0 #(norm_value=0.001)
+    #}
+
+    #behaviour2 = {
+    #    1: InterGammaGlutamate(GLU_density=1.0),
+    #    2: IntraGammaGlutamate(),
+    #    3: IntraGammaGABA(GABA_density=1.0, GABA_random_factor=10.0, GABA_Norm=4.5),#3.4
+    #    4: ActivityBuffering(activity_multiplyer=0.0, firetreshold=0.1),
+    #    5: STDP_simple(exponent=8.92, post_learn_value=6.55),#8.92 #6.55
+    #    6: TemporalWeightCache(decay=1, strength=1),
+    #    #7: RandomWeightFluctuation(beta=4*0.2, gamma=3*0.2),
+    #    8: HomeostaticMechanism(range_end='550,+-30%', inc='1.84,+-10%', dec='4.92,+-10%', pattern_chance='0.0086,+-30%'),#0.0086
+    #    9: GlutamateCacheConvergeAndNormalization(norm_value='0.001,40.0')
+    #}
+
+
+
+    # score = 0
+    # for neuron_group in tren.getNG('Cortex')[-1:]:
+    #    recon = EvalF.get_reconstruction(tren, tren.getNG('Cortex')[-1])
+    #    div_score = EvalF.get_diversity_score(EvalF.flatten_cycles(recon))
+    #    var_score = EvalF.get_variance_score(EvalF.flatten_cycles(recon), 0.9, exponent=100)
+
+    # print(recon.shape)
+    # print(EvalF.sum_cycles(recon).shape)
+    # print(EvalF.flatten_cycles(recon).shape)
+
+    # print(div_score)
+    # print(var_score)
+
+    #    score += (div_score*var_score)/neuron_group.size
+    # return score
+
+
+    # score = EvalF.get_Group_Weighted_total_neuron_diversity_metric(tren, tren.getNG('Cortex')[-1:], reconstruction=True)
+    # print(ind, score)
+    # return score
+
+
+
+
+
+
+#[5.11, 9.99, 6.366, 496.6, 2.1768, 5.363, 0.0074185]
+#for i in range(2):
+#0.01587351440687829
+#[0.1, 0.3065479735895208, 0.23879815676473182, 3154.1775672118597, 1.1817318279668876, 0.5061319821944426, 0.003172264344893538]
+#create_run_and_evaluate([2.5, 4.67, 1.0, 500.0, 0.3, 0.3, 0.08], evolution=False)#1.9, 5.7
+
+#[2.5, 4.67, 1.0, 500.0, 0.3, 0.3, 0.08]
+
+#[0.020215420483847692, 0.15551361728383079, 1.3737154237756135, 958.061824606519, 1.1701555584561028, 0.10295665508100105, 0.002883636526522287]
+#[0.009003241855014988, 4.669884620625264, 0.009999934273962943, 560.9983129191046, 1.92287450779038, 5.718836002709096, 0.006299363027924097]
+
+#[3.4, 8.9, 6.5, 550, 1.8, 4.9, 0.008]
+
+#[0.01, 2.17, 0.01, 644.5, 1.45, 2.55, 0.00826]
+#[3.4, 8.9, 6.5, 550, 1.8, 4.9, 0.008]
+#[3.6, 4.0, 0.5, 496.6, 1.0, 2.0, 0.0074185]
+
+
+    #[2.5, 4.67, 1.0, 500.0, 0.3, 0.3, 0.08]
+#, [0.01, 4.0, 0.01, 496.6, 2.1768, 5.363, 0.0074185], [0.020215420483847692, 0.15551361728383079, 1.3737154237756135, 9587.061824606519, 1.1701555584561028, 0.10295665508100105, 0.002883636526522287],
+    #[0.021899975433302427, 0.14549720453469017, 1.148814086985662, 10590.546577502797, 1.2189258624842032, 0.1011651394242266, 0.0024270892936288785], [0.021872471518096796, 0.12595421772126095, 1.2104640864376135, 13300.41409472325, 1.1241878955694768, 0.12014927191028507, 0.002488159537420787], [0.022277948602421327, 0.12606038645698972, 1.378209411083545, 9906.226846039528, 1.1618674692623316, 0.09371132689418855, 0.002450741918637238]
+
+    #[3.0, 7.0, 6.0, 500, 2.0, 6.0, 0.01]#[4.5, 8.0, 11, 700.0, 4.0, 20.0, 0.01]
+    #[3.8, 8.92, 6.55, 550.0, 1.84, 4.92, 0.0086], [3.4, 8.9, 6.5, 550, 1.8, 4.9, 0.008]
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+#    def print_all_global_variables():
+#        for var, obj in globals().items():
+#            print(var, sys.getsizeof(obj))
+
+
+#    def return_stock_from_active_memory():
+#        for obj in gc.get_objects():
+#            try:
+#                size = sys.getsizeof(obj)
+#                if size > 100000:
+#                    print(size, obj.__name__)
+#            except:
+#                print('error')
+
+
+#from NetworkExplorationModules.Visualization.Visualization_Helper import *
+
+#import matplotlib.pyplot as plt
+
+#pexels-photo-275484.jpeg#, 'on_center_white', 'rgbw', '255-rgbw' #sample_03.jpg #'off_center_white',#on_center_white #off_center_white #'on_center_red_green','on_center_yellow_blue','off_center_red_green', 'off_center_yellow_blue'
+#img_patches = TNAP_Image_Patches(group_possibility=1.0,foveation_upscale=1.0, image_path='../Data/Local/pexels-photo-275484.jpeg', grid_width=input_width, grid_height=input_height, dimensions=['on_center_white', 'off_center_white'], patch_norm=True)#'red', 'green', 'blue', 'gray', '255-red', '255-green', '255-blue', '255-gray'
+#img_patches=None
+
+#img_patches = TNAP_Foveation_Image_Patches(group_possibility=1.0, foveation_upscale=1.3, image_path='../Data/Local/pexels-photo-275484.jpeg', grid_width=input_width, grid_height=input_height, dimensions=['on_center_white', 'off_center_white'], patch_norm=True)#'red', 'green', 'blue', 'gray', '255-red', '255-green', '255-blue', '255-gray'
+#plt.matshow(img_patches.get_retina_pic())
+#plt.matshow(img_patches.reconstruct_pattern(img_patches.get_pattern()).reshape(img_patches.get_vstackpattern_dimension()))
+#plt.show()
+
+#plt.matshow(MNIST_patterns.get_pattern().reshape(MNIST_patterns.get_vstackpattern_dimension()))
+#plt.show()
+
+# scores = []
+# for i in range(10):
+#    TREN.simulate_iterations(100, 40, False)
+#    score=1
+#    score = EvalF.get_pattern_response_score(TREN, LGN_PC_Neurons[TRENNeuronActivator].TNAPatterns[0],LGN_PC_Neurons, [Cortex_V1], combinations=False) * (18 * 18)  # **2
+#    #score += EvalF.get_pattern_response_score(TREN, LGN_PC_Neurons[TRENNeuronActivator].TNAPatterns[0],LGN_PC_Neurons, [Cortex_V1], combinations=True)
+#    scores.append(score)
+# score = np.average(np.array(scores))
+# print(score)
+# return score
+
+
+
+# print('before', EvalF.get_Group_Weighted_total_neuron_weight_diversity_metric([Cortex_V1, Cortex_V2, Cortex_V3]))
+
+# print('before2', EvalF.get_pattern_response_score(TREN, LGN_PC_Neurons[TRENNeuronActivator].TNAPatterns[0], LGN_PC_Neurons,
+#                                           [Cortex_V1, Cortex_V2], combinations=False, max_gamma_cycles_for_pattern=2))
+
+# pv.run_and_visualize([
+# pv.weight_visualization_recorder(),
+# pv.activity_visualization_recorder(),
+# pv.firing_rate_visualization_recorder(),
+# pv.score_visualization_recorder()
+# ], TREN, Cortex_V1, 4000)
+
+# print('after', EvalF.get_Group_Weighted_total_neuron_weight_diversity_metric([Cortex_V1, Cortex_V2]))
+
+# print('after2', EvalF.get_pattern_response_score(TREN, LGN_PC_Neurons[TRENNeuronActivator].TNAPatterns[0], LGN_PC_Neurons, [Cortex_V1, Cortex_V2], combinations=False, max_gamma_cycles_for_pattern=2))
+
+
+
+# pv.visualize_input_and_learned_patterns(TREN, Cortex_V1, LGN_PC_Neurons, pattern=MNIST_patterns, v_split=True)#img_patches
+# pv.visualize_input_and_learned_patterns(TREN, Cortex_V2, LGN_PC_Neurons, pattern=MNIST_patterns, v_split=True)  # img_patches
+# pv.visualize_input_and_learned_patterns(TREN, Cortex_V3, LGN_PC_Neurons, pattern=MNIST_patterns, v_split=True)  # img_patches
+
+
+
+
+
+
+#from NetworkExplorationModules.Evolution.parrallel_plot import *
+
+
+
+
+
+# 1  18.604.800    1  5749.710ms
+# 4   8.812.800   32  1148.234ms
+# 5   8.258.112   50   722.355ms  <===============
+# 6   7.729.200   72   727.782ms
+# 8   6.998.724  128   865.211ms
+# 10  6.748.704  200  1073.318ms
+# 20  6.055.128  800  2485.685ms
+# 60  5.598.024 7200 15857.886ms
+
+
+
+
+
+# LGN_PC_Neurons[TRENNeuronDimension].apply_pattern_transformation_function(img_patches.foveation_mask, img_patches.wup, img_patches.hup, 2)#TODO:TEST
+# LGN_PC_Neurons[TRENNeuronDimension].move(30, 0)
+
+# plt.scatter(LGN_PC_Neurons.x, LGN_PC_Neurons.y)
+# plt.show()
+
+
+
+    # from NetworkExplorationModules.Realtime_UI import *
+    # TREN_Realtime_UI(network,Cortex_PC_Neurons, LGN_PC_Neurons).show()
+
+    # from NetworkExplorationModules.Parameter_Exploration_UI import *
+    # TREN_Parameter_Exploration_UI(network, Cortex_PC_Neurons, LGN_PC_Neurons, None, 'Test').show()
+
+    # from NetworkExplorationModules.TREN_UI_Base import *
+    # TREN_QT_UI_Base(None, "Test")
+
+    # v = Visualizer(None)
+    # sys.exit(v.app.exec_())
+
+
+
+
+
+
+    # print(LGN_PC_Neurons.norm_value)
+
+    # print('diversity', EvalF.get_diversity_score(feed_forward_syn.GLU_Synapses.reshape(feed_forward_syn.get_synapse_mat_dim())))#(50, 100)
+    # print('single', EvalF.get_pattern_response_score(network, LGN_PC_Neurons[TRENNeuronActivator].TNAPatterns[0], LGN_PC_Neurons, [Cortex_PC_Neurons], combinations=False) ** 2)
+    # print('double', EvalF.get_pattern_response_score(network, LGN_PC_Neurons[TRENNeuronActivator].TNAPatterns[0], LGN_PC_Neurons, [Cortex_PC_Neurons], combinations=True))
+
+    # pv.matshow(EvalF.get_pattern_response_image(network, LGN_PC_Neurons[TRENNeuronActivator].TNAPatterns[0], LGN_PC_Neurons, [Cortex_PC_Neurons], combinations=True))
+
+    # pv.visualize_input_and_learned_patterns(TREN, Cortex_V2, LGN_PC_Neurons)
+    # pv.visualize_input_and_learned_patterns(TREN, Cortex_V3, LGN_PC_Neurons)
+
+    # lgn_vis[0].visualize()
+
+
+    # lgn_vis = network.add_behaviours_to_neuron_group([pv.input_visualization_recorder()], LGN_PC_Neurons)
+
+
+    # import NetworkExplorationModules.Helper.Visualization_Helper as vh
+    # ps = LGN_PC_Neurons[TRENNeuronActivator].get_pattern_samples(100)
+    # img = vh.get_reconstruction_activations(ps, input_width, input_height*img_patches.z_dim)
+    # pv.imshow(img)
+    # pv.show()
+
+
+    # pv.plot_network(TREN)
+
+
+#print(create_run_and_evaluate([], True))
+#print(create_run_and_evaluate([], False))
+
+    # import NetworkExplorationModules.Pyplot_visualizer as pv
+    # pv.plot(scores)
+    # pv.plot([np.average(np.array(scores)) for _ in scores])
+    # score = EvalF.get_diversity_score(feed_forward_syn.GLU_Synapses.reshape((50, 100)))
+
+
+    #gen 28
+    #gen 36
+
+    #['3.814', '7.773', '10.536', '345.517', '1.453', '4.857', '0.011']
+
+    #[3.0, 7.0, 6.0, 500, 2.0, 6.0, 0.01]
+    #[4.727207749959612, 7.869339491307885, 8.071211120799314, 1152.046957812022, 3.078347860574453, 2.005965766084856, 0.0035233099163080816]
+
+
+
+
+    # def connect_NGs(source_group_list, dest_groups_list, network, syn_type, connectivity):
+    #    for sg in source_group_list:
+    #        for dg in dest_groups_list:
+    #            TRENSynapseGroup(sg, dg, connectivity, net=network).add_tag(syn_type)
+
+
+    # def connect_group_block_neighbours(block_mat, network, syn_type, connectivity, vertical=True, horizontal=True, diagonal=True, recurrent=True, tag='Synapse_block'):
+    #    shape=block_mat.shape
+    #    #ver_syn_mat = np.empty(shape=(shape[0]-1, shape[1]-1), dtype=object)
+    #    # .add_tag(tag+'(x:{},y:{})'.format(x, y))
+    #    for y in range(shape[0]):
+    #        for x in range(shape[1]):
+    #            if vertical and y<shape[0]-1:
+    #                TRENSynapseGroup(block_mat[y, x], block_mat[y+1, x], connectivity, net=network).add_tag(syn_type)#.add_tag(tag)
+    #                TRENSynapseGroup(block_mat[y+1, x], block_mat[y, x], connectivity, net=network).add_tag(syn_type)#.add_tag(tag)
+    #            if horizontal and x<shape[1]-1:
+    #                TRENSynapseGroup(block_mat[y, x], block_mat[y, x+1], connectivity, net=network).add_tag(syn_type)#.add_tag(tag)
+    #                TRENSynapseGroup(block_mat[y, x+1], block_mat[y, x], connectivity, net=network).add_tag(syn_type)#.add_tag(tag)
+    #            if diagonal and y<shape[0]-1 and x<shape[1]-1:
+    #                TRENSynapseGroup(block_mat[y, x], block_mat[y+1, x+1], connectivity, net=network).add_tag(syn_type)#.add_tag(tag)
+    #                TRENSynapseGroup(block_mat[y+1, x+1], block_mat[y, x], connectivity, net=network).add_tag(syn_type)#.add_tag(tag)
+    #                TRENSynapseGroup(block_mat[y, x+1], block_mat[y+1, x], connectivity, net=network).add_tag(syn_type)#.add_tag(tag)
+    #                TRENSynapseGroup(block_mat[y+1, x], block_mat[y, x+1], connectivity, net=network).add_tag(syn_type)#.add_tag(tag)
+    #            if recurrent:
+    #                TRENSynapseGroup(block_mat[y, x], block_mat[y, x], connectivity, net=network).add_tag(syn_type)#.add_tag(tag)
+
+    # def split_neuron_group_into_subgroup_blocks(group, block_group_width, block_group_height):
+    #    if block_group_width>1 or block_group_height>1:
+    #        min_x=np.min(group.x)
+    #        max_x=np.max(group.x)+0.0001
+    #        x_steps = np.arange(block_group_width + 1) * ((max_x - min_x)/block_group_width)+min_x
+
+    #        min_y=np.min(group.y)
+    #        max_y=np.max(group.y)+0.0001
+    #        y_steps = np.arange(block_group_height+1) * ((max_y - min_y)/block_group_height)+min_y
+
+    # print(x_steps,y_steps)
+
+    #        block_mat = np.empty(shape=(block_group_height, block_group_width), dtype=object)
+    #        for y in range(block_group_height):
+    #            for x in range(block_group_width):
+    #                block_mat[y, x] = group.subGroup((group.x >= x_steps[x]) * (group.x < x_steps[x+1]) * (group.y >= y_steps[y]) * (group.y < y_steps[y+1]))
+
+    #        return block_mat
+    #    else:
+    #        return to_np_mat(group)
+
+
+
+
+
+
+
+
+
+
+#def get_default_Representation_Extraction_Network(behaviour, preprocessing_steps=-1, num_neurons=-1, recurrentGLU=False, recurrentGABA=False):#sadfafdgdfgdsfgsdfg
+#    LGN_PC_Neurons = get_default_Input_Pattern_Neurons(preprocessing_steps=preprocessing_steps,input_width=10, input_height=10, patterns='cross,noise')
+
+#    # print(LGN_PC_Neurons[TRENNeuronActivator].get_pattern_differences(np.ones(100)))
+#    # syn_rec = TRENSynapseRecorder('GLU', ['GLU_Synapses'])
+#    neu_rec = TRENNeuronRecorder(['output_activity_history[0]', 'input_activity_history[0]', 'activity'])  # activity
+
+#    Cortex_PC_Neurons = TRENNeuronGroup(num_neurons, behaviour)
+
+#    synapses = {}
+
+#    synapses['feed_forward_syn'] = TRENSynapseGroup(LGN_PC_Neurons, Cortex_PC_Neurons).add_tag('GLU')
+#    if recurrentGLU:
+#        synapses['recurrent_syn'] = TRENSynapseGroup(Cortex_PC_Neurons, Cortex_PC_Neurons).add_tag('GLU')
+#    if recurrentGABA:
+#        synapses['inh_syn'] = TRENSynapseGroup(Cortex_PC_Neurons, Cortex_PC_Neurons).add_tag('GABA')
+
+#    network = TRENet([LGN_PC_Neurons, Cortex_PC_Neurons], synapses.values())
+
+#    return network, LGN_PC_Neurons, Cortex_PC_Neurons, synapses
+
+
+
+
+
+
+
+
+
+
+
+
+    # Cortex_V1_blocks = get_neuron_group_blocks(10, 10, 6, 6, behaviour1, TREN, scale_x=28/60, scale_y=28/60)
+    # connect_group_block_neighbours(V1_blocks, TREN, 'GLU', None)
+    # connect_group_block_neighbours(Cortex_V1_blocks, TREN, 'GABA', None)#v1_inh
+    # connect_multiple_neuron_groups([LGN_PC_Neurons], list(Cortex_V1_blocks.flatten()), TREN, 'GLU', '(np.abs(sx-dx)<5) * (np.abs(sy-dy)<5)')
+
+    # LGN_to_V1 = TRENSynapseGroup(network.getNG('input'), Cortex_V1, '(np.abs(sx-dx)<5) * (np.abs(sy-dy)<5)', net=network).add_tag('GLU')#.subGroup(LGN_PC_Neurons.x<0)
+    # V1_inh = TRENSynapseGroup(Cortex_V1, Cortex_V1, 's_id!=d_id', net=network).add_tag('GABA')
+    # V1_rec = TRENSynapseGroup(Cortex_V1, Cortex_V1, 's!=d', net=TREN).add_tag('GLU')#, recurrent_syn
+
+    # Cortex_V2 = TRENNeuronGroup(TRENNeuronDimension(width=15, height=15, depth=1), behaviour1, net=TREN).add_tag('V2')
+    # Cortex_V2[TRENNeuronDimension].move(10, 90)
+    # Cortex_V2[TRENNeuronDimension].scale(28/15, 28/15)
+
+    # connect_multiple_neuron_groups(list(Cortex_V1_blocks.flatten()), [Cortex_V2], TREN, 'GLU', '(np.abs(sx-dx)<4) * (np.abs(sy-dy)<4)')
+
+    # V1_to_V2 = TRENSynapseGroup(Cortex_V1, Cortex_V2,'(np.abs(sx-dx)<4) * (np.abs(sy-dy)<4)', net=TREN).add_tag('GLU')
+    # V2_to_V1_inh = TRENSynapseGroup(Cortex_V2, Cortex_V1, net=TREN).add_tag('GLU')
+
+    # V1_to_V2_inh = TRENSynapseGroup(Cortex_V1, Cortex_V2, net=TREN).add_tag('GABA')
+    # V2_to_V1_inh = TRENSynapseGroup(Cortex_V2, Cortex_V1, net=TREN).add_tag('GABA')
+
+    # V2_inh = TRENSynapseGroup(Cortex_V2, Cortex_V2, 's_id!=d_id', net=TREN).add_tag('GABA')
+    # V2_rec = TRENSynapseGroup(Cortex_V2, Cortex_V2, 's!=d', net=TREN).add_tag('GLU')
+
+    # Cortex_V3 = TRENNeuronGroup(TRENNeuronDimension(width=4, height=4, depth=1), behaviour1, net=TREN).add_tag('V3')
+    # Cortex_V3[TRENNeuronDimension].move(10, 85)
+    # V2_to_V3 = TRENSynapseGroup(Cortex_V2, Cortex_V3, net=TREN).add_tag('GLU')
+    # V2_to_V3_inh = TRENSynapseGroup(Cortex_V2, Cortex_V3, net=TREN).add_tag('GABA')
+    # V3_inh = TRENSynapseGroup(Cortex_V3, Cortex_V3, 's_id!=d_id', net=TREN).add_tag('GABA')
+    # V3_rec = TRENSynapseGroup(Cortex_V3, Cortex_V3, net=TREN).add_tag('GLU')
+
+    # import NetworkExplorationModules.Visualization.Pyplot_visualizer as pv
+    # pv.plot_network(TREN, blocks.flatten())

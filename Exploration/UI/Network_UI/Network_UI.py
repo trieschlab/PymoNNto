@@ -4,46 +4,54 @@ from Exploration.UI.UI_Base import *
 #from X_Experimental.Functions import *
 #from Exploration.Visualization.Analysis_Plots import *
 #from Testing.SORN.SORN_Helper import *
-from NetworkBehaviour.Recorder.Recorder import *
 
-from Exploration.UI.Network_UI.Tabs.sidebar_activity_module import *
+from Exploration.UI.Network_UI.Basic_Tabs.sidebar_activity_module import *
 from Exploration.UI.Network_UI.Tabs.sidebar_image_module import *
 from Exploration.UI.Network_UI.Tabs.sidebar_grammar_module import *
-from Exploration.UI.Network_UI.Tabs.sidebar_fast_forward_module import *
-from Exploration.UI.Network_UI.Tabs.sidebar_save_load_module import *
-from Exploration.UI.Network_UI.Tabs.activity_tab import *
+from Exploration.UI.Network_UI.Basic_Tabs.sidebar_fast_forward_module import *
+from Exploration.UI.Network_UI.Basic_Tabs.sidebar_save_load_module import *
+from Exploration.UI.Network_UI.Basic_Tabs.multi_group_plot_tab import *
 from Exploration.UI.Network_UI.Tabs.buffer_tab import *
-from Exploration.UI.Network_UI.Tabs.hist_tab import *
-from Exploration.UI.Network_UI.Tabs.info_tabs import *
-from Exploration.UI.Network_UI.Tabs.inh_exc_tab import *
-from Exploration.UI.Network_UI.Tabs.scatter_tab import *
-from Exploration.UI.Network_UI.Tabs.stability_tab import *
-from Exploration.UI.Network_UI.Tabs.weight_tab import *
+from Exploration.UI.Network_UI.Basic_Tabs.hist_tab import *
+from Exploration.UI.Network_UI.Basic_Tabs.info_tabs import *
+from Exploration.UI.Network_UI.Basic_Tabs.single_group_plot_tab import *
+from Exploration.UI.Network_UI.Basic_Tabs.scatter_tab import *
+from Exploration.UI.Network_UI.Basic_Tabs.stability_tab import *
+from Exploration.UI.Network_UI.Basic_Tabs.weight_tab import *
 from Exploration.UI.Network_UI.Tabs.reconstruction_tab import *
-from Exploration.UI.Network_UI.Tabs.fourier_tab import *
-from Exploration.UI.Network_UI.Tabs.partition_tab import *
+from Exploration.UI.Network_UI.Basic_Tabs.fourier_tab import *
+from Exploration.UI.Network_UI.Basic_Tabs.partition_tab import *
 from Exploration.UI.Network_UI.Tabs.sidebar_music_module import *
-from Exploration.UI.Network_UI.Tabs.spiketrain_tab import *
+from Exploration.UI.Network_UI.Tabs.sidebar_drumbeat_module import *
+from Exploration.UI.Network_UI.Basic_Tabs.spiketrain_tab import *
+from Exploration.UI.Network_UI.Basic_Tabs.afferent_syn_attr_plot_tab import *
+from Exploration.UI.Network_UI.Basic_Tabs.individual_weight_tab import *
+from Exploration.UI.Network_UI.Tabs.sun_gravity_plot_tab import *
 
 default_modules = [
     UI_sidebar_activity_module(1),
-    activity_tab(['output', 'TH', 'weight_norm_factor', 'nox', 'refractory_counter']),
-    spiketrain_tab(),
-    weight_tab(False),
+    multi_group_plot_tab(['output', 'TH', 'weight_norm_factor', 'nox', 'refractory_counter']),
+    spiketrain_tab(parameter='output'),
+    weight_tab(weight_attr='W'),
     partition_tab(),
+    sun_gravity_plot_tab(),
+    afferent_syn_attr_plot_tab(syn_vars=['slow_add', 'fast_add']),
     sidebar_image_module(),
     sidebar_grammar_module(),
-    #SORN_UI_sidebar_music_module(),
+    sidebar_music_module(),
+    sidebar_drumbeat_module(),
     buffer_tab(),
+    individual_weight_tab(),
     #reconstruction_tab(),
     hist_tab(),
-    inh_exc_tab(),
-    stability_tab(),
-    scatter_tab(),
-    fourier_tab(),
+    single_group_plot_tab({'activity':(0, 0, 0), 'excitation':(0, 0, 255), 'inhibition':(255, 0, 0), 'input_act':(255, 0, 255), 'TH':(0, 255, 0)}),
+    stability_tab(parameter='output'),
+    scatter_tab(x_var='excitation', y_var='inhibition'),
+    fourier_tab(parameter='output'),
     info_tab(),
     sidebar_fast_forward_module(),
     sidebar_save_load_module()
+
 ]
 
 class Network_UI(UI_Base):
@@ -101,8 +109,9 @@ class Network_UI(UI_Base):
         self.neuron_select_group = group_tags[0]#exc_group_name
         self.neuron_visible_groups = []
         #self.ts_group = 0
-        self.x_steps = 500
+        #self.x_steps = 500
         self.group_sliders=[]
+        self.neuron_select_color=(0,255,0,255)
 
         self.modules = modules
 
@@ -111,17 +120,52 @@ class Network_UI(UI_Base):
 
         for group_tag in group_tags:
             for group in network[group_tag]:
-                rec = NeuronRecorder([], tag='UI_rec')
-                network.add_behaviours_to_neuron_group({10000: rec}, group)
+
+                group._rec_dict={}
+
+                #rec = NeuronRecorder([], tag='UI_rec')
+                #network.add_behaviours_to_neuron_group({10000: rec}, group)
 
                 for module in self.modules:
-                    module.add_recorder_variables(group, rec)
+                    module.add_recorder_variables(group, self)
 
+        self.init_recoders()
 
         timer = QtCore.QTimer(self)
         timer.timeout.connect(self.on_timer)
         timer.start(40)
 
+    def add_recording_variable(self, group, var, timesteps):
+
+        old_ts=0
+        if var in group._rec_dict:
+            old_ts=group._rec_dict[var]
+
+        group._rec_dict[var] = max(timesteps,old_ts)
+        #recorder.add_varable('n.output')
+
+    def init_recoders(self):
+        for group_tag in self.group_tags:
+            for group in self.network[group_tag]:
+
+                rec_time_dict={}
+                for variable in group._rec_dict:
+                    rec_length=group._rec_dict[variable]
+                    if rec_length not in rec_time_dict:
+                        rec_time_dict[rec_length]=[]
+                    rec_time_dict[rec_length].append(variable)
+
+                for rec_length in rec_time_dict:
+                    rec = NeuronRecorder(rec_time_dict[rec_length]+['n.iteration'], tag='UI_rec,rec_'+str(rec_length), max_length=rec_length)
+                    self.network.add_behaviours_to_neuron_group({10000+rec_length: rec}, group)
+
+    #def rec(self, neuron_group, rec_length=-1):
+    #    return neuron_group[self.rec_tag(rec_length),0]
+
+    #def rec_tag(self, rec_length=-1):
+    #    if rec_length==-1:
+    #        rec_length = self.default_rec_recording_length
+    #    return 'rec_'+str(rec_length)
 
     def static_update_func(self, event=None):
         if self.pause:
@@ -134,7 +178,7 @@ class Network_UI(UI_Base):
             self.storage_manager.save_frame(image, key)
 
 
-    def get_combined_syn_mats(self, synapses, neuron_id=None):
+    def get_combined_syn_mats(self, synapses, neuron_id=None, attr='W'):
         results = {}
         shapes = {}
         for s in synapses:
@@ -144,11 +188,12 @@ class Network_UI(UI_Base):
             if not key in results:
                 results[key] = np.zeros((base_dst.size, base_src.size))
                 shapes[key] = (base_src.height, base_src.width)
-            if base_src == s.src and base_dst == s.dst:
-                results[key] += s.W.copy()
-            else:
-                mat_mask = s.dst.mask[:, None]*s.src.mask[None, :]
-                results[key][mat_mask] += s.W.flatten()
+            if hasattr(s, attr):
+                if base_src == s.src and base_dst == s.dst:
+                    results[key] += getattr(s,attr).copy()
+                else:
+                    mat_mask = s.dst.mask[:, None]*s.src.mask[None, :]
+                    results[key][mat_mask] += getattr(s,attr).flatten()
 
         if neuron_id is not None:
             for key in results:
@@ -170,8 +215,8 @@ class Network_UI(UI_Base):
             for module in self.modules:
                 module.update(self)
 
-            for rec in self.network['UI_rec']:
-                rec.cut_length(1000)
+            #for rec in self.network['UI_rec']:
+            #    rec.cut_length(self.default_recorder_length)
 
             self.update_without_state_change = False
 

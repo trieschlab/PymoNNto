@@ -1,4 +1,4 @@
-from NetworkBehaviour.Basics.BasicNeuronBehaviour import *
+from NetworkBehaviour.Logic.Basics.BasicHomeostasis import *
 
 
 class Easy_neuron_initialize(Neuron_Behaviour):
@@ -7,20 +7,23 @@ class Easy_neuron_initialize(Neuron_Behaviour):
         self.add_tag('Easy_neuron_initialize')
 
         #create neuron group variables
-        neurons.activation = neurons.get_neuron_vec()
+        neurons.activity = neurons.get_neuron_vec()
         neurons.output = neurons.get_neuron_vec()
         # equivalent to: np.zeros(neurons.size)
 
         syn_density = self.get_init_attr('syn_density', 0.1, neurons)
-        syn_scale = self.get_init_attr('syn_scale', 0.1, neurons)
+        neurons.syn_norm = self.get_init_attr('syn_norm', 0.8, neurons)
 
         #create random synapse weights
         for synapse_group in neurons.afferent_synapses['GLUTAMATE']:
-            synapse_group.W = synapse_group.get_random_synapse_mat(density=syn_density)*syn_scale
+            synapse_group.W = synapse_group.get_random_synapse_mat(density=syn_density)
+            synapse_group.enabled*=synapse_group.W>0
             #synapse_group.get_synapse_mat() #equivalent to np.zeros(s.get_synapse_mat_dim())
 
+        self.normalize_synapse_attr('W', 'W', neurons.syn_norm, neurons, 'GLUTAMATE')
+
     def new_iteration(self, neurons):
-        neurons.activation *= 0.0
+        neurons.activity *= 0.0
 
 
 class Easy_neuron_collect_input(Neuron_Behaviour):
@@ -33,9 +36,9 @@ class Easy_neuron_collect_input(Neuron_Behaviour):
 
     def new_iteration(self, neurons):
         for s in neurons.afferent_synapses['GLUTAMATE']:
-            neurons.activation += s.W.dot(s.src.output)*neurons.sensitivity
+            s.dst.activity += s.W.dot(s.src.output)*neurons.sensitivity
 
-        neurons.activation += neurons.get_random_neuron_vec(density=neurons.noise_density)*neurons.noise_strength
+        neurons.activity += neurons.get_random_neuron_vec(density=neurons.noise_density)*neurons.noise_strength
 
 
 class Easy_neuron_generate_output(Neuron_Behaviour):
@@ -45,7 +48,7 @@ class Easy_neuron_generate_output(Neuron_Behaviour):
         neurons.TH = self.get_init_attr('threshold', 0.5, neurons)
 
     def new_iteration(self, neurons):
-        neurons.output = (neurons.activation > (neurons.TH+neurons.refractory_counter)).astype(np.float64)
+        neurons.output = (neurons.activity > (neurons.TH+neurons.refractory_counter)).astype(np.float64)
 
 class Easy_neuron_Refractory(Neuron_Behaviour):
 

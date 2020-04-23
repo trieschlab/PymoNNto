@@ -1,8 +1,5 @@
-from NetworkCore.Neuron_Group import *
-from NetworkCore.Neuron_Behaviour import *
-from NetworkBehaviour.Basics.BasicNeuronBehaviour import *
 from NetworkBehaviour.Input.Activator import *
-import scipy.sparse as sp
+
 
 def binary_activation_function(neurons):
     if neurons.rnd_act_factor != None:
@@ -39,7 +36,7 @@ class SORN_init_afferent_synapses(Neuron_Behaviour):
         self.transmitter = self.get_init_attr('transmitter', None, neurons)
 
         density = self.get_init_attr('density', None, neurons)
-        if type(density)==str and density[-1] is '%':
+        if type(density)==str and density[-1] == '%':
             density=float(density[:-1])/100
 
         density_mode = self.get_init_attr('density_mode', 'auto', neurons)
@@ -280,8 +277,6 @@ class SORN_STDP_new(Neuron_Behaviour):
         neurons.eta_stdp = self.get_init_attr('eta_stdp', 0.005, neurons)
         neurons.excitation_punishment = self.get_init_attr('excitation_punishment', 0.0, neurons)
         neurons.prune_stdp = self.get_init_attr('prune_stdp', False, neurons)
-
-
         for s in neurons.afferent_synapses['GLU']:
             s.STDP_src_lag_buffer_old = np.zeros(s.src.size)#neurons.size bug?
             s.STDP_src_lag_buffer_new = np.zeros(s.src.size)#neurons.size bug?
@@ -289,8 +284,8 @@ class SORN_STDP_new(Neuron_Behaviour):
     def new_iteration(self, neurons):
         for s in neurons.afferent_synapses['GLU']:
             grow=s.dst.output_new[:, None] * s.src.output[None, :]
-            shrink=neurons.excitation_punishment * s.dst.excitation[:, None] * s.src.output[None, :]
-            exc_shrink=s.dst.output[:, None] * s.src.output_new[None, :]
+            shrink=s.dst.output[:, None] * s.src.output_new[None, :]
+            exc_shrink=neurons.excitation_punishment * s.dst.excitation[:, None] * s.src.output[None, :]
 
             dw = neurons.eta_stdp * (grow - shrink - exc_shrink)
 
@@ -414,8 +409,6 @@ class SORN_external_input(NeuronActivator):
         if self.strength!=0:
             add = neurons.input * self.strength / neurons.iteration_lag
             neurons.activity += add
-
-            #neurons.excitation += add #Todo:test
 
             neurons.input *= 0
             neurons.input_act += add

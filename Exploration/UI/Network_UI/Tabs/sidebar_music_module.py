@@ -4,13 +4,11 @@ from Testing.Common.Classifier_Helper import *
 
 class sidebar_music_module():
 
-    def add_recorder_variables(self, neuron_group, recorder):
+    def add_recorder_variables(self, neuron_group, Network_UI):
         if hasattr(neuron_group, 'pattern_index'):
-            print('hello')
-            recorder.add_varable('n.pattern_index')
-        return
+            Network_UI.add_recording_variable(neuron_group, 'n.pattern_index', timesteps=100)
 
-    def __init__(self, Network_UI):
+    def initialize(self, Network_UI):
         if len(Network_UI.network['music_act'])>0:
 
             self.readout = None

@@ -10,12 +10,15 @@ from Exploration.Visualization.Reconstruct_Analyze_Label.Reconstruct_Analyze_Lab
 
 class reconstruction_tab():
 
-    def add_recorder_variables(self, neuron_group, recorder):
+    def __init__(self, title='recon'):
+        self.title = title
+
+    def add_recorder_variables(self, neuron_group, Network_UI):
         return
 
     def initialize(self, Network_UI):
         if Network_UI.network['grammar_act', 0] is not None:
-            self.reconstruction_tab = Network_UI.Next_Tab('recon')
+            self.reconstruction_tab = Network_UI.Next_Tab(self.title)
 
             self.grid = QGridLayout()
             self.grid.setAlignment(Qt.AlignLeft)

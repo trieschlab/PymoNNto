@@ -122,6 +122,20 @@ class Network(NetworkObjectBase):
         self.set_variables()
         #self.save_network_state()
 
+        self.check_unique_tags()
+
+    def check_unique_tags(self):
+        unique_tags=[]
+        for ng in self.NeuronGroups:
+            if ng.tags[0] in unique_tags:
+                print('Warning: NeuronGroup Tag "'+ng.tags[0]+'" already in use. The first Tag of an Object should be unique. Multiple Tags can be sperated with a "," (NeuronGroup(..., tag="tag1,tag2,..."))')
+            unique_tags.append(ng.tags[0])
+
+        #for sg in self.SynapseGroups:
+        #    if sg.tags[0] in unique_tags:
+        #        print('Warning: NeuronGroup Tag "' + sg.tags[0] + '" already in use. The first Tag of an Object should be unique. Multiple Tags can be sperated with a "," (SynapseGroup(..., tag="tag1,tag2,..."))')
+        #    unique_tags.append(sg.tags[0])
+
     def add_behaviour_key(self, key):
         self.behaviour_timesteps.append(key)
         self.behaviour_timesteps.sort()
@@ -149,6 +163,7 @@ class Network(NetworkObjectBase):
         for key in behaviours:
             neuron_group.behaviour[key] = behaviours[key]
             neuron_group.behaviour[key].set_variables(neuron_group)
+            neuron_group.behaviour[key].check_unused_attrs()
 
 
         self.add_behaviour_keys_dict(behaviours)
@@ -187,10 +202,18 @@ class Network(NetworkObjectBase):
 
     def set_variables(self):
         for timestep in self.behaviour_timesteps:
+
+            if timestep in self.network_behaviour:
+                self.network_behaviour[timestep].set_variables(self)
+                self.network_behaviour[timestep].check_unused_attrs()
+
             for ng in self.NeuronGroups:
                 if timestep in ng.behaviour:
                     if not ng.behaviour[timestep].run_on_neuron_init_var:
                         ng.behaviour[timestep].set_variables(ng)
+                        ng.behaviour[timestep].check_unused_attrs()
+
+
 
     def set_synapses_to_neuron_groups(self):
         for ng in self.NeuronGroups:
@@ -312,6 +335,10 @@ class Network(NetworkObjectBase):
 
         #calculate sub Groups
         sub_groups=[]
+
+        #src_masks = []
+        dst_masks = []
+
         for w_step in range(split_size[0]):          #x_steps
             src_x_start, src_x_end = get_start_end(w_step, 0, 'src')
             dst_x_start, dst_x_end = get_start_end(w_step, 0, 'dst')
@@ -322,8 +349,20 @@ class Network(NetworkObjectBase):
                     src_z_start, src_z_end = get_start_end(d_step, 2, 'src')
                     dst_z_start, dst_z_end = get_start_end(d_step, 2, 'dst')
 
-                    src_mask = (src.x>=src_x_start) * (src.x<=src_x_end) * (src.y>=src_y_start) * (src.y<=src_y_end) * (src.z>=src_z_start) * (src.z<=src_z_end)
-                    dst_mask = (dst.x>=dst_x_start) * (dst.x<=dst_x_end) * (dst.y>=dst_y_start) * (dst.y<=dst_y_end) * (dst.z>=dst_z_start) * (dst.z<=dst_z_end)
+                    src_mask = (src.x >= src_x_start) * (src.x <= src_x_end) * (src.y >= src_y_start) * (src.y <= src_y_end) * (src.z >= src_z_start) * (src.z <= src_z_end)
+                    dst_mask = (dst.x >= dst_x_start) * (dst.x <= dst_x_end) * (dst.y >= dst_y_start) * (dst.y <= dst_y_end) * (dst.z >= dst_z_start) * (dst.z <= dst_z_end)
+
+                    #remove duplicates
+                    #for old_src_mask in src_masks:
+                    #    src_mask[old_src_mask] *= False
+
+                    for old_dst_mask in dst_masks:
+                        dst_mask[old_dst_mask] *= False
+
+                    #print(np.sum(src_mask), np.sum(dst_mask))
+
+                    #src_masks.append(src_mask)
+                    dst_masks.append(dst_mask)
 
                     #import matplotlib.pyplot as plt
                     #plt.scatter(src.x, src.y, c=src_mask)
