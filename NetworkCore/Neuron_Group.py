@@ -101,7 +101,7 @@ class NeuronGroup(NetworkObjectBase):
         return self.get_nparray((self.size))
 
     def get_neuron_vec_buffer(self, buffer_size):
-        return self.get_buffer((self.size), buffer_size)
+        return self.get_buffer_mat((self.size), buffer_size)
 
     def get_random_neuron_vec(self, density=1.0):
         return self.get_random_nparray((self.size), density)
@@ -162,6 +162,9 @@ class NeuronGroup(NetworkObjectBase):
 
         return result
 
+    def mask_var(self, var):
+        return var
+
     '''
     def get_neuron_behaviour_parameter_list(self, neurons, param):
         result = []
@@ -196,12 +199,19 @@ class TRENNeuronSubGroup:
         self.BaseNeuronGroup = BaseNeuronGroup
         self.mask = mask
 
-    def get_masked_dict(self, dict_name, key):
-        attr=getattr(self.BaseNeuronGroup, dict_name)[key]
-        if attr.shape[0] != self.mask.shape[0]:
-            return attr[:, self.mask]
+    def mask_var(self, var):
+        if var.shape[0] != self.mask.shape[0]:
+            return var[:, self.mask]
         else:
-            return attr[self.mask]
+            return var[self.mask]
+
+    #def get_masked_dict(self, dict_name, key):
+    #    attr=getattr(self.BaseNeuronGroup, dict_name)[key]
+    #    self.mask_var(attr)
+    #    #if attr.shape[0] != self.mask.shape[0]:
+    #    #    return attr[:, self.mask]
+    #    #else:
+    #    #    return attr[self.mask]
 
     def __getattr__(self, attr_name):
         if attr_name in ['BaseNeuronGroup', 'mask', 'cache', 'key_id_cache']:
@@ -223,6 +233,8 @@ class TRENNeuronSubGroup:
             #        self.cache[attr_id] = attr[self.mask]
             #    self.key_id_cache[attr_name] = attr_id
             #return self.cache[attr_id]
+
+            #self.mask_var(attr)
 
             if attr.shape[0] != self.mask.shape[0]:
                 return attr[:, self.mask]
@@ -250,6 +262,8 @@ class TRENNeuronSubGroup:
             #        self.cache[attr_id] = attr[self.mask]
             #    self.key_id_cache[attr_name] = attr_id
             #self.cache[attr_id] = value
+
+            #self.mask_var(attr)[:] = value
 
             if attr.shape[0] != self.mask.shape[0]:
                 attr[:, self.mask] = value

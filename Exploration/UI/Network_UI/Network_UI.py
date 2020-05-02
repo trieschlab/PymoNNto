@@ -27,12 +27,14 @@ from Exploration.UI.Network_UI.Basic_Tabs.spiketrain_tab import *
 from Exploration.UI.Network_UI.Basic_Tabs.afferent_syn_attr_plot_tab import *
 from Exploration.UI.Network_UI.Basic_Tabs.individual_weight_tab import *
 from Exploration.UI.Network_UI.Tabs.sun_gravity_plot_tab import *
+from Exploration.UI.Network_UI.Basic_Tabs.stdp_buffer_tab import *
 
 default_modules = [
     UI_sidebar_activity_module(1),
     multi_group_plot_tab(['output', 'TH', 'weight_norm_factor', 'nox', 'refractory_counter']),
     spiketrain_tab(parameter='output'),
     weight_tab(weight_attr='W'),
+    stdp_buffer_tab(),
     partition_tab(),
     sun_gravity_plot_tab(),
     afferent_syn_attr_plot_tab(syn_vars=['slow_add', 'fast_add']),
@@ -236,7 +238,36 @@ class Network_UI(UI_Base):
 
 
 
+def get_color(type_index, layer):
+    dim_value = max(layer * 0.7, 1.0)
 
+    if type_index == 0:
+        return (0.0, 0.0, 255.0 / dim_value, 255.0)
+    if type_index == 1:
+        return (255.0 / dim_value, 0.0, 0.0, 255.0)
+    if type_index == 2:
+        return (255.0 / dim_value, 150.0 / dim_value, 0.0, 255.0)
+    if type_index == 3:
+        return (255.0 / dim_value, 80.0 / dim_value, 0.0, 255.0)
+    if type_index == 4:
+        return (255.0 / dim_value, 0.0 , 150.0/ dim_value, 255.0)
+
+
+'''
+def get_color(type_index, layer):
+    dim_value = max(layer * 1.0, 1.0)
+
+    if type_index == 0:
+        return (0.0, 0.0, 255.0 / dim_value, 255.0)
+    if type_index == 1:
+        return (255.0 / dim_value, 0.0, 0.0, 255.0)
+    if type_index == 2:
+        return (255.0 / dim_value, 150.0 / dim_value, 0.0, 255.0)
+    if type_index == 3:
+        return (255.0 / dim_value, 80.0 / dim_value, 0.0, 255.0)
+    if type_index == 4:
+        return (255.0 / dim_value, 0.0 , 150.0/ dim_value, 255.0)
+'''
 
 ########################################################### Exception handling
 

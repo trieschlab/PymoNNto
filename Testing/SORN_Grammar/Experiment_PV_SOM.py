@@ -9,34 +9,25 @@ from NetworkCore.Synapse_Group import *
 from NetworkBehaviour.Structure.Structure import *
 from Exploration.StorageManager.StorageManager import *
 from Testing.Common.Grammar_Helper import *
-from Exploration.UI.Network_UI.Network_UI import *
+if __name__ == '__main__':
+    from Exploration.UI.Network_UI.Network_UI import *
 
-def get_color(type_index, layer):
-    dim_value = max(layer * 0.7, 1.0)
 
-    if type_index == 0:
-        return (0.0, 0.0, 255.0 / dim_value, 255.0)
-    if type_index == 1:
-        return (255.0 / dim_value, 0.0, 0.0, 255.0)
-    if type_index == 2:
-        return (255.0 / dim_value, 150.0 / dim_value, 0.0, 255.0)
-    if type_index == 3:
-        return (255.0 / dim_value, 80.0 / dim_value, 0.0, 255.0)
-    if type_index == 4:
-        return (255.0 / dim_value, 0.0 , 150.0/ dim_value, 255.0)
 
-display = False
-so = True
+def run(attrs={'name':'PV_SOM', 'ind':[], 'N_e':900, 'TS':[1]}):
+    so = True
 
-def run(tag='PV_SOM', ind=[], par={'N_e':900, 'TS':[1]}):
-    print(tag, par)
+    print_info = attrs.get('print', True)
 
-    sm = StorageManager(tag, random_nr=True, print_msg=display)
-    sm.save_param_dict(par)
+    if print_info:
+        print(attrs)
+
+    sm = StorageManager(attrs['name'], random_nr=True, print_msg=print_info)
+    sm.save_param_dict(attrs)
 
     #source = FDTGrammarActivator_New(tag='grammar_act', random_blocks=True, input_density=15/par['N_e'])#.plot_char_input_statistics()#output_size=par['N_e']#15
     #print(len(source.alphabet))
-    source = LongDelayGrammar(tag='grammar_act', output_size=par['N_e'], random_blocks=True, mode=['simple'], input_density=0.015)#.print_test().plot_char_input_statistics()#10/par['N_e']
+    source = LongDelayGrammar(tag='grammar_act', output_size=attrs['N_e'], random_blocks=True, mode=['simple'], input_density=0.015)#.print_test().plot_char_input_statistics()#10/par['N_e']
     #source.plot_char_input_statistics()
     #print(len(source.alphabet))
     #source = Line_Patterns(tag='image_act', group_possibility=1.0, grid_width=30, grid_height=30, center_x=list(range(30)), center_y=30 / 2, degree=90, line_length=60)
@@ -46,15 +37,15 @@ def run(tag='PV_SOM', ind=[], par={'N_e':900, 'TS':[1]}):
     SORN = Network()#[], [], initialize=False
     last_PC = None
 
-    for timescale in par['TS']:
+    for timescale in attrs['TS']:
 
-        PC = NeuronGroup(net=SORN, tag='Pyramidal Cell {},prediction_source'.format(timescale), size=get_squared_dim(int(par['N_e'])), behaviour={
+        PC = NeuronGroup(net=SORN, tag='Pyramidal Cell {},prediction_source'.format(timescale), size=get_squared_dim(int(attrs['N_e'])), behaviour={
             2: SORN_init_neuron_vars(timescale=timescale, init_TH='0.1;+-100%'),
-            3: SORN_init_afferent_synapses(transmitter='GLU', density='[50#0]%', distribution='uniform(0.1,0.11)', normalize=True, partition_compensation=True), #lognormal(0,0.6)
+            3: SORN_init_afferent_synapses(transmitter='GLU', density='[50#0]%', distribution='lognormal(0,0.6)', normalize=True, partition_compensation=True), #lognormal(0,0.6)
             4: SORN_init_afferent_synapses(transmitter='GABA_Dendrite', density='[30#1]%', distribution='uniform(0.1,0.11)', normalize=True),
             5: SORN_init_afferent_synapses(transmitter='GABA_Soma', density='[30#2]%', distribution='uniform(0.1,0.11)', normalize=True),
             6: SORN_init_afferent_synapses(transmitter='GABA_AIS', density='[30#3]%', distribution='uniform(0.1,0.11)', normalize=True),
-            7: SORN_init_afferent_synapses(transmitter='GABA_NOX', density='full', distribution=None, normalize=True),
+            #7: SORN_init_afferent_synapses(transmitter='GABA_NOX', density='full', distribution=None, normalize=True),
 
             12: SORN_slow_syn(transmitter='GLU', strength='[0.1383#4]', so=so),
             13: SORN_slow_syn(transmitter='GABA_Dendrite', strength='-0.1', so=False),
@@ -62,19 +53,19 @@ def run(tag='PV_SOM', ind=[], par={'N_e':900, 'TS':[1]}):
             17: SORN_fast_syn(transmitter='GABA_Soma', strength='-0.1', so=False),
             17.1: SORN_fast_syn(transmitter='GABA_AIS', strength='-0.1', so=False),
             #17.2: SORN_fast_syn(transmitter='GABA_NOX', strength='-0.1', so=False),
-            18: SORN_generate_output_and_bufer(),
+            18: SORN_generate_output_and_buffer(),
 
             20: SORN_Refractory(factor='[0.5#5];+-50%'),
             21: SORN_STDP(eta_stdp='[0.0015#6]'),#0.1#todo: test!!!, prune_stdp=False, excitation_punishment=0.0
             22: SORN_SN(syn_type='GLU', clip_max=None, init_norm_factor=1.0),
 
             23: SORN_IP_TI(mp='n.output', h_ip='lognormal_real_mean([0.04#7], [0.2944#8])', eta_ip='[0.0006#9];+-50%', integration_length='[15#10];+-50%', clip_min=None),#mp='n.output_new/2.0+n.output_new_temp/2.0'
-            #25: SORN_NOX(mp='self.partition_sum(n)', eta_nox='0.5;+-50%', h_dh=0.0),#0.9#0.3
+            25: SORN_NOX(mp='self.partition_sum(n)', eta_nox='0.5;+-50%', h_dh=0.0),#0.9#0.3
             26: SORN_SC_TI(h_sc='lognormal_real_mean([0.015#11], [0.2944#12])', eta_sc='[0.1#13];+-50%', integration_length='1'),
             #27: SORN_iSTDP(h_ip='same(SCTI, th)', eta_istdp='[0.0001#13]'),
         })
 
-        MT_SOM = NeuronGroup(net=SORN, tag='Martinotti Cell {},Somatostatin'.format(timescale), size=get_squared_dim(int(0.07 * par['N_e'])), behaviour={
+        MT_SOM = NeuronGroup(net=SORN, tag='Martinotti Cell {},Somatostatin'.format(timescale), size=get_squared_dim(int(0.07 * attrs['N_e'])), behaviour={
             2: SORN_init_neuron_vars(timescale=timescale, init_TH='0.1;+-0%'),
             3: SORN_init_afferent_synapses(transmitter='GLU', density='50%', distribution='lognormal(0,0.87038)', normalize=True),
             #4: SORN_init_afferent_synapses(transmitter='GABA', density='20%', distribution='lognormal(0,[0.82099#15])', normalize=True),  # 40
@@ -83,12 +74,12 @@ def run(tag='PV_SOM', ind=[], par={'N_e':900, 'TS':[1]}):
             #11: SORN_slow_syn(transmitter='GABA', strength='-[0.1838#16]', so=so),
 
             #15: SORN_fast_syn(transmitter='GABA', strength='-[0.08#17]', so=False),#0.08
-            18: SORN_generate_output_and_bufer(),
+            18: SORN_generate_output_and_buffer(),
             #20: SORN_Refractory(factor='0.2;0.7'),
         })
 
         EXP_NOX_CELL = NeuronGroup(net=SORN, tag='NOX Cell {}'.format(timescale), size=get_squared_dim(int(16)), behaviour={
-            2: SORN_init_neuron_vars(timescale=timescale, init_TH='0.04', activation_function='identity'),
+            2: SORN_init_neuron_vars(timescale=timescale, init_TH='0.0', digital_output=False),
             3: SORN_init_afferent_synapses(transmitter='GLU', density='full', distribution=None, normalize=True),
             #4: SORN_init_afferent_synapses(transmitter='GABA', density='20%', distribution='lognormal(0,[0.82099#15])', normalize=True),  # 40
 
@@ -96,11 +87,11 @@ def run(tag='PV_SOM', ind=[], par={'N_e':900, 'TS':[1]}):
             #11: SORN_slow_syn(transmitter='GABA', strength='-[0.1838#16]', so=so),
 
             #15: SORN_fast_syn(transmitter='GABA', strength='-[0.08#17]', so=False),#0.08
-            18: SORN_generate_output_and_bufer(),
+            18: SORN_generate_output_and_buffer(),
             #20: SORN_Refractory(factor='0.2;0.7'),
         })
 
-        BA_PV = NeuronGroup(net=SORN, tag='Basket Cell {},Parvalbumin'.format(timescale), size=get_squared_dim(int(0.07 * par['N_e'])), behaviour={
+        BA_PV = NeuronGroup(net=SORN, tag='Basket Cell {},Parvalbumin'.format(timescale), size=get_squared_dim(int(0.07 * attrs['N_e'])), behaviour={
             2: SORN_init_neuron_vars(timescale=timescale, init_TH='0.1;+-0%'),
             3: SORN_init_afferent_synapses(transmitter='GLU', density='50%', distribution='lognormal(0,0.87038)', normalize=True),
             #4: SORN_init_afferent_synapses(transmitter='GABA', density='20%', distribution='lognormal(0,[0.82099#15])', normalize=True),  # 40
@@ -109,20 +100,20 @@ def run(tag='PV_SOM', ind=[], par={'N_e':900, 'TS':[1]}):
             #11: SORN_slow_syn(transmitter='GABA', strength='-[0.1838#16]', so=so),
 
             #15: SORN_fast_syn(transmitter='GABA', strength='-[0.08#17]', so=False),#0.08
-            18: SORN_generate_output_and_bufer(),
+            18: SORN_generate_output_and_buffer(),
             #20: SORN_Refractory(factor='0.2;0.7'),
         })
 
-        CH_PV = NeuronGroup(net=SORN, tag='Chandelier Cell {},Parvalbumin'.format(timescale), size=get_squared_dim(int(0.07 * par['N_e'])), behaviour={
+        CH_PV = NeuronGroup(net=SORN, tag='Chandelier Cell {},Parvalbumin'.format(timescale), size=get_squared_dim(int(0.07 * attrs['N_e'])), behaviour={
             2: SORN_init_neuron_vars(timescale=timescale, init_TH='0.1;+-0%'),
             3: SORN_init_afferent_synapses(transmitter='GLU', density='50%', distribution='lognormal(0,0.87038)', normalize=True),
             #4: SORN_init_afferent_synapses(transmitter='GABA', density='20%', distribution='lognormal(0,[0.82099#15])', normalize=True),  # 40
 
             #11: SORN_slow_syn(transmitter='GABA', strength='-[0.1838#16]', so=so),
-            14: SORN_fast_syn(transmitter='GLU', strength='0.4', so=so),#1.5353
+            14: SORN_fast_syn(transmitter='GLU', strength='0.2', so=so),#1.5353
             #15: SORN_fast_syn(transmitter='GABA', strength='-[0.08#17]', so=False),#0.08
 
-            18: SORN_generate_output_and_bufer(),
+            18: SORN_generate_output_and_buffer(),
             #19: SORN_Refractory(factor='0.2;0.7'),
         })
 
@@ -181,30 +172,31 @@ def run(tag='PV_SOM', ind=[], par={'N_e':900, 'TS':[1]}):
         #last_CH_PV = CH_PV
         #last_EXP_NOX_CELL = EXP_NOX_CELL
 
-        PC.color = get_color(0, timescale)
-        MT_SOM.color = get_color(1, timescale)
-        BA_PV.color = get_color(2, timescale)
-        CH_PV.color = get_color(3, timescale)
-        EXP_NOX_CELL.color = get_color(4, timescale)
-        #EXP_NOX_CELL.display_min_max_act = (0, 0.3)
+        if __name__ == '__main__':
+            PC.color = get_color(0, timescale)
+            MT_SOM.color = get_color(1, timescale)
+            BA_PV.color = get_color(2, timescale)
+            CH_PV.color = get_color(3, timescale)
+            EXP_NOX_CELL.color = get_color(4, timescale)
+            #EXP_NOX_CELL.display_min_max_act = (0, 0.3)
 
-    SORN.set_marked_variables(ind, info=(ind == []), storage_manager=sm)
+    SORN.set_marked_variables(attrs['ind'], info=print_info, storage_manager=sm)
     SORN.initialize(info=False)
 
     ###################################################################################################################
 
+    if __name__ == '__main__':
+        Network_UI(SORN, label='SORN UI PC PV SOM', storage_manager=sm, group_display_count=5).show()#'GLU', 'GABA_Dendrite', 'GABA_Soma', 'GABA_AIS'
+
     score = 0
-
-    Network_UI(SORN, label='SORN UI PC PV SOM', storage_manager=sm, group_display_count=4).show()#'GLU', 'GABA_Dendrite', 'GABA_Soma', 'GABA_AIS'
-
-    score += train_and_generate_text(SORN, 30000, 5000, 2000, display=True, stdp_off=True, same_timestep_without_feedback_loop=False, steps_recovery=0, storage_manager=sm)#, steps_recovery=15000
+    score += train_and_generate_text(SORN, 15000, 5000, 2000, display=print_info, stdp_off=True, same_timestep_without_feedback_loop=False, steps_recovery=0, storage_manager=sm)#, steps_recovery=15000
     #score += get_oscillation_score_hierarchical(SORN, 0, 5000)
     return score
 
 if __name__ == '__main__':
-    #ind = []#
+    ind = []#
     #['density', 'density', 'density', 'density', 'strength', 'factor', 'eta_stdp', 'h_ip', 'h_ip', 'eta_ip', 'integration_length', 'h_sc', 'h_sc', 'eta_sc']
-    ind = [39.554, 16.13, 26.068, 20.96, 0.1158, 0.5067, 0.000112073, 0.05369, 0.17177, 0.00030581, 10.836, 0.00533, 0.4372, 0.0491]
+    #ind = [39.554, 16.13, 26.068, 20.96, 0.1158, 0.5067, 0.000112073, 0.05369, 0.17177, 0.00030581, 10.836, 0.00533, 0.4372, 0.0491]
     #ind = [50.0,   30.0,  30.0,   30.0,  0.1383, 0.5,    0.0015,      0.04,    0.2944,  0.0006,     15.0,   0.015,   0.2944, 0.1]
 
     #ind = [43.79804446004616, 19.467895828002142, 20.723331106881577, 14.58778050582485, 0.18989074665316877, 0.424770865064861, 0.00020765235989644087, 0.051324555253239916, 0.33960912587182096, 0.00044854320463179613, 11.797617914320949, 0.01316824405689011, 0.2854104398700873, 0.10946615640551477]
@@ -227,7 +219,7 @@ if __name__ == '__main__':
     #for i in range(15):
     #    print('score', run(tag='old_STDP_nox_same_05_900_01_04_20', ind=ind, par={'N_e': 900, 'TS': [1]}))
 
-    print('score', run(tag='test', ind=ind, par={'N_e': 900, 'TS': [1]}))
+    print('score', run(attrs={'name':'test', 'ind':ind, 'N_e':900, 'TS':[1]}))
 
     # 23: SORN_IP_TI(mp='output_new', h_ip='lognormal_real_mean([0.04#6], [0.2944#7])', eta_ip='[0.0004#8];+-45.4%', integration_length=0, gap_percent=10, clip_min=None),
     # 24: SORN_diffuse_IP(mp='output_new', h_dh='same(IPTI, th)', eta_dh='[0.0002#9]', integration_length=0, gap_percent=0, clip_min=None),

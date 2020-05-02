@@ -122,7 +122,7 @@ class Neuron_Behaviour(NetworkObjectBase):
             if 'sparse' in s.tags:
                 s.dst.temp_weight_sum += np.array(getattr(s, src_attr).sum(1)).flatten()
             else:
-                s.dst.temp_weight_sum += np.sum(getattr(s, src_attr),axis=1)
+                s.dst.temp_weight_sum += np.sum(getattr(s, src_attr), axis=1)
 
         neurons.temp_weight_sum /= target_value
 

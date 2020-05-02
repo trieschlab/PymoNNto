@@ -107,5 +107,5 @@ class NetworkObjectBase:
             return np.array([result[0] for _ in range(dim[0])])
 
 
-    def get_buffer(self, dim, size):
+    def get_buffer_mat(self, dim, size):
         return np.array([self.get_nparray(dim) for _ in range(size)])

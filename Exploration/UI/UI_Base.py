@@ -19,14 +19,14 @@ sys.excepthook = exception_hook
 
 class UI_Base(QApplication):
 
-    def __init__(self, network, label="Network_Test"):
+    def __init__(self, network, label="Network_Test", create_sidebar=True):
         super().__init__(sys.argv)
 
         self.network = network
 
         self.main_window = QWidget()
 
-        self.init_QT_Window(label)
+        self.init_QT_Window(label, create_sidebar)
         quit = QAction("Quit", self.main_window)
         quit.triggered.connect(self.main_window.closeEvent)
         self.closeeventtriggered = False
@@ -40,6 +40,7 @@ class UI_Base(QApplication):
             self.Add_Sidebar_Element(elem)
         else:
             self.current_H_block.addWidget(elem, stretch=stretch)
+        return elem
 
     def Add_plot(self, title=None, sidebar=False, stretch=1, axisItems=None, x_label=None, y_label=None, always_show_axis_labels=False, tooltip_message=None):
         canvas = pg.GraphicsLayoutWidget()
@@ -124,7 +125,7 @@ class UI_Base(QApplication):
         else:
             return curves
 
-    def Next_Tab(self, title='', stretch=1):
+    def Next_Tab(self, title='', stretch=1 , create_h_block=True):
 
         main_tab_container = QWidget()
 
@@ -145,7 +146,8 @@ class UI_Base(QApplication):
         #bl.addWidget(self.net_info_text_label)
         self.tabs.addTab(main_tab_container, title)
         self.visualization_layout = QVBoxLayout(main_tab_container)
-        self.Next_H_Block(stretch)
+        if create_h_block:
+            self.Next_H_Block(stretch)
         return main_tab_container
 
 
@@ -153,7 +155,7 @@ class UI_Base(QApplication):
         self.current_H_block = QHBoxLayout()
         self.visualization_layout.addLayout(self.current_H_block, stretch=stretch)
 
-    def init_QT_Window(self, label):
+    def init_QT_Window(self, label, create_sidebar=True):
         self.width = 1200
         self.height = 600
         self.main_window.setWindowTitle(label)
@@ -165,7 +167,8 @@ class UI_Base(QApplication):
         self.sidebar_column_layout = QHBoxLayout()
         self.main_h_layout.addLayout(self.sidebar_column_layout, stretch=2)
 
-        self.Add_New_Sidebar_Column()
+        if create_sidebar:
+            self.Add_New_Sidebar_Column()
 
         cont=QVBoxLayout()
 

@@ -1,31 +1,28 @@
 from NetworkBehaviour.Input.Activator import *
 
-#import matplotlib.pyplot as plt
 
-def identity(neurons):
-    return neurons.activity-neurons.TH
+##########################################################################
+#Helper functions
+##########################################################################
+def modular_activation_function(neurons):
+    result = neurons.activity.copy()
 
-def analog_activation_function(neurons):
-    return np.clip(np.power(neurons.activity, 2.0), 0, 1)
+    if hasattr(neurons, 'rnd_act_factor') and neurons.rnd_act_factor is not None:
+        result += neurons.rnd_act_factor * np.random.rand(neurons.size)
 
-def binary_activation_function(neurons):
-    if neurons.rnd_act_factor != None:
-        sig = neurons.rnd_act_factor * np.random.rand(neurons.size)
-    else:
-        sig = 0
+    if hasattr(neurons, 'nox') and neurons.nox is not None:
+        result -= neurons.nox
 
-    if hasattr(neurons, 'nox'):
-        nox = neurons.nox
-    else:
-        nox = 0
+    if hasattr(neurons, 'TH') and neurons.TH is not None:
+        result -= neurons.TH
 
-    val = ((neurons.activity-neurons.TH-nox+sig >= 0.0) + 0.0)
+    if hasattr(neurons, 'digital_output') and neurons.digital_output:
+        result = (result >= 0.0).astype(np.float64)
 
-    if hasattr(neurons, 'refractory_counter'):
-        return val * (neurons.refractory_counter < 0.1)
-    else:
-        return val
-    #neurons.output_new *= neurons.refractory_counter < 0.1
+    if hasattr(neurons, 'refractory_counter') and neurons.refractory_counter is not None:
+        result *= (neurons.refractory_counter < 0.1)
+
+    return result
 
 def last_cycle_step(neurons):
     return neurons.iteration % neurons.timescale == neurons.timescale-1
@@ -35,7 +32,9 @@ def first_cycle_step(neurons):
 
 
 
-
+##########################################################################
+#Init synapses
+##########################################################################
 class SORN_init_afferent_synapses(Neuron_Behaviour):
 
     def set_variables(self, neurons):
@@ -131,22 +130,23 @@ class SORN_init_afferent_synapses(Neuron_Behaviour):
     def new_iteration(self, neurons):
         return
 
+##########################################################################
+#Init neurons
+##########################################################################
 class SORN_init_neuron_vars(Neuron_Behaviour):
 
     def afferent_buffer_requirement(self, neurons):
-        return 1, neurons.timescale#, 0
+        return buffer_reqirement(length=1, variable='output', timescale=neurons.timescale)
+        #return 1, neurons.timescale#, 0
 
     def set_variables(self, neurons):
         self.add_tag('init_neuron_vars')
 
-        af=self.get_init_attr('activation_function', 'binary', neurons)
-        if af=='binary':
-            neurons.activation_function = binary_activation_function
-        elif af=='analog':
-            neurons.activation_function = analog_activation_function
-        else:
-            neurons.activation_function=eval(af)
-            #print('warning: no activation function defined')
+        neurons.digital_output = self.get_init_attr('digital_output', True, neurons)
+
+        neurons.activation_function = self.get_init_attr('activation_function', modular_activation_function, neurons)
+        if not callable(neurons.activation_function):
+            neurons.activation_function = eval(neurons.activation_function)
 
         neurons.activity = neurons.get_neuron_vec()
         neurons.excitation = neurons.get_neuron_vec()
@@ -155,7 +155,7 @@ class SORN_init_neuron_vars(Neuron_Behaviour):
 
         #neurons.slow_act=neurons.get_neuron_vec()
 
-        neurons.TH = neurons.get_neuron_vec()+self.get_init_attr('init_TH', 0.5, neurons)#neurons.get_random_neuron_vec()*0.5
+        neurons.TH = neurons.get_neuron_vec()+self.get_init_attr('init_TH', 0.0, neurons)#neurons.get_random_neuron_vec()*0.5
 
         neurons.timescale = self.get_init_attr('timescale', 1)
 
@@ -172,6 +172,10 @@ class SORN_init_neuron_vars(Neuron_Behaviour):
 
             #neurons.slow_act *= 0
 
+
+##########################################################################
+#NOX
+##########################################################################
 class SORN_NOX(Instant_Homeostasis):
 
     def partition_sum(self, neurons):
@@ -202,6 +206,9 @@ class SORN_NOX(Instant_Homeostasis):
             #neurons.nox *= 0.5#0.9
 
 
+##########################################################################
+#Basic activity transission class
+##########################################################################
 class SORN_signal_propagation_base(Neuron_Behaviour):
 
     def set_variables(self, neurons):
@@ -223,6 +230,9 @@ class SORN_signal_propagation_base(Neuron_Behaviour):
         print('warning: signal_propagation_base has to be overwritten')
 
 
+##########################################################################
+#External Input
+##########################################################################
 class SORN_external_input(NeuronActivator):
 
     def set_variables(self, neurons):
@@ -231,8 +241,8 @@ class SORN_external_input(NeuronActivator):
         neurons.input = np.zeros(neurons.size)
         self.write_to = 'input'
         neurons.add_tag('text_input_group')
-        pre_syn = neurons.connected_NG_param_list('afferent_buffer_requirement', same_NG=True, search_behaviours=True)
-        neurons.input_buffer = neurons.get_neuron_vec_buffer(pre_syn[0][0])
+        #pre_syn = neurons.connected_NG_param_list('afferent_buffer_requirement', same_NG=True, search_behaviours=True)
+        neurons.input_buffer = neurons.get_neuron_vec_buffer(neurons.timescale)#pre_syn[0][0]
 
 
     def new_iteration(self, neurons):
@@ -247,6 +257,9 @@ class SORN_external_input(NeuronActivator):
             neurons.input_act += add
 
 
+##########################################################################
+#Slow(normal) transmission
+##########################################################################
 class SORN_slow_syn(SORN_signal_propagation_base):
 
     def set_variables(self, neurons):
@@ -274,7 +287,8 @@ class SORN_slow_syn(SORN_signal_propagation_base):
                 #    s.slow_add = (np.sum(s.W[:, s.src.output.astype(np.bool)], axis=1) * self.strength) / neurons.timescale
                 #    #add = (np.sum(s.W.transpose()[s.src.output.astype(np.bool)], axis=0) * self.strength) / neurons.timescale
                 #else:
-                s.slow_add = s.W.dot(s.src.get_masked_dict('output_buffer_dict', neurons.timescale)[0]) * self.strength #todo:test
+
+                s.slow_add = s.W.dot(get_buffer(s.src, 'output', neurons.timescale, 0)[0]) * self.strength #todo:test
                 #s.slow_add = (s.W.dot(s.src.output) * self.strength) / neurons.timescale
 
                 #neurons.slow_act += add
@@ -294,7 +308,9 @@ class SORN_slow_syn(SORN_signal_propagation_base):
         #    neurons.input_act += add
 
 
-
+##########################################################################
+#Fast(same clock cycle) transmission
+##########################################################################
 class SORN_fast_syn(SORN_signal_propagation_base):
 
     def set_variables(self, neurons):
@@ -318,48 +334,59 @@ class SORN_fast_syn(SORN_signal_propagation_base):
                     s.dst.inhibition += s.fast_add
 
 
-#class SORN_slow_input_collect(Neuron_Behaviour):#has to be executed AFTER intra, inter...behaviours
-#
-#    def set_variables(self, neurons):
-#        self.add_tag('input_collect')
-#        neurons.output_new_temp = neurons.get_neuron_vec() #required for STDP todo:remove
-
-#    def new_iteration(self, neurons):
-#        if last_cycle_step(neurons):
-#            neurons.output_new_temp = neurons.activation_function(neurons)
-            #reset moved to init_vars
-
-            #neurons.test_val = (activation_function(neurons.activity, neurons) + activation_function(neurons.slow_act, neurons))/2
 
 
-class SORN_generate_output_and_bufer(Neuron_Behaviour):#has to be executed AFTER intra, inter...behaviours
+##########################################################################
+#Buffer allocation and output production
+##########################################################################
+class buffer_reqirement:
+    def __init__(self, length=-1, variable='', timescale=1, offset=0):
+        self.length = length
+        self.variable = variable
+        self.timescale = timescale
+        self.offset = offset
+
+def get_buffer(neurons, variable, timescale=1, offset=0):
+    return neurons.mask_var(neurons.buffers[variable][timescale][offset])
+
+class SORN_generate_output_and_buffer(Neuron_Behaviour):#has to be executed AFTER intra, inter...behaviours
 
     def set_variables(self, neurons):
+        neurons.get_buffer = get_buffer#just for simpler access
+
         self.add_tag('generate_output_and_bufer')
         neurons.output = neurons.get_neuron_vec()
 
         post_syn_req = neurons.connected_NG_param_list('afferent_buffer_requirement', syn_tag='All', efferent_NGs=True, search_behaviours=True)
         own_req = neurons.connected_NG_param_list('own_buffer_requirement', same_NG=True, search_behaviours=True)
-        req_array = np.array(post_syn_req+own_req+[[1,1]])
+        pre_syn_req = neurons.connected_NG_param_list('efferent_buffer_requirement', syn_tag='All', afferent_NGs=True, search_behaviours=True)
+        all_requirments = post_syn_req+own_req+pre_syn_req
 
-        steps = req_array[:, 0]
-        timescales = req_array[:, 1]
-        #offsets = req_array[:, 2]
+        variable_key = np.unique([vr.variable+'_'+str(vr.timescale)+'_'+str(vr.offset) for vr in all_requirments]) #remove timescale
 
-        unique_timescales = np.unique(timescales)
-        max_timescales = np.max(timescales)#for fastest buffer
+        neurons.buffers = {}
+        def add_buffer(variable, timescale, offset, length):#create dict(offset) in a dict(timescale) in a dict(variable)...
+            if variable not in neurons.buffers:
+                neurons.buffers[variable] = {}
+            if timescale not in neurons.buffers[variable]:
+                neurons.buffers[variable][timescale] = {}
 
-        neurons.output_buffer_dict = {}
+            current = None
+            if offset in neurons.buffers[variable][timescale]:#buffer already exists:
+                current=len(neurons.buffers[variable][timescale][offset])
 
-        for ts in unique_timescales:
-            buffer_length = int(np.max(steps[timescales == ts]))
-            if ts==1:
-                buffer_length=np.maximum(buffer_length, max_timescales)#ts[1] is used for computing the other buffers!
-            neurons.output_buffer_dict[ts] = neurons.get_neuron_vec_buffer(buffer_length)
-            print(neurons.tags, 'ts buffer', ts)
+            if current==None or length>current:
+                neurons.buffers[variable][timescale][offset]=neurons.get_neuron_vec_buffer(length)
 
-        #max_req_buf = int(np.max(post_syn_req+own_req))
-        #neurons.output_buffer = neurons.get_neuron_vec_buffer(max_req_buf)
+        for var_key in variable_key:
+            split_key=var_key.split('_')
+            variable = split_key[0]
+            timescale = int(split_key[1])
+            offset = int(split_key[2])
+            max_req_length = np.max([vr.length for vr in all_requirments if vr.variable == variable and vr.timescale == timescale and vr.offset == offset])
+            add_buffer(variable, 1, 0, timescale)
+            add_buffer(variable, timescale, offset, max_req_length)
+
 
 
 
@@ -367,18 +394,39 @@ class SORN_generate_output_and_bufer(Neuron_Behaviour):#has to be executed AFTER
         if last_cycle_step(neurons):
             neurons.output = neurons.activation_function(neurons)
 
-        neurons.buffer_roll(neurons.output_buffer_dict[1], neurons.output.copy())
+        for variable in neurons.buffers:
+            for timescale in neurons.buffers[variable]:
+                if timescale == 1:
 
-        for ts, buffer in neurons.output_buffer_dict.items():
-            if ts>1 and neurons.iteration % ts == ts-1:
-                data = np.sum(neurons.output_buffer_dict[1][0:ts], axis=0) / ts
-                neurons.buffer_roll(neurons.output_buffer_dict[ts], data)
+                    new=
+
+                    neurons.buffer_roll(neurons.buffers[variable][1][0], neurons.output)
+
+        for variable in neurons.buffers:
+            for timescale in neurons.buffers[variable]:
+                if timescale > 1:
+                    for offset in neurons.buffers[variable][timescale]:
+                        if neurons.iteration % timescale == timescale - 1 - offset:
+                            data = np.sum(neurons.buffers[variable][1][offset][0:timescale], axis=0) / timescale
+                            neurons.buffer_roll(neurons.buffers[variable][timescale][offset], data)
+
+        #if 'prediction_source' in neurons.tags:
+        #    print(neurons.output[10], get_buffer(neurons, variable, 1, 0)[:,10])
+
+        #.copy()
+
+        #for ts, buffer in neurons.output_buffer_dict.items():
+        #    if ts>1 and neurons.iteration % ts == ts-1:
+        #        data = np.sum(neurons.output_buffer_dict[1][0:ts], axis=0) / ts
+        #        neurons.buffer_roll(neurons.output_buffer_dict[ts], data)
 
         #neurons.output_buffer = neurons.buffer_roll(neurons.output_buffer)
         #reset moved to init_vars
         #neurons.test_val = (activation_function(neurons.activity, neurons) + activation_function(neurons.slow_act, neurons))/2
 
-
+    #def afferent_buffer_requirement(self, neurons):
+    #    return buffer_reqirement(length=10, variable='output', timescale=neurons.timescale)
+    #    #return 1, neurons.timescale#, 0
 
 
 class SORN_STDP(Neuron_Behaviour):
@@ -389,25 +437,29 @@ class SORN_STDP(Neuron_Behaviour):
     def afferent_buffer_requirement(self, neurons):
         self.STDP_F = self.get_STDP_Function()
         self.data = np.array([[t, s] for t, s in self.STDP_F.items()])
-        return int(np.maximum(np.min(self.data[:, 0])*-1, 1)+1), neurons.timescale#, 0
+        length = int(np.maximum(np.max(self.data[:, 0])*-1, 1)+1)
+        return buffer_reqirement(length=length, variable='output', timescale=neurons.timescale)
+        #return int(np.maximum(np.min(self.data[:, 0])*-1, 1)+1), neurons.timescale#, 0
 
     def own_buffer_requirement(self, neurons):
         self.STDP_F = self.get_STDP_Function()
         self.data = np.array([[t, s] for t, s in self.STDP_F.items()])
-        return int(np.maximum(np.max(self.data[:, 0]), 1)+1), neurons.timescale#, 0
+        length = int(np.maximum(np.min(self.data[:, 0]), 1)+1)
+        return buffer_reqirement(length=length, variable='output', timescale=neurons.timescale)
+        #return int(np.maximum(np.max(self.data[:, 0]), 1)+1), neurons.timescale#, 0
 
     def set_variables(self, neurons):
         self.add_tag('STDP')
         self.STDP_F = self.get_STDP_Function()# left(negative t):pre->post right(positive t):post->pre
 
-        self.pre_post_mask = np.array([-t in self.STDP_F for t in range(self.afferent_buffer_requirement(neurons)[0])])
-        self.pre_post_mul = np.array([self.STDP_F[-t] for t in range(self.afferent_buffer_requirement(neurons)[0]) if -t in self.STDP_F])
+        self.pre_post_mask = np.array([-t in self.STDP_F for t in range(self.afferent_buffer_requirement(neurons).length)])
+        self.pre_post_mul = np.array([self.STDP_F[t] for t in range(self.afferent_buffer_requirement(neurons).length) if t in self.STDP_F])
 
-        self.post_pre_mask = np.array([t in self.STDP_F for t in range(self.own_buffer_requirement(neurons)[0])])
-        self.post_pre_mul = np.array([self.STDP_F[t] for t in range(self.own_buffer_requirement(neurons)[0]) if t in self.STDP_F])
+        self.post_pre_mask = np.array([t in self.STDP_F for t in range(self.own_buffer_requirement(neurons).length)])
+        self.post_pre_mul = np.array([self.STDP_F[-t] for t in range(self.own_buffer_requirement(neurons).length) if -t in self.STDP_F])
 
-        print(self.pre_post_mask, self.pre_post_mul)
-        print(self.post_pre_mask, self.post_pre_mul)
+        #print(self.pre_post_mask, self.pre_post_mul, self.afferent_buffer_requirement(neurons).length)
+        #print(self.post_pre_mask, self.post_pre_mul, self.own_buffer_requirement(neurons).length)
 
         neurons.eta_stdp = self.get_init_attr('eta_stdp', 0.005, neurons)
         neurons.last_output = neurons.get_neuron_vec()
@@ -423,21 +475,18 @@ class SORN_STDP(Neuron_Behaviour):
             plt.show()
 
     def new_iteration(self, neurons):
-        if first_cycle_step(neurons):
-
+        if first_cycle_step(neurons):#first????????????????????????????????????????????????????????????????????????
+            start=True
             for s in neurons.afferent_synapses['GLU']:
 
-                post_act = s.dst.get_masked_dict('output_buffer_dict', neurons.timescale)
-                pre_act = s.src.get_masked_dict('output_buffer_dict', neurons.timescale)
+                post_act = get_buffer(s.dst, 'output', neurons.timescale)#s.dst.get_masked_dict('output_buffer_dict', neurons.timescale)
+                pre_act = get_buffer(s.src, 'output', neurons.timescale)#s.src.get_masked_dict('output_buffer_dict', neurons.timescale)
 
                 if len(post_act) > len(self.pre_post_mask):
-                    self.pre_post_mask = np.concatenate([self.pre_post_mask+np.array([False for _ in range(len(post_act)-len(self.pre_post_mask)+1)])])
+                    self.pre_post_mask = np.concatenate([self.pre_post_mask, np.array([False for _ in range(len(post_act)-len(self.pre_post_mask))])])
 
                 if len(pre_act) > len(self.post_pre_mask):
-                    self.post_pre_mask = np.concatenate([self.post_pre_mask+np.array([False for _ in range(len(pre_act)-len(self.post_pre_mask)+1)])])
-
-                #print(post_act.shape, self.pre_post_mask.shape, self.pre_post_mul.shape)
-                #print(pre_act.shape, self.post_pre_mask.shape, self.post_pre_mul.shape)
+                    self.post_pre_mask = np.concatenate([self.post_pre_mask, np.array([False for _ in range(len(pre_act)-len(self.post_pre_mask))])])
 
                 summed_up_dact = np.sum(post_act[self.pre_post_mask]*self.pre_post_mul[:,None], axis=0)
                 summed_up_sact = np.sum(pre_act[self.post_pre_mask]*self.post_pre_mul[:,None], axis=0)
@@ -445,146 +494,32 @@ class SORN_STDP(Neuron_Behaviour):
                 dw_pre_post = summed_up_dact[:, None] * pre_act[0][None, :]
                 dw_post_pre = post_act[0][:, None] * summed_up_sact[None, :]
 
-                s.W += neurons.eta_stdp * (dw_pre_post+dw_post_pre) * s.enabled / (neurons.timescale*neurons.timescale)
+                s.dw = neurons.eta_stdp * (dw_pre_post+dw_post_pre) * s.enabled / (neurons.timescale*neurons.timescale)
+
+                s.W += s.dw
                 s.W[s.W < 0.0] = 0.0
 
+                '''
+                if start:
+                    start=False
 
-                #dw = s.get_synapse_mat()
+                    import matplotlib.pyplot as plt
 
-                #for t, f in self.STDP_F.items():
-                #    t_start = neurons.timescale*abs(t)
-                #    t_end = neurons.timescale*abs(t)+1
-                #    print(t_start, t_end)
-                #    if t < 0:
-                #        dact = np.sum(s.dst.output_buffer[0:neurons.timescale], axis=0)
-                #        sact = np.sum(s.src.output_buffer[t_start:t_end], axis=0)
-                #    else:
-                #        dact = np.sum(s.dst.output_buffer[t_start:t_end], axis=0)
-                #        sact = np.sum(s.src.output_buffer[0:neurons.timescale], axis=0)
-                #
-                #    dw += f * dact[:, None] * sact[None, :]
+                    gap=5
 
-                #print('start', neurons.tags)
+                    dwh = s.dw.shape[0]
+                    dww = s.dw.shape[1]
 
-                #print(list(s.dst.output_buffer_dict.keys()), list(s.src.output_buffer_dict.keys()))
-                #print(len(s.dst.output_buffer_dict[neurons.timescale]), len(s.src.output_buffer_dict[neurons.timescale]))
+                    s.dw = np.concatenate([s.dw, np.ones((s.dw.shape[0], gap+len(post_act)))*-1], axis=1)
+                    s.dw = np.concatenate([s.dw, np.ones((gap+len(pre_act), s.dw.shape[1]))*-1], axis=0)
 
-                #dact = s.dst.get_masked_dict('output_buffer_dict', neurons.timescale)
-                #sact = s.src.get_masked_dict('output_buffer_dict', neurons.timescale)
+                    s.dw[0:len(post_act[0]), dww+gap:dww+gap+len(post_act)] = post_act.transpose()
 
-                #print(neurons.timescale)
+                    s.dw[dwh+gap:dwh+gap+len(pre_act), 0:len(summed_up_sact)] = pre_act
 
-                #print(dact.shape, sact.shape)
-                #print(self.pre_post_mask.shape, self.post_pre_mask.shape)
-
-                #masked_dact = dact[self.pre_post_mask]
-                #masked_sact = sact[self.post_pre_mask]
-
-                #print(masked_dact.shape, masked_sact.shape)
-
-                #weighted_masked_dact = masked_dact*self.pre_post_mul
-                #weighted_masked_sact = masked_sact*self.pre_post_mul
-
-                #print(weighted_masked_dact.shape, weighted_masked_sact.shape)
-
-                #summed_up_dact = np.sum(weighted_masked_dact, axis=0)
-                #summed_up_sact = np.sum(weighted_masked_sact, axis=0)
-
-                #print(summed_up_dact.shape, summed_up_sact.shape)
-
-                #current_dact = dact[0]
-                #current_sact = sact[0]
-
-                #dw_pre_post = summed_up_dact[:, None] * current_sact[None, :]
-                #dw_post_pre = current_dact[:, None] * summed_up_sact[None, :]
-
-                #print(current_dact.shape, current_sact.shape)
-
-                #o_new[:, None] * from_old[None, :] - to_old[:, None] * from_new[None, :]
-                #dw = dact[:, None] * sact[None, :]
-
-                #s.src_act_sum_old = src_out_new.copy()
-            #neurons.last_output = neurons.output_buffer[0].copy()
-
-        # for ng in self.pre_syn_groups:
-        #    if not neurons.timescale in ng.buffer_timescale_sum_dict:
-        #        ng.buffer_timescale_sum_dict[neurons.timescale] = np.sum(ng.output_buffer[neurons.timescale - 1:neurons.timescale * 2 - 1], axis=0)/neurons.timescale
-
-        # for s in neurons.afferent_synapses[self.transmitter]:
-        #    s.slow_add = s.W.dot(s.src.buffer_timescale_sum_dict[neurons.timescale][s.src.mask]) * self.strength
-
-    '''
-    def set_variables(self, neurons):
-        neurons.eta_stdp = self.get_init_attr('eta_stdp', 0.005, neurons)
-        neurons.last_output = neurons.get_neuron_vec()
-        for s in neurons.afferent_synapses['GLU']:
-            s.src_act_sum_old = np.zeros(s.src.size)
-
-    def new_iteration(self, neurons):
-        if first_cycle_step(neurons):
-
-            for s in neurons.afferent_synapses['GLU']:
-                src_out_new = np.sum(s.src.output_buffer[0:neurons.timescale], axis=0)
-
-                grow = s.dst.output_buffer[0][:, None] * s.src_act_sum_old[None, :]
-                shrink = s.dst.last_output[:, None] * src_out_new[None, :]
-
-                dw = neurons.eta_stdp * (grow - shrink) / (neurons.timescale*neurons.timescale)
-
-                s.W += dw * s.enabled
-                s.W[s.W < 0.0] = 0.0
-
-                s.src_act_sum_old = src_out_new.copy()
-            neurons.last_output = neurons.output_buffer[0].copy()
-    '''
-
-
-'''
-class SORN_STDP_old(Neuron_Behaviour):
-
-    def set_variables(self, neurons):
-        self.add_tag('STDP')
-        neurons.eta_stdp = self.get_init_attr('eta_stdp', 0.005, neurons)
-        #neurons.prune_stdp = self.get_init_attr('prune_stdp', False, neurons)
-
-        for s in neurons.afferent_synapses['GLU']:
-            s.STDP_src_lag_buffer_old = np.zeros(s.src.size)#neurons.size bug?
-            s.STDP_src_lag_buffer_new = np.zeros(s.src.size)#neurons.size bug?
-
-    def new_iteration(self, neurons):
-        for s in neurons.afferent_synapses['GLU']:
-
-            #print(s.src.size, len(s.STDP_src_lag_buffer_new), len(s.src.output_new))
-
-            s.STDP_src_lag_buffer_new += s.src.output_buffer[0]/neurons.timescale
-
-            #buffer previous states
-
-            if last_cycle_step(neurons):
-
-                from_old = s.STDP_src_lag_buffer_old#
-                from_new = s.STDP_src_lag_buffer_new#s.src.x_new#
-
-                to_old = s.dst.output_buffer[1]
-                to_new = s.dst.output_buffer[0]
-
-                #print(to_new, from_old, to_old, from_new)
-
-                dw = neurons.eta_stdp * (to_new[:, None] * from_old[None, :] - to_old[:, None] * from_new[None, :])
-
-                s.W += dw * s.enabled
-                s.W[s.W < 0.0] = 0.0
-
-                #if neurons.prune_stdp:
-                #    s.W[s.W < 1e-10] = 0
-                #    s.enabled *= (s.W > 0)
-
-                # print('STDP',s.W.sum())
-
-                #clear buffer
-                s.STDP_src_lag_buffer_old = s.STDP_src_lag_buffer_new.copy()
-                s.STDP_src_lag_buffer_new = np.zeros(s.src.size)#neurons.size bug?
-'''
+                    plt.matshow(s.dw, vmin=-0.00001, vmax=+0.00001, cmap=plt.get_cmap('seismic'))
+                    plt.show()
+                '''
 
 class SORN_Refractory(Neuron_Behaviour):
 
@@ -700,3 +635,184 @@ class SORN_diffuse_IP(Time_Integration_Homeostasis):
         if last_cycle_step(neurons):
             super().new_iteration(neurons)
 
+
+
+'''
+def binary_activation_function(neurons):
+    if neurons.rnd_act_factor != None:
+        sig = neurons.rnd_act_factor * np.random.rand(neurons.size)
+    else:
+        sig = 0
+
+    if hasattr(neurons, 'nox'):
+        nox = neurons.nox
+    else:
+        nox = 0
+
+    val = ((neurons.activity-neurons.TH-nox+sig >= 0.0) + 0.0)
+
+    if hasattr(neurons, 'refractory_counter'):
+        return val * (neurons.refractory_counter < 0.1)
+    else:
+        return val
+    #neurons.output_new *= neurons.refractory_counter < 0.1
+'''
+
+#def identity(neurons):
+#    return neurons.activity-neurons.TH
+
+#def analog_activation_function(neurons):
+#    return np.clip(np.power(neurons.activity, 2.0), 0, 1)
+
+                #print(post_act.shape, self.pre_post_mask.shape, self.pre_post_mul.shape)
+                #print(pre_act.shape, self.post_pre_mask.shape, self.post_pre_mul.shape)
+
+                #dw = s.get_synapse_mat()
+
+                #for t, f in self.STDP_F.items():
+                #    t_start = neurons.timescale*abs(t)
+                #    t_end = neurons.timescale*abs(t)+1
+                #    print(t_start, t_end)
+                #    if t < 0:
+                #        dact = np.sum(s.dst.output_buffer[0:neurons.timescale], axis=0)
+                #        sact = np.sum(s.src.output_buffer[t_start:t_end], axis=0)
+                #    else:
+                #        dact = np.sum(s.dst.output_buffer[t_start:t_end], axis=0)
+                #        sact = np.sum(s.src.output_buffer[0:neurons.timescale], axis=0)
+                #
+                #    dw += f * dact[:, None] * sact[None, :]
+
+                #print('start', neurons.tags)
+
+                #print(list(s.dst.output_buffer_dict.keys()), list(s.src.output_buffer_dict.keys()))
+                #print(len(s.dst.output_buffer_dict[neurons.timescale]), len(s.src.output_buffer_dict[neurons.timescale]))
+
+                #dact = s.dst.get_masked_dict('output_buffer_dict', neurons.timescale)
+                #sact = s.src.get_masked_dict('output_buffer_dict', neurons.timescale)
+
+                #print(neurons.timescale)
+
+                #print(dact.shape, sact.shape)
+                #print(self.pre_post_mask.shape, self.post_pre_mask.shape)
+
+                #masked_dact = dact[self.pre_post_mask]
+                #masked_sact = sact[self.post_pre_mask]
+
+                #print(masked_dact.shape, masked_sact.shape)
+
+                #weighted_masked_dact = masked_dact*self.pre_post_mul
+                #weighted_masked_sact = masked_sact*self.pre_post_mul
+
+                #print(weighted_masked_dact.shape, weighted_masked_sact.shape)
+
+                #summed_up_dact = np.sum(weighted_masked_dact, axis=0)
+                #summed_up_sact = np.sum(weighted_masked_sact, axis=0)
+
+                #print(summed_up_dact.shape, summed_up_sact.shape)
+
+                #current_dact = dact[0]
+                #current_sact = sact[0]
+
+                #dw_pre_post = summed_up_dact[:, None] * current_sact[None, :]
+                #dw_post_pre = current_dact[:, None] * summed_up_sact[None, :]
+
+                #print(current_dact.shape, current_sact.shape)
+
+                #o_new[:, None] * from_old[None, :] - to_old[:, None] * from_new[None, :]
+                #dw = dact[:, None] * sact[None, :]
+
+                #s.src_act_sum_old = src_out_new.copy()
+            #neurons.last_output = neurons.output_buffer[0].copy()
+
+        # for ng in self.pre_syn_groups:
+        #    if not neurons.timescale in ng.buffer_timescale_sum_dict:
+        #        ng.buffer_timescale_sum_dict[neurons.timescale] = np.sum(ng.output_buffer[neurons.timescale - 1:neurons.timescale * 2 - 1], axis=0)/neurons.timescale
+
+        # for s in neurons.afferent_synapses[self.transmitter]:
+        #    s.slow_add = s.W.dot(s.src.buffer_timescale_sum_dict[neurons.timescale][s.src.mask]) * self.strength
+
+'''
+    def set_variables(self, neurons):
+        neurons.eta_stdp = self.get_init_attr('eta_stdp', 0.005, neurons)
+        neurons.last_output = neurons.get_neuron_vec()
+        for s in neurons.afferent_synapses['GLU']:
+            s.src_act_sum_old = np.zeros(s.src.size)
+
+    def new_iteration(self, neurons):
+        if first_cycle_step(neurons):
+
+            for s in neurons.afferent_synapses['GLU']:
+                src_out_new = np.sum(s.src.output_buffer[0:neurons.timescale], axis=0)
+
+                grow = s.dst.output_buffer[0][:, None] * s.src_act_sum_old[None, :]
+                shrink = s.dst.last_output[:, None] * src_out_new[None, :]
+
+                dw = neurons.eta_stdp * (grow - shrink) / (neurons.timescale*neurons.timescale)
+
+                s.W += dw * s.enabled
+                s.W[s.W < 0.0] = 0.0
+
+                s.src_act_sum_old = src_out_new.copy()
+            neurons.last_output = neurons.output_buffer[0].copy()
+'''
+
+
+'''
+class SORN_STDP_old(Neuron_Behaviour):
+
+    def set_variables(self, neurons):
+        self.add_tag('STDP')
+        neurons.eta_stdp = self.get_init_attr('eta_stdp', 0.005, neurons)
+        #neurons.prune_stdp = self.get_init_attr('prune_stdp', False, neurons)
+
+        for s in neurons.afferent_synapses['GLU']:
+            s.STDP_src_lag_buffer_old = np.zeros(s.src.size)#neurons.size bug?
+            s.STDP_src_lag_buffer_new = np.zeros(s.src.size)#neurons.size bug?
+
+    def new_iteration(self, neurons):
+        for s in neurons.afferent_synapses['GLU']:
+
+            #print(s.src.size, len(s.STDP_src_lag_buffer_new), len(s.src.output_new))
+
+            s.STDP_src_lag_buffer_new += s.src.output_buffer[0]/neurons.timescale
+
+            #buffer previous states
+
+            if last_cycle_step(neurons):
+
+                from_old = s.STDP_src_lag_buffer_old#
+                from_new = s.STDP_src_lag_buffer_new#s.src.x_new#
+
+                to_old = s.dst.output_buffer[1]
+                to_new = s.dst.output_buffer[0]
+
+                #print(to_new, from_old, to_old, from_new)
+
+                dw = neurons.eta_stdp * (to_new[:, None] * from_old[None, :] - to_old[:, None] * from_new[None, :])
+
+                s.W += dw * s.enabled
+                s.W[s.W < 0.0] = 0.0
+
+                #if neurons.prune_stdp:
+                #    s.W[s.W < 1e-10] = 0
+                #    s.enabled *= (s.W > 0)
+
+                # print('STDP',s.W.sum())
+
+                #clear buffer
+                s.STDP_src_lag_buffer_old = s.STDP_src_lag_buffer_new.copy()
+                s.STDP_src_lag_buffer_new = np.zeros(s.src.size)#neurons.size bug?
+'''
+
+#class SORN_slow_input_collect(Neuron_Behaviour):#has to be executed AFTER intra, inter...behaviours
+#
+#    def set_variables(self, neurons):
+#        self.add_tag('input_collect')
+#        neurons.output_new_temp = neurons.get_neuron_vec() #required for STDP todo:remove
+
+#    def new_iteration(self, neurons):
+#        if last_cycle_step(neurons):
+#            neurons.output_new_temp = neurons.activation_function(neurons)
+            #reset moved to init_vars
+
+            #neurons.test_val = (activation_function(neurons.activity, neurons) + activation_function(neurons.slow_act, neurons))/2

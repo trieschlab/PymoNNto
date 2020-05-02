@@ -1,6 +1,7 @@
 import random
 
 import sys
+import os
 import threading
 
 from Exploration.StorageManager.StorageManager import *
@@ -34,7 +35,7 @@ class Evolution:
             except:
                 print('evolution folder already exits')
 
-        self.name = name+'_{}'.format(int(np.random.rand()*10000))
+        self.name = name#+'_{}'.format(int(np.random.rand()*10000))
         #print(self.name)
         self.param=param
         self.savestate = True
@@ -147,10 +148,16 @@ class Evolution:
             self.save('Gen {} breed:'.format(generation), self.set_get_ind_params('parameters'))
 
 
+    def get_evo_file(self):
+        return self.datafolder+self.name+".txt"
+
+    def evo_file_exists(self):
+        return os.path.exists(self.get_evo_file())
+
     def save(self, message, data):
         print(message, data)
         if self.savestate:
-            f = open(self.datafolder+self.name+".txt", "a")
+            f = open(self.get_evo_file(), "a")
             f.write(message+" {}".format(data)+"\n")
             f.close()
 
