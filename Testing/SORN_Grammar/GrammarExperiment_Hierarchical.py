@@ -47,9 +47,10 @@ def run(attrs={'name':'hierarchical', 'ind':[], 'N_e':900, 'TS':[1]}):
             12: SORN_slow_syn(transmitter='GLU', strength='[0.1383#2]', so=so),
             13: SORN_slow_syn(transmitter='GABA', strength='-[0.1698#3]', so=False),
             17: SORN_fast_syn(transmitter='GABA', strength='-[0.1#4]', so=False),#0.11045
-            18: SORN_generate_output_and_buffer(),
+            18: SORN_generate_output(),
+            19: SORN_buffer_variables(),
 
-            19: SORN_Refractory(factor='0.5;+-50%'),
+            20: SORN_Refractory(factor='0.5;+-50%'),
             21: SORN_STDP(eta_stdp='[0.00015#5]'),#, STDP_F={-4:-0.01,-3:0.01,-2:0.1,-1:0.5,0:0.2,1:-0.3,2:-0.1,3:-0.05}, plot=True),#{-2:0.1,-1:0.5,0:0.2,1:-0.3,2:-0.1}
             22: SORN_SN(syn_type='GLU', clip_max=None, init_norm_factor=1.0),
 
@@ -67,9 +68,10 @@ def run(attrs={'name':'hierarchical', 'ind':[], 'N_e':900, 'TS':[1]}):
             11: SORN_slow_syn(transmitter='GABA', strength='-[0.1838#16]', so=so),
             14: SORN_fast_syn(transmitter='GLU', strength='[1.5#16]', so=so),#1.5353
             15: SORN_fast_syn(transmitter='GABA', strength='-[0.08#17]', so=False),#0.08
-            18: SORN_generate_output_and_buffer(),
+            18: SORN_generate_output(),
+            19: SORN_buffer_variables(),
 
-            19: SORN_Refractory(factor='0.2;0.7'),
+            20: SORN_Refractory(factor='0.2;0.7'),
 
             #23: SORN_IP_TI(h_ip='lognormal_real_mean([0.08#6], [0.2944#7])', eta_ip='[0.0003#8];+-50%', integration_length='30;+-50%', clip_min=None),
 

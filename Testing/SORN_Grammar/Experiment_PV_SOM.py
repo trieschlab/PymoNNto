@@ -53,7 +53,8 @@ def run(attrs={'name':'PV_SOM', 'ind':[], 'N_e':900, 'TS':[1]}):
             17: SORN_fast_syn(transmitter='GABA_Soma', strength='-0.1', so=False),
             17.1: SORN_fast_syn(transmitter='GABA_AIS', strength='-0.1', so=False),
             #17.2: SORN_fast_syn(transmitter='GABA_NOX', strength='-0.1', so=False),
-            18: SORN_generate_output_and_buffer(),
+            18: SORN_generate_output(),
+            19: SORN_buffer_variables(),
 
             20: SORN_Refractory(factor='[0.5#5];+-50%'),
             21: SORN_STDP(eta_stdp='[0.0015#6]'),#0.1#todo: test!!!, prune_stdp=False, excitation_punishment=0.0
@@ -74,7 +75,8 @@ def run(attrs={'name':'PV_SOM', 'ind':[], 'N_e':900, 'TS':[1]}):
             #11: SORN_slow_syn(transmitter='GABA', strength='-[0.1838#16]', so=so),
 
             #15: SORN_fast_syn(transmitter='GABA', strength='-[0.08#17]', so=False),#0.08
-            18: SORN_generate_output_and_buffer(),
+            18: SORN_generate_output(),
+            19: SORN_buffer_variables(),
             #20: SORN_Refractory(factor='0.2;0.7'),
         })
 
@@ -87,7 +89,8 @@ def run(attrs={'name':'PV_SOM', 'ind':[], 'N_e':900, 'TS':[1]}):
             #11: SORN_slow_syn(transmitter='GABA', strength='-[0.1838#16]', so=so),
 
             #15: SORN_fast_syn(transmitter='GABA', strength='-[0.08#17]', so=False),#0.08
-            18: SORN_generate_output_and_buffer(),
+            18: SORN_generate_output(),
+            19: SORN_buffer_variables(),
             #20: SORN_Refractory(factor='0.2;0.7'),
         })
 
@@ -100,7 +103,8 @@ def run(attrs={'name':'PV_SOM', 'ind':[], 'N_e':900, 'TS':[1]}):
             #11: SORN_slow_syn(transmitter='GABA', strength='-[0.1838#16]', so=so),
 
             #15: SORN_fast_syn(transmitter='GABA', strength='-[0.08#17]', so=False),#0.08
-            18: SORN_generate_output_and_buffer(),
+            18: SORN_generate_output(),
+            19: SORN_buffer_variables(),
             #20: SORN_Refractory(factor='0.2;0.7'),
         })
 
@@ -113,7 +117,8 @@ def run(attrs={'name':'PV_SOM', 'ind':[], 'N_e':900, 'TS':[1]}):
             14: SORN_fast_syn(transmitter='GLU', strength='0.2', so=so),#1.5353
             #15: SORN_fast_syn(transmitter='GABA', strength='-[0.08#17]', so=False),#0.08
 
-            18: SORN_generate_output_and_buffer(),
+            18: SORN_generate_output(),
+            19: SORN_buffer_variables(),
             #19: SORN_Refractory(factor='0.2;0.7'),
         })
 

@@ -334,6 +334,18 @@ class SORN_fast_syn(SORN_signal_propagation_base):
                     s.dst.inhibition += s.fast_add
 
 
+##########################################################################
+#Generate output with activation fucntion
+##########################################################################
+class SORN_generate_output(Neuron_Behaviour):#has to be executed AFTER intra, inter...behaviours
+
+    def set_variables(self, neurons):
+        self.add_tag('generate output')
+        neurons.get_buffer = get_buffer
+
+    def new_iteration(self, neurons):
+        if last_cycle_step(neurons):
+            neurons.output = neurons.activation_function(neurons)
 
 
 ##########################################################################
@@ -349,12 +361,13 @@ class buffer_reqirement:
 def get_buffer(neurons, variable, timescale=1, offset=0):
     return neurons.mask_var(neurons.buffers[variable][timescale][offset])
 
-class SORN_generate_output_and_buffer(Neuron_Behaviour):#has to be executed AFTER intra, inter...behaviours
+class SORN_buffer_variables(Neuron_Behaviour):#has to be executed AFTER intra, inter...behaviours
 
     def set_variables(self, neurons):
+        n=neurons#for compile...
+        self.add_tag('buffer')
         neurons.get_buffer = get_buffer#just for simpler access
 
-        self.add_tag('generate_output_and_bufer')
         neurons.output = neurons.get_neuron_vec()
 
         post_syn_req = neurons.connected_NG_param_list('afferent_buffer_requirement', syn_tag='All', efferent_NGs=True, search_behaviours=True)
@@ -364,8 +377,14 @@ class SORN_generate_output_and_buffer(Neuron_Behaviour):#has to be executed AFTE
 
         variable_key = np.unique([vr.variable+'_'+str(vr.timescale)+'_'+str(vr.offset) for vr in all_requirments]) #remove timescale
 
+        neurons.precompiled_vars = {}
         neurons.buffers = {}
+
         def add_buffer(variable, timescale, offset, length):#create dict(offset) in a dict(timescale) in a dict(variable)...
+
+            if '.' in variable or '(' in variable:
+                neurons.precompiled_vars[variable] = compile(variable, '<string>', 'eval')
+
             if variable not in neurons.buffers:
                 neurons.buffers[variable] = {}
             if timescale not in neurons.buffers[variable]:
@@ -388,19 +407,17 @@ class SORN_generate_output_and_buffer(Neuron_Behaviour):#has to be executed AFTE
             add_buffer(variable, timescale, offset, max_req_length)
 
 
-
-
     def new_iteration(self, neurons):
-        if last_cycle_step(neurons):
-            neurons.output = neurons.activation_function(neurons)
+        n = neurons  # for compile...
 
         for variable in neurons.buffers:
             for timescale in neurons.buffers[variable]:
                 if timescale == 1:
-
-                    new=
-
-                    neurons.buffer_roll(neurons.buffers[variable][1][0], neurons.output)
+                    if variable in neurons.precompiled_vars:
+                        new = eval(variable)
+                    else:
+                        new = getattr(neurons, variable)
+                    neurons.buffer_roll(neurons.buffers[variable][1][0], new)
 
         for variable in neurons.buffers:
             for timescale in neurons.buffers[variable]:
