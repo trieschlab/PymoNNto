@@ -12,10 +12,10 @@ from Testing.Common.Grammar_Helper import *
 if __name__ == '__main__':
     from Exploration.UI.Network_UI.Network_UI import *
 
-def run(attrs={'name':'hierarchical', 'ind':[], 'N_e':900, 'TS':[1]}):
+def run(attrs={'name':'hierarchical', 'ind':[], 'N_e':900, 'TS':[1], 'ff':True, 'fb':True, 'plastic':15000}):
     so = True
 
-    print_info=attrs.get('print', True)
+    print_info = attrs.get('print', True)
 
     if print_info:
         print(attrs)
@@ -35,24 +35,24 @@ def run(attrs={'name':'hierarchical', 'ind':[], 'N_e':900, 'TS':[1]}):
 
     SORN = Network()
 
-    last_e_ng = None
+    for layer, timescale in enumerate(attrs['TS']):
 
-    for timecale in attrs['TS']:
-
-        e_ng = NeuronGroup(net=SORN, tag='PC_{},prediction_source'.format(timecale), size=get_squared_dim(int(attrs['N_e'])), behaviour={
-            2: SORN_init_neuron_vars(timescale=timecale, init_TH='0.1;+-100%'),
+        e_ng = NeuronGroup(net=SORN, tag='PC_{},prediction_source'.format(timescale), size=get_squared_dim(int(attrs['N_e'])), behaviour={
+            2: SORN_init_neuron_vars(timescale=timescale),
             3: SORN_init_afferent_synapses(transmitter='GLU', density='13%', distribution='lognormal(0,[0.95#0])', normalize=True, partition_compensation=True),#0.89 uniform(0.1,0.11)
             4: SORN_init_afferent_synapses(transmitter='GABA', density='45%', distribution='lognormal(0,[0.4#1])', normalize=True),#0.80222 uniform(0.1,0.11)
 
             12: SORN_slow_syn(transmitter='GLU', strength='[0.1383#2]', so=so),
             13: SORN_slow_syn(transmitter='GABA', strength='-[0.1698#3]', so=False),
             17: SORN_fast_syn(transmitter='GABA', strength='-[0.1#4]', so=False),#0.11045
-            18: SORN_generate_output(),
+            18: SORN_generate_output(init_TH='0.1;+-100%'),
             19: SORN_buffer_variables(),
 
             20: SORN_Refractory(factor='0.5;+-50%'),
             21: SORN_STDP(eta_stdp='[0.00015#5]'),#, STDP_F={-4:-0.01,-3:0.01,-2:0.1,-1:0.5,0:0.2,1:-0.3,2:-0.1,3:-0.05}, plot=True),#{-2:0.1,-1:0.5,0:0.2,1:-0.3,2:-0.1}
-            22: SORN_SN(syn_type='GLU', clip_max=None, init_norm_factor=1.0),
+            22.1: SORN_SN(syn_type='GLU_same', clip_max=None, init_norm_factor=0.6),
+            22.2: SORN_SN(syn_type='GLU_ff', clip_max=None, init_norm_factor=0.2),
+            22.3: SORN_SN(syn_type='GLU_fb', clip_max=None, init_norm_factor=0.2),
 
             23: SORN_IP_TI(h_ip='lognormal_real_mean([0.04#6], [0.2944#7])', eta_ip='[0.0006#8];+-50%', integration_length='[15#18];+-50%', clip_min=None),#30          #, gap_percent=10 #30;+-50% #0.0003 #np.mean(n.output_new)
             25: SORN_NOX(mp='self.partition_sum(n)', eta_nox='[0.5#9];+-50%'),
@@ -60,26 +60,25 @@ def run(attrs={'name':'hierarchical', 'ind':[], 'N_e':900, 'TS':[1]}):
             27: SORN_iSTDP(h_ip='same(SCTI, th)', eta_istdp='[0.0001#13]')
         })
 
-        i_ng = NeuronGroup(net=SORN, tag='Inter_{}'.format(timecale), size=get_squared_dim(int(0.2 * attrs['N_e'])), behaviour={
-            2: SORN_init_neuron_vars(timescale=timecale, init_TH='0.1;+-0%'),########################################################################################################################################
+        i_ng = NeuronGroup(net=SORN, tag='Inter_{}'.format(timescale), size=get_squared_dim(int(0.2 * attrs['N_e'])), behaviour={
+            2: SORN_init_neuron_vars(timescale=timescale),########################################################################################################################################
             3: SORN_init_afferent_synapses(transmitter='GLU', density='50%', distribution='lognormal(0,[0.87038#14])', normalize=True),  # 450
             4: SORN_init_afferent_synapses(transmitter='GABA', density='20%', distribution='lognormal(0,[0.82099#15])', normalize=True),  # 40
 
             11: SORN_slow_syn(transmitter='GABA', strength='-[0.1838#16]', so=so),
             14: SORN_fast_syn(transmitter='GLU', strength='[1.5#16]', so=so),#1.5353
             15: SORN_fast_syn(transmitter='GABA', strength='-[0.08#17]', so=False),#0.08
-            18: SORN_generate_output(),
+            18: SORN_generate_output(init_TH='0.1;+-0%'),
             19: SORN_buffer_variables(),
 
             20: SORN_Refractory(factor='0.2;0.7'),
 
             #23: SORN_IP_TI(h_ip='lognormal_real_mean([0.08#6], [0.2944#7])', eta_ip='[0.0003#8];+-50%', integration_length='30;+-50%', clip_min=None),
-
         })
 
         i_ng['structure', 0].stretch_to_equal_size(e_ng)
 
-        SynapseGroup(net=SORN, src=e_ng, dst=e_ng, tag='GLU', connectivity='(s_id!=d_id)*in_box(10)', partition=True)#.partition([10, 10], [partition, partition])
+        SynapseGroup(net=SORN, src=e_ng, dst=e_ng, tag='GLU,GLU_same', connectivity='(s_id!=d_id)*in_box(10)', partition=True)#.partition([10, 10], [partition, partition])
         SynapseGroup(net=SORN, src=e_ng, dst=i_ng, tag='GLU', connectivity='in_box(10)', partition=True)#.partition([5, 5], [2, 2])
         SynapseGroup(net=SORN, src=i_ng, dst=e_ng, tag='GABA', connectivity='in_box(10)', partition=True)
         SynapseGroup(net=SORN, src=i_ng, dst=i_ng, tag='GABA', connectivity='(s_id!=d_id)*in_box(10)', partition=True)
@@ -87,20 +86,20 @@ def run(attrs={'name':'hierarchical', 'ind':[], 'N_e':900, 'TS':[1]}):
         #i_ng.add_behaviour(10, SORN_external_input(strength=1.0, pattern_groups=[source]))
         e_ng.add_behaviour(9, SORN_external_input(strength=1.0, pattern_groups=[source]))
 
-        #if last_e_ng is not None:
-            #forward synapses
-            #SynapseGroup(net=SORN, src=last_e_ng, dst=e_ng, tag='GLU', connectivity='in_box(10)', partition=True)#.partition([10, 10], [partition, partition])
-            #SynapseGroup(net=SORN, src=last_e_ng, dst=i_ng, tag='GABA', connectivity='in_box(10)', partition=True)#.partition([5, 5], [2, 2])
-            #backward synapses
-            #SynapseGroup(net=SORN, src=e_ng, dst=last_e_ng, tag='GLU', connectivity='in_box(10)', partition=True)#.partition([10, 10], [partition, partition])
-            #SynapseGroup(net=SORN, src=e_ng, dst=last_i_ng, tag='GABA', connectivity='in_box(10)', partition=True)#.partition([5, 5], [2, 2])
+        if layer>0:
+            if attrs.get('ff', True):#forward synapses
+                SynapseGroup(net=SORN, src=last_e_ng, dst=e_ng, tag='GLU,GLU_ff', connectivity='in_box(10)', partition=True)#.partition([10, 10], [partition, partition])
+                #SynapseGroup(net=SORN, src=last_e_ng, dst=i_ng, tag='GABA', connectivity='in_box(10)', partition=True)#.partition([5, 5], [2, 2])
+            if attrs.get('fb', False):#backward synapses
+                SynapseGroup(net=SORN, src=e_ng, dst=last_e_ng, tag='GLU,GLU_fb', connectivity='in_box(10)', partition=True)#.partition([10, 10], [partition, partition])
+                #SynapseGroup(net=SORN, src=e_ng, dst=last_i_ng, tag='GABA', connectivity='in_box(10)', partition=True)#.partition([5, 5], [2, 2])
 
         last_e_ng = e_ng
         last_i_ng = i_ng
 
         if __name__ == '__main__' and attrs.get('UI', False):
-            e_ng.color = get_color(0, timecale)
-            i_ng.color = get_color(1, timecale)
+            e_ng.color = get_color(0, timescale)
+            i_ng.color = get_color(1, timescale)
 
     SORN.set_marked_variables(attrs['ind'], info=print_info, storage_manager=sm)
     SORN.initialize(info=False)
@@ -111,7 +110,8 @@ def run(attrs={'name':'hierarchical', 'ind':[], 'N_e':900, 'TS':[1]}):
         Network_UI(SORN, label='SORN UI default setup', storage_manager=sm, group_display_count=2, reduced_layout=True).show()
 
     score = 0
-    score += train_and_generate_text(SORN, 30000, 5000, 2000, display=print_info, stdp_off=True, same_timestep_without_feedback_loop=False, steps_recovery=0, storage_manager=sm)#, steps_recovery=15000
+    plastic_steps=attrs.get('plastic', 15000)
+    score += train_and_generate_text(SORN, plastic_steps, 5000, 2000, display=print_info, stdp_off=True, same_timestep_without_feedback_loop=False, steps_recovery=0, storage_manager=sm)#, steps_recovery=15000
     #score += get_oscillation_score_hierarchical(SORN, 0, 5000)
     return score
 
@@ -135,7 +135,32 @@ if __name__ == '__main__':
     #ind = [0.6828200083021586, 0.6050826299550228, 0.27340764947165486, 0.11895670182349916, 0.09240731578767125, 0.00016169410156046727, 0.03073392425413874, 0.3144793476060314, 0.0002815704596128816, 0.22574975043865556, 0.013842493647697771, 0.37396533444265084, 0.11193287910054223, 9.52953796589554e-05, 1.1186328285166929, 0.6188618067727688, 1.4402062021072555, 0.08858786066982591, 22.846206788079957]
 
     #for i in range(10):
-    print('blub', run(attrs={'name': 'test', 'ind': ind, 'N_e': 900, 'TS': [1, 2], 'UI': True}))
+
+    #print('x', run(attrs={'name': 'x', 'ind': [], 'N_e': 900, 'TS': [1, 2, 3], 'UI': False, 'ff': True, 'fb': True, 'plastic': 30000}))
+    print('score', run(attrs={'name': 'test', 'ind': ind, 'N_e': 900, 'TS': [1, 2], 'UI': True, 'ff':True, 'fb':True}))
+
+    #print('simu')
+
+    '''
+    plastic=15000
+    for i in range(10):
+
+        print('score', run(attrs={'name': '900_1', 'ind': ind, 'N_e': 900, 'TS': [1], 'UI': False, 'ff':False, 'fb':False,'plastic':plastic}))
+        print('score', run(attrs={'name': '900,1,2', 'ind': ind, 'N_e': 900, 'TS': [1, 2], 'UI': False, 'ff':False, 'fb':False,'plastic':plastic}))
+        print('score', run(attrs={'name': '900,1,2,3', 'ind': ind, 'N_e': 900, 'TS': [1, 2, 3], 'UI': False, 'ff':False, 'fb':False,'plastic':plastic}))
+        print('score', run(attrs={'name': '900_1,1,1', 'ind': ind, 'N_e': 900, 'TS': [1, 1, 1], 'UI': False, 'ff': False, 'fb': False, 'plastic': plastic}))
+
+        print('score', run(attrs={'name': 'ff_900_1', 'ind': ind, 'N_e': 900, 'TS': [1], 'UI': False, 'ff': True, 'fb': False,'plastic':plastic}))
+        print('score', run(attrs={'name': 'ff_900,1,2', 'ind': ind, 'N_e': 900, 'TS': [1, 2], 'UI': False, 'ff': True, 'fb': False,'plastic':plastic}))
+        print('score', run(attrs={'name': 'ff_900,1,2,3', 'ind': ind, 'N_e': 900, 'TS': [1, 2, 3], 'UI': False, 'ff': True, 'fb': False,'plastic':plastic}))
+        print('score', run(attrs={'name': 'ff_900_1,1,1', 'ind': ind, 'N_e': 900, 'TS': [1, 1, 1], 'UI': False, 'ff': True, 'fb': False, 'plastic': plastic}))
+
+        print('score', run(attrs={'name': 'ff_fb_900_1', 'ind': ind, 'N_e': 900, 'TS': [1], 'UI': False, 'ff': True, 'fb': True,'plastic':plastic}))
+        print('score', run(attrs={'name': 'ff_fb_900,1,2', 'ind': ind, 'N_e': 900, 'TS': [1, 2], 'UI': False, 'ff': True, 'fb': True,'plastic':plastic}))
+        print('score', run(attrs={'name': 'ff_fb_900,1,2,3', 'ind': ind, 'N_e': 900, 'TS': [1, 2, 3], 'UI': False, 'ff': True, 'fb': True, 'plastic': plastic}))
+        print('score', run(attrs={'name': 'ff_fb_900_1,1,1', 'ind': ind, 'N_e': 900, 'TS': [1, 1, 1], 'UI': False, 'ff': True, 'fb': True, 'plastic': plastic}))
+    '''
+
 
     #print('score', run(tag='blub', ind=ind, par={'N_e': 900, 'TS': [1]}))
 

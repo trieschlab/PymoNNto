@@ -13,7 +13,7 @@ def run(tag='test', ind=[], thread_index=None):
 
 
 if __name__ == '__main__':
-    import Exploration.Evolution.Distributed_Evolution as DistEvo
+    import Exploration.Evolution.Old.Distributed_Evolution as DistEvo
     tag, ind, thread = DistEvo.parse_sys()
     score = run(tag, ind, thread)
     DistEvo.save_score(score, tag, ind, thread)

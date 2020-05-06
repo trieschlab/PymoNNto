@@ -6,7 +6,6 @@
 
 from Exploration.Visualization.Visualization_Helper import *
 
-from Exploration.StorageManager.StorageManager import *
 import matplotlib.pylab as plt
 import matplotlib as mpl
 
@@ -15,9 +14,6 @@ mpl.rcParams["savefig.directory"] = '~/Desktop/'
 from matplotlib.collections import PolyCollection
 import matplotlib.pyplot as plt
 from matplotlib import colors as mcolors
-import numpy as np
-import os
-import pickle
 import configparser
 from scipy.stats import entropy
 
@@ -137,15 +133,51 @@ if __name__ == '__main__':
         'bv_3200_single_layer_1l_exc_act_0015_inpd',
         '3200_single_layer_1l_exc_act_0015_inpd'
     ])
-    '''
 
-    plot_wrong_new_right_bar(tags=[
         '17_4_900_single',
         '17_4_900_double_ff_fb',
         '17_4_900_double_ff',
         '17_4_900_double_no_conn',
         '17_4_900_double_same_ff_fb'
+    
+        #print('score', run(attrs={'name': '900_1,1,1', 'ind': ind, 'N_e': 900, 'TS': [1,1,1], 'UI': False, 'ff': False, 'fb': False,'plastic': plastic}))
+        #print('score', run(attrs={'name': 'ff_900_1,1,1', 'ind': ind, 'N_e': 900, 'TS': [1,1,1], 'UI': False, 'ff': True, 'fb': False,'plastic': plastic}))
+        #print('score', run(attrs={'name': 'ff_fb_900_1,1,1', 'ind': ind, 'N_e': 900, 'TS': [1,1,1], 'UI': False, 'ff': True, 'fb': True,'plastic': plastic}))
+
+        #print('score', run(attrs={'name': '900_1', 'ind': ind, 'N_e': 900, 'TS': [1], 'UI': False, 'ff':False, 'fb':False,'plastic':plastic}))
+        #print('score', run(attrs={'name': '900,1,2', 'ind': ind, 'N_e': 900, 'TS': [1, 2], 'UI': False, 'ff':False, 'fb':False,'plastic':plastic}))
+        #print('score', run(attrs={'name': '900,1,2,3', 'ind': ind, 'N_e': 900, 'TS': [1, 2, 3], 'UI': False, 'ff':False, 'fb':False,'plastic':plastic}))
+        #print('score', run(attrs={'name': 'ff_900_1', 'ind': ind, 'N_e': 900, 'TS': [1], 'UI': False, 'ff': True, 'fb': False,'plastic':plastic}))
+        #print('score', run(attrs={'name': 'ff_900,1,2', 'ind': ind, 'N_e': 900, 'TS': [1, 2], 'UI': False, 'ff': True, 'fb': False,'plastic':plastic}))
+        #print('score', run(attrs={'name': 'ff_900,1,2,3', 'ind': ind, 'N_e': 900, 'TS': [1, 2, 3], 'UI': False, 'ff': True, 'fb': False,'plastic':plastic}))
+        #print('score', run(attrs={'name': 'ff_fb_900_1', 'ind': ind, 'N_e': 900, 'TS': [1], 'UI': False, 'ff': True, 'fb': True,'plastic':plastic}))
+        #print('score', run(attrs={'name': 'ff_fb_900,1,2', 'ind': ind, 'N_e': 900, 'TS': [1, 2], 'UI': False, 'ff': True, 'fb': True,'plastic':plastic}))
+        #print('score', run(attrs={'name': 'ff_fb_900,1,2,3', 'ind': ind, 'N_e': 900, 'TS': [1, 2, 3], 'UI': False, 'ff': True, 'fb': True, 'plastic': plastic}))
+
+    plot_wrong_new_right_bar(tags=[
+        '900_1,1,1',
+        'ff_900_1,1,1',
+        #'ff_fb_900_1,1,1',
+
+        '900_1',
+        '900,1,2',
+        '900,1,2,3',
+
+        'ff_900_1',
+        'ff_900,1,2',
+        'ff_900,1,2,3',
+
+
+        'ff_fb_900_1',
+        'ff_fb_900,1,2',
+        'ff_fb_900,1,2,3'
     ])
+    '''
+
+    from Exploration.StorageManager.Storage_Manager_Dir_Select_Dialog import *
+    plot_wrong_new_right_bar(tags=Storage_Manager_Dir_Select_Dialog())
+
+
 
 def plot_netsize_vs_score():
     lookup_dict = {'n_wrong_sentences': 'wrong', 'IP_Test_diffuse': 'diffuse', 'n_new': 'new', 'n_wrong': 'wrong',

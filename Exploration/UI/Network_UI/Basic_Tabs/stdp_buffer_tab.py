@@ -21,9 +21,17 @@ class stdp_buffer_tab():
         self.select_syn_box.setCurrentIndex(0)
         Network_UI.Add_element(self.select_syn_box, stretch=4)
 
+        Network_UI.Next_H_Block(stretch=0)
+        self.min_label=QLabel('???')
+        Network_UI.Add_element(self.min_label, stretch=4)
+
+        Network_UI.Next_H_Block(stretch=0)
+        self.max_label=QLabel('???')
+        Network_UI.Add_element(self.max_label, stretch=4)
+
         Network_UI.Next_H_Block(stretch=10)
 
-        grid_base_widget=QWidget()
+        grid_base_widget = QWidget()
         Network_UI.Add_element(grid_base_widget)
 
 
@@ -112,6 +120,9 @@ class stdp_buffer_tab():
         self.sensitivity_slider.setSliderPosition(50)
         Network_UI.Add_element(self.sensitivity_slider)
 
+        self.current_selector_group=None
+        self.current_selector_index_dict={}
+
     def get_shift_and_zoom(self, transform):
         zero = QtCore.QPointF(0, 0)
         p = QtCore.QPointF(1, 1)
@@ -127,13 +138,25 @@ class stdp_buffer_tab():
         if self.stdp_tab.isVisible():
             if len(Network_UI.network[Network_UI.neuron_select_group]) > 0:
                 group = Network_UI.network[Network_UI.neuron_select_group, 0]
-                syn = group.afferent_synapses[self.select_syn_box.currentText()]
-                if len(syn) > 0:
-                    indx = 0
-                    for i,s in enumerate(syn):
+                synapse_groups = group.afferent_synapses['All']
+
+                if self.current_selector_group != group:
+                    self.current_selector_group = group
+                    self.select_syn_box.clear()
+                    self.current_selector_index_dict.clear()
+                    ct=0
+                    for i,s in enumerate(synapse_groups):
                         if type(s.dst.mask) == np.ndarray and s.dst.mask[Network_UI.neuron_select_id]:
-                            indx=i
-                    syn = syn[indx]
+                            self.current_selector_index_dict[ct]=i
+                            self.select_syn_box.addItem(' '.join(s.tags))
+                            ct += 1
+
+                    #self.select_syn_box.addItems(Network_UI.transmitters)
+
+                current_select_index = self.current_selector_index_dict[self.select_syn_box.currentIndex()]
+
+                if current_select_index >= 0:
+                    syn = synapse_groups[current_select_index]
 
                     post_act = group.get_buffer(syn.dst, 'output', group.timescale)#s.dst.get_masked_dict('output_buffer_dict', neurons.timescale)
                     pre_act = group.get_buffer(syn.src, 'output', group.timescale)#s.src.get_masked_dict('output_buffer_dict', neurons.timescale)
@@ -141,12 +164,14 @@ class stdp_buffer_tab():
                     self.post_length = len(post_act)
                     self.pre_length = len(pre_act)
 
-                    sensitivity=self.sensitivity_slider.sliderPosition()/100.0*0.0001
+                    sensitivity = self.sensitivity_slider.sliderPosition()/100.0*0.0001
 
                     self.pre_img.setImage(np.rot90(pre_act, 3), levels=(0, 1))
                     self.post_img.setImage(np.rot90(post_act.transpose(), 3), levels=(0, 1))
 
                     if hasattr(syn, 'dw'):
+                        self.min_label.setText('min dW: ' + str(np.min(syn.dw)))
+                        self.max_label.setText('max dW: ' + str(np.max(syn.dw)))
                         self.syn_img.setImage(np.rot90(syn.dw, 3), levels=(-sensitivity, +sensitivity))
                     else:
                         self.syn_img.clear()

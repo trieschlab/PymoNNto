@@ -410,9 +410,6 @@ class SORN_STDP(Neuron_Behaviour):
 
 
 
-
-
-
 class SORN_SN(Neuron_Behaviour):
 
     def set_variables(self, neurons):

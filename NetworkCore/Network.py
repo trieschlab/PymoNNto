@@ -101,7 +101,7 @@ class Network(NetworkObjectBase):
 
         print('initialize tren... Neurons: ', neuron_count, '|', len(self.NeuronGroups), ' blocks, Synapses: ', sysnape_count, '|', len(self.SynapseGroups),' blocks')
 
-    def initialize(self, evo_replace_param_list=None, info=False):
+    def initialize(self, evo_replace_param_list=None, info=False, warnings=True):
 
         if info:
             self.print_net_info()
@@ -122,14 +122,21 @@ class Network(NetworkObjectBase):
         self.set_variables()
         #self.save_network_state()
 
-        self.check_unique_tags()
+        self.check_unique_tags(warnings)
 
-    def check_unique_tags(self):
+    def check_unique_tags(self,warnings=True):
         unique_tags=[]
         for ng in self.NeuronGroups:
             if ng.tags[0] in unique_tags:
-                print('Warning: NeuronGroup Tag "'+ng.tags[0]+'" already in use. The first Tag of an Object should be unique. Multiple Tags can be sperated with a "," (NeuronGroup(..., tag="tag1,tag2,..."))')
-            unique_tags.append(ng.tags[0])
+                counts=unique_tags.count(ng.tags[0])
+                new_tag=ng.tags[0]+chr(97+counts)
+                unique_tags.append(ng.tags[0])
+                if warnings:
+                    print('Warning: NeuronGroup Tag "'+ng.tags[0]+'" already in use. The first Tag of an Object should be unique and will be renamed to "'+new_tag+'". Multiple Tags can be sperated with a "," (NeuronGroup(..., tag="tag1,tag2,..."))')
+                ng.tags[0] = new_tag
+
+            else:
+                unique_tags.append(ng.tags[0])
 
         #for sg in self.SynapseGroups:
         #    if sg.tags[0] in unique_tags:
