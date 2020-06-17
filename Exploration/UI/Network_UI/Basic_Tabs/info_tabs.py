@@ -101,7 +101,10 @@ class info_tab():
             Network_UI.Next_H_Block()
             for key in group.behaviour:
                 behaviour = group.behaviour[key]
-                add_line(str(key) + ' ' + ''.join(behaviour.tags[0]), behaviour, group)
+                main_tag = ''
+                if len(behaviour.tags)>0:
+                    main_tag = behaviour.tags[0]
+                add_line(str(key) + ' ' + main_tag, behaviour, group)
                 h += 60
 
             infotab.setMaximumHeight(h)

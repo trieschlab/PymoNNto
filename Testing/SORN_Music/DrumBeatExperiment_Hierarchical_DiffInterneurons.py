@@ -9,7 +9,7 @@ from NetworkCore.Synapse_Group import *
 from Testing.Common.SORN_MusicHelper import *
 from NetworkBehaviour.Structure.Structure import *
 from Exploration.StorageManager.StorageManager import *
-from Testing.Common.SORN_visualization import *
+from Exploration.Visualization.SORN_visualization import *
 from Exploration.UI.Network_UI.Network_UI import *
 
 
@@ -65,7 +65,7 @@ def run(tag, ind=[], par={'N_e':1800, 'TS':[1]}):
             22: SORN_SN(syn_type='GLU', clip_max=None, init_norm_factor=1.0),
 
             23: SORN_IP_TI(mp='n.output_new/2.0+n.output_new_temp/2.0', h_ip='lognormal_real_mean([0.04#7], [0.2944#8])', eta_ip='[0.0006#9];+-50%', integration_length='[15#10];+-50%', clip_min=None),
-            #25: SORN_NOX(mp='self.partition_sum(n)', eta_nox='0.5;+-50%', h_dh=0.0),#0.9#0.3
+            25: SORN_NOX(mp='self.partition_sum(n)', eta_nox='0.5;+-50%', h_dh=0.0),#0.9#0.3
             26: SORN_SC_TI(h_sc='lognormal_real_mean([0.015#11], [0.2944#12])', eta_sc='[0.1#13];+-50%', integration_length='1'),
             #27: SORN_iSTDP(h_ip='same(SCTI, th)', eta_istdp='[0.0001#13]'),
 
@@ -87,6 +87,7 @@ def run(tag, ind=[], par={'N_e':1800, 'TS':[1]}):
             30: SORN_finish()
         })
 
+        '''
         EXP_NOX_CELL = NeuronGroup(net=SORN, tag='NOX Cell {}'.format(timescale), size=get_squared_dim(int(16)), behaviour={
             2: SORN_init_neuron_vars(iteration_lag=timescale, init_TH='0.04', activation_function='identity'),
             3: SORN_init_afferent_synapses(transmitter='GLU', density='full', distribution=None, normalize=True),
@@ -100,6 +101,7 @@ def run(tag, ind=[], par={'N_e':1800, 'TS':[1]}):
             #20: SORN_Refractory(factor='0.2;0.7'),
             30: SORN_finish()
         })
+        '''
 
         BA_PV = NeuronGroup(net=SORN, tag='Basket Cell {},Parvalbumin'.format(timescale), size=get_squared_dim(int(0.07 * par['N_e'])), behaviour={
             2: SORN_init_neuron_vars(iteration_lag=timescale, init_TH='0.1;+-0%'),
@@ -132,20 +134,20 @@ def run(tag, ind=[], par={'N_e':1800, 'TS':[1]}):
         MT_SOM['structure', 0].stretch_to_equal_size(PC)
         BA_PV['structure', 0].stretch_to_equal_size(PC)
         CH_PV['structure', 0].stretch_to_equal_size(PC)
-        EXP_NOX_CELL['structure', 0].stretch_to_equal_size(PC)
+        #EXP_NOX_CELL['structure', 0].stretch_to_equal_size(PC)
 
         SynapseGroup(net=SORN, src=PC, dst=PC, tag='GLU', connectivity='(s_id!=d_id)*in_box(10)', partition=True)
         SynapseGroup(net=SORN, src=PC, dst=MT_SOM, tag='GLU', connectivity='in_box(2)', partition=True)
         SynapseGroup(net=SORN, src=PC, dst=BA_PV, tag='GLU', connectivity='in_box(2)', partition=True)
         SynapseGroup(net=SORN, src=PC, dst=CH_PV, tag='GLU', connectivity='in_box(2)', partition=True)
 
-        SynapseGroup(net=SORN, src=PC, dst=EXP_NOX_CELL, tag='GLU', connectivity='in_box(3.75)', partition=True)
+        #SynapseGroup(net=SORN, src=PC, dst=EXP_NOX_CELL, tag='GLU', connectivity='in_box(3.75)', partition=True)
 
         SynapseGroup(net=SORN, src=MT_SOM, dst=PC, tag='GABA_Dendrite', connectivity='in_box(10)', partition=True)
         SynapseGroup(net=SORN, src=BA_PV, dst=PC, tag='GABA_Soma', connectivity='in_box(10)', partition=True)
         SynapseGroup(net=SORN, src=CH_PV, dst=PC, tag='GABA_AIS', connectivity='in_box(10)', partition=True)
 
-        SynapseGroup(net=SORN, src=EXP_NOX_CELL, dst=PC, tag='GABA_NOX', connectivity='in_box(3.75)', partition=True)
+        #SynapseGroup(net=SORN, src=EXP_NOX_CELL, dst=PC, tag='GABA_NOX', connectivity='in_box(3.75)', partition=True)
 
         #SynapseGroup(net=SORN, src=SOM, dst=SOM, tag='GABA_D,SOM->SOM', connectivity='(s_id!=d_id)*(np.abs(sx-dx)<=10)*(np.abs(sy-dy)<=10)', partition=True)
         #SynapseGroup(net=SORN, src=SOM, dst=PV, tag='GABA_D,SOM->PV', connectivity='(s_id!=d_id)*(np.abs(sx-dx)<=10)*(np.abs(sy-dy)<=10)', partition=True)

@@ -125,7 +125,7 @@ def run(tag='hierarchical', ind=[], par={'N_e':900, 'TS':[1]}):
 
     #Network_UI(SORN, label='SORN UI default setup', storage_manager=sm, group_display_count=2, reduced_layout=True).show()
 
-    score += train_and_generate_text(SORN, 15000, 5000, 2000, display=True, stdp_off=True, same_timestep_without_feedback_loop=False, steps_recovery=0, storage_manager=sm)#, steps_recovery=15000
+    score += train_and_generate_text(SORN, 15000, 5000, 2000, display=True, stdp_off=True, same_timestep_without_feedback_loop=True, steps_recovery=2000, storage_manager=sm)#, steps_recovery=15000
     #score += get_oscillation_score_hierarchical(SORN, 0, 5000)
     return score
 

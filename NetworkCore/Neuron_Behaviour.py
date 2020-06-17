@@ -115,6 +115,18 @@ class Neuron_Behaviour(NetworkObjectBase):
     #    return None
 
     def normalize_synapse_attr(self, src_attr, target_attr, target_value, neurons, synapse_type):
+        neurons.temp_weight_sum = neurons.get_neuron_vec()
+
+        for s in neurons.afferent_synapses[synapse_type]:
+            s.dst.temp_weight_sum += np.sum(getattr(s, src_attr), axis=1)
+
+        neurons.temp_weight_sum /= target_value
+
+        for s in neurons.afferent_synapses[synapse_type]:
+            setattr(s, target_attr, getattr(s, target_attr) / (s.dst.temp_weight_sum[:, None] + (s.dst.temp_weight_sum[:, None] == 0)))
+
+    '''
+    def normalize_synapse_attr(self, src_attr, target_attr, target_value, neurons, synapse_type):
 
         neurons.temp_weight_sum = neurons.get_neuron_vec()
 
@@ -132,6 +144,7 @@ class Neuron_Behaviour(NetworkObjectBase):
                 W.data /= np.array(neurons.temp_weight_sum[W.indices]).reshape(W.data.shape)
             else:
                 setattr(s, target_attr, getattr(s, target_attr) / (s.dst.temp_weight_sum[:, None]+(s.dst.temp_weight_sum[:, None]==0)))
+    '''
 
     def initialize_synapse_attr(self, target_attr, density, equal_range, random_range, neurons, synapse_type, all_neurons_same=False):
         for s in neurons.afferent_synapses[synapse_type]:

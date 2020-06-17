@@ -92,10 +92,16 @@ class NeuronGroup(NetworkObjectBase):
         else:
             return setattr(self, key, value)
 
-    def require_synapses(self, name):
-        if not name in self.afferent_synapses:
-            print('warning: no {} synapses found'.format(name))
+    def require_synapses(self, name, afferent=True, efferent=True, warning=True):
+        if afferent and not name in self.afferent_synapses:
+            if warning:
+                print('warning: no afferent {} synapses found'.format(name))
             self.afferent_synapses[name] = []
+
+        if efferent and not name in self.efferent_synapses:
+            if warning:
+                print('warning: no efferent {} synapses found'.format(name))
+            self.efferent_synapses[name] = []
 
     def get_neuron_vec(self):
         return self.get_nparray((self.size))

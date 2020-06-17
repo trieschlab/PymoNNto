@@ -8,6 +8,8 @@ from scp import SCPClient
 
 import zipfile
 
+
+
 def zipDir(dirPath, zipPath, filter):
     zipf = zipfile.ZipFile(zipPath , mode='w')
     lenDirPath = len(dirPath)
@@ -15,7 +17,7 @@ def zipDir(dirPath, zipPath, filter):
         for file in files:
             filter_file=False
             for f in filter:
-                if f in root or f in file:
+                if f in root or f in file+'\\':
                     filter_file = True
             if not filter_file:
                 filePath = os.path.join(root, file)
@@ -123,7 +125,8 @@ class Evolution_Server_Base:
         return result_list
 
     def open_terminal(self, evo_name):
-        os.system("start cmd.exe @cmd /k " + " ".join(self.get_open_terminal_cmd(evo_name)))
+        print(self.get_open_terminal_cmd(evo_name))
+        os.system("start "+" ".join(self.get_open_terminal_cmd(evo_name)))#start "C:/Windows/System32/WindowsPowerShell/v1.0/powershell.exe Get-Process"') # @cmd /k " + " ".join(self.get_open_terminal_cmd(evo_name))
 
     def get_open_terminal_cmd(self, evo_name):
         return 'screen -r '+evo_name
@@ -244,14 +247,14 @@ class Evolution_Server_SSH(Evolution_Server_Base):
         self.ssh_name = ssh_name
         self.ssh_pw = ssh_pw
 
-    #def ssh_wrap_cmd(self, commands):
-    #    return ["C:\\Windows\\System32\\OpenSSH\\ssh.exe", self.ssh_target, "-t", commands]
+    def ssh_wrap_cmd(self, commands):
+        return ["C:\\Windows\\System32\\OpenSSH\\ssh.exe", self.ssh_name+'@'+self.ssh_host, "-t", commands]
 
     def transfer(self, evo_name):
         #compress
 
         #shutil.make_archive(self.temp_zip_dir+evo_name, 'zip', '../../../Self-Organizing-Recurrent-Network-Simulator_Dev')
-        zipDir('../../../Self-Organizing-Recurrent-Network-Simulator_Dev/', self.temp_zip_dir+evo_name+'.zip', ['.git', '.idea', '\\StorageManager', '\\NetworkStates', '\\Evo', '\\__pycache__'])
+        zipDir('../../../Self-Organizing-Recurrent-Network-Simulator_Dev/', self.temp_zip_dir+evo_name+'.zip', ['.git', '.idea', '\\StorageManager\\', '\\NetworkStates\\', '\\Evo\\', '\\__pycache__\\', '\\midis\\'])
 
         #transfer
         #self.exec_cmd(self.get_transfer_cmd(evo_name))
@@ -281,13 +284,15 @@ class Evolution_Server_SSH(Evolution_Server_Base):
     def exec_cmd(self, cmd, shell=False, cwd=None):
         print(cmd)
 
-        ssh=self.get_ssh_connection()
-        ssh_stdin, ssh_stdout, ssh_stderr = ssh.exec_command(cmd)
-        ssh_stdout.channel.recv_exit_status()
-        result = ssh_stdout.read().decode('utf-8')
-        print(result)
-        ssh.close()
-
+        try:
+            ssh = self.get_ssh_connection()
+            ssh_stdin, ssh_stdout, ssh_stderr = ssh.exec_command(cmd)
+            ssh_stdout.channel.recv_exit_status()
+            result = ssh_stdout.read().decode('utf-8')
+            print(result)
+            ssh.close()
+        except:
+            result = ''
 
         #if type(cmd) is tuple:
         #    if len(cmd)>2:
@@ -316,14 +321,14 @@ class Evolution_Server_SSH(Evolution_Server_Base):
     #def get_remove_cmd(self, evo_name):
     #    return self.ssh_wrap_cmd(super().get_remove_cmd(evo_name))
 
-    #def get_open_terminal_cmd(self, evo_name):
-    #    return self.ssh_wrap_cmd(super().get_open_terminal_cmd(evo_name))
+    def get_open_terminal_cmd(self, evo_name):
+        return self.ssh_wrap_cmd(super().get_open_terminal_cmd(evo_name))
 
     #def get_evo_list_cmd(self):
     #    return self.ssh_wrap_cmd(super().get_evo_list_cmd())
 
     #def get_running_list_cmd(self):
-    #    return self.ssh_wrap_cmd(super().get_running_list_cmd())
+    #    return self.ssh_wrap_cmd(super().get_running_list_cmd())ssh_wrap_cmd
 
     #def get_plot_cmd(self, evo_name):
     #    return self.ssh_wrap_cmd(super().get_plot_cmd(evo_name))

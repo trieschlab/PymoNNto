@@ -131,8 +131,8 @@ class Multithreaded_Evolution(Evolution):
         #self.individual_pipelines = []
         #self.fitness_pipelines = []
 
-        #for t_i in range(self.thread_count):
-        #    self.add_process()
+        for t_i in range(thread_count):
+            self.add_process()
 
         self.remote_rendering_threads = []
 
@@ -153,7 +153,7 @@ class Multithreaded_Evolution(Evolution):
         return ready, data
 
     def get_fitnesses(self, living_individuals):
-        print()
+        #print()
         last_progress=-1
 
         #self.adjust_process_count()
@@ -212,7 +212,7 @@ class Multithreaded_Evolution(Evolution):
                 print('\rprogress: '+str(current_progress)+'%', end='')
                 last_progress = current_progress
 
-            print(fitnesses)
+            #print(fitnesses)
             time.sleep(1.0)  # 0.1
 
         return fitnesses

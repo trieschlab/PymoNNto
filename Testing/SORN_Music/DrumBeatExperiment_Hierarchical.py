@@ -8,6 +8,7 @@ from NetworkCore.Network import *
 from NetworkCore.Synapse_Group import *
 from Testing.Common.SORN_MusicHelper import *
 from NetworkBehaviour.Structure.Structure import *
+from Exploration.StorageManager.StorageManager import *
 from Exploration.Visualization.SORN_visualization import *
 
 display = False
@@ -109,14 +110,14 @@ def run(tag, ind=[], par={'N_e':[1800], 'TS':[1]}):
 
     score_spont = score_predict_train = score_predict_test = 0
 
-    #import Exploration.UI.Network_UI.Network_UI as SUI
-    #SUI.Network_UI(SORN, label='SORN UI default setup', storage_manager=sm, group_display_count=2, reduced_layout=False).show()
+    import Exploration.UI.Network_UI.Network_UI as SUI
+    SUI.Network_UI(SORN, label='SORN UI default setup', storage_manager=sm, group_display_count=2, reduced_layout=False).show()
 
-    SORN = run_plastic_phase(SORN, steps_plastic=1000000, display=True, storage_manager=sm)
+    #SORN = run_plastic_phase(SORN, steps_plastic=10000, display=True, storage_manager=sm)#1000000
 
     #print(set(np.nonzero(np.array(SORN['drum_act', 0].seen))[1]))
 
-    readout, X_train, Y_train, X_test, Y_test = train_readout(SORN, steps_train=100000, steps_test=100, source = SORN['drum_act', 0], display=True, stdp_off=True, storage_manager=sm)
+    readout, X_train, Y_train, X_test, Y_test = train_readout(SORN, steps_train=10000, steps_test=100, source = SORN['drum_act', 0], display=True, stdp_off=True, storage_manager=sm)#100000
     
     score_predict_train = get_score_predict_next_step(SORN, SORN['drum_act', 0],readout, X_train, Y_train, display=True, stdp_off=True, storage_manager=sm)
 

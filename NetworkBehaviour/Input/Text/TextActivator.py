@@ -18,7 +18,7 @@ class TextActivator_New(PatternGroup):
     def build_sentences_recurrent(self, string, blocks, result):
         if len(blocks) > 0:
             words = blocks.pop(0)
-            if len(words) is 0:
+            if len(words) == 0:
                 self.build_sentences_recurrent(string, blocks.copy(), result)
             else:
                 for word in words:
@@ -514,7 +514,7 @@ class LongDelayGrammar(TextActivator_New):
             self.valid_sentence_blocks.append([start, subject_water, what_center, what_water])
             self.valid_sentence_blocks.append([start, subject_ice, what_center, what_ice])
 
-        if 'level17' in modes or 'what' in modes:
+        if 'level17_short' in modes or 'what_short' in modes:
             what_center = ['is an animal that']
 
             what_forest = ['camouflages.']

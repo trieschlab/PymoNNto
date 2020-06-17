@@ -60,7 +60,13 @@ class DrawItem2(pg.GraphicsObject):
 
             for sg in group.afferent_synapses['GLU']:
                 theta_src, rho_src = cart2pol(sg.src.buffer_posx, sg.src.buffer_posy)
-                attractorx, attractory = pol2cart(theta_src, rho_src*0.9)
+
+                if hasattr(group, 'timescale'):
+                    step_factor = np.power(0.9, group.timescale)
+                else:
+                    step_factor = 0.9
+
+                attractorx, attractory = pol2cart(theta_src, rho_src * step_factor)
 
                 theta_dst, rho_dst = cart2pol(sg.dst.buffer_posx, sg.dst.buffer_posy)
                 rd = np.array(attractor_rads)[:, None]-rho_dst[None, :]
@@ -126,8 +132,8 @@ class DrawItem2(pg.GraphicsObject):
         for x, y in zip(group.buffer_posx[inv_mask], group.buffer_posy[inv_mask]):
             painter.drawEllipse(QtCore.QPointF(x, y), neuron_size, neuron_size)
 
-        painter.setPen(pg.mkPen(color=(255,255,255,50)))
-        painter.setBrush(pg.mkBrush(color=(255,255,255,50)))
+        painter.setPen(pg.mkPen(color=(0,255,0,150)))
+        painter.setBrush(pg.mkBrush(color=(0,255,0,150)))
         for x, y in zip(group.buffer_posx[mask], group.buffer_posy[mask]):
             painter.drawEllipse(QtCore.QPointF(x, y), neuron_size, neuron_size)
 
@@ -316,7 +322,7 @@ class sun_gravity_plot_tab():
 
             self.sl2 = QSlider(1)
             self.sl2.setMinimum(0)
-            self.sl2.setMaximum(1000)
+            self.sl2.setMaximum(3000)
             self.sl2.setSliderPosition(100)
             self.sl2.label = QLabel('Anti gravity:')
             Network_UI.Add_element(self.sl2.label)

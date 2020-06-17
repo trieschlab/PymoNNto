@@ -68,7 +68,7 @@ class individual_weight_tab():
             self.listWidget.clear()
             for i, s in enumerate(group.afferent_synapses["All"]):
                 new_id = np.where(s.dst.id == self.neuron_index)[0]
-                if len(new_id) > 0:
+                if len(new_id) > 0 and hasattr(s,'W'):
                     new_id = new_id[0]
                     syn_count = len(s.W[new_id,:][s.enabled[new_id,:]])
                     if syn_count > 0:

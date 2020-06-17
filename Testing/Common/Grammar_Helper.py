@@ -2,6 +2,47 @@ import numpy as np
 from NetworkBehaviour.Recorder.Recorder import *
 from Testing.Common.Classifier_Helper import *
 
+def max_source_act_text(network, steps):
+
+    source = network['grammar_act', 0]
+    alphabet = source.alphabet
+    alphabet_length = len(alphabet)
+
+    result_text = ''
+
+    for i in range(steps):
+        network.simulate_iteration()
+        char_act = np.zeros(alphabet_length)
+
+        for ng in network['prediction_source']:
+            recon = ng.Input_Weights.transpose().dot(ng.output)
+            char_act += recon
+
+        char = source.index_to_char(np.argmax(char_act))
+        result_text += char
+
+    return result_text
+
+
+def predict_text_max_source_act(network, steps_plastic, steps_recovery, steps_spont, display=True, stdp_off=True):
+    network.simulate_iterations(steps_plastic, 100, measure_block_time=display)
+
+    if stdp_off:
+        network.deactivate_mechanisms('STDP')
+
+    network['grammar_act', 0].active = False
+
+    network.simulate_iterations(steps_recovery, 100, measure_block_time=display)
+
+    text = max_source_act_text(network, steps_spont)
+
+    network['grammar_act', 0].active = True
+
+    if stdp_off:
+        network.activate_mechanisms('STDP')
+
+    return text
+
 def predict_char(linear_model, input_neuron_groups, inp_param_name):
     compiled_inp_param_name=compile(inp_param_name, '<string>', 'eval')
     inputs = [eval(compiled_inp_param_name) for n in input_neuron_groups]

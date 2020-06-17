@@ -153,7 +153,10 @@ class SynapseGroup(NetworkObjectBase):
         #print(self.src.size, self.src.x.shape, self.src.y.shape, self.src.z.shape)
 
         for i in range(self.dst.size):
-            mask = self.enabled[i]
+            if type(self.enabled) is np.ndarray:
+                mask = self.enabled[i]
+            else:
+                mask = self.enabled
 
             if np.sum(mask)>0:
                 x = self.dst.x[i]

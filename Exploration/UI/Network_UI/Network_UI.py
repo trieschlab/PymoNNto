@@ -11,7 +11,7 @@ from Exploration.UI.Network_UI.Tabs.sidebar_grammar_module import *
 from Exploration.UI.Network_UI.Basic_Tabs.sidebar_fast_forward_module import *
 from Exploration.UI.Network_UI.Basic_Tabs.sidebar_save_load_module import *
 from Exploration.UI.Network_UI.Basic_Tabs.multi_group_plot_tab import *
-from Exploration.UI.Network_UI.Tabs.buffer_tab import *
+from Exploration.UI.Network_UI.Tabs.chain_tab import *
 from Exploration.UI.Network_UI.Basic_Tabs.hist_tab import *
 from Exploration.UI.Network_UI.Basic_Tabs.info_tabs import *
 from Exploration.UI.Network_UI.Basic_Tabs.single_group_plot_tab import *
@@ -28,12 +28,14 @@ from Exploration.UI.Network_UI.Basic_Tabs.afferent_syn_attr_plot_tab import *
 from Exploration.UI.Network_UI.Basic_Tabs.individual_weight_tab import *
 from Exploration.UI.Network_UI.Tabs.sun_gravity_plot_tab import *
 from Exploration.UI.Network_UI.Basic_Tabs.stdp_buffer_tab import *
+from Exploration.UI.Network_UI.Basic_Tabs.criticality_tab import *
+from Exploration.UI.Network_UI.Basic_Tabs.buffer_tab import *
 
 default_modules = [
     UI_sidebar_activity_module(1),
     multi_group_plot_tab(['output', 'TH', 'weight_norm_factor', 'nox', 'refractory_counter']),
     spiketrain_tab(parameter='output'),
-    weight_tab(weight_attr='W'),
+    weight_tab(weight_attrs=['W', 'W_temp', 'W_stable']),
     stdp_buffer_tab(),
     partition_tab(),
     sun_gravity_plot_tab(),
@@ -42,10 +44,12 @@ default_modules = [
     sidebar_grammar_module(),
     sidebar_music_module(),
     sidebar_drumbeat_module(),
+    chain_tab(),
     buffer_tab(),
     individual_weight_tab(),
     #reconstruction_tab(),
     hist_tab(),
+    criticality_tab(),
     single_group_plot_tab({'activity':(0, 0, 0), 'excitation':(0, 0, 255), 'inhibition':(255, 0, 0), 'input_act':(255, 0, 255), 'TH':(0, 255, 0)}),
     stability_tab(parameter='output'),
     scatter_tab(x_var='excitation', y_var='inhibition'),
@@ -179,6 +183,22 @@ class Network_UI(UI_Base):
             image = upscale(img*255, 10)
             self.storage_manager.save_frame(image, key)
 
+    def get_selected_neuron_subgroup(self):
+        syn_sgs = self.get_selected_synapses()
+        if len(syn_sgs) > 0:
+            return syn_sgs[0]
+        else:
+            return None
+
+    def get_selected_synapses(self):
+        result = []
+        if len(self.network[self.neuron_select_group]) > 0:
+            group = self.network[self.neuron_select_group, 0]
+            synapse_groups = group.afferent_synapses['All']
+            for i, s in enumerate(synapse_groups):
+                if (type(s.dst.mask) == np.ndarray and s.dst.mask[self.neuron_select_id]) or (type(s.dst.mask) is bool and s.dst.mask == True):
+                    result.append(synapse_groups[i].dst)
+        return result
 
     def get_combined_syn_mats(self, synapses, neuron_id=None, attr='W'):
         results = {}
@@ -239,7 +259,7 @@ class Network_UI(UI_Base):
 
 
 def get_color(type_index, layer):
-    dim_value = max(layer * 0.7, 1.0)
+    dim_value = max(layer * 0.9, 1.0)
 
     if type_index == 0:
         return (0.0, 0.0, 255.0 / dim_value, 255.0)

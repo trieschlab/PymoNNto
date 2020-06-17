@@ -6,9 +6,9 @@ import numpy as np
 
 from Exploration.Visualization.Reconstruct_Analyze_Label.Reconstruct_Analyze_Label import *
 
-class buffer_tab():
+class chain_tab():
 
-    def __init__(self, title='Buffer'):
+    def __init__(self, title='Chain'):
         self.title = title
 
     def add_recorder_variables(self, neuron_group, Network_UI):
@@ -16,7 +16,7 @@ class buffer_tab():
 
     def initialize(self, Network_UI):
         if Network_UI.network['grammar_act', 0] is not None:
-            self.buffertab = Network_UI.Next_Tab(self.title)
+            self.chaintab = Network_UI.Next_Tab(self.title)
 
             alphabet = Network_UI.network['grammar_act'][0].alphabet
             a_list = [alphabet[i] for i in range(len(alphabet))]
@@ -80,7 +80,7 @@ class buffer_tab():
 
 
     def update(self, Network_UI):
-        if Network_UI.network['grammar_act', 0] is not None and self.buffertab.isVisible() and hasattr(self, "nodes"):
+        if Network_UI.network['grammar_act', 0] is not None and self.chaintab.isVisible() and hasattr(self, "nodes"):
             group = Network_UI.network['prediction_source', 0]
 
             pos = np.array(self.nodes, dtype=float)

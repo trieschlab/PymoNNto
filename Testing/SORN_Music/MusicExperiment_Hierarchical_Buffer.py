@@ -8,7 +8,7 @@ from NetworkCore.Synapse_Group import *
 from Testing.Common.SORN_MusicHelper import *
 from NetworkBehaviour.Structure.Structure import *
 from Exploration.StorageManager.StorageManager import *
-from Testing.Common.SORN_visualization import *
+from Exploration.Visualization.SORN_visualization import *
 
 
 display = False

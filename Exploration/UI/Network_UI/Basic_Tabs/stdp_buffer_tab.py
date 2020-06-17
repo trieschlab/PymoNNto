@@ -139,14 +139,16 @@ class stdp_buffer_tab():
             if len(Network_UI.network[Network_UI.neuron_select_group]) > 0:
                 group = Network_UI.network[Network_UI.neuron_select_group, 0]
                 synapse_groups = group.afferent_synapses['All']
+                #print(synapse_groups)
 
                 if self.current_selector_group != group:
                     self.current_selector_group = group
                     self.select_syn_box.clear()
                     self.current_selector_index_dict.clear()
+                    self.current_selector_index_dict[-1]=-1
                     ct=0
                     for i,s in enumerate(synapse_groups):
-                        if type(s.dst.mask) == np.ndarray and s.dst.mask[Network_UI.neuron_select_id]:
+                        if (type(s.dst.mask) == np.ndarray and s.dst.mask[Network_UI.neuron_select_id]) or (type(s.dst.mask) is bool and s.dst.mask==True):
                             self.current_selector_index_dict[ct]=i
                             self.select_syn_box.addItem(' '.join(s.tags))
                             ct += 1

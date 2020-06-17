@@ -98,7 +98,7 @@ class DrumBeatActivator(PatternGroup):
         dataset = []
         coordinates = []
 
-        if which_tracks is not 'all':
+        if which_tracks != 'all':
 
             # read tracks from list which_tracks
             with open(os.path.join(path, file)) as tsvfile:

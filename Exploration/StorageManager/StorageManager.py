@@ -21,7 +21,18 @@ def get_data_folder():
 
 class StorageManager:
 
+    def dict_to_folder_name(self, dict):
+        result = ''
+        for k, v in dict.items():
+            if result != '':
+                result += '_'
+            result += str(k).replace(' ', '')+'='+str(v).replace(' ', '')
+        return result
+
     def __init__(self, main_folder_name, folder_name=None, random_nr=False, print_msg=True, add_new_when_exists=True):
+
+        if type(main_folder_name) is dict:
+            main_folder_name = self.dict_to_folder_name(main_folder_name)
 
         storage_manager_folder = get_data_folder()+'/StorageManager/'
 

@@ -207,10 +207,10 @@ class EVO_UI(UI_Base):
                     import_file = evo_server.Class_Select_Combo_Box.currentText()
                     mutation = evo_server.mutation_edit.text()
                     distributed = evo_server.distributed_evo_cb.isChecked()
-                    thread_count = evo_server.N_e_edit.text()
+                    thread_count = evo_server.thread_count_edit.text()
                     ind_count = evo_server.ind_count_edit.text()
 
-                    N_e = evo_server.thread_count_edit.text()
+                    N_e = evo_server.N_e_edit.text()
                     TS = evo_server.TS_edit.text()
 
                     evo_server.execute(evo_name, ['name='+evo_name, 'max_individual_count='+ind_count, 'thread_count='+thread_count, 'individuals='+individuals, 'import_file='+import_file, 'mutation='+str(mutation), 'distributed='+str(distributed), 'N_e='+N_e, 'TS='+TS])

@@ -80,6 +80,10 @@ def plot_wrong_new_right_bar(tags=[]):
     plt.show()
 
 if __name__ == '__main__':
+
+    from Exploration.StorageManager.Storage_Manager_Dir_Select_Dialog import *
+    plot_wrong_new_right_bar(tags=Storage_Manager_Dir_Select_Dialog())
+
     '''
     plot_wrong_new_right_bar(tags=[
         'bv_900_single_layer_1l_exc_act',
@@ -174,8 +178,7 @@ if __name__ == '__main__':
     ])
     '''
 
-    from Exploration.StorageManager.Storage_Manager_Dir_Select_Dialog import *
-    plot_wrong_new_right_bar(tags=Storage_Manager_Dir_Select_Dialog())
+
 
 
 

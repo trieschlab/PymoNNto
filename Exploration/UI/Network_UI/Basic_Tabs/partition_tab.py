@@ -64,8 +64,9 @@ class DrawItem(pg.GraphicsObject):
         for x,y in zip(group.x, group.y):
             painter.drawEllipse(QtCore.QPointF(x+30, y), 0.4, 0.4)
 
-        for x,y in zip(sub_sgs[0].src.BaseNeuronGroup.x,sub_sgs[0].src.BaseNeuronGroup.y):
-            painter.drawEllipse(QtCore.QPointF(x-30, y), 0.4, 0.4)
+        if len(sub_sgs)>0:
+            for x,y in zip(sub_sgs[0].src.BaseNeuronGroup.x,sub_sgs[0].src.BaseNeuronGroup.y):
+                painter.drawEllipse(QtCore.QPointF(x-30, y), 0.4, 0.4)
 
         for i, key in enumerate(blocks):
             for sg in blocks[key]:

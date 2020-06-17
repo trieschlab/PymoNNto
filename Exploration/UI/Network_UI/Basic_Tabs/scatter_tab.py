@@ -27,6 +27,7 @@ class scatter_tab():
         for i, _ in enumerate(Network_UI.neuron_visible_groups):
             spi = pg.ScatterPlotItem()
             self.scatter_items.append(spi)
+
             p.addItem(spi)
             #Network_UI.Next_H_Block()
 

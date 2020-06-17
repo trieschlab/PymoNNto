@@ -56,7 +56,7 @@ class sidebar_grammar_module():
             self.text = []
 
             def train_click(event):
-                Network_UI.network.deactivate_mechanisms('STDP')
+                #Network_UI.network.deactivate_mechanisms('STDP')
 
                 #Network_UI.network.recording_off()
 
@@ -89,7 +89,7 @@ class sidebar_grammar_module():
 
                 #Network_UI.network.recording_on()
 
-                Network_UI.network.activate_mechanisms('STDP')
+                #Network_UI.network.activate_mechanisms('STDP')
 
                 self.input_select_box.setCurrentIndex(1)
 
