@@ -17,6 +17,8 @@ from matplotlib import colors as mcolors
 import configparser
 from scipy.stats import entropy
 
+import numpy as np
+
 
 def wrong_new_rigt_bar_comparison(tag, x,h,w,l,e,c):
 
@@ -79,106 +81,176 @@ def plot_wrong_new_right_bar(tags=[]):
 
     plt.show()
 
+def plot_wrong_new_right_graph(tags=[]):
+
+    x = []
+    w = []
+    ws = []
+    r = []
+    rs = []
+    n = []
+    ns = []
+
+    for i, t in enumerate(tags):
+        wrong_percentages = []
+        right_percentages = []
+        new_percentages = []
+
+        smg = StorageManagerGroup(t)
+
+        for sm in smg.StorageManagerList:
+            n_output_sentences = sm.load_param('n_output_sentences')
+            n_wrong_sentences = sm.load_param('n_wrong_sentences')
+            n_new_sentences = sm.load_param('n_new_sentences')
+            n_right_sentences = sm.load_param('n_right_sentences')
+
+            if n_output_sentences is not None and n_wrong_sentences is not None and n_new_sentences is not None and n_right_sentences is not None:
+                wrong_percentages.append(n_wrong_sentences / n_output_sentences)
+                right_percentages.append(n_new_sentences / n_output_sentences)
+                new_percentages.append(n_right_sentences / n_output_sentences)
+
+        x.append(i+1)
+        w.append(np.average(wrong_percentages))
+        ws.append(np.std(wrong_percentages))
+
+        r.append(np.average(right_percentages))
+        rs.append(np.std(right_percentages))
+
+        n.append(np.average(new_percentages))
+        ns.append(np.std(new_percentages))
+
+        #_, yp1 = add_bar('w', np.average(wrong_percentages), np.std(wrong_percentages), 'red')
+        #xp, yp2 = add_bar('n', np.average(right_percentages), np.std(right_percentages), 'yellow')
+        #_, yp3 = add_bar('r', np.average(new_percentages), np.std(new_percentages), 'green')
+
+    x=np.array(x)*10000
+
+    plt.plot(x, w, label='wrong')
+    plt.fill_between(x, np.array(w) - np.array(ws), np.array(w) + np.array(ws), alpha=0.2)
+    plt.plot(x, r, label='right')
+    plt.fill_between(x, np.array(r) - np.array(rs), np.array(r) + np.array(rs), alpha=0.2)
+    plt.plot(x, n, label='new')
+    plt.fill_between(x, np.array(n) - np.array(ns), np.array(n) + np.array(ns), alpha=0.2)
+
+    plt.legend(loc='best', frameon=False, fontsize=20)
+
+    plt.show()
+
+
+def comp_plot(tags=[]):
+
+    x = [0]
+    h = [0]
+    w = [0]
+    l = ['']
+    e = [0]
+    c = ['white']
+
+    sv = []
+    xsv = []
+
+    fig, axs = plt.subplots(4)
+    fig.suptitle('Learning performance - Singular values - Wilting-Priesmann r values - Average activity')
+
+    train_s = 5000
+    eval_s = 1000
+
+    #component_image = np.zeros((100,900))
+
+    for i, t in enumerate(tags):
+        wrong_new_rigt_bar_comparison(t, x, h, w, l, e, c)
+
+        for _ in range(2):
+            x.append(x[-1]+1)
+            h.append(0)
+            w.append(0)
+            l.append('')
+            e.append(0)
+            c.append('white')
+
+        smg = StorageManagerGroup(t)
+
+        #.load_param('n_output_sentences')
+
+        singular_values = smg.StorageManagerList[0].load_np('singluar_values')
+        sv.append(singular_values)
+        xsv.append((i+1)*(train_s+eval_s))
+
+
+
+
+        r_k = smg.StorageManagerList[0].load_np('r_k')
+        x_p=np.arange(len(r_k))*30+i*(train_s+eval_s)
+        axs[2].scatter(x_p, r_k, s=1)
+
+        axs[2].set_xticklabels([])
+
+        #axs[2].set_xticks(x, np.arange(len(x)))
+
+
+        mean_act = smg.StorageManagerList[0].load_np('act_exc')
+        axs[3].plot(np.arange(len(mean_act))+i*(train_s+eval_s), mean_act, linewidth=1)
+
+        axs[1].axvline(i * (train_s + eval_s) + train_s)
+        axs[1].axvline(i * (train_s + eval_s) + train_s + eval_s)
+
+        axs[3].axvline(i * (train_s + eval_s) + train_s)
+        axs[3].axvline(i * (train_s + eval_s) + train_s + eval_s)
+
+
+        axs[1].axvspan(i * (train_s + eval_s), i * (train_s + eval_s) + train_s, facecolor='red', alpha=0.1)
+        axs[1].axvspan(i * (train_s + eval_s), i * (train_s + eval_s) + train_s + eval_s, facecolor='green', alpha=0.1)
+
+        axs[3].axvspan(i * (train_s + eval_s), i * (train_s + eval_s) + train_s, facecolor='red', alpha=0.1)
+        axs[3].axvspan(i * (train_s + eval_s), i * (train_s + eval_s) + train_s + eval_s, facecolor='green', alpha=0.1)
+
+        #for sm in smg.StorageManagerList:
+        #    n_output_sentences = sm.load_param('n_output_sentences')
+
+
+        components = smg.StorageManagerList[0].load_np('components')
+
+        #component_image=np.concatenate([component_image, np.zeros((100, 900)), np.abs(components)*10], axis=0)
+
+
+
+    axs[0].bar(x, h, w, tick_label=l, yerr=e, color=c)
+    axs[1].plot(xsv, sv)
+    axs[1].scatter([0],[0], s=0)
+
+    axs[0].set_xlabel('wrong new right sentences')
+    axs[0].set_ylabel('share')
+
+    axs[1].set_xlabel('timesteps')
+    axs[1].set_ylabel('singular values')
+
+    axs[2].set_xlabel('delta t (1-150 blocks)')
+    axs[2].set_ylabel('correlation coefficient (wilting priesmann)')
+
+    axs[3].set_xlabel('timesteps')
+    axs[3].set_ylabel('average excitatory neuron activity')
+
+    #axs[3].plot(xsv, sv)
+
+    #plt.bar(x, h, w, tick_label=l, yerr=e, color=c)
+
+    plt.show()
+
+    plt.imshow(components.transpose(), cmap=plt.get_cmap('gray'), interpolation='nearest', aspect='auto')
+
+    plt.xlabel('component vectors')
+    plt.ylabel('neurons')
+
+    plt.show()
+
+
+
 if __name__ == '__main__':
 
     from Exploration.StorageManager.Storage_Manager_Dir_Select_Dialog import *
-    plot_wrong_new_right_bar(tags=Storage_Manager_Dir_Select_Dialog())
-
-    '''
-    plot_wrong_new_right_bar(tags=[
-        'bv_900_single_layer_1l_exc_act',
-        'bv_1600_single_layer_1l_exc_act',
-        'bv_1600_two_layer_1l_exc_act',
-        'bv_3200_single_layer_1l_exc_act',
-
-        'xps_900_single_layer_1l_exc_act',
-        'xps_1600_single_layer_1l_exc_act',
-        'xps_1600_two_layer_1l_exc_act',
-        'xps_3200_single_layer_1l_exc_act',
-
-        '900_single_layer_1l_exc_act',
-        '1600_single_layer_1l_exc_act',
-        '1600_two_layer_1l_exc_act',
-        '3200_single_layer_1l_exc_act'
-        
-        'bv_900_single_layer_1l_exc_act',
-        'xps_900_single_layer_1l_exc_act',
-        '900_single_layer_1l_exc_act',
-
-        'xps_1600_single_layer_1l_exc_act',
-        'bv_1600_single_layer_1l_exc_act',
-        '1600_single_layer_1l_exc_act',
-
-        'xps_1600_two_layer_1l_exc_act',
-        'bv_1600_two_layer_1l_exc_act',
-        '1600_two_layer_1l_exc_act',
-
-        'xps_3200_single_layer_1l_exc_act',
-        'bv_3200_single_layer_1l_exc_act',
-        '3200_single_layer_1l_exc_act',
-    ])
-    '''
-    '''
-    plot_wrong_new_right_bar(tags=[
-
-        'bv_900_single_layer_1l_exc_act_0015_inpd',
-        'xps_900_single_layer_1l_exc_act_0015_inpd',
-        '900_single_layer_1l_exc_act_0015_inpd',
-
-        'xps_1600_single_layer_1l_exc_act_0015_inpd',
-        'bv_1600_single_layer_1l_exc_act_0015_inpd',
-        '1600_single_layer_1l_exc_act_0015_inpd',
-
-        'xps_1600_two_layer_1l_exc_act_0015_inpd',
-        'bv_1600_two_layer_1l_exc_act_0015_inpd',
-        '1600_two_layer_1l_exc_act_0015_inpd',
-
-        'xps_3200_single_layer_1l_exc_act_0015_inpd',
-        'bv_3200_single_layer_1l_exc_act_0015_inpd',
-        '3200_single_layer_1l_exc_act_0015_inpd'
-    ])
-
-        '17_4_900_single',
-        '17_4_900_double_ff_fb',
-        '17_4_900_double_ff',
-        '17_4_900_double_no_conn',
-        '17_4_900_double_same_ff_fb'
-    
-        #print('score', run(attrs={'name': '900_1,1,1', 'ind': ind, 'N_e': 900, 'TS': [1,1,1], 'UI': False, 'ff': False, 'fb': False,'plastic': plastic}))
-        #print('score', run(attrs={'name': 'ff_900_1,1,1', 'ind': ind, 'N_e': 900, 'TS': [1,1,1], 'UI': False, 'ff': True, 'fb': False,'plastic': plastic}))
-        #print('score', run(attrs={'name': 'ff_fb_900_1,1,1', 'ind': ind, 'N_e': 900, 'TS': [1,1,1], 'UI': False, 'ff': True, 'fb': True,'plastic': plastic}))
-
-        #print('score', run(attrs={'name': '900_1', 'ind': ind, 'N_e': 900, 'TS': [1], 'UI': False, 'ff':False, 'fb':False,'plastic':plastic}))
-        #print('score', run(attrs={'name': '900,1,2', 'ind': ind, 'N_e': 900, 'TS': [1, 2], 'UI': False, 'ff':False, 'fb':False,'plastic':plastic}))
-        #print('score', run(attrs={'name': '900,1,2,3', 'ind': ind, 'N_e': 900, 'TS': [1, 2, 3], 'UI': False, 'ff':False, 'fb':False,'plastic':plastic}))
-        #print('score', run(attrs={'name': 'ff_900_1', 'ind': ind, 'N_e': 900, 'TS': [1], 'UI': False, 'ff': True, 'fb': False,'plastic':plastic}))
-        #print('score', run(attrs={'name': 'ff_900,1,2', 'ind': ind, 'N_e': 900, 'TS': [1, 2], 'UI': False, 'ff': True, 'fb': False,'plastic':plastic}))
-        #print('score', run(attrs={'name': 'ff_900,1,2,3', 'ind': ind, 'N_e': 900, 'TS': [1, 2, 3], 'UI': False, 'ff': True, 'fb': False,'plastic':plastic}))
-        #print('score', run(attrs={'name': 'ff_fb_900_1', 'ind': ind, 'N_e': 900, 'TS': [1], 'UI': False, 'ff': True, 'fb': True,'plastic':plastic}))
-        #print('score', run(attrs={'name': 'ff_fb_900,1,2', 'ind': ind, 'N_e': 900, 'TS': [1, 2], 'UI': False, 'ff': True, 'fb': True,'plastic':plastic}))
-        #print('score', run(attrs={'name': 'ff_fb_900,1,2,3', 'ind': ind, 'N_e': 900, 'TS': [1, 2, 3], 'UI': False, 'ff': True, 'fb': True, 'plastic': plastic}))
-
-    plot_wrong_new_right_bar(tags=[
-        '900_1,1,1',
-        'ff_900_1,1,1',
-        #'ff_fb_900_1,1,1',
-
-        '900_1',
-        '900,1,2',
-        '900,1,2,3',
-
-        'ff_900_1',
-        'ff_900,1,2',
-        'ff_900,1,2,3',
-
-
-        'ff_fb_900_1',
-        'ff_fb_900,1,2',
-        'ff_fb_900,1,2,3'
-    ])
-    '''
-
-
+    #plot_wrong_new_right_bar(tags=Storage_Manager_Dir_Select_Dialog())
+    #plot_wrong_new_right_graph(tags=Storage_Manager_Dir_Select_Dialog())
+    comp_plot(tags=Storage_Manager_Dir_Select_Dialog())
 
 
 

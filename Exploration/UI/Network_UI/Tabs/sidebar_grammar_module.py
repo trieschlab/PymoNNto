@@ -56,6 +56,10 @@ class sidebar_grammar_module():
             self.text = []
 
             def train_click(event):
+
+                item = pg.InfiniteLine(pos=Network_UI.network.iteration, movable=False, angle=90)
+                self.wnr_plot.addItem(item)
+
                 #Network_UI.network.deactivate_mechanisms('STDP')
 
                 #Network_UI.network.recording_off()
@@ -95,6 +99,13 @@ class sidebar_grammar_module():
 
                 print('training_finished')
 
+                item = pg.InfiniteLine(pos=Network_UI.network.iteration, movable=False, angle=90)
+                self.wnr_plot.addItem(item)
+
+                item = pg.InfiniteLine(pos=Network_UI.network.iteration+1000, movable=False, angle=90)
+                self.wnr_plot.addItem(item)
+
+
             if self.next_p:
                 self.pred_text_label = QLabel(Network_UI.main_window)
                 Network_UI.Add_Sidebar_Element(self.pred_text_label, stretch=0.2)
@@ -111,6 +122,22 @@ class sidebar_grammar_module():
                 self.pred_simu_text = list(self.pred_simu_text_label.text())
                 self.pred_simu_text_label.setToolTip('classifiers prediction for current timestep')
 
+            self.wnr_tab = Network_UI.Next_Tab('WNR')
+
+            btn = QPushButton('train')
+            btn.mousePressEvent = train_click
+            Network_UI.Add_element(btn)
+
+            _, self.wnr_bar_plot = Network_UI.Add_plot_curve('Wrong/New/Right Sentences', True, False, legend=False,x_label='', y_label='')
+
+            Network_UI.Next_H_Block()
+
+            self.wrong_s = []
+            self.new_s = []
+            self.right_s = []
+            self.iteration_list = []
+            self.wnr_curves, self.wnr_plot = Network_UI.Add_plot_curve('Wrong/New/Right Sentences', True, False, number_of_curves=3, legend=False, x_label='', y_label='', colors=['r', (255,150,0), 'g'])
+
 
 
     def update(self, Network_UI):
@@ -121,18 +148,18 @@ class sidebar_grammar_module():
             grammar_act = Network_UI.network['grammar_act', 0]
 
             if grammar_act is not None:
-                self.inp_text_label.setText('I: ' + ''.join(self.text))
+                self.inp_text_label.setText('I: ' + ''.join(self.text[-self.text_length:]))
                 if self.readout_simu is not None:
                     symbol_simu = predict_char(self.readout_simu, Network_UI.network['prediction_source'], 'n.output')
                     char = grammar_act.index_to_char(symbol_simu)
                     self.pred_simu_text += char
-                    self.pred_simu_text_label.setText('PC: ' + ''.join(self.pred_simu_text))
+                    self.pred_simu_text_label.setText('PC: ' + ''.join(self.pred_simu_text[-self.text_length:]))
 
                 if self.readout is not None:
                     symbol = predict_char(self.readout, Network_UI.network['prediction_source'], 'n.output')
                     char = grammar_act.index_to_char(symbol)
                     self.pred_text += char
-                    self.pred_text_label.setText('PN: ' + ''.join(self.pred_text))
+                    self.pred_text_label.setText('PN: ' + ''.join(self.pred_text[-self.text_length:]))
 
                 if self.input_select_box.currentText() == 'Prediction':
                     if self.readout is not None:
@@ -148,7 +175,42 @@ class sidebar_grammar_module():
                 else:
                     self.text.append('|')
 
-            if len(self.text) > self.text_length: self.text.pop(0)
-            if len(self.pred_text) > self.text_length: self.pred_text.pop(0)
-            if len(self.pred_simu_text) > self.text_length: self.pred_simu_text.pop(0)
+
+            if Network_UI.network.iteration%10 and self.wnr_tab.isVisible():
+                score_info = grammar_act.get_text_score(''.join(self.pred_text))
+
+                n_sentences = score_info['n_output_sentences']
+                if n_sentences>0:
+                    w = score_info['n_wrong_sentences']/n_sentences
+                    n = score_info['n_new_sentences']/n_sentences
+                    r = score_info['n_right_sentences']/n_sentences
+
+                    self.wrong_s.append(w)
+                    self.new_s.append(n)
+                    self.right_s.append(r)
+                    self.iteration_list.append(Network_UI.network.iteration)
+
+                    self.wnr_curves[0].setData(self.iteration_list, self.wrong_s)
+                    self.wnr_curves[1].setData(self.iteration_list, self.new_s)
+                    self.wnr_curves[2].setData(self.iteration_list, self.right_s)
+
+                    self.wnr_bar_plot.clear()
+                    self.wnr_bar_item = pg.BarGraphItem(x=[1, 2, 3], height=[w, n, r], width=0.6, brushes=['r', (255,150,0), 'g'])
+                    self.wnr_bar_plot.addItem(self.wnr_bar_item)
+
+                #self.isi_plt.clear()
+                #y, x = np.histogram(SpikeTrain_ISI(self.neuron_act_data), bins=15)
+                #curve = pg.PlotCurveItem(x, y, stepMode=True, fillLevel=0, brush=Network_UI.neuron_select_color)
+                #self.isi_plt.addItem(curve)
+
+                #if len(self.wrong_s) > 1000: self.wrong_s.pop(0)
+                #if len(self.new_s) > 1000: self.new_s.pop(0)
+                #if len(self.right_s) > 1000: self.right_s.pop(0)
+                #if len(self.iteration_list) > 1000: self.iteration_list.pop(0)
+
+            if len(self.text) > 1000: self.text.pop(0)
+            if len(self.pred_text) > 1000: self.pred_text.pop(0)
+            if len(self.pred_simu_text) > 1000: self.pred_simu_text.pop(0)
+
+
 

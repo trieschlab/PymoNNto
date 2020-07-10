@@ -5,12 +5,9 @@ import sys
 
 
 def getXY(output_recorders, out_param_name, input_recorder, inp_param_name, start, end, XYshift=0, learn_shift=1):#todo XYshift -1 ...
-    #print('act', start+XYshift, end-learn_shift)
-    #print('in', learn_shift+start, end-XYshift)
     inputs = [rec[out_param_name, 0, 'np'][start+XYshift:end-learn_shift] for rec in output_recorders]
     X = np.concatenate(inputs, axis=1)
     Y = input_recorder[inp_param_name, 0, 'np'][learn_shift+start:end-XYshift].T.astype(int)
-    #print(X.shape, Y.shape)
     return X, Y
 
 def remove_lag(X, Y, lag):
@@ -29,6 +26,7 @@ def train_same_step(output_recorders, out_param_name, input_recorders, inp_param
     return lg.fit(X_train, Y_train)
 
 def train(output_recorders, out_param_name, input_recorder, inp_param_name, start, end, lag=1):
+
     X_train, Y_train = getXY(output_recorders, out_param_name, input_recorder, inp_param_name, start, end, XYshift=lag-1, learn_shift=lag)
     X_train, Y_train= remove_lag(X_train, Y_train, lag)
     if sys.version_info[1]>5:#3.5...

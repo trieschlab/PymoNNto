@@ -1,6 +1,8 @@
-import numpy as np
 from NetworkBehaviour.Recorder.Recorder import *
 from Testing.Common.Classifier_Helper import *
+
+from Exploration.Analysis.PCA import *
+from Exploration.Analysis.WiltingPriesemann import *
 
 def max_source_act_text(network, steps):
 
@@ -92,12 +94,13 @@ def get_simu_sequence(SORN, prediction_neuron_groups, output_param_name, readout
         result += source.index_to_char(symbol)
     return result
 
-def train_and_generate_text(SORN, steps_plastic, steps_train, steps_spont, steps_recovery=0, display=True, stdp_off=True, storage_manager=None, same_timestep_without_feedback_loop=False):
+def train_and_generate_text(SORN, steps_plastic, steps_train, steps_spont, steps_recovery=0, display=True, stdp_off=True, storage_manager=None, same_timestep_without_feedback_loop=False, return_key='total_score'):
     #exc_neuron_tag, output_recorder_tag, input_recorder_tag
     #'main_exc_group', 'exc_out_rec', 'inp_rec'
 
     #SORN.clear_recorder()
-    SORN.simulate_iterations(steps_plastic, 100, measure_block_time=display)#, disable_recording=True
+    if steps_plastic>0:
+        SORN.simulate_iterations(steps_plastic, 100, measure_block_time=display)#, disable_recording=True
 
     if stdp_off:
         SORN.deactivate_mechanisms('STDP')
@@ -109,15 +112,48 @@ def train_and_generate_text(SORN, steps_plastic, steps_train, steps_spont, steps
 
     SORN.simulate_iterations(steps_train, 100, measure_block_time=display)
 
+
     if same_timestep_without_feedback_loop:
         readout_layer = train_same_step(SORN['prediction_rec'], 'n.output', SORN['index_rec', 0], 'n.pattern_index', 0, steps_train)  # train
     else:
         readout_layer = train(SORN['prediction_rec'], 'n.output', SORN['index_rec', 0], 'n.pattern_index', 0, steps_train, lag=1)  # steps_plastic, steps_plastic + steps_readout
 
-    #SORN.clear_recorder(['prediction_rec', 'index_rec'])
-    #SORN.deactivate_mechanisms(['prediction_rec', 'index_rec'])
-    SORN.remove_behaviours_from_neuron_groups(SORN['prediction_source'], tags=['prediction_rec'])
-    SORN.remove_behaviours_from_neuron_groups(SORN['text_input_group'], tags=['index_rec'])
+
+    ###########################################################
+    ###########################################################
+    ###########################################################
+
+    additional_info=False
+
+    if additional_info:
+        act = SORN['prediction_rec', 0]['n.output', 0, 'np']
+
+        mean_act_1 = np.mean(act, axis=1)
+
+        print(mean_act_1.shape)
+
+        group_mr_A = MR_estimation([mean_act_1], 1, 150)
+
+        #storage_manager.save_np('act_inh', SORN['prediction_rec', 1]['n.output', 0, 'np'])
+
+        storage_manager.save_np('r_k', group_mr_A['r_k'])
+        storage_manager.save_param('branching_ratio', group_mr_A['branching_ratio'])
+
+        singluar_values, components, explained_variance, explained_variance_ratio = get_activity_singular_values_and_components(act)
+
+        storage_manager.save_np('singluar_values', singluar_values)
+        storage_manager.save_np('components', components)
+        storage_manager.save_np('explained_variance', explained_variance)
+        storage_manager.save_np('explained_variance_ratio', explained_variance_ratio)
+
+        #print(singluar_values)
+        #print(components.shape, components)
+
+    ###########################################################
+    ###########################################################
+    ###########################################################
+
+
 
     #SORN.recording_off()
 
@@ -131,6 +167,15 @@ def train_and_generate_text(SORN, steps_plastic, steps_train, steps_spont, steps
 
     SORN['grammar_act', 0].active = True
 
+    if additional_info:
+        mean_act=np.mean(SORN['prediction_rec', 0]['n.output', 0, 'np'], axis=1)
+        storage_manager.save_np('act_exc', mean_act)
+    #SORN.clear_recorder(['prediction_rec', 'index_rec'])
+    #SORN.deactivate_mechanisms(['prediction_rec', 'index_rec'])
+    SORN.remove_behaviours_from_neuron_groups(SORN['prediction_source'], tags=['prediction_rec'])
+    SORN.remove_behaviours_from_neuron_groups(SORN['text_input_group'], tags=['index_rec'])
+
+
     #if display:
     print(spont_output)
     SORN.recording_on()
@@ -143,4 +188,4 @@ def train_and_generate_text(SORN, steps_plastic, steps_train, steps_spont, steps
     if storage_manager is not None:
         storage_manager.save_param_dict(score_dict)
 
-    return score_dict['total_score']
+    return score_dict[return_key]

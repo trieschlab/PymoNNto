@@ -27,9 +27,16 @@ def run(attrs={'name':'hierarchical', 'ind':[], 'N_e':900, 'TS':[1], 'ff':True, 
 
     #grammar mode: what level17_short simple
 
-    source = FDTGrammarActivator_New(tag='grammar_act', random_blocks=True, input_density=0.015)#15/par['N_e']#.plot_char_input_statistics()#output_size=par['N_e']#15
+    #source = FDTGrammarActivator_New(tag='grammar_act', random_blocks=True, input_density=0.015)#15/par['N_e']#.plot_char_input_statistics()#output_size=par['N_e']#15
     #print(len(source.alphabet))
-    #source = LongDelayGrammar(tag='grammar_act', output_size=attrs['N_e'], random_blocks=True, mode=['level17_short'], input_density=0.015)#.print_test()#.plot_char_input_statistics()#10/par['N_e']
+    source = LongDelayGrammar(tag='grammar_act', output_size=attrs['N_e'], random_blocks=True, mode=['level17_short'], input_density=0.015)#.print_test()#.plot_char_input_statistics()#10/par['N_e']
+
+    #source = SingleWordGrammar(tag='grammar_act', output_size=attrs['N_e'], random_blocks=True, input_density=0.015)
+
+    #print(source.print_test())
+
+    #print([t for t in source.get_all_grammar_transitions() if len(t)==2])
+
     #source.plot_char_input_statistics()
     #print(len(source.alphabet))
     #source = Line_Patterns(tag='image_act', group_possibility=1.0, grid_width=30, grid_height=30, center_x=list(range(30)), center_y=30 / 2, degree=90, line_length=60)
@@ -56,7 +63,7 @@ def run(attrs={'name':'hierarchical', 'ind':[], 'N_e':900, 'TS':[1], 'ff':True, 
             22: SORN_SN(syn_type='GLU', clip_max=None, behaviour_norm_factor=1.0),
             #22.1: SORN_SN(syn_type='GLU_same', clip_max=None, behaviour_norm_factor=0.6),
             #22.2: SORN_SN(syn_type='GLU_ff', clip_max=None, behaviour_norm_factor=0.25),
-            #22.3: SORN_SN(syn_type='GLU_fb', clip_max=None, behaviour_norm_factor=0.25),
+            #22.3: SORN_SN(syn_type='GLU_fb', clip_max=None, behaviour_norm_factor=0.25),7z
 
             23: SORN_IP_TI(h_ip='lognormal_real_mean([0.04#6], [0.2944#7])', eta_ip='[0.0006#8];+-50%', integration_length='[15#18];+-50%', clip_min=None),#30          #, gap_percent=10 #30;+-50% #0.0003 #np.mean(n.output_new)
             25: SORN_NOX(mp='self.partition_sum(n)', eta_nox='[0.5#9];+-50%'),
@@ -88,8 +95,7 @@ def run(attrs={'name':'hierarchical', 'ind':[], 'N_e':900, 'TS':[1], 'ff':True, 
         SynapseGroup(net=SORN, src=i_ng, dst=e_ng, tag='GABA', connectivity='in_box(10)', partition=True)
         SynapseGroup(net=SORN, src=i_ng, dst=i_ng, tag='GABA', connectivity='(s_id!=d_id)*in_box(10)', partition=True)
 
-        #i_ng.add_behaviour(10, SORN_external_input(strength=1.0, pattern_groups=[source]))
-        e_ng.add_behaviour(9, SORN_external_input(strength=1.0, pattern_groups=[source]))
+
 
         if layer > 0:
             if attrs.get('ff', True):#forward synapses
@@ -98,6 +104,9 @@ def run(attrs={'name':'hierarchical', 'ind':[], 'N_e':900, 'TS':[1], 'ff':True, 
             if attrs.get('fb', False):#backward synapses
                 SynapseGroup(net=SORN, src=e_ng, dst=last_e_ng, tag='GLU,GLU_fb', connectivity='in_box(10)', partition=True)#.partition([10, 10], [partition, partition])
                 #SynapseGroup(net=SORN, src=e_ng, dst=last_i_ng, tag='GABA', connectivity='in_box(10)', partition=True)#.partition([5, 5], [2, 2])
+        #else:
+            # i_ng.add_behaviour(10, SORN_external_input(strength=1.0, pattern_groups=[source]))
+        e_ng.add_behaviour(9, SORN_external_input(strength=1.0, pattern_groups=[source]))
 
         last_e_ng = e_ng
         last_i_ng = i_ng
@@ -112,11 +121,17 @@ def run(attrs={'name':'hierarchical', 'ind':[], 'N_e':900, 'TS':[1], 'ff':True, 
     ###################################################################################################################
 
     if __name__ == '__main__' and attrs.get('UI', False):
-        Network_UI(SORN, label='SORN UI default setup', storage_manager=sm, group_display_count=2, reduced_layout=True).show()
+        Network_UI(SORN, label='SORN UI default setup', storage_manager=sm, group_display_count=2, reduced_layout=False).show()
+
+
 
     score = 0
-    plastic_steps=attrs.get('plastic', 15000)
-    score += train_and_generate_text(SORN, plastic_steps, 5000, 3000, display=print_info, stdp_off=True, same_timestep_without_feedback_loop=False, steps_recovery=0, storage_manager=sm)
+    plastic_steps = attrs.get('plastic', 20000)
+
+    for i in range(1):
+        sm = StorageManager(attrs['name']+'[{:03d}]'.format(i+1), random_nr=True, print_msg=print_info)
+        sm.save_param_dict(attrs)
+        score += train_and_generate_text(SORN, plastic_steps, 5000, 1000, display=print_info, stdp_off=False, same_timestep_without_feedback_loop=False, steps_recovery=0, storage_manager=sm)#5000, 3000 stdp_off=True
 
     #score += get_oscillation_score_hierarchical(SORN, 0, 5000)
     #print(predict_text_max_source_act(SORN, plastic_steps, 1000, 2000))
@@ -127,6 +142,10 @@ def run(attrs={'name':'hierarchical', 'ind':[], 'N_e':900, 'TS':[1], 'ff':True, 
 
 if __name__ == '__main__':
     ind = []
+
+    #ind = [1.1385839161773175, 0.4073146769613646, 0.13587912708168629, 0.1965291172296534, 0.07661149836598065, 0.00020840216060054014, 0.07123856635243955, 0.2384422002962631, 0.0004180627654563409, 0.4077163066752066, 0.014568544114246046, 0.28286016600695146, 0.10256707760821504, 8.728311353819638e-05, 0.834274750010592, 0.5473748796671416, 1.9849892656147436, 0.07268689716650815, 17.333978531296722]
+
+    #ind = [0.783046250138997, 0.43558491916386505, 0.27221561385258014, 0.16964231336668145, 0.07919219556785047, 0.00017165173047783107, 0.06491120339899444, 0.24323564948178908, 0.0004506839958001859, 0.603570600116428, 0.010327904873102926, 0.27765418598000813, 0.09265882959260471, 0.00012054062555343568, 0.7752008835575164, 0.8265310969678688, 1.7787116863931238, 0.09004420081400137, 22.43755849738225]
 
     #[0, 0, 0.1383, 0.1698, 0.1, 0.00015, 0.04, 0.2944, 0.0006, 0.5, 0.015, 0.2944, 0.1, 0.0001, 0.87038, 0.82099, 1.5,
     # 0.08, 15.0]
@@ -147,10 +166,10 @@ if __name__ == '__main__':
 
     #print('x', run(attrs={'name': 'x', 'ind': [], 'N_e': 900, 'TS': [1, 2, 3], 'UI': False, 'ff': True, 'fb': True, 'plastic': 30000}
 
-    for i in range(5):
-        print('score', run(attrs={'name': 'Single_2200_30k', 'ind': ind, 'N_e': 2200, 'TS': [1], 'UI': False, 'ff': True, 'fb': True, 'plastic': 30000}))#1600
+    #for i in range(1):
+    #    print('score', run(attrs={'name': 'full_[1,4]_1600_10ksteps', 'ind': ind, 'N_e': 1600, 'TS': [1,4], 'UI': False, 'ff': True, 'fb': True, 'plastic': 10000}))#1600#2200
 
-    #print('score', run(attrs={'name': 'test', 'ind': ind, 'N_e': 1600, 'TS': [1, 4, 8], 'UI': False, 'ff':True, 'fb':True,'plastic':20000}))
+    print('score', run(attrs={'name': 'abc', 'ind': ind, 'N_e': 1400, 'TS': [1], 'UI': True, 'ff':True, 'fb':True,'plastic':10000}))
 
     #print('simu')
 
@@ -173,16 +192,6 @@ if __name__ == '__main__':
         print('score', run(attrs={'name': 'ff_fb_900_1,1,1', 'ind': ind, 'N_e': 900, 'TS': [1, 1, 1], 'UI': False, 'ff': True, 'fb': True, 'plastic': plastic}))
     '''
 
-
-    #print('score', run(tag='blub', ind=ind, par={'N_e': 900, 'TS': [1]}))
-
     # 23: SORN_IP_TI(mp='output_new', h_ip='lognormal_real_mean([0.04#6], [0.2944#7])', eta_ip='[0.0004#8];+-45.4%', integration_length=0, gap_percent=10, clip_min=None),
     # 24: SORN_diffuse_IP(mp='output_new', h_dh='same(IPTI, th)', eta_dh='[0.0002#9]', integration_length=0, gap_percent=0, clip_min=None),
 
-    #while True:
-    #    for N_e in [300, 600, 900, 1200, 1500, 1800, 2100]:
-
-    #import Exploration.Evolution.Distributed_Evolution as DistEvo
-    #tag, ind = DistEvo.parse_sys(ind=ind)
-    #score = run(tag, ind)
-    #DistEvo.save_score(score, tag, ind)

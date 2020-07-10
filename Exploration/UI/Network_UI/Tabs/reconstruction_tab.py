@@ -137,7 +137,7 @@ class reconstruction_tab():
             RALN = Reconstruct_Analyze_Label_Network(Network_UI.network)
             RALN.zero_recon()
             for ng in Network_UI.network.NeuronGroups:
-                ng.recon = ng.output_new.copy()
+                ng.recon = ng.output.copy()
             RALN.propagation('W', 10, 'backward', 'forget', 'all', temporal_recon_groups=Network_UI.network['prediction_source'], exponent=4, normalize=True, filter_weakest_percent=40.0)  # forget
 
             source = Network_UI.network['grammar_act', 0]
@@ -181,8 +181,6 @@ class reconstruction_tab():
                         m = (np.max(res) + np.max(res[y, :])) / 2.0
                         if m == 0:
                             m = 1.0
-
-                        print()
 
                         val = 255 - np.clip(int((res[y, x] - (np.mean(res[y, :]) / 2.0)) / m * 255.0), 0, None)
                         self.net_labels[x][y].setText('<font color=' + ('#%02x%02x%02x' % (val, val, val)).upper() + '>' + self.net_labels[x][y].char.replace(' ','_') + '</font>')

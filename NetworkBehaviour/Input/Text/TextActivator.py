@@ -199,6 +199,24 @@ class TextActivator_New(PatternGroup):
         else:
             return None
 
+    def add_to_dict(self, d, key):
+        if key not in d:
+            d[key] = 1
+        else:
+            d[key] += 1
+
+    def get_all_grammar_transitions(self):
+        transitions = {'. ':len(self.corpus_blocks)}
+
+        for sentence in self.corpus_blocks:
+            sl = len(sentence)
+            for start in range(sl):
+                for end in range(start+2, sl+1):
+                    self.add_to_dict(transitions, sentence[start:end])
+
+        return list(transitions.keys())
+
+
     def get_text_score(self, spont_output):
         result = {}
         result['output_text'] = spont_output
@@ -214,10 +232,20 @@ class TextActivator_New(PatternGroup):
         else:
             result['%_different_transitions'] = 0.0
 
+
+        result['transition_score'] = 0
+        transitions = self.get_all_grammar_transitions()
+        lso = len(spont_output)
+        for transition in transitions:
+            found = spont_output.count(transition)
+            all_ct = lso-len(transition)
+            if all_ct>0:
+                result['transition_score'] += np.sqrt(found)/all_ct/10
+
         #words and sentences
         output_sentences = self.split_text_into_sentences(spont_output)
-        if len(output_sentences)>2:
-            output_sentences=output_sentences[1:-1]
+        if len(output_sentences) > 2:
+            output_sentences = output_sentences[1:-1]
 
         result['n_output_sentences'] = len(output_sentences)
         result['n_wrong_sentences'] = 0
@@ -232,15 +260,11 @@ class TextActivator_New(PatternGroup):
         result['unique_sentences'] = {}
         result['wrong_sentences'] = {}
 
-        def add_to_dict(d, key):
-            if key not in d:
-                d[key] = 1
-            else:
-                d[key] += 1
+
 
         for sentence in output_sentences:
 
-            add_to_dict(result['unique_sentences'], sentence)
+            self.add_to_dict(result['unique_sentences'], sentence)
 
             words_in_sentence = self.split_text_into_words(sentence)
             result['n_words'] += len(words_in_sentence)
@@ -251,18 +275,18 @@ class TextActivator_New(PatternGroup):
                     wrong = True
                     result['n_wrong_words'] += 1
                 else:
-                    add_to_dict(result['right_words'], word)
+                    self.add_to_dict(result['right_words'], word)
 
             if sentence not in self.corpus_blocks:
                 if not wrong:
                     result['n_new_sentences'] += 1
-                    add_to_dict(result['new_sentences'], sentence)
+                    self.add_to_dict(result['new_sentences'], sentence)
                 else:
                     result['n_wrong_sentences'] += 1
-                    add_to_dict(result['wrong_sentences'], sentence)
+                    self.add_to_dict(result['wrong_sentences'], sentence)
             else:
                 result['n_right_sentences'] += 1
-                add_to_dict(result['right_sentences'], sentence)
+                self.add_to_dict(result['right_sentences'], sentence)
 
         result['n_right_words'] = result['n_words'] - result['n_wrong_words']
 
@@ -286,7 +310,7 @@ class TextActivator_New(PatternGroup):
         ns_count = np.array(list(result['new_sentences'].values()))
         result['new_sentences_square_score'] = np.sum(np.sqrt(ns_count))/len(self.corpus_blocks)/10
 
-        result['total_score'] = (result['%_different_transitions'] + result['right_word_square_score'] + result['right_sentences_square_score'])/3
+        result['total_score'] = (result['%_different_transitions'] + result['right_word_square_score'] + result['right_sentences_square_score'] + result['transition_score'])/3
 
         #with open('obj/'+ name + '.pkl', 'wb') as f:
         #    pickle.dump(result, f, pickle.HIGHEST_PROTOCOL)
@@ -441,6 +465,10 @@ class FDTGrammarActivator_New(TextActivator_New):
         result['n_wrong'] = sum(wrong_dict.values())
         return result
 
+class SingleWordGrammar(TextActivator_New):
+
+    def get_text_blocks(self):
+        return [' fox.', ' whale.', ' bird.']#, ' penguin.'
 
 class LongDelayGrammar(TextActivator_New):
 

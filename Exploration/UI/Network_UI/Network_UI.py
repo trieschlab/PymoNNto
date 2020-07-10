@@ -30,6 +30,7 @@ from Exploration.UI.Network_UI.Tabs.sun_gravity_plot_tab import *
 from Exploration.UI.Network_UI.Basic_Tabs.stdp_buffer_tab import *
 from Exploration.UI.Network_UI.Basic_Tabs.criticality_tab import *
 from Exploration.UI.Network_UI.Basic_Tabs.buffer_tab import *
+from Exploration.UI.Network_UI.Basic_Tabs.PCA_tab import *
 
 default_modules = [
     UI_sidebar_activity_module(1),
@@ -38,16 +39,17 @@ default_modules = [
     weight_tab(weight_attrs=['W', 'W_temp', 'W_stable']),
     stdp_buffer_tab(),
     partition_tab(),
+    PCA_tab(),
     sun_gravity_plot_tab(),
     afferent_syn_attr_plot_tab(syn_vars=['slow_add', 'fast_add']),
     sidebar_image_module(),
     sidebar_grammar_module(),
     sidebar_music_module(),
     sidebar_drumbeat_module(),
-    chain_tab(),
+    #chain_tab(),
     buffer_tab(),
     individual_weight_tab(),
-    #reconstruction_tab(),
+    reconstruction_tab(),
     hist_tab(),
     criticality_tab(),
     single_group_plot_tab({'activity':(0, 0, 0), 'excitation':(0, 0, 255), 'inhibition':(255, 0, 0), 'input_act':(255, 0, 255), 'TH':(0, 255, 0)}),
@@ -122,6 +124,7 @@ class Network_UI(UI_Base):
         self.modules = modules
 
         for module in self.modules:
+            print('Initialize:', module)
             module.initialize(self)
 
         for group_tag in group_tags:

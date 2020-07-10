@@ -237,16 +237,16 @@ def args_to_param_dict(add=[]):
 
 if __name__ == '__main__':
 
-    params = args_to_param_dict(['name=default_evo_name','evolution=True', 'N_e=900', 'TS=[1]', 'print=False'])
+    params = args_to_param_dict(['name=default_evo_name','evolution=True', 'N_e=1400', 'TS=[1]', 'print=False', 'UI=False', 'ff=True', 'fb=True','plastic=20000'])
 
     name = params.get('name', None)
     import_file = params.get('import_file', 'Testing.SORN_Grammar.GrammarExperiment_Hierarchical')
     mutation = params.get('mutation', 0.05)
-    distributed = params.get('distributed', True)
+    distributed = params.get('distributed', False)
     max_individual_count = params.get('max_individual_count', 30)
-    thread_count = params.get('thread_count', 4)
+    thread_count = params.get('thread_count', 5)
     func_name = params.get('func_name', 'run')
-    individuals = params.get('individuals',[[0.95, 0.4, 0.1383, 0.1698, 0.1, 0.00015, 0.04, 0.2944, 0.0006, 0.5, 0.015, 0.2944, 0.1, 0.0001, 0.87038, 0.82099, 1.5, 0.08, 15.0]])
+    individuals = params.get('individuals', [[0.95, 0.4, 0.1383, 0.1698, 0.1, 0.00015, 0.04, 0.2944, 0.0006, 0.5, 0.015, 0.2944, 0.1, 0.0001, 0.87038, 0.82099, 1.5, 0.08, 15.0],[1.1385839161773175, 0.4073146769613646, 0.13587912708168629, 0.1965291172296534, 0.07661149836598065, 0.00020840216060054014, 0.07123856635243955, 0.2384422002962631, 0.0004180627654563409, 0.4077163066752066, 0.014568544114246046, 0.28286016600695146, 0.10256707760821504, 8.728311353819638e-05, 0.834274750010592, 0.5473748796671416, 1.9849892656147436, 0.07268689716650815, 17.333978531296722]])
     if type(individuals[0]) is not list:
         individuals = [individuals]
 

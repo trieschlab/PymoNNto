@@ -1,16 +1,8 @@
-from PyQt5 import QtCore
-from PyQt5.QtGui import *
 from PyQt5.QtWidgets import *
 import pyqtgraph as pg
-import numpy as np
-
-import powerlaw as pl
-
-import Exploration.UI.Network_UI.Basic_Tabs.Helper.WiltingPriesemann as WP
 
 from Exploration.Visualization.Visualization_Helper import *
 
-import matplotlib.pyplot as plt
 
 class criticality_tab():
 
@@ -29,7 +21,7 @@ class criticality_tab():
             Network_UI.add_recording_variable(neuron_group, 'n.' + self.param, timesteps=self.timesteps)
         if hasattr(neuron_group, self.param):
             self.sum_tag='np.sum(n.'+self.param+')'
-            Network_UI.add_recording_variable(neuron_group, self.sum_tag, timesteps=5000)
+            Network_UI.add_recording_variable(neuron_group, self.sum_tag, timesteps=1000)
 
     def initialize(self, Network_UI):
         self.criticality_tab = Network_UI.Next_Tab(self.title)
@@ -60,11 +52,13 @@ class criticality_tab():
         self.group_estimate=pg.PlotCurveItem(pen=(255,0,0))
         self.group_m_text = pg.TextItem(text='...', anchor=(0, 0))
         self.group_m_text.setPos(75, 0.5)
+        self.group_test_text = pg.TextItem(text='...', anchor=(0, 0))
+        self.group_test_text.setPos(75, 0.4)
 
         self.group_branche_estimate_plt.addItem(self.group_scatter)
         self.group_branche_estimate_plt.addItem(self.group_estimate)
         self.group_branche_estimate_plt.addItem(self.group_m_text)
-
+        self.group_branche_estimate_plt.addItem(self.group_test_text)
 
         _, self.net_branche_estimate_plt = Network_UI.Add_plot_curve('Network Wilting Branching Estimate', True, False, number_of_curves=2, legend=False, x_label='delta t', y_label='Autocorrelation r delta t')
 
@@ -72,23 +66,25 @@ class criticality_tab():
         self.net_estimate=pg.PlotCurveItem(pen=(255,0,0))
         self.net_m_text = pg.TextItem(text='...', anchor=(0, 0))
         self.net_m_text.setPos(75, 0.5)
+        self.net_test_text = pg.TextItem(text='...', anchor=(0, 0))
+        self.net_test_text.setPos(75, 0.4)
 
         self.net_branche_estimate_plt.addItem(self.net_scatter)
         self.net_branche_estimate_plt.addItem(self.net_estimate)
         self.net_branche_estimate_plt.addItem(self.net_m_text)
+        self.net_branche_estimate_plt.addItem(self.net_test_text)
 
-
-
-
-        #def on_click(event):
-        #    self.update_branching(Network_UI, Network_UI.network[Network_UI.neuron_select_group, 0])
+        self.WP_test_execute = False
+        def on_click(event):
+            self.WP_test_execute = True
+            #self.update_branching(Network_UI, Network_UI.network[Network_UI.neuron_select_group, 0])
             #self.log = not self.log
             #self.avalance_size_plot.setLogMode(self.log, self.log)
             #self.avalance_duration_plot.setLogMode(self.log, self.log)
 
-        #btn = QPushButton()
-        #btn.mousePressEvent = on_click
-        #Network_UI.Add_element(btn)
+        btn = QPushButton('WP Test')
+        btn.mousePressEvent = on_click
+        Network_UI.Add_element(btn)
 
         Network_UI.Next_H_Block(stretch=0.1)
 
@@ -100,9 +96,44 @@ class criticality_tab():
         self.min_slider.setToolTip('slide to cut away smallest slopes')
         Network_UI.Add_element(self.min_slider)  # , stretch=0.1
 
+        self.WP_init = False
+        self.WPT_init = False
+
+    def button_update(self, Network_UI, group):
+        if self.WP_test_execute:
+            self.WP_test_execute = False
+
+            #if self.WPT_init:
+            import Exploration.Analysis.WP_testing as WPT
+            import mrestimator as mre
+            #self.WPT_init = True
+
+            group_A_t = group[self.sum_tag, 0, 'np'].copy()  # [-1000:]
+            net_A_t = np.sum(Network_UI.network[self.sum_tag], axis=0)  # np.swapaxes(, 0, 1)#
+
+            rk, ft, (counts, bins) = WPT.branching_ratio(group_A_t, 1)
+            expoffset_fit = mre.fit(rk, fitfunc=mre.f_exponential_offset)
+            test1 = WPT.h_offset(ft, expoffset_fit)
+            test2 = WPT.h_tau(ft, expoffset_fit)
+            test3 = WPT.h_lin(rk, ft)
+            print(str(test1)+' '+str(test2)+' '+str(test3))
+
+            rk, ft, (counts, bins) = WPT.branching_ratio(net_A_t, 1)
+            expoffset_fit = mre.fit(rk, fitfunc=mre.f_exponential_offset)
+            test1 = WPT.h_offset(ft, expoffset_fit)
+            test2 = WPT.h_tau(ft, expoffset_fit)
+            test3 = WPT.h_lin(rk, ft)
+            print(str(test1)+' '+str(test2)+' '+str(test3))
+
+
 
     def update_branching(self, Network_UI, group):
-        group_A_t = group[self.sum_tag, 0, 'np'].copy()#[-1000:]
+
+        #if not self.WP_init:
+        import Exploration.Analysis.WiltingPriesemann as WP
+        #self.WP_init = True
+
+        group_A_t = group[self.sum_tag, 0, 'np'].copy()[-1000:]
 
         net_A_t = np.sum(Network_UI.network[self.sum_tag], axis=0)#np.swapaxes(, 0, 1)#
 
@@ -217,7 +248,7 @@ class criticality_tab():
         if self.criticality_tab.isVisible():
 
             group = Network_UI.network[Network_UI.neuron_select_group, 0]
-            n=group#for eval comand
+            n = group#for eval comand
 
             if self.mask_param is not None and hasattr(group, self.mask_param):
                 input_mask = eval(self.compiled_param)
@@ -226,7 +257,7 @@ class criticality_tab():
             else:
                 input_mask = False
                 not_input_mask = True
-                mca = (0,0,0)
+                mca = (0, 0, 0)
 
             net_color_input = np.clip([group.color[0] + mca[0], group.color[1] + mca[1], group.color[2] + mca[2], 255], 0, 255)
 
@@ -235,6 +266,7 @@ class criticality_tab():
                 self.update_Mean_Activity(Network_UI, group, input_mask, not_input_mask, net_color_input)
                 self.update_avalanche_distributions(Network_UI, group)
                 self.update_branching(Network_UI, group)
+                self.button_update(Network_UI, group)
 
 
 

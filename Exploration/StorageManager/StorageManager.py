@@ -46,7 +46,7 @@ class StorageManager:
             folder_name = main_folder_name
 
         self.folder_name = folder_name
-        if type(random_nr)==bool and random_nr:
+        if type(random_nr) == bool and random_nr:
             self.folder_name += str(int(np.random.rand() * 10000))
         if type(random_nr) == int:
             self.folder_name += str(random_nr)
