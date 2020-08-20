@@ -94,7 +94,7 @@ class SORN_init_afferent_synapses(Neuron_Behaviour):
         else:
             print('invalid density mode')
 
-        self.group_weighting = self.get_init_attr('group_weighting', False, neurons)
+        self.group_weighting = self.get_init_attr('group_weighting', False, neurons)#each group can be weighted individually with a unique parameter (s.group_weighting)
 
         for s in neurons.afferent_synapses[self.transmitter]:
             if self.group_weighting == False:
@@ -103,8 +103,7 @@ class SORN_init_afferent_synapses(Neuron_Behaviour):
                 weighting = s.get_synapse_group_size_factor(s, self.transmitter)#todo test
 
             if partition_compensation:
-                pc = s.src.group_without_subGroup().size/s.src.size
-                weighting *= pc
+                weighting *= s.src.group_without_subGroup().size/s.src.size
 
             if density_mode == 'syn_count':
                density = base_density/s.src.size
@@ -394,7 +393,7 @@ class SORN_generate_output(Neuron_Behaviour):#has to be executed AFTER intra, in
 
         neurons.rnd_act_factor = self.get_init_attr('rnd_act_factor', None, neurons)  # sigma
 
-        neurons.get_buffer = get_buffer
+        #neurons.get_buffer = get_buffer
 
     def new_iteration(self, neurons):
         if last_cycle_step(neurons):
@@ -594,7 +593,6 @@ class SORN_STDP(Neuron_Behaviour):
 
                 s.dw = neurons.eta_stdp * (dw_pre_post+dw_post_pre) * s.enabled# * (neurons.timescale)
 
-
                 setattr(s, self.weight_attr, getattr(s, self.weight_attr)+s.dw)
 
                 #W = getattr(s, self.weight_attr)[:]
@@ -615,6 +613,7 @@ class SORN_Refractory_Digital(Neuron_Behaviour):
             neurons.refractory_counter_digital *= self.factor
             neurons.refractory_counter_digital += neurons.output
 
+
 class SORN_Refractory_Analog(Neuron_Behaviour):
 
     def set_variables(self, neurons):
@@ -627,6 +626,7 @@ class SORN_Refractory_Analog(Neuron_Behaviour):
             neurons.refractory_counter_analog *= self.factor
             neurons.refractory_counter_analog += neurons.output
 
+
 class SORN_SN(Neuron_Behaviour):
 
     def set_variables(self, neurons):
@@ -635,17 +635,33 @@ class SORN_SN(Neuron_Behaviour):
 
         neurons.require_synapses(self.syn_type, warning=False)#suppresses error when synapse group does not exist
 
+        self.clip_min = self.get_init_attr('clip_min', None, neurons)
         self.clip_max = self.get_init_attr('clip_max', None, neurons)
+
+        self.only_positive_synapses = self.get_init_attr('only_positive_synapses', True, neurons)
+        if self.only_positive_synapses:
+            self.clip_min = self.get_init_attr('clip_min', 0.0, neurons)
+
         self.behaviour_norm_factor = self.get_init_attr('behaviour_norm_factor', 1.0, neurons)
         neurons.weight_norm_factor = neurons.get_neuron_vec()+self.get_init_attr('neuron_norm_factor', 1.0, neurons)
 
     def new_iteration(self, neurons):
         if last_cycle_step(neurons):
-            for s in neurons.afferent_synapses[self.syn_type]:
-                s.W[s.W < 0.0] = 0.0
+            if self.only_positive_synapses:
+                for s in neurons.afferent_synapses[self.syn_type]:
+                    s.W[s.W < 0.0] = 0.0
+
             self.normalize_synapse_attr('W', 'W', neurons.weight_norm_factor*self.behaviour_norm_factor, neurons, self.syn_type)
-            for s in neurons.afferent_synapses[self.syn_type]:
-                s.W = np.clip(s.W, 0, self.clip_max)
+
+            if self.clip_max is not None:
+                for s in neurons.afferent_synapses[self.syn_type]:
+                    s.W[s.W > self.clip_max] = self.clip_max
+
+            if self.clip_min is not None:
+                for s in neurons.afferent_synapses[self.syn_type]:
+                    s.W[s.W < self.clip_min] = self.clip_min
+
+                #s.W = np.clip(s.W, 0, self.clip_max)
 
 
 class SORN_iSTDP(Neuron_Behaviour):

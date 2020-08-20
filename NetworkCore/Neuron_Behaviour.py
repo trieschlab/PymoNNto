@@ -118,7 +118,7 @@ class Neuron_Behaviour(NetworkObjectBase):
         neurons.temp_weight_sum = neurons.get_neuron_vec()
 
         for s in neurons.afferent_synapses[synapse_type]:
-            s.dst.temp_weight_sum += np.sum(getattr(s, src_attr), axis=1)
+            s.dst.temp_weight_sum += np.sum(np.abs(getattr(s, src_attr)), axis=1)
 
         neurons.temp_weight_sum /= target_value
 

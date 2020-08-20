@@ -112,12 +112,13 @@ def train_and_generate_text(SORN, steps_plastic, steps_train, steps_spont, steps
 
     SORN.simulate_iterations(steps_train, 100, measure_block_time=display)
 
-
     if same_timestep_without_feedback_loop:
         readout_layer = train_same_step(SORN['prediction_rec'], 'n.output', SORN['index_rec', 0], 'n.pattern_index', 0, steps_train)  # train
     else:
         readout_layer = train(SORN['prediction_rec'], 'n.output', SORN['index_rec', 0], 'n.pattern_index', 0, steps_train, lag=1)  # steps_plastic, steps_plastic + steps_readout
 
+    #act = SORN['prediction_rec', 0]['n.output', 0, 'np']
+    #transition_score = np.mean(np.abs(act[0:-2]-act[1:-1])/np.mean(act))
 
     ###########################################################
     ###########################################################
@@ -185,7 +186,18 @@ def train_and_generate_text(SORN, steps_plastic, steps_train, steps_spont, steps
 
     score_dict = SORN['grammar_act', 0].get_text_score(spont_output)
 
+
     if storage_manager is not None:
         storage_manager.save_param_dict(score_dict)
 
-    return score_dict[return_key]
+    result = score_dict[return_key]#-transition_score/10
+
+    if result<0:
+        return 0
+    else:
+        return result
+
+
+#act = np.random.rand(10000)+1
+#transition_error = np.mean(np.abs(act[0:-2]-act[1:-1])/np.mean(act))
+#print(transition_error)

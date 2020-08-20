@@ -12,6 +12,28 @@ from collections import Counter
 
 class TextActivator_New(PatternGroup):
 
+    def plot_char_frequency_histogram(self, bins=20):
+        import matplotlib.pyplot as plt
+        char_count = {}
+        for s in self.corpus_blocks:
+            for c in s:
+                char_count[c] = 0
+        sum_car = 0
+        for s in self.corpus_blocks:
+            for c in s:
+                char_count[c] += 1
+                sum_car += 1
+
+        for c in char_count:
+            char_count[c] /= sum_car
+
+        print(char_count)
+
+        plt.hist(list(char_count.values()), bins=bins)
+        plt.show()
+
+
+
     def get_unique_block_text(self):
         return ' '.join(self.corpus_blocks)
 
@@ -310,7 +332,7 @@ class TextActivator_New(PatternGroup):
         ns_count = np.array(list(result['new_sentences'].values()))
         result['new_sentences_square_score'] = np.sum(np.sqrt(ns_count))/len(self.corpus_blocks)/10
 
-        result['total_score'] = (result['%_different_transitions'] + result['right_word_square_score'] + result['right_sentences_square_score'] + result['transition_score'])/3
+        result['total_score'] = (result['right_word_square_score'] + result['right_sentences_square_score'] + result['transition_score'])/3 # + result['%_different_transitions']
 
         #with open('obj/'+ name + '.pkl', 'wb') as f:
         #    pickle.dump(result, f, pickle.HIGHEST_PROTOCOL)
@@ -465,10 +487,20 @@ class FDTGrammarActivator_New(TextActivator_New):
         result['n_wrong'] = sum(wrong_dict.values())
         return result
 
+class FewLongSentencesGrammar(TextActivator_New):
+
+    def get_text_blocks(self):
+        return [' fox is an animal that eats meat.', ' boy likes to drink juice in the summer.']#, ' whale.', ' bird.', 'dog.', ' penguin likes cold weather and ice.'
+
 class SingleWordGrammar(TextActivator_New):
 
     def get_text_blocks(self):
-        return [' fox.', ' whale.', ' bird.']#, ' penguin.'
+        return [' fox.', ' boy.', ' penguin.']#, ' whale.', ' bird.', 'dog.'
+
+class FewSentencesGrammar(TextActivator_New):
+
+    def get_text_blocks(self):
+        return [' fox eats meat.', ' boy drinks juice.']#, ' penguin likes ice.', ]#, ' penguin.' #, 'the fish swims.' , ' the fish swims.'
 
 class LongDelayGrammar(TextActivator_New):
 

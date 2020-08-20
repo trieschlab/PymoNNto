@@ -96,6 +96,16 @@ class criticality_tab():
         self.min_slider.setToolTip('slide to cut away smallest slopes')
         Network_UI.Add_element(self.min_slider)  # , stretch=0.1
 
+        Network_UI.Next_H_Block(stretch=0.1)
+
+        self.split_slider = QSlider(1)  # QtCore.Horizontal
+        self.split_slider.setMinimum(1)
+        self.split_slider.setMaximum(10)
+        self.split_slider.setSliderPosition(1)
+        self.split_slider.mouseReleaseEvent = Network_UI.static_update_func
+        self.split_slider.setToolTip('split to calculate average block')
+        Network_UI.Add_element(self.split_slider)  # , stretch=0.1
+
         self.WP_init = False
         self.WPT_init = False
 
@@ -142,15 +152,17 @@ class criticality_tab():
         k_min = self.min_slider.sliderPosition()
         k_max = min(150, len(group_A_t)-10)
 
+        fractions = self.split_slider.sliderPosition()
+
         if k_max > 0:
 
-            group_mr_A = WP.MR_estimation(group_A_t, k_min, k_max)
+            group_mr_A = WP.MR_estimation(group_A_t, k_min, k_max, fractions=fractions)
             self.group_scatter.setData(group_mr_A['k'], group_mr_A['r_k'])
             self.group_estimate.setData(group_mr_A['k'], group_mr_A['fitfunc'](group_mr_A['k'], *group_mr_A['p_opt']))
             self.group_m_text.setText(str(group_mr_A['branching_ratio']))
 
 
-            net_mr_A = WP.MR_estimation(net_A_t, k_min, k_max)
+            net_mr_A = WP.MR_estimation(net_A_t, k_min, k_max, fractions=fractions)
             self.net_scatter.setData(net_mr_A['k'], net_mr_A['r_k'])
             self.net_estimate.setData(net_mr_A['k'], net_mr_A['fitfunc'](net_mr_A['k'], *net_mr_A['p_opt']))
             self.net_m_text.setText(str(net_mr_A['branching_ratio']))

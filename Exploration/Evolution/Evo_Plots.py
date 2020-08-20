@@ -47,6 +47,63 @@ def plot_parallel(data, labels, colors=None, up_down=None):
 #visualize_performance('Oscillation_evo_4788.txt')
 #visualize_performance('Oscillation_evo_3192.txt')#MNIST_test_last_split_3510.txt
 
+def two_gene_comparison(data, labels, colors=None):
+    import matplotlib.pyplot as plt
+
+    width=0.5
+
+    x=np.array(list(range(len(labels)))).astype(np.float64)
+    x += 0.3
+    plt.bar(x, np.array(data[0])/np.array(data[0])*100-100, width, tick_label=labels, color=colors)
+
+    x += 0.3
+    plt.bar(x, np.array(data[1])/np.array(data[0])*100-100, width, tick_label=labels, color=colors)
+
+    #plt.xlabel('parameters')
+    plt.ylabel('change from original %')
+
+    plt.show()
+
+def plot_parallel_bar(data, labels):
+    import matplotlib.pyplot as plt
+
+    #print(np.array(data).shape)
+
+    x=np.array(list(range(len(labels)))).astype(np.float64)
+    block_count = 5
+    w=1/(block_count+2)
+    l=labels
+    len_data=len(data)
+    block_size=len_data/block_count
+
+    first_block = np.mean(data[:int(block_size)], axis=0)
+
+    for i in range(block_count-1):
+        block_ct = i+1
+        block = np.mean(data[int(block_size*block_ct):int(block_size*(block_ct+1))], axis=0)
+        block = block/first_block-1
+        x += w
+        plt.bar(x, block, w, tick_label=l)  # , yerr=e, color=c
+
+    #print(x.shape)
+    #print(avg.shape)
+
+    #first = np.mean(data[:10], axis=0)
+    #last = np.mean(data[-10:], axis=0)
+    #avg = np.mean(data, axis=0)
+
+    #avg = avg / first -1
+    #last = last / first -1
+    #first = first/first -1
+
+    #plt.bar(x, first, w, tick_label=l)#, yerr=e, color=c
+
+
+
+    #x += 0.2
+    #plt.bar(x, avg, w, tick_label=l)#, yerr=e, color=c
+
+    plt.show()
 
 def visualize_evolution_run(file,labels, up_down=None):
 
@@ -73,6 +130,10 @@ def visualize_evolution_run(file,labels, up_down=None):
     colors = [(1-1/ld*i, 1/ld*i, 0, 0.1) for i in range(ld)]#green= newer red=older
     for i in range(nr):
         colors[-(i+1)] = (1/nr*i, 1-1/nr*i, 1, 1)
+
+    plot_parallel_bar(data, labels)
+
+
     #colors[-3] = (0, 0, 0, 1)#last data point
     #colors[-2] = (0, 1, 1, 1)#first half
     #colors[-1] = (1, 0, 1, 1)#second half
@@ -171,6 +232,36 @@ if __name__ == '__main__':
     # 'eta_nox', 'h_sc', 'h_sc', 'eta_sc', 'eta_istdp', 'distribution', 'distribution', 'strength', 'strength',
     # 'integration_length'])
 
+    labels=['e=>e\n(GLU)\ninitial\nweight\nlognormal\nsigma',#0
+       'i=>e\n(GABA)\ninitial\nweight\nlognormal\nsigma',#1
+       'e=>e\n(GLU)\nfactor',#2
+       'i=>e\n(GABA)\nfactor',#3
+       'i=>e\n(GABA)\nfactor\n(same step)',#4
+       'eta\nSTDP',#5
+       'h_IP\nlognormal\nmean',#6
+       'h_IP\nlognormal\nsigma',#7
+       'eta\nIP',#8
+       'eta\ndiffuse IP',#9
+       'synaptic\nscaling\ntarget\nlognormal\nmean',#10
+       'synaptic\nscaling\ntarget\nlognormal\nsigma',#11
+       'eta\nsynaptic\nscaling',#12
+       'eta\niSTDP',#13
+       'e=>i\n(GLU)\ninitial\nweight\nlognormal\nsigma',#14
+       'i=>i\n(GABA)\ninitial\nweight\nlognormal\nsigma',#15
+       'i=>i\n(GABA)\nfactor',#16
+       'e=>i\n(GLU)\nfactorn\n(same step)',#17
+       'i=>i\n(GABA)\nfactor\n(same step)',#18
+       'IP\nintegration\nlength']#19
+
+    two_gene_comparison(
+    [
+        [0.95, 0.4, 0.1383, 0.1698, 0.1, 0.00015, 0.04, 0.2944, 0.0006, 0.5, 0.015, 0.2944, 0.1, 0.0001, 0.87038, 0.82099, 1.5, 1.5, 0.08, 15.0],
+        [0.8696216017907924, 0.4054197902251851, 0.15908648909538786, 0.16151455753719493, 0.048518733002033534, 0.0001606965068387588, 0.04879157151210372, 0.24231706635277966, 0.00045610819523760965, 0.5253225640567556, 0.014480162857178793, 0.3081697797506037, 0.09954804863544643, 0.00010776187534473455, 0.8077440101913735, 0.7062739421354904, 2.4503147431937236, 3.040822590617692, 0.08547161769469239, 13.841327314728604]
+
+        #[0.95, 0.4, 0.1383, 0.1698, 0.1, 0.00015, 0.04, 0.2944, 0.0006, 0.5, 0.015, 0.2944, 0.1, 0.0001, 0.87038, 0.82099, 1.5, 1.5, 0.08, 15.0],
+        #[0.9017392286400007, 0.336521535781792, 0.13270199949220565, 0.14962388907357316, 0.06263567358824208, 0.0001397543247035365, 0.05482554055188729, 0.18435824905204146, 0.00042698042629804394, 0.3583295613950753, 0.01496552477298455, 0.25978647637282687, 0.09257143917052511, 0.0001021643241400783, 1.2256750667338105, 0.9819249648687961, 2.7626521922657132, 2.7626521922657132, 0.08020358998634196, 12.47920274827478]
+        #[0.9150239636600058, 0.41444993786908246, 0.13078958866926443, 0.13714627712547764, 0.10630224681081862, 0.00015355740938283497, 0.0572896064024363, 0.17205724061775884, 0.00039571392172929647, 0.36313382202600764, 0.014006216457593942, 0.2853897955370888, 0.09556820236444917, 0.0001020117958079417, 1.2850520374240129, 0.9521124386241633, 2.8949553979288645, 1.4680181329908213, 0.07774755473801938, 13.999695490935174]
+    ],labels, colors=['gray', 'gray', 'red', 'red', 'red', 'purple', 'aqua', 'aqua', 'blue', 'blue', 'aqua', 'aqua', 'blue', 'purple', 'gray', 'gray', 'red', 'red', 'red', 'blue'])
 
 
     default = ''#'Oscillation_evo_9228.txt'
@@ -185,9 +276,7 @@ if __name__ == '__main__':
     if '.txt' not in default:
         default += '.txt'
 
-    #visualize_evolution_run(default,['distribution', 'distribution', 'strength', 'strength', 'strength', 'eta_stdp', 'h_ip', 'h_ip', 'eta_ip',
-    # 'eta_nox', 'h_sc', 'h_sc', 'eta_sc', 'eta_istdp', 'distribution', 'distribution', 'strength', 'strength',
-    # 'integration_length'],[1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1])
+    #visualize_evolution_run(default,labels,[1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1])
     #visualize_performance(default, visualize=plot)
     visualize_performance(default, visualize=True)
 

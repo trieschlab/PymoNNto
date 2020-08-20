@@ -23,7 +23,7 @@ class Pixel_Pattern(PatternGroup):
 
         self.mask_mode = self.kwargs.get('mask_mode', 'center')
 
-        self.select_mode = self.kwargs.get('grid_channels', 'sequential')
+        self.select_mode = self.kwargs.get('select_mode', 'sequential')
         self.select_counter=-1
 
     def get_current_pattern_index(self):

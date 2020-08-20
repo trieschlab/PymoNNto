@@ -174,7 +174,7 @@ def func(x, a, b, string=False):
 # 3) path to a .npy file with time series
 # 4) list of paths to multiple .npy files with time series
 # ============================================================================
-def MR_estimation(all_counts, minslopes=1, maxslopes=40, scatterpoints=False):
+def MR_estimation(all_counts, minslopes=1, maxslopes=40, scatterpoints=False, fractions=1):
     
     # scatterpoints: if scatterpoints of all regressions shall be returned. Can consume a lot of memory if True
 
@@ -182,10 +182,49 @@ def MR_estimation(all_counts, minslopes=1, maxslopes=40, scatterpoints=False):
 
     return_dict = dict()
     
-    all_counts = input_handler(all_counts)    
-    
-    # Get all slopes r_k
-    k, r_k, intercepts, r_values, p_values, std_errs, data_length, mean_activity, xs, ys = get_slopes(all_counts, minslopes, maxslopes, scatterpoints)
+    all_counts = np.array(input_handler(all_counts))
+
+    fraction_block_size=int(np.floor(len(all_counts[0])/fractions))
+
+    k = []
+    r_k = []
+    #intercepts = []
+    #r_values = []
+    #p_values = []
+    std_errs = []
+    data_length = []
+    #mean_activity = []
+    #xs = []
+    #ys = []
+
+    for f in range(fractions):
+        spike_fraction = all_counts[:, fraction_block_size*f:fraction_block_size*(f+1)]
+        #print(f, len(spike_fraction[0]))
+        # Get all slopes r_k
+        _k, _r_k, _intercepts, _r_values, _p_values, _std_errs, _data_length, _mean_activity, _xs, _ys = get_slopes(spike_fraction, minslopes, maxslopes, scatterpoints)
+
+        k.append(_k)
+        r_k.append(_r_k)
+        #intercepts.append(_intercepts)
+        #r_values.append(_r_values)
+        #p_values.append(_p_values)
+        std_errs.append(_std_errs)
+        data_length.append(_data_length)
+        #mean_activity.append(_mean_activity)
+        #xs.append(_xs)
+        #ys.append(_ys)
+
+    k = k[0]
+    r_k = np.mean(r_k, axis=0)
+    #intercepts=intercepts[0]
+    #r_values=np.mean(r_values, axis=0)
+    #p_values=np.mean(p_values, axis=0)
+    std_errs=np.mean(std_errs, axis=0)
+    data_length=data_length[0]
+    #mean_activity=np.mean(mean_activity, axis=0)
+    #xs=xs[0]
+    #ys=ys[0]
+
     
     # Fit m, b (here as p_opt = [b, m]) according to exponential model        
     fitfunc = func
@@ -199,17 +238,20 @@ def MR_estimation(all_counts, minslopes=1, maxslopes=40, scatterpoints=False):
     return_dict['k'] = k
     return_dict['r_k'] = r_k
     return_dict['fitfunc'] = fitfunc
-    if scatterpoints:
-        if onlytwoscatterpoints:
-            return_dict['xs'] = [xs[0], xs[-1]] 
-            return_dict['ys'] = [ys[0], ys[-1]]
-        else:
-            return_dict['xs'] = xs
-            return_dict['ys'] = ys
+    #if scatterpoints:
+    #    if onlytwoscatterpoints:
+    #        return_dict['xs'] = [xs[0], xs[-1]]
+    #        return_dict['ys'] = [ys[0], ys[-1]]
+    #    else:
+    #        return_dict['xs'] = xs
+    #        return_dict['ys'] = ys
     return_dict['data_length'] = data_length
     return_dict['p_opt'] = p_opt
 
-
-
     return return_dict
 
+#import matplotlib.pyplot as plt
+#act=np.random.rand(10000)
+#data = MR_estimation(act, 1, 100, fractions=4)
+#plt.scatter(data['k'], data['r_k'])
+#plt.show()

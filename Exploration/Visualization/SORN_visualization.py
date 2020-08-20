@@ -248,9 +248,9 @@ def comp_plot(tags=[]):
 if __name__ == '__main__':
 
     from Exploration.StorageManager.Storage_Manager_Dir_Select_Dialog import *
-    #plot_wrong_new_right_bar(tags=Storage_Manager_Dir_Select_Dialog())
+    plot_wrong_new_right_bar(tags=Storage_Manager_Dir_Select_Dialog())
     #plot_wrong_new_right_graph(tags=Storage_Manager_Dir_Select_Dialog())
-    comp_plot(tags=Storage_Manager_Dir_Select_Dialog())
+    #comp_plot(tags=Storage_Manager_Dir_Select_Dialog())
 
 
 
