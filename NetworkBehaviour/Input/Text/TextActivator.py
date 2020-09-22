@@ -8,8 +8,6 @@ from collections import Counter
 #SPD_activator = TextActivator_New(filename='SPD.txt', replace_dict={'?': '.', ':': '.', ',': '.', '.': '. ', '  ': ' ', '-': ''})
 
 
-
-
 class TextActivator_New(PatternGroup):
 
     def plot_char_frequency_histogram(self, bins=20):
@@ -87,6 +85,20 @@ class TextActivator_New(PatternGroup):
             self.build_sentences_recurrent('', sentence, result)
         return result
 
+    def make_string_redundant(self, str, redundancy_number):
+        new_str = ''
+        for c in str:
+            for _ in range(redundancy_number):
+                new_str += c
+        return new_str
+
+    def add_redundancy(self, redundancy_number):
+        self.corpus = self.make_string_redundant(self.corpus, redundancy_number)
+
+        for i, cb in enumerate(self.corpus_blocks):
+            self.corpus_blocks[i] = self.make_string_redundant(cb, redundancy_number)
+
+
     def initialize(self):
         self.last_iteration=-1
         self.nextchar=None
@@ -98,6 +110,8 @@ class TextActivator_New(PatternGroup):
         self.corpus = self.corpus.lower()
 
         self.corpus_blocks = self.get_text_blocks()
+
+        #self.add_redundancy(3)
 
         ut = self.get_unique_block_text()
         self.alphabet = ''.join(sorted(set(ut)))
@@ -151,7 +165,10 @@ class TextActivator_New(PatternGroup):
 
         A = self.get_alphabet_length()
 
-        self.activation_size = int(output_size * density)
+        if density<=1:
+            self.activation_size = int(output_size * density)
+        else:
+            self.activation_size = int(density)
 
         neurons.Input_Weights = np.zeros((output_size, A))
         available = set(range(output_size))
@@ -500,7 +517,12 @@ class SingleWordGrammar(TextActivator_New):
 class FewSentencesGrammar(TextActivator_New):
 
     def get_text_blocks(self):
-        return [' fox eats meat.', ' boy drinks juice.']#, ' penguin likes ice.', ]#, ' penguin.' #, 'the fish swims.' , ' the fish swims.'
+        return [' fox eats meat.', ' boy drinks juice.', ' penguin likes ice.']# , ]#, ' penguin.' #,  , ' the fish swims.' #, 'the fish swims.'
+
+class FewSentencesContextGrammar(TextActivator_New):
+
+    def get_text_blocks(self):
+        return [' fox eats meat.', ' boy eats bread.', ' penguin eats fish.']# , ]#, ' penguin.' #,  , ' the fish swims.' #, ' parrot eats nuts.'
 
 class LongDelayGrammar(TextActivator_New):
 

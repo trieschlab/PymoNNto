@@ -200,7 +200,7 @@ if __name__ == '__main__':
     #for i in range(1):
     #    print('score', run(attrs={'name': 'full_[1,4]_1600_10ksteps', 'ind': ind, 'N_e': 1600, 'TS': [1,4], 'UI': False, 'ff': True, 'fb': True, 'plastic': 10000}))#1600#2200
 
-    print('score', run(attrs={'name': 'abc', 'ind': ind, 'N_e': 1400, 'TS': [1], 'UI': False, 'ff':True, 'fb':True,'plastic':30000}))
+    print('score', run(attrs={'name': 'abc', 'ind': ind, 'N_e': 1400, 'TS': [1], 'UI': True, 'ff':True, 'fb':True,'plastic':30000}))
 
     #print('simu')
 

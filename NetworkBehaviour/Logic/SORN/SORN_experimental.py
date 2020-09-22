@@ -49,17 +49,24 @@ class SORN_generate_output_K_WTA_partitioned(Neuron_Behaviour):
                 else:
                     K = K_floor
 
-                act = s.dst.activity
-
-                if self.filter_temporal_output:
-                    act = s.dst.activity*s.dst.output
-
-                ind = np.argpartition(act, -K)[-K:]
-                act_mat = np.zeros(s.dst.size)
-                act_mat[ind] = 1
                 s.dst.output *= 0
-                #s.dst.output[ind] += 1
-                s.dst.output += act_mat
+
+                if K>0:
+                    act = s.dst.activity.copy()
+
+                    if self.filter_temporal_output:
+                        act = s.dst.activity*s.dst.output#-(s.dst.output*-10000)
+
+                    ind = np.argpartition(act, -K)[-K:]
+                    act_mat = np.zeros(s.dst.size)
+                    act_mat[ind] = 1
+
+                    s.dst.output += act_mat
+
+                    #s.dst.output = s.dst.output*0.0+act_mat
+                    #
+                    #s.dst.output[ind] += 1
+
 
                 #s.dst._temp_act_sum += np.mean(s.src.output)
 
@@ -140,8 +147,17 @@ class SORN_IP_WTA(Instant_Homeostasis):
 
             neurons.exhaustion_value = neurons.exhaustion_value-np.mean(neurons.exhaustion_value)
 
-            neurons.activity -= neurons.exhaustion_value
+            #neurons.activity -= neurons.exhaustion_value
 
+class SORN_IP_WTA_apply(Neuron_Behaviour):
+
+    def set_variables(self, neurons):
+        super().set_variables(neurons)
+        self.add_tag('SORN_IP_WTA_apply')
+
+    def new_iteration(self, neurons):
+        if last_cycle_step(neurons):
+            neurons.activity -= neurons.exhaustion_value
 
 '''
 class SORN_Neuron_Exhaustion(Neuron_Behaviour):

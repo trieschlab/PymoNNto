@@ -102,6 +102,10 @@ def train_and_generate_text(SORN, steps_plastic, steps_train, steps_spont, steps
     if steps_plastic>0:
         SORN.simulate_iterations(steps_plastic, 100, measure_block_time=display)#, disable_recording=True
 
+    #for i, syn in enumerate(SORN['syn']):
+    #    np.save('Data/E{}.npy'.format(i), syn.enabled)
+    #    np.save('Data/W{}.npy'.format(i), syn.W)
+
     if stdp_off:
         SORN.deactivate_mechanisms('STDP')
 
@@ -111,6 +115,8 @@ def train_and_generate_text(SORN, steps_plastic, steps_train, steps_spont, steps
         SORN.add_behaviours_to_neuron_group({101: NeuronRecorder(['n.pattern_index'], tag='index_rec')}, ng)
 
     SORN.simulate_iterations(steps_train, 100, measure_block_time=display)
+
+    print('test2')
 
     if same_timestep_without_feedback_loop:
         readout_layer = train_same_step(SORN['prediction_rec'], 'n.output', SORN['index_rec', 0], 'n.pattern_index', 0, steps_train)  # train

@@ -552,10 +552,11 @@ class SORN_STDP(Neuron_Behaviour):
         self.post_pre_mask = np.array([-t in self.STDP_F for t in range(self.own_buffer_requirement(neurons).length)])
         self.post_pre_mul = np.array([self.STDP_F[-t] for t in range(self.own_buffer_requirement(neurons).length) if -t in self.STDP_F])
 
+        self.transmitter = self.get_init_attr('transmitter', 'GLU', neurons)
 
         neurons.eta_stdp = self.get_init_attr('eta_stdp', 0.005, neurons)
         neurons.last_output = neurons.get_neuron_vec()
-        for s in neurons.afferent_synapses['GLU']:
+        for s in neurons.afferent_synapses[self.transmitter]:
             s.src_act_sum_old = np.zeros(s.src.size)
 
         if self.get_init_attr('plot', False):
@@ -570,7 +571,7 @@ class SORN_STDP(Neuron_Behaviour):
         #if first_cycle_step(neurons):#first????????????????????????????????????????????????????????????????????????
         if last_cycle_step(neurons):
 
-            for s in neurons.afferent_synapses['GLU']:
+            for s in neurons.afferent_synapses[self.transmitter]:
 
                 post_act = get_buffer(s.dst, 'output', neurons.timescale)#s.dst.get_masked_dict('output_buffer_dict', neurons.timescale)
                 pre_act = get_buffer(s.src, 'output', neurons.timescale)#s.src.get_masked_dict('output_buffer_dict', neurons.timescale)

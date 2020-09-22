@@ -8,22 +8,27 @@ from NetworkCore.Synapse_Group import *
 from NetworkBehaviour.Structure.Structure import *
 from Exploration.StorageManager.StorageManager import *
 
+if __name__ == '__main__':
+    from Exploration.UI.Network_UI.Network_UI import *
+
 display = False
 def run(tag='bruno', ind=[], par={'N_e':900}):
 
     sm = StorageManager(tag, random_nr=True, print_msg=display)
     sm.save_param_dict(par)
 
-    source = FDTGrammarActivator_New(tag='grammar_act', output_size=par['N_e'], random_blocks=True)
+    source = FDTGrammarActivator_New(tag='grammar_act', output_size=par['N_e'], random_blocks=True, input_density=0.016)
 
-    e_ng = NeuronGroup(tag='main_exc_group', size=get_squared_dim(par['N_e']),
+    SORN = Network()
+
+    e_ng = NeuronGroup(net=SORN, tag='main_exc_group,prediction_source', size=get_squared_dim(par['N_e']),
                        behaviour={
-                           1: NeuronActivator(write_to='input', pattern_groups=[source]),
                            2: SORN_init_neuron_vars(iteration_lag=1, init_TH='uniform(0.0,0.5)'),
                            3: SORN_init_afferent_synapses(transmitter='GLU', density=10, distribution='uniform(0.0,0.5)', normalize=True),
                            4: SORN_init_afferent_synapses(transmitter='GABA', density='full', distribution='uniform(0.0,0.5)', normalize=True),
 
-                           12: SORN_slow_syn(transmitter='GLU', strength='1.0', input_strength=1.0),
+                           10: SORN_external_input(write_to='input', pattern_groups=[source]),
+                           12: SORN_slow_syn(transmitter='GLU', strength='1.0'),
                            13: SORN_slow_syn(transmitter='GABA', strength='-1.0'),
                            20: SORN_input_collect(),
 
@@ -32,12 +37,9 @@ def run(tag='bruno', ind=[], par={'N_e':900}):
                            23: SORN_IP_TI(h_ip='0.1', eta_ip='0.001', integration_length=1, gap_percent=None, clip_min=None),
 
                            30: SORN_finish(),
-
-                           100: NeuronRecorder(['np.mean(n.output)', 'np.mean(n.TH)', 'n.output', 'n.TH', 'n.excitation', 'n.inhibition', 'n.input_act'], tag='exc_out_rec'),
-                           101: NeuronRecorder(['n.pattern_index'], tag='inp_rec')
                        })
 
-    i_ng = NeuronGroup(tag='main_inh_group', size=get_squared_dim(int(0.2 * par['N_e'])), behaviour={
+    i_ng = NeuronGroup(net=SORN, tag='main_inh_group', size=get_squared_dim(int(0.2 * par['N_e'])), behaviour={
         2: SORN_init_neuron_vars(iteration_lag=1, init_TH='uniform(0.0,0.5)'),
         #3: SORN_init_afferent_synapses(transmitter='GLU', density=200, normalize=True),
         3: SORN_init_afferent_synapses(transmitter='GLU', density='full', distribution='uniform(0.0,0.5)', normalize=True),
@@ -48,17 +50,20 @@ def run(tag='bruno', ind=[], par={'N_e':900}):
 
         30: SORN_finish(),
 
-        100: NeuronRecorder(['np.mean(n.output)', 'np.mean(n.TH)', 'n.output', 'n.TH', 'n.excitation', 'n.inhibition', 'n.input_act'], tag='inh_out_rec')
+        #100: NeuronRecorder(['np.mean(n.output)', 'np.mean(n.TH)', 'n.output', 'n.TH', 'n.excitation', 'n.inhibition', 'n.input_act'], tag='inh_out_rec')
     })
 
-    ee_syn = SynapseGroup(src=e_ng, dst=e_ng, connectivity='s_id!=d_id').add_tag('GLU')  # .add_tag('sparse')
-    ie_syn = SynapseGroup(src=e_ng, dst=i_ng).add_tag('GLU')
-    ei_syn = SynapseGroup(src=i_ng, dst=e_ng).add_tag('GABA')
+    SynapseGroup(net=SORN, src=e_ng, dst=e_ng, tag='GLU', connectivity='s_id!=d_id')
+    SynapseGroup(net=SORN, src=e_ng, dst=i_ng, tag='GLU')
+    SynapseGroup(net=SORN, src=i_ng, dst=e_ng, tag='GABA')
 
-    SORN_Global = Network([e_ng, i_ng], [ee_syn, ie_syn, ei_syn], initialize=False)
+    SORN.set_marked_variables(ind, info=(ind == []))
+    SORN.initialize(info=False)
 
-    SORN_Global.set_marked_variables(ind, info=(ind == []))
-    SORN_Global.initialize(info=False)
+    e_ng.color = get_color(0, 1)
+    i_ng.color = get_color(1, 1)
+
+    Network_UI(SORN, label='SORN Bruno', storage_manager=sm, group_display_count=2, reduced_layout=False).show()
 
     ####################################################
     ####################################################
@@ -67,23 +72,13 @@ def run(tag='bruno', ind=[], par={'N_e':900}):
     #import Exploration.UI.Network_UI as SUI
     #SUI.Network_UI(SORN_Global, label='SORN UI', exc_group_name='main_exc_group', inh_group_name='main_inh_group', storage_manager=sm).show()
 
-    return get_evolution_score_words(SORN_Global, 20000, 5000, 2000, display=True, stdp_off=True, storage_manager=sm)
+    #return get_evolution_score_words(SORN_Global, 20000, 5000, 2000, display=True, stdp_off=True, storage_manager=sm)
     #return get_evolution_score(SORN_Global, 5000, 3000, 0.2, e_ng, i_ng)#0.04
     #return get_evolution_score_simple(SORN_Global, 5000, 4000, e_ng)
 
 
-
-ind = []
-
 if __name__ == '__main__':
+    run('bruno', [], par={'N_e': 900})
 
-    while True:
-        for N_e in [300, 600, 900, 1200, 1500, 1800]:
-            run('bruno_size_comp', ind, par={'N_e': N_e})
-
-    #import Exploration.Evolution.Distributed_Evolution as DistEvo
-    #tag, ind = DistEvo.parse_sys(ind=ind)
-    #score = run(tag, ind)
-    #DistEvo.save_score(score, tag, ind)
 
 

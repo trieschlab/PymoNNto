@@ -31,6 +31,7 @@ from Exploration.UI.Network_UI.Basic_Tabs.stdp_buffer_tab import *
 from Exploration.UI.Network_UI.Basic_Tabs.criticality_tab import *
 from Exploration.UI.Network_UI.Basic_Tabs.buffer_tab import *
 from Exploration.UI.Network_UI.Basic_Tabs.PCA_tab import *
+from Exploration.UI.Network_UI.Tabs.character_activation_tab import *
 
 default_modules = [
     UI_sidebar_activity_module(1),
@@ -56,6 +57,7 @@ default_modules = [
     stability_tab(parameter='output'),
     scatter_tab(x_var='excitation', y_var='inhibition'),
     fourier_tab(parameter='output'),
+    character_activation_tab(),
     info_tab(),
     sidebar_fast_forward_module(),
     sidebar_save_load_module()

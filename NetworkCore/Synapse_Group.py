@@ -68,6 +68,7 @@ class SynapseGroup(NetworkObjectBase):
 
         if type(connectivity) == str:
             self.enabled = eval(connectivity)
+            #print(self.enabled)
         elif type(connectivity) == float or type(connectivity) == int:
             if connectivity >= 0:
                 self.enabled = (np.sqrt(

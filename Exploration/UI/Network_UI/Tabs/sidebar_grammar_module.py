@@ -10,9 +10,10 @@ from Testing.Common.Grammar_Helper import *
 
 class sidebar_grammar_module():
 
-    def __init__(self, next_p=True, simu_p=True, text_length=35):
+    def __init__(self, next_p=True, simu_p=True, noc_p=True, text_length=35):
         self.next_p=next_p
         self.simu_p=simu_p
+        self.noc_p=noc_p
         self.text_length=text_length
 
 
@@ -105,6 +106,11 @@ class sidebar_grammar_module():
                 item = pg.InfiniteLine(pos=Network_UI.network.iteration+1000, movable=False, angle=90)
                 self.wnr_plot.addItem(item)
 
+            if self.noc_p:
+                self.noc_text_label = QLabel(Network_UI.main_window)
+                Network_UI.Add_Sidebar_Element(self.noc_text_label, stretch=0.2)
+                self.noc_text = list(self.noc_text_label.text())
+                self.noc_text_label.setToolTip('most active input neuron character')
 
             if self.next_p:
                 self.pred_text_label = QLabel(Network_UI.main_window)
@@ -121,6 +127,9 @@ class sidebar_grammar_module():
                 self.pred_simu_text_label.setText('Click to Train...')
                 self.pred_simu_text = list(self.pred_simu_text_label.text())
                 self.pred_simu_text_label.setToolTip('classifiers prediction for current timestep')
+
+
+
 
             self.wnr_tab = Network_UI.Next_Tab('WNR')
 
@@ -149,6 +158,17 @@ class sidebar_grammar_module():
 
             if grammar_act is not None:
                 self.inp_text_label.setText('I: ' + ''.join(self.text[-self.text_length:]))
+
+                self.noc_text_label.setText('NC: ' + ''.join(self.noc_text[-self.text_length:]))
+
+                char_act = np.zeros(len(grammar_act.alphabet))
+                for ng in Network_UI.network['prediction_source']:
+                    recon = ng.Input_Weights.transpose().dot(ng.output)
+                    char_act += recon
+                char = grammar_act.index_to_char(np.argmax(char_act))
+
+                self.noc_text.append(char)
+
                 if self.readout_simu is not None:
                     symbol_simu = predict_char(self.readout_simu, Network_UI.network['prediction_source'], 'n.output')
                     char = grammar_act.index_to_char(symbol_simu)
