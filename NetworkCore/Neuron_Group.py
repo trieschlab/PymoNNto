@@ -168,6 +168,49 @@ class NeuronGroup(NetworkObjectBase):
 
         return result
 
+    def partition_block_size(self):
+        best_block_size = 7
+        w = int((self.src.width/best_block_size+self.dst.width/best_block_size)/2)
+        h = int((self.src.height/best_block_size+self.dst.height/best_block_size)/2)
+        d = int((self.src.depth / best_block_size + self.dst.depth / best_block_size) / 2)
+        split_size = [np.maximum(w, 1), np.maximum(h, 1), np.maximum(d, 1)]
+        if split_size[0]<2 and split_size[1]<2 and split_size[2]<2:
+            return [self]
+        else:
+            return self.partition_block_ct(split_size)
+
+    def partition_block_ct(self, steps=[1, 1, 1]):
+
+        dst_min = [np.min(p) for p in [self.x, self.y, self.z]]
+        dst_max = [np.max(p) for p in [self.x, self.y, self.z]]
+
+        def get_start_end(step, dim):
+            start=dst_min[dim]+(dst_max[dim]-dst_min[dim])/steps[dim]*step
+            end=dst_min[dim]+(dst_max[dim]-dst_min[dim])/steps[dim]*(step+1)
+            return start, end
+
+        results = []
+
+        masks = []
+        for w_step in range(steps[0]):          #x_steps
+            dst_x_start, dst_x_end = get_start_end(w_step, 0)
+            for h_step in range(steps[1]):      #y_steps
+                dst_y_start, dst_y_end = get_start_end(h_step, 1)
+                for d_step in range(steps[2]):  #z_steps
+                    dst_z_start, dst_z_end = get_start_end(d_step, 2)
+
+                    sub_group_mask = (self.x >= dst_x_start) * (self.x <= dst_x_end) * (self.y >= dst_y_start) * (self.y <= dst_y_end) * (self.z >= dst_z_start) * (self.z <= dst_z_end)
+
+                    #remove redundancies
+                    for old_dst_mask in masks:
+                        sub_group_mask[old_dst_mask] *= False
+                    masks.append(sub_group_mask)
+
+                    results.append(self.subGroup(sub_group_mask))
+
+        return results
+
+
     def mask_var(self, var):
         return var
 

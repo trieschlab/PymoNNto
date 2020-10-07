@@ -25,6 +25,8 @@ class sidebar_grammar_module():
     def initialize(self, Network_UI):
         if Network_UI.network['grammar_act', 0] is not None:
 
+            self.grammar_tab = Network_UI.Next_Tab('text analysis')
+
             self.readout = None
             self.readout_simu = None
 
@@ -112,6 +114,7 @@ class sidebar_grammar_module():
                 self.noc_text = list(self.noc_text_label.text())
                 self.noc_text_label.setToolTip('most active input neuron character')
 
+
             if self.next_p:
                 self.pred_text_label = QLabel(Network_UI.main_window)
                 Network_UI.Add_Sidebar_Element(self.pred_text_label, stretch=0.2)
@@ -128,7 +131,15 @@ class sidebar_grammar_module():
                 self.pred_simu_text = list(self.pred_simu_text_label.text())
                 self.pred_simu_text_label.setToolTip('classifiers prediction for current timestep')
 
+            self.text_box = QTextEdit()
 
+            #self.highlighter = Highlighter(self.editor.document())
+            #self.editor.setText(sample)
+            #layout = QtGui.QVBoxLayout(self)
+            #layout.addWidget(self.editor)
+
+            Network_UI.Add_element(self.text_box)
+            self.noc_text_long = ''
 
 
             self.wnr_tab = Network_UI.Next_Tab('WNR')
@@ -168,6 +179,9 @@ class sidebar_grammar_module():
                 char = grammar_act.index_to_char(np.argmax(char_act))
 
                 self.noc_text.append(char)
+                self.noc_text_long += char
+                if self.grammar_tab.isVisible():
+                    self.text_box.setText(grammar_act.mark_with_grammar(self.noc_text_long, False))
 
                 if self.readout_simu is not None:
                     symbol_simu = predict_char(self.readout_simu, Network_UI.network['prediction_source'], 'n.output')

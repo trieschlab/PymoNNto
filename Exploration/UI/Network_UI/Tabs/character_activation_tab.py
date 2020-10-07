@@ -21,12 +21,31 @@ class character_activation_tab():
             self.reconstruction_tab = Network_UI.Next_Tab(self.title)
 
 
-            source=Network_UI.network['grammar_act', 0]
+            self.source=Network_UI.network['grammar_act', 0]
 
-            self.char_Act_plots = Network_UI.Add_plot_curve(number_of_curves=len(source.alphabet), x_label='t (iterations)', y_label='Network average ')
+            _, self.plt = Network_UI.Add_plot_curve(title='Character activations', return_plot=True, number_of_curves=0, x_label='t (iterations)', y_label='Network average ')
 
-            for plot in self.char_Act_plots:
-                plot.data=[]
+            self.max_char_scatter = pg.ScatterPlotItem(pen=(100,100,100), brush=(100,100,100))
+            self.max_char_scatter.activity_data = []
+
+            self.char_scatter_plots=[]
+            for i in range(len(self.source.alphabet)):
+                symbol = QPainterPath()
+                # symbol.addEllipse(QtCore.QRectF(-0.5, -0.5, 1, 1))
+
+                font = QFont()
+                #font.setStyleHint(QFont.Helvetica)
+                font.setPointSize(1)
+                char=self.source.index_to_char(i)
+                if char==' ':
+                    char='_'
+                symbol.addText(-0.5, 0.2, font, char)
+
+                color=set(np.random.rand(3)*255)
+                self.char_scatter = pg.ScatterPlotItem(pen=color, brush=color, symbol=symbol)
+                self.plt.addItem(self.char_scatter)
+                self.char_scatter_plots.append(self.char_scatter)
+                self.char_scatter.activity_data = []
 
             #self.data = np.zeros((len(source.alphabet),1))
 
@@ -36,17 +55,27 @@ class character_activation_tab():
     def update(self, Network_UI):
         if Network_UI.network['grammar_act', 0] is not None and self.reconstruction_tab.isVisible():
             group=Network_UI.network[Network_UI.neuron_select_group, 0]
-            #iterations = group['n.iteration', 0, 'np'][-self.timesteps:]
+
 
             if hasattr(group, 'Input_Weights') and hasattr(group, 'output'):
                 activation = group.Input_Weights.transpose().dot(group.output)
 
-                for i, plot in enumerate(self.char_Act_plots):
-                    plot.data.append(activation[i])
-                    plot.setData(plot.data)
+                self.max_char_scatter.activity_data.append(np.max(activation))
+                if len(self.max_char_scatter.activity_data) > 50:
+                    self.max_char_scatter.activity_data = self.max_char_scatter.activity_data[1:]
 
-                    if len(plot.data)>100:
-                        plot.data=plot.data[1:]
+                iterations = group['n.iteration', 0, 'np'][-len(self.max_char_scatter.activity_data):]
+                self.max_char_scatter.setData(iterations, self.max_char_scatter.activity_data, size=50)
+
+                for i, char_scatter in enumerate(self.char_scatter_plots):
+                    char_scatter.activity_data.append(activation[i])
+                    if len(char_scatter.activity_data)>50:
+                        char_scatter.activity_data=char_scatter.activity_data[1:]
+
+
+                    char_scatter.setData(iterations, char_scatter.activity_data, size=50)#list(range(len(char_scatter.activity_data)))
+
+
 
                 #if len(neuron_data.shape) > 1:
                 #    neuron_data = neuron_data[:, Network_UI.neuron_select_id]

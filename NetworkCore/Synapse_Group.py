@@ -175,10 +175,10 @@ class SynapseGroup(NetworkObjectBase):
         return max_dx, max_dy, max_dz
 
 
-    def partition(self, receptive_field_size='auto', split_size='auto'):
+    def partition(self, split_size='auto'):#, receptive_field_size='auto'
 
-        if receptive_field_size == 'auto':
-            receptive_field_size = self.get_max_receptive_field_size()
+        #if receptive_field_size == 'auto':
+        #    receptive_field_size = self.get_max_receptive_field_size()
 
         if split_size == 'auto':
             best_block_size = 7
@@ -191,4 +191,6 @@ class SynapseGroup(NetworkObjectBase):
 
         #print('partition:', receptive_field_size, split_size)
 
-        self.network.partition_Synapse_Group(self, receptive_field_size=receptive_field_size, split_size=split_size)
+        self.network.partition_Synapse_Group3(self, steps=split_size)
+
+        #self.network.partition_Synapse_Group(self, receptive_field_size=receptive_field_size, split_size=split_size)

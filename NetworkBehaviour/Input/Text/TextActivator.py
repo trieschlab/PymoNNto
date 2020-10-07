@@ -2,6 +2,7 @@ from NetworkBehaviour.Input.Pattern_Basics import *
 import random
 import numpy as np
 from collections import Counter
+import random
 
 #{' PERIOD': '.', ' COMMA': '.', ' QUESTION': '.'} #, 'MNAME':'Name', 'FNAME':'Name'
 #CHILDES_activator = TextActivator_New(filename='CHILDES.txt', replace_dict={' PERIOD': '.', ' COMMA': '.', ' QUESTION': '.'})
@@ -163,17 +164,32 @@ class TextActivator_New(PatternGroup):
         #output_size = self.kwargs.get('output_size', 600)
         # self.kwargs.get('activation_size', int(output_size / 60))
 
-        A = self.get_alphabet_length()
-
         if density<=1:
             self.activation_size = int(output_size * density)
         else:
             self.activation_size = int(density)
 
-        neurons.Input_Weights = np.zeros((output_size, A))
+        neurons.Input_Weights = np.zeros((output_size, self.get_alphabet_length()))
         available = set(range(output_size))
-        for a in range(A):
-            temp = random.sample(available, self.activation_size)
+
+        frequency_adjustment = self.kwargs.get('frequency_adjustment', False)
+        char_count = self.get_char_input_statistics_list()
+        mean_char_count = np.mean(char_count)
+        sum_char_count = np.sum(char_count)
+
+        for a in range(self.get_alphabet_length()):
+
+            char_activiation_size=self.activation_size
+
+            if frequency_adjustment:
+                char_activiation_size = int(self.activation_size*(char_count[a]/mean_char_count))
+
+                avg_char_act = char_count[a]/sum_char_count
+                avg_cluster_red = char_activiation_size/28
+                avg_cluster_act = avg_cluster_red * 0.02
+                print(self.index_to_char(a), ': ', char_activiation_size, char_count[a], np.round(avg_char_act,decimals=4), np.round(avg_cluster_red,decimals=4), np.round(avg_cluster_act,decimals=4))
+
+            temp = random.sample(available, char_activiation_size)
             neurons.Input_Weights[temp, a] = 1
             available = set([n for n in available if n not in temp])
             assert len(available) > 0, 'Input alphabet too big for non-overlapping neurons'
@@ -299,8 +315,6 @@ class TextActivator_New(PatternGroup):
         result['unique_sentences'] = {}
         result['wrong_sentences'] = {}
 
-
-
         for sentence in output_sentences:
 
             self.add_to_dict(result['unique_sentences'], sentence)
@@ -366,7 +380,64 @@ class TextActivator_New(PatternGroup):
         self.current_index = temp
         return self
 
+    def mark_with_grammar(self, str, html=True):
 
+        output_sentences = self.split_text_into_sentences(str)
+
+        new_sentences = []
+
+        for sentence in output_sentences:
+
+            words_in_sentence = self.split_text_into_words(sentence)
+
+            wrong = False
+            for word in words_in_sentence:
+                if word not in self.words:
+                    wrong = True
+
+            if sentence not in self.corpus_blocks and ' '+sentence not in self.corpus_blocks:
+                if not wrong and len(words_in_sentence) >= 3:
+                    if sentence not in new_sentences:
+                        new_sentences.append(sentence)
+
+        #print(new_sentences)
+
+        mark_dict={}
+
+        #random_color=['0','1','2','3','4','5','6','7','8','9','A','B','C','D','E','F']
+
+        #for i, s in enumerate(self.corpus_blocks):
+        #    rnd_add = random_color[i]+'0'
+        #    mark_dict["background-color:#00FF"+rnd_add] = [s]
+
+        mark_dict["background-color:#00FF00"] = self.corpus_blocks #right
+        mark_dict["background-color:#FFFF00"] = new_sentences #new
+        mark_dict["color:#0000FF"] = [' ' + w for w in self.words] #right words
+
+
+        print(mark_dict)
+
+
+        return self.mark_text(str, mark_dict, html)
+
+    def mark_text(self, str, styles, html=True):  # styles={"background-color:#FF0000":[text1,text2,...], }
+        result = str
+        tags = ['a','b','c','d','e','f','g','h','i','j','k','l','m','n','o','p','q','r','s','t','u','v','w','x','y','z']
+        i=0
+        for style, mark_str_list in styles.items():
+
+            for mark_str in mark_str_list:
+                result = result.replace(mark_str, '<'+tags[i]+' style="' + style + '";>' + mark_str + '</'+tags[i]+'>')
+
+            i+=1
+
+        if html:
+            return """<html>
+            <head></head>
+            <body>""" + result + """</body>
+            </html>"""
+        else:
+            return result
 
 class FDTGrammarActivator_New(TextActivator_New):
 
@@ -517,12 +588,23 @@ class SingleWordGrammar(TextActivator_New):
 class FewSentencesGrammar(TextActivator_New):
 
     def get_text_blocks(self):
-        return [' fox eats meat.', ' boy drinks juice.', ' penguin likes ice.']# , ]#, ' penguin.' #,  , ' the fish swims.' #, 'the fish swims.'
+        return [' fox eats meat.', ' boy drinks juice.', ' penguin likes ice.', ' deer lives in forest.']#, ' parrots can fly.'#' the fish swims.' , ' deer lives in the forest.',  , ]#, ' penguin.' #,  , ' the fish swims.' #, 'the fish swims.'
 
 class FewSentencesContextGrammar(TextActivator_New):
 
     def get_text_blocks(self):
-        return [' fox eats meat.', ' boy eats bread.', ' penguin eats fish.']# , ]#, ' penguin.' #,  , ' the fish swims.' #, ' parrot eats nuts.'
+        return [' fox eats meat.', ' boy eats bread.', ' penguin eats fish.', ' parrot eats nuts.']## , ]#, ' penguin.' #,  , ' the fish swims.' #
+
+class NewGrammar(TextActivator_New):
+
+    def get_text_blocks(self):
+        return [' fox eats meat.', ' man drinks juice.', ' penguin likes ice.', ' parrots can fly.', 'the fish swims']
+
+class Combined_text_analysis_grammar(TextActivator_New):
+
+    def get_text_blocks(self):
+        return [' fox is an animal that eats meat.', ' boy likes to drink juice in the summer.', ' fox eats meat.', ' boy drinks juice.', ' man drinks juice.', ' penguin likes ice.', ' deer lives in forest.', ' parrots can fly.', 'the fish swims', ' parrots can fly.', ' boy eats bread.', ' penguin eats fish.', ' parrot eats nuts.']
+
 
 class LongDelayGrammar(TextActivator_New):
 

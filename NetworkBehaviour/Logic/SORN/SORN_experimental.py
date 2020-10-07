@@ -135,7 +135,6 @@ class SORN_IP_WTA(Instant_Homeostasis):
 
         self.set_threshold(self.get_init_attr('h_ip', 0.1, neurons))
         self.adj_strength = -self.get_init_attr('eta_ip', 0.001, neurons)
-        self.target_clip_min=self.get_init_attr('clip_min', -0.001, neurons)
 
         #target_clip_max
 

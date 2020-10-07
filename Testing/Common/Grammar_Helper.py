@@ -38,12 +38,21 @@ def predict_text_max_source_act(network, steps_plastic, steps_recovery, steps_sp
 
     text = max_source_act_text(network, steps_spont)
 
+    print(text)
+
+    #print('\x1b[6;30;42m' + 'Success!' + '\x1b[0m')
+
     network['grammar_act', 0].active = True
 
     if stdp_off:
         network.activate_mechanisms('STDP')
 
     return text
+
+def get_max_text_score(network, steps_plastic, steps_recovery, steps_spont, display=True, stdp_off=True, return_key='total_score'):
+    text = predict_text_max_source_act(network, steps_plastic, steps_recovery, steps_spont, display, stdp_off)
+    scores = network['grammar_act', 0].get_text_score(text)
+    return scores[return_key]
 
 def predict_char(linear_model, input_neuron_groups, inp_param_name):
     compiled_inp_param_name=compile(inp_param_name, '<string>', 'eval')

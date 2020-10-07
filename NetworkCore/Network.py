@@ -289,13 +289,59 @@ class Network(NetworkObjectBase):
         return time_diff
 
 
-    def partition_Synapse_Groups(self, SynapseGroups=[]):
-        #todo: make sure that all mechanisms use "s.src" and "s.dst" and not "neurons"!
-        if SynapseGroups==[]:
-            SynapseGroups=self.SynapseGroups.copy()
+    #def partition_Synapse_Groups(self, SynapseGroups=[]):
+    #    #todo: make sure that all mechanisms use "s.src" and "s.dst" and not "neurons"!
+    #    if SynapseGroups==[]:
+    #        SynapseGroups=self.SynapseGroups.copy()
 
-        for sg in SynapseGroups:
-            self.partition_Synapse_Group(sg)
+    #    for sg in SynapseGroups:
+    #        self.partition_Synapse_Group(sg)
+
+    def partition_Synapse_Group3(self, synapse_group, steps):
+        return self.partition_Synapse_Group2(synapse_group, synapse_group.dst.partition(steps))
+
+    def partition_Synapse_Group2(self, synapse_group, dst_groups):#todo:auto receptive field extraction (blocks dont need to be squared!)
+
+        rf_x, rf_y, rf_z = synapse_group.get_max_receptive_field_size()
+
+        syn_sub_groups=[]
+
+        for dst_subgroup in dst_groups:
+
+            src_x_start = np.min(dst_subgroup.x)-rf_x
+            src_x_end = np.max(dst_subgroup.x)+rf_x
+
+            src_y_start = np.min(dst_subgroup.y)-rf_y
+            src_y_end = np.max(dst_subgroup.y)+rf_y
+
+            src_z_start = np.min(dst_subgroup.z)-rf_z
+            src_z_end = np.max(dst_subgroup.z)+rf_z
+
+            src_mask = (synapse_group.src.x >= src_x_start) * (synapse_group.src.x <= src_x_end) * (synapse_group.src.y >= src_y_start) * (synapse_group.src.y <= src_y_end) * (synapse_group.src.z >= src_z_start) * (synapse_group.src.z <= src_z_end)
+
+            sg=SynapseGroup(synapse_group.src.subGroup(src_mask), dst_subgroup)
+
+            syn_sub_groups.append(sg)
+
+            # partition enabled update
+            if type(synapse_group.enabled) is np.ndarray:
+                mat_mask = dst_subgroup.mask[:, None] * src_mask[None, :]
+                sg.enabled = synapse_group.enabled[mat_mask].copy().reshape(sg.get_synapse_mat_dim())
+
+            # copy al attributes
+            sgd = synapse_group.__dict__
+            for key in sgd:
+                if key not in ['src', 'dst', 'enabled']:
+                    setattr(sg, key, copy.copy(sgd[key]))
+
+        #add sub Groups
+        for sg in syn_sub_groups:
+            self.SynapseGroups.append(sg)
+
+        #remove original SG
+        self.SynapseGroups.remove(synapse_group)
+
+        return syn_sub_groups
 
 
     def partition_Synapse_Group(self, syn_group, receptive_field_size=1, split_size=1):
@@ -341,7 +387,7 @@ class Network(NetworkObjectBase):
             return start, end
 
         #calculate sub Groups
-        sub_groups=[]
+        sub_groups = []
 
         #src_masks = []
         dst_masks = []
