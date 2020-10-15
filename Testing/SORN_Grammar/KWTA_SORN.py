@@ -3,7 +3,6 @@ import sys
 sys.path.append('../../')
 
 from NetworkCore.Network import *
-from NetworkCore.Neuron_Group import *
 from NetworkCore.Synapse_Group import *
 from Testing.Common.Grammar_Helper import *
 from NetworkBehaviour.Logic.SORN.SORN_experimental import *
@@ -14,7 +13,7 @@ from Exploration.StorageManager.StorageManager import *
 
 
 if __name__ == '__main__':
-    from Exploration.UI.Network_UI.Network_UI import *
+    pass
 
 def run(attrs={'name': 'KWTA', 'ind': [], 'N_e': 900, 'TS': [1], 'ff': True, 'fb': True, 'plastic': 15000}):
     so = True

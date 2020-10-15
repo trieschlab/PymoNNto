@@ -3,7 +3,6 @@ sys.path.append('../../')
 
 from NetworkCore.Network import *
 from NetworkCore.Synapse_Group import *
-from Testing.Common.Classifier_Helper import *
 from NetworkBehaviour.Structure.Structure import *
 from Exploration.StorageManager.StorageManager import *
 
@@ -84,7 +83,7 @@ def run(tag='hierarchical', ind=[], par={'N_e':900}):
 
     #SORN.simulate_iterations(100, 100, measure_block_time=True, disable_recording=True)
 
-    import Exploration.UI.Network_UI.Network_UI as SUI
+    import Exploration.Network_UI.Network_UI as SUI
     SUI.Network_UI(SORN, label='T', exc_group_name='main_exc_group', inh_group_name='main_inh_group', storage_manager=sm).show()
 
     score += get_evolution_score_words(SORN, 15000, 5000, 2000, display=False, stdp_off=True, same_timestep_without_feedback_loop=True, steps_recovery=15000)#, steps_recovery=15000

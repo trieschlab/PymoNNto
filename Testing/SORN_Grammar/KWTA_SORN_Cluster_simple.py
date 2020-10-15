@@ -3,11 +3,9 @@ import sys
 sys.path.append('../../')
 
 from NetworkCore.Network import *
-from NetworkCore.Neuron_Group import *
 from NetworkCore.Synapse_Group import *
 from Testing.Common.Grammar_Helper import *
 from NetworkBehaviour.Logic.SORN.SORN_experimental import *
-from NetworkBehaviour.Logic.SORN.SORN_advanced_buffer import *
 from NetworkBehaviour.Logic.SORN.SORN_WTA import *
 from NetworkBehaviour.Input.Text.TextActivator import *
 from NetworkBehaviour.Structure.Structure import *
@@ -15,7 +13,7 @@ from Exploration.StorageManager.StorageManager import *
 
 
 if __name__ == '__main__':
-    from Exploration.UI.Network_UI.Network_UI import *
+    pass
 
 class SORN_K_random_input(Neuron_Behaviour):
 

@@ -1,5 +1,4 @@
-from Exploration.UI.UI_Base import *
-import matplotlib.pyplot as plt
+from Exploration.UI_Base import *
 import subprocess
 from functools import partial
 

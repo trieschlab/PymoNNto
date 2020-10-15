@@ -110,7 +110,7 @@ def run(tag, ind=[], par={'N_e':2000, 'TS':[1], 'ts_plastic':1000, 'ts_train':10
     score_spont = score_predict_train = score_predict_test = 0
 
 
-    import Exploration.UI.Network_UI.Network_UI as SUI
+    import Exploration.Network_UI.Network_UI as SUI
     SUI.Network_UI(SORN, label='SORN UI default setup', storage_manager=sm, group_display_count=2, reduced_layout=False).show()
     
     SORN = run_plastic_phase(SORN, steps_plastic=1000, display=True, storage_manager=sm)

@@ -168,18 +168,18 @@ class NeuronGroup(NetworkObjectBase):
 
         return result
 
-    def partition_block_size(self):
-        best_block_size = 7
-        w = int((self.src.width/best_block_size+self.dst.width/best_block_size)/2)
-        h = int((self.src.height/best_block_size+self.dst.height/best_block_size)/2)
-        d = int((self.src.depth / best_block_size + self.dst.depth / best_block_size) / 2)
+    def partition_size(self, block_size = 7):
+
+        w = block_size#int((self.src.width/block_size+self.dst.width/block_size)/2)
+        h = block_size#int((self.src.height/block_size+self.dst.height/block_size)/2)
+        d = block_size#int((self.src.depth / block_size + self.dst.depth / block_size) / 2)
         split_size = [np.maximum(w, 1), np.maximum(h, 1), np.maximum(d, 1)]
         if split_size[0]<2 and split_size[1]<2 and split_size[2]<2:
             return [self]
         else:
-            return self.partition_block_ct(split_size)
+            return self.partition_steps(split_size)
 
-    def partition_block_ct(self, steps=[1, 1, 1]):
+    def partition_steps(self, steps=[1, 1, 1]):
 
         dst_min = [np.min(p) for p in [self.x, self.y, self.z]]
         dst_max = [np.max(p) for p in [self.x, self.y, self.z]]

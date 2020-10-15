@@ -4,12 +4,10 @@ sys.path.append('../../')
 from NetworkBehaviour.Logic.SORN.SORN_advanced import *
 from NetworkCore.Network import *
 from NetworkCore.Synapse_Group import *
-from Testing.Common.Classifier_Helper import *
 from NetworkBehaviour.Structure.Structure import *
 from Exploration.StorageManager.StorageManager import *
 from NetworkBehaviour.Input.Images.MNIST_Patterns import *
 from Testing.Common.Grammar_Helper import *
-from Exploration.UI.Network_UI.Network_UI import *
 
 display = False
 so = True

@@ -37,11 +37,16 @@ class SORN_generate_output_K_WTA_partitioned(Neuron_Behaviour):
 
         self.K = self.get_init_attr('K', 0.1, neurons)#only accepts values between 0 and 1
 
+        partition_size = self.get_init_attr('partition_size', 7, neurons)
+        self.partitioned_ng=neurons.partition_size(partition_size)
+
     def new_iteration(self, neurons):
         if last_cycle_step(neurons):
 
-            for s in neurons.afferent_synapses['GLU']:
-                K = s.dst.size * self.K
+            #for syn in neurons.afferent_synapses['GLU']:
+            #    ng=syn.dst
+            for ng in self.partitioned_ng:#
+                K = ng.size * self.K
                 #for non integer K
                 K_floor = int(np.floor(K))
                 if np.random.rand() < (K-K_floor):
@@ -49,19 +54,19 @@ class SORN_generate_output_K_WTA_partitioned(Neuron_Behaviour):
                 else:
                     K = K_floor
 
-                s.dst.output *= 0
+                ng.output *= 0
 
                 if K>0:
-                    act = s.dst.activity.copy()
+                    act = ng.activity.copy()
 
                     if self.filter_temporal_output:
-                        act = s.dst.activity*s.dst.output#-(s.dst.output*-10000)
+                        act = ng.activity*ng.output#-(s.dst.output*-10000)
 
                     ind = np.argpartition(act, -K)[-K:]
-                    act_mat = np.zeros(s.dst.size)
+                    act_mat = np.zeros(ng.size)
                     act_mat[ind] = 1
 
-                    s.dst.output += act_mat
+                    ng.output += act_mat
 
                     #s.dst.output = s.dst.output*0.0+act_mat
                     #

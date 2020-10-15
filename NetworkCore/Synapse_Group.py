@@ -20,12 +20,13 @@ class SynapseGroup(NetworkObjectBase):
         self.enabled = True
         self.group_weighting = 1
 
+        self.description = {'connectivity': str(connectivity), 'partition':str(partition)}
+
         if connectivity is not None:
             self.set_connectivity(connectivity)
 
         if partition:
             self.partition(split_size=partition_blocks)
-
 
     def set_connectivity(self, connectivity):
         src = self.src
@@ -193,4 +194,4 @@ class SynapseGroup(NetworkObjectBase):
 
         self.network.partition_Synapse_Group3(self, steps=split_size)
 
-        #self.network.partition_Synapse_Group(self, receptive_field_size=receptive_field_size, split_size=split_size)
+        #self.network.partition_Synapse_Group(self, receptive_field_size=self.get_max_receptive_field_size(), split_size=split_size)

@@ -10,7 +10,7 @@ from NetworkBehaviour.Structure.Structure import *
 from Exploration.StorageManager.StorageManager import *
 from Testing.Common.Grammar_Helper import *
 if __name__ == '__main__':
-    from Exploration.UI.Network_UI.Network_UI import *
+    pass
 
 
 

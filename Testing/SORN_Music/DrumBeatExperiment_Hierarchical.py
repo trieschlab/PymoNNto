@@ -9,7 +9,6 @@ from NetworkCore.Synapse_Group import *
 from Testing.Common.SORN_MusicHelper import *
 from NetworkBehaviour.Structure.Structure import *
 from Exploration.StorageManager.StorageManager import *
-from Exploration.Visualization.SORN_visualization import *
 
 display = False
 so = True
@@ -110,7 +109,7 @@ def run(tag, ind=[], par={'N_e':[1800], 'TS':[1]}):
 
     score_spont = score_predict_train = score_predict_test = 0
 
-    import Exploration.UI.Network_UI.Network_UI as SUI
+    import Exploration.Network_UI.Network_UI as SUI
     SUI.Network_UI(SORN, label='SORN UI default setup', storage_manager=sm, group_display_count=2, reduced_layout=False).show()
 
     #SORN = run_plastic_phase(SORN, steps_plastic=10000, display=True, storage_manager=sm)#1000000

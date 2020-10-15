@@ -9,7 +9,6 @@ from NetworkCore.Synapse_Group import *
 from NetworkBehaviour.Structure.Structure import *
 from Exploration.StorageManager.StorageManager import *
 from Testing.Common.Grammar_Helper import *
-from Exploration.UI.Network_UI.Network_UI import *
 
 
 def get_color(type_index, layer):

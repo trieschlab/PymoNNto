@@ -5,14 +5,12 @@ sys.path.append('../../')
 from NetworkBehaviour.Logic.SORN.SORN_advanced_buffer import *
 from NetworkCore.Network import *
 from NetworkCore.Synapse_Group import *
-from NetworkBehaviour.Structure.Structure import *
 from Exploration.StorageManager.StorageManager import *
 
 from Testing.Agent_Maze.Maze import *
-from Exploration.UI.Network_UI.Tabs.maze_tab import *
 
 if __name__ == '__main__':
-    from Exploration.UI.Network_UI.Network_UI import *
+    pass
 
 
 def run(attrs={'name': 'maze', 'ind': [], 'N_e': 900, 'TS': [1], 'ff': True, 'fb': True, 'plastic': 15000}):

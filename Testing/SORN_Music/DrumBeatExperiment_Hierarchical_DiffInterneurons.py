@@ -10,7 +10,6 @@ from Testing.Common.SORN_MusicHelper import *
 from NetworkBehaviour.Structure.Structure import *
 from Exploration.StorageManager.StorageManager import *
 from Exploration.Visualization.SORN_visualization import *
-from Exploration.UI.Network_UI.Network_UI import *
 
 
 def get_color(type_index, layer):

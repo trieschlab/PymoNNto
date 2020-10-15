@@ -242,17 +242,35 @@ class Network(NetworkObjectBase):
                     for tag in sg.tags+['All']:
                         ng.efferent_synapses[tag].append(sg)
 
-    def simulate_iteration(self):
+    def simulate_iteration(self, measure_behaviour_execution_time=False):
+
+        if measure_behaviour_execution_time:
+            time_measures={}
+
         self.iteration+=1
         for timestep in self.behaviour_timesteps:
 
-            if timestep in self.network_behaviour and self.network_behaviour[timestep].behaviour_enabled:#todo: Test
-                self.network_behaviour[timestep].new_iteration(self)
+            if timestep in self.network_behaviour and self.network_behaviour[timestep].behaviour_enabled:
+                if measure_behaviour_execution_time:
+                    start_time = time()
+                    self.network_behaviour[timestep].new_iteration(self)
+                    time_measures[timestep] = (time() - start_time) * 1000
+                else:
+                    self.network_behaviour[timestep].new_iteration(self)
 
             for ng in self.NeuronGroups:
                 ng.iteration=self.iteration
                 if timestep in ng.behaviour and ng.behaviour[timestep].behaviour_enabled:
-                    ng.behaviour[timestep].new_iteration(ng)
+                    if measure_behaviour_execution_time:
+                        start_time = time()
+                        ng.behaviour[timestep].new_iteration(ng)
+                        time_measures[timestep] = (time() - start_time) * 1000
+                    else:
+                        ng.behaviour[timestep].new_iteration(ng)
+
+        if measure_behaviour_execution_time:
+            return time_measures
+
 
     def simulate_iterations(self, iterations, batch_size=-1, measure_block_time=False, disable_recording=False):
         time_diff=None
@@ -298,7 +316,7 @@ class Network(NetworkObjectBase):
     #        self.partition_Synapse_Group(sg)
 
     def partition_Synapse_Group3(self, synapse_group, steps):
-        return self.partition_Synapse_Group2(synapse_group, synapse_group.dst.partition(steps))
+        return self.partition_Synapse_Group2(synapse_group, synapse_group.dst.partition_steps(steps))
 
     def partition_Synapse_Group2(self, synapse_group, dst_groups):#todo:auto receptive field extraction (blocks dont need to be squared!)
 
