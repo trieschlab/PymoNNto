@@ -98,8 +98,9 @@ class sidebar_activity_sub_module():
 
 class UI_sidebar_activity_module():
 
-    def __init__(self, group_display_count=1):
+    def __init__(self, group_display_count=1, add_color_dict={'output': (255, 255, 255), 'Input_Mask': (-100, -100, -100)}):
         self.group_display_count=group_display_count
+        self.add_color_dict=add_color_dict
 
     def add_recorder_variables(self, neuron_group, Network_UI):
         for module in self.sub_modules:
@@ -112,7 +113,7 @@ class UI_sidebar_activity_module():
 
         self.sub_modules = []
         for i in range(self.group_display_count):
-            self.sub_modules.append(sidebar_activity_sub_module())
+            self.sub_modules.append(sidebar_activity_sub_module(add_color_dict=self.add_color_dict))
             self.sub_modules[-1].initialize(SORN_UI, np.minimum(i, len(SORN_UI.group_tags)))
 
     def update(self, SORN_UI):

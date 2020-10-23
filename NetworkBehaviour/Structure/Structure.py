@@ -30,7 +30,7 @@ def get_squared_dim(number_of_neurons, depth=1, round_up=True):
     return NeuronDimension(width=w, height=h, depth=depth)
 
 
-class NeuronDimension(Neuron_Behaviour):
+class NeuronDimension(Behaviour):
 
     run_on_neuron_init_var = True
 

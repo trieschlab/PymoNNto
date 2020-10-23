@@ -6,7 +6,7 @@ from NetworkBehaviour.Logic.SORN.SORN_advanced_buffer import *
 ##########################################################################
 #Generate output with k winner takes all algorithm
 ##########################################################################
-class SORN_generate_output_K_WTA(Neuron_Behaviour):
+class SORN_generate_output_K_WTA(Behaviour):
 
     def set_variables(self, neurons):
         self.add_tag('K_WTA')
@@ -26,14 +26,14 @@ class SORN_generate_output_K_WTA(Neuron_Behaviour):
             neurons.output[ind] = 1
 
 
-class SORN_generate_output_K_WTA_partitioned(Neuron_Behaviour):
+class SORN_generate_output_K_WTA_partitioned(Behaviour):
 
     def set_variables(self, neurons):
         self.add_tag('K_WTA_partitioned')
 
         self.filter_temporal_output = self.get_init_attr('filter_temporal_output', False, neurons)
 
-        neurons.output = neurons.get_neuron_vec()
+
 
         self.K = self.get_init_attr('K', 0.1, neurons)#only accepts values between 0 and 1
 
@@ -75,6 +75,7 @@ class SORN_generate_output_K_WTA_partitioned(Neuron_Behaviour):
 
                 #s.dst._temp_act_sum += np.mean(s.src.output)
 
+
 class SORN_WTA_fast_syn(SORN_signal_propagation_base):
 
     def set_variables(self, neurons):
@@ -93,7 +94,7 @@ class SORN_WTA_fast_syn(SORN_signal_propagation_base):
                 else:
                     s.dst.inhibition += s.fast_add
 
-class SORN_WTA_iSTDP(Neuron_Behaviour):
+class SORN_WTA_iSTDP(Behaviour):
 
     def set_variables(self, neurons):
         super().set_variables(neurons)
@@ -153,7 +154,7 @@ class SORN_IP_WTA(Instant_Homeostasis):
 
             #neurons.activity -= neurons.exhaustion_value
 
-class SORN_IP_WTA_apply(Neuron_Behaviour):
+class SORN_IP_WTA_apply(Behaviour):
 
     def set_variables(self, neurons):
         super().set_variables(neurons)

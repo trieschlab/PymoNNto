@@ -10,7 +10,7 @@ import Exploration.Evolution.NetworkEvaluationFunctions as EvalF
 
 
 
-class visualization_recorder(Neuron_Behaviour):
+class visualization_recorder(Behaviour):
     def __init__(self):
         self.recorderlist = []
         self.neurons = None

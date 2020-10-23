@@ -16,7 +16,7 @@ class TREN_external_input(NeuronActivator):
         neurons.input *= self.strength
 
 
-class InterGammaGlutamate(Neuron_Behaviour):
+class InterGammaGlutamate(Behaviour):
     modificaton_reset_vars = ['']
 
     def set_variables(self, neurons):
@@ -39,7 +39,7 @@ class InterGammaGlutamate(Neuron_Behaviour):
 
 
 
-class IntraGammaGlutamate(Neuron_Behaviour):
+class IntraGammaGlutamate(Behaviour):
     def set_variables(self, neurons):
         self.add_tag('Intra GLU')
         neurons.glu_intra_gamma_activity = neurons.get_neuron_vec()
@@ -56,7 +56,7 @@ class IntraGammaGlutamate(Neuron_Behaviour):
                 #s.get_dest_vec('glu_intra_gamma_activity')[:] += np.dot(s.W,  relu3(s.get_src_vec('glu_inter_gamma_activity')[:], neurons.TH,  0))
 
 
-class IntraGammaGABA(Neuron_Behaviour):
+class IntraGammaGABA(Behaviour):
 
     def set_variables(self, neurons):
         self.add_tag('Intra GABA')
@@ -89,7 +89,7 @@ class IntraGammaGABA(Neuron_Behaviour):
             return 1
 
 
-class ActivityBuffering(Neuron_Behaviour):
+class ActivityBuffering(Behaviour):
 
     def set_variables(self, neurons):
         self.add_tag('Collect and Buffer')
@@ -136,7 +136,7 @@ class ActivityBuffering(Neuron_Behaviour):
             return self.min_buffersize
 
 
-class RandomLeakInput(Neuron_Behaviour):
+class RandomLeakInput(Behaviour):
 
     def set_variables(self, neurons):
         self.add_tag('Random Leak')
@@ -146,7 +146,7 @@ class RandomLeakInput(Neuron_Behaviour):
     def new_iteration(self, neurons):
         neurons.random_leak_activity = neurons.get_random_neuron_vec()*neurons.weight_norm_factor*self.random_strength
 
-class additional(Neuron_Behaviour):
+class additional(Behaviour):
 
     def set_variables(self, neurons):
         self.add_tag('additional ...')

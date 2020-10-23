@@ -36,7 +36,7 @@ def first_cycle_step(neurons):
 
 
 
-class SORN_init_afferent_synapses(Neuron_Behaviour):
+class SORN_init_afferent_synapses(Behaviour):
 
     def set_variables(self, neurons):
         self.add_tag('init_afferent_synapses')
@@ -131,7 +131,7 @@ class SORN_init_afferent_synapses(Neuron_Behaviour):
     def new_iteration(self, neurons):
         return
 
-class SORN_init_neuron_vars(Neuron_Behaviour):
+class SORN_init_neuron_vars(Behaviour):
 
     def set_variables(self, neurons):
         self.add_tag('init_neuron_vars')
@@ -196,7 +196,7 @@ class SORN_NOX(Instant_Homeostasis):
             #neurons.nox *= 0.5#0.9
 
 
-class SORN_signal_propagation_base(Neuron_Behaviour):
+class SORN_signal_propagation_base(Behaviour):
 
     def set_variables(self, neurons):
         self.transmitter = self.get_init_attr('transmitter', None, neurons)
@@ -296,7 +296,7 @@ class SORN_fast_syn(SORN_signal_propagation_base):
                     s.dst.inhibition += s.fast_add
 
 
-class SORN_slow_input_collect(Neuron_Behaviour):#has to be executed AFTER intra, inter...behaviours
+class SORN_slow_input_collect(Behaviour):#has to be executed AFTER intra, inter...behaviours
 
     def set_variables(self, neurons):
         self.add_tag('input_collect')
@@ -310,7 +310,7 @@ class SORN_slow_input_collect(Neuron_Behaviour):#has to be executed AFTER intra,
             #neurons.test_val = (activation_function(neurons.activity, neurons) + activation_function(neurons.slow_act, neurons))/2
 
 
-class SORN_input_collect(Neuron_Behaviour):#has to be executed AFTER intra, inter...behaviours
+class SORN_input_collect(Behaviour):#has to be executed AFTER intra, inter...behaviours
 
     def set_variables(self, neurons):
         self.add_tag('input_collect')
@@ -325,7 +325,7 @@ class SORN_input_collect(Neuron_Behaviour):#has to be executed AFTER intra, inte
             #neurons.test_val = (activation_function(neurons.activity, neurons) + activation_function(neurons.slow_act, neurons))/2
 
 
-class SORN_Refractory(Neuron_Behaviour):
+class SORN_Refractory(Behaviour):
 
     def set_variables(self, neurons):
         self.add_tag('Refractory')
@@ -338,7 +338,7 @@ class SORN_Refractory(Neuron_Behaviour):
             neurons.refractory_counter *= self.factor
             neurons.refractory_counter += neurons.output_new
 
-class SORN_STDP_new(Neuron_Behaviour):
+class SORN_STDP_new(Behaviour):
 
     def set_variables(self, neurons):
         self.add_tag('STDP')
@@ -365,7 +365,7 @@ class SORN_STDP_new(Neuron_Behaviour):
             s.W[s.W < 0.0] = 0.0
 
 
-class SORN_STDP(Neuron_Behaviour):
+class SORN_STDP(Behaviour):
 
     def set_variables(self, neurons):
         self.add_tag('STDP')
@@ -410,7 +410,7 @@ class SORN_STDP(Neuron_Behaviour):
 
 
 
-class SORN_SN(Neuron_Behaviour):
+class SORN_SN(Behaviour):
 
     def set_variables(self, neurons):
         self.add_tag('SN')
@@ -425,7 +425,7 @@ class SORN_SN(Neuron_Behaviour):
                 s.W=np.clip(s.W, 0, self.clip_max)
 
 
-class SORN_iSTDP(Neuron_Behaviour):
+class SORN_iSTDP(Behaviour):
 
     def set_variables(self, neurons):
         self.add_tag('iSTDP')
@@ -512,7 +512,7 @@ class SORN_diffuse_IP(Time_Integration_Homeostasis):
 
 
 
-class SORN_finish(Neuron_Behaviour):
+class SORN_finish(Behaviour):
 
     def set_variables(self, neurons):
         self.add_tag('finish')
@@ -523,7 +523,7 @@ class SORN_finish(Neuron_Behaviour):
             #neurons.exc=neurons.excitation.copy()
 
 
-class SORN_random_act(Neuron_Behaviour):
+class SORN_random_act(Behaviour):
 
     def set_variables(self, neurons):
         self.add_tag('rnd_act')

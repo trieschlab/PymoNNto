@@ -2,7 +2,7 @@ import numpy as np
 from NetworkCore.Base import *
 from numpy.random import *
 
-class Neuron_Behaviour(NetworkObjectBase):
+class Behaviour(NetworkObjectBase):
     #modificaton_reset_vars = []
     run_on_neuron_init_var = False
 
@@ -19,7 +19,7 @@ class Neuron_Behaviour(NetworkObjectBase):
     def diversity_string_to_vec(self, ds, neurons):
 
         if 'same(' in ds and ds[-1] == ')':
-            params=ds[5:-1].replace(' ','').split(',')
+            params=ds[5:-1].replace(' ', '').split(',')
             if len(params) == 2:
                 #print('same', params)
                 return getattr(neurons[params[0], 0], params[1])
@@ -121,6 +121,8 @@ class Neuron_Behaviour(NetworkObjectBase):
             s.dst.temp_weight_sum += np.sum(np.abs(getattr(s, src_attr)), axis=1)
 
         neurons.temp_weight_sum /= target_value
+
+        #print(neurons.temp_weight_sum)
 
         for s in neurons.afferent_synapses[synapse_type]:
             setattr(s, target_attr, getattr(s, target_attr) / (s.dst.temp_weight_sum[:, None] + (s.dst.temp_weight_sum[:, None] == 0)))

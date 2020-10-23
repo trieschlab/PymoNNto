@@ -1,6 +1,6 @@
 from NetworkBehaviour.Logic.Basics.BasicHomeostasis import *
 
-class STDP_base(Neuron_Behaviour):
+class STDP_base(Behaviour):
 
     def set_variables(self, neurons):
         self.add_tag('STDP')
@@ -55,7 +55,7 @@ class STDP_complex(STDP_base):
     zerotime=2
 
 
-class TemporalWeightCache(Neuron_Behaviour):
+class TemporalWeightCache(Behaviour):
 
     def set_variables(self, neurons):
         self.add_tag('Weight_Cache')
@@ -127,7 +127,7 @@ class RandomWeightFluctuation2(TemporalWeightCache):
         super().new_iteration(neurons)
 
 
-class DopamineProcessing(Neuron_Behaviour):
+class DopamineProcessing(Behaviour):
 
     def set_variables(self, neurons):
         self.source_weight_id = self.get_init_attr('source_weight_id', 1, neurons)

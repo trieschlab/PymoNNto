@@ -127,6 +127,11 @@ class Network(NetworkObjectBase):
     def check_unique_tags(self,warnings=True):
         unique_tags=[]
         for ng in self.NeuronGroups:
+
+            if len(ng.tags) == 0:
+                ng.tags.append('NG')
+                print('no tag defined for NeuronGroup. "NG" tag added')
+
             if ng.tags[0] in unique_tags:
                 counts=unique_tags.count(ng.tags[0])
                 new_tag=ng.tags[0]+chr(97+counts)
@@ -273,6 +278,10 @@ class Network(NetworkObjectBase):
 
 
     def simulate_iterations(self, iterations, batch_size=-1, measure_block_time=False, disable_recording=False):
+
+        if type(iterations) is str:
+            iterations=self['Clock', 0].time_to_iterations(iterations)
+
         time_diff=None
 
         if disable_recording:

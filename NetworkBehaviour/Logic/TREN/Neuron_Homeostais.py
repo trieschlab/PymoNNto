@@ -1,6 +1,6 @@
 from NetworkBehaviour.Logic.Basics.BasicHomeostasis import *
 
-class HomeostaticMechanism(Neuron_Behaviour):
+class HomeostaticMechanism(Behaviour):
 
     def set_variables(self, neurons):
         self.add_tag('Homeostasis')
@@ -65,7 +65,7 @@ class HomeostaticMechanism(Neuron_Behaviour):
 
 
 
-class GlutamateCacheConvergeAndNormalization(Neuron_Behaviour):
+class GlutamateCacheConvergeAndNormalization(Behaviour):
 
     def set_variables(self, neurons):
         self.add_tag('Normalization')
@@ -96,7 +96,7 @@ class GlutamateCacheConvergeAndNormalization(Neuron_Behaviour):
 
 #only for LGN
 
-class TREN_input_weighting(Neuron_Behaviour):
+class TREN_input_weighting(Behaviour):
 
     def set_variables(self, neurons):
         neurons.norm_value = neurons.get_random_neuron_vec()*0.5#0.4-0.2+0.3 #neurons.get_neuron_vec()+1

@@ -1,6 +1,6 @@
-from NetworkCore.Neuron_Behaviour import *
+from NetworkCore.Behaviour import *
 
-class Instant_Homeostasis(Neuron_Behaviour):
+class Instant_Homeostasis(Behaviour):
 
     def get_measurement_param(self, n):
         if self.compiled_mp is None:

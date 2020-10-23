@@ -38,7 +38,7 @@ def get_default_UI_modules():
     UI_sidebar_activity_module(1),
     multi_group_plot_tab(['output', 'TH', 'weight_norm_factor', 'nox', 'refractory_counter']),
     spiketrain_tab(parameter='output'),
-    weight_tab(weight_attrs=['W', 'W_temp', 'W_stable']),
+    weight_tab(weight_attrs=['W']),#, 'W_temp', 'W_stable'
     stdp_buffer_tab(),
     partition_tab(),
     PCA_tab(),
@@ -217,10 +217,10 @@ class Network_UI(UI_Base):
                 shapes[key] = (base_src.height, base_src.width)
             if hasattr(s, attr):
                 if base_src == s.src and base_dst == s.dst:
-                    results[key] += getattr(s,attr).copy()
+                    results[key] += getattr(s, attr).numpy()#.copy()
                 else:
                     mat_mask = s.dst.mask[:, None]*s.src.mask[None, :]
-                    results[key][mat_mask] += getattr(s,attr).flatten()
+                    results[key][mat_mask] += getattr(s, attr).flatten()
 
         if neuron_id is not None:
             for key in results:

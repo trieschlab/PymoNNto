@@ -1,5 +1,5 @@
 from NetworkCore.Base import *
-from NetworkCore.Neuron_Behaviour import *
+from NetworkCore.Behaviour import *
 from NetworkBehaviour.Recorder.Recorder import *
 import copy
 
@@ -10,7 +10,7 @@ class NeuronGroup(NetworkObjectBase):
 
         self.BaseNeuronGroup = self#used for subgroup reconstruction
 
-        if isinstance(size, Neuron_Behaviour):
+        if isinstance(size, Behaviour):
             if type(behaviour) is dict:
                 if 0 in behaviour:
                     print('warning: 0 index behaviour will be overwritten by size behaviour')
@@ -69,7 +69,8 @@ class NeuronGroup(NetworkObjectBase):
 
         for syn_key in self.afferent_synapses:
             for syn in self.afferent_synapses[syn_key]:
-                result += syn[key]
+                if syn not in result:
+                    result += syn[key]
 
         return result
 
@@ -128,7 +129,7 @@ class NeuronGroup(NetworkObjectBase):
         return self.size, source_num
 
     def subGroup(self, mask=None):
-        return TRENNeuronSubGroup(self, mask)
+        return NeuronSubGroup(self, mask)
 
     def group_without_subGroup(self):
         return self
@@ -240,13 +241,14 @@ class NeuronGroup(NetworkObjectBase):
     '''
 
 
-class TRENNeuronSubGroup:
+class NeuronSubGroup:
 
     def __init__(self, BaseNeuronGroup, mask):
         self.cache = {}
         self.key_id_cache = {}
         self.BaseNeuronGroup = BaseNeuronGroup
         self.mask = mask
+        self.id_mask = np.where(mask)[0]
 
     def mask_var(self, var):
         if var.shape[0] != self.mask.shape[0]:
@@ -263,11 +265,13 @@ class TRENNeuronSubGroup:
     #    #    return attr[self.mask]
 
     def __getattr__(self, attr_name):
-        if attr_name in ['BaseNeuronGroup', 'mask', 'cache', 'key_id_cache']:
+        if attr_name in ['BaseNeuronGroup', 'mask', 'cache', 'key_id_cache', 'id_mask']:
             return super().__getattr__(attr_name)#setattr
 
         if attr_name == 'size':
             return np.sum(self.mask)
+
+        #print('request', attr_name,hasattr(self.BaseNeuronGroup, 'tf'))
 
         attr = getattr(self.BaseNeuronGroup, attr_name)
         if type(attr) == np.ndarray:
@@ -290,13 +294,26 @@ class TRENNeuronSubGroup:
             else:
                 return attr[self.mask]
 
+
+        elif hasattr(self.BaseNeuronGroup, 'tf') and (type(attr) == self.BaseNeuronGroup.tf.python.ops.resource_variable_ops.ResourceVariable or type(attr) == self.BaseNeuronGroup.tf.python.framework.ops.EagerTensor):
+
+            if attr.shape[0] != self.mask.shape[0]:
+                return self.BaseNeuronGroup.tf.boolean_mask(attr, self.mask, axis=1)#attr[:, self.mask]
+            else:
+                return self.BaseNeuronGroup.tf.boolean_mask(attr, self.mask, axis=0)#attr[self.mask]
         else:
             return attr
 
     def __setattr__(self, attr_name, value):
-        if attr_name in ['BaseNeuronGroup', 'mask', 'cache', 'key_id_cache']:
+        if attr_name in ['BaseNeuronGroup', 'mask', 'cache', 'key_id_cache', 'id_mask']:
             super().__setattr__(attr_name, value)
             return
+
+        #if len(self.BaseNeuronGroup['TF']) > 0 and not hasattr(self, 'tf'):
+        #    import tensorflow as tf
+        #    self.tf=tf
+
+        #print(self.BaseNeuronGroup.__dict__)
 
         attr = getattr(self.BaseNeuronGroup, attr_name)
         if type(attr) == np.ndarray:
@@ -319,6 +336,13 @@ class TRENNeuronSubGroup:
             else:
                 attr[self.mask] = value
 
+        elif hasattr(self.BaseNeuronGroup, 'tf') and (type(attr) == self.BaseNeuronGroup.tf.python.ops.resource_variable_ops.ResourceVariable or type(attr) == self.BaseNeuronGroup.tf.python.framework.ops.EagerTensor):
+            if attr.shape[0] != self.mask.shape[0]:
+                attr.assign(self.BaseNeuronGroup.tf.compat.v1.scatter_update(attr, [np.newaxis, self.id_mask], value))
+                #setattr(self.BaseNeuronGroup, attr_name, self.BaseNeuronGroup.tf.compat.v1.scatter_update(attr, [np.newaxis, self.id_mask], value))
+            else:
+                #setattr(self.BaseNeuronGroup, attr_name, self.BaseNeuronGroup.tf.compat.v1.scatter_update(attr, [self.id_mask], value))
+                attr.assign(self.BaseNeuronGroup.tf.compat.v1.scatter_update(attr, [self.id_mask], value))
 
 
         else:

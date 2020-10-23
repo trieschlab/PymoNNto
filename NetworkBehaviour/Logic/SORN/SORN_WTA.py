@@ -1,7 +1,7 @@
 from NetworkBehaviour.Input.Activator import *
 from NetworkBehaviour.Logic.SORN.SORN_advanced_buffer import *
 
-class SORN_init_neuron_vars_decay(Neuron_Behaviour):
+class SORN_init_neuron_vars_decay(Behaviour):
 
     def set_variables(self, neurons):
         self.add_tag('init_neuron_vars')
@@ -20,7 +20,7 @@ class SORN_init_neuron_vars_decay(Neuron_Behaviour):
             neurons.inhibition.fill(0)# *= 0
             neurons.input_act.fill(0)# *= 0
 
-class WTA_refrac(Neuron_Behaviour):
+class WTA_refrac(Behaviour):
 
     def set_variables(self, neurons):
         self.add_tag('Refractory_A')
@@ -35,7 +35,7 @@ class WTA_refrac(Neuron_Behaviour):
             neurons.refractory_counter_analog *= self.decayfactor
             neurons.refractory_counter_analog += neurons.output
 
-class WTA_refrac_apply(Neuron_Behaviour):
+class WTA_refrac_apply(Behaviour):
 
     def set_variables(self, neurons):
         self.add_tag('Refractory_Apply')

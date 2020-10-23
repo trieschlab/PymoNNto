@@ -15,7 +15,7 @@ from Exploration.StorageManager.StorageManager import *
 if __name__ == '__main__':
     pass
 
-class SORN_K_random_input(Neuron_Behaviour):
+class SORN_K_random_input(Behaviour):
 
     def set_variables(self, neurons):
         self.K = int(neurons.size*0.04)
@@ -32,7 +32,7 @@ class SORN_K_random_input(Neuron_Behaviour):
             neurons.activity=rnd
 
 
-class SORN_generate_output_K_WTA_partitioned_dec_k(Neuron_Behaviour):
+class SORN_generate_output_K_WTA_partitioned_dec_k(Behaviour):
 
     def set_variables(self, neurons):
         self.add_tag('K_WTA_partitioned')
@@ -80,7 +80,7 @@ class SORN_generate_output_K_WTA_partitioned_dec_k(Neuron_Behaviour):
 
                 #s.dst._temp_act_sum += np.mean(s.src.output)
 
-class SORN_init_neuron_vars_no_reset(Neuron_Behaviour):
+class SORN_init_neuron_vars_no_reset(Behaviour):
 
     def set_variables(self, neurons):
         self.add_tag('init_neuron_vars')

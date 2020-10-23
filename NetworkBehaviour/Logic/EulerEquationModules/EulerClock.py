@@ -1,17 +1,25 @@
-from NetworkCore.Neuron_Behaviour import *
+from NetworkCore.Behaviour import *
+import numpy as np
+from sympy import symbols
+from sympy.physics.units import *
 
-class SORN_generate_output_K_WTA_partitioned(Neuron_Behaviour):
 
-    def set_variables(self, neurons):
-        self.add_tag('K_WTA_partitioned')
+class ClockModule(Behaviour):
 
-        self.filter_temporal_output = self.get_init_attr('filter_temporal_output', False, neurons)
+    def set_variables(self, neuron_or_network):
+        self.add_tag('Clock')
 
-        neurons.output = neurons.get_neuron_vec()
+        #convert_to(seconds / tau, seconds)
 
-        self.K = self.get_init_attr('K', 0.1, neurons)#only accepts values between 0 and 1
+        neuron_or_network.clock_step_size = float(convert_to(eval(self.get_init_attr('step', '1*ms')), seconds)/second) #in ms (*ms)
+        self.clock_step_size=neuron_or_network.clock_step_size
+        print(neuron_or_network.clock_step_size)
+        neuron_or_network.t = 0.0
 
-        partition_size = self.get_init_attr('partition_size', 7, neurons)
-        self.partitioned_ng=neurons.partition_size(partition_size)
+    def new_iteration(self, neuron_or_network):
+        neuron_or_network.t += neuron_or_network.clock_step_size
 
-    def new_iteration(self, neurons):
+    def time_to_iterations(self, time_str):
+        iterations = int(convert_to(eval(time_str + '/seconds'), seconds)/self.clock_step_size)
+        print(iterations)
+        return iterations

@@ -4,6 +4,8 @@ from PyQt5.QtWidgets import *
 import pyqtgraph as pg
 import numpy as np
 
+add_str='.numpy()'
+#add_str=''
 
 class multi_group_plot_tab():
 
@@ -16,8 +18,8 @@ class multi_group_plot_tab():
     def add_recorder_variables(self, neuron_group, Network_UI):
         for var in self.variables:
             if hasattr(neuron_group, var):
-                Network_UI.add_recording_variable(neuron_group, 'n.'+var, timesteps=self.timesteps)
-                Network_UI.add_recording_variable(neuron_group, 'np.mean(n.'+var+')', timesteps=self.timesteps)
+                Network_UI.add_recording_variable(neuron_group, 'n.'+var+add_str, timesteps=self.timesteps)
+                Network_UI.add_recording_variable(neuron_group, 'np.mean(n.'+var+add_str+')', timesteps=self.timesteps)
 
         '''
         if hasattr(neuron_group, 'output'):
@@ -99,7 +101,7 @@ class multi_group_plot_tab():
 
                     for var in self.variables:
                         if hasattr(group, var):
-                            net_data = group['np.mean(n.'+var+')', 0, 'np'][-self.timesteps:]
+                            net_data = group['np.mean(n.'+var+add_str+')', 0, 'np'][-self.timesteps:]
                             iterations = group['n.iteration', 0, 'np'][-self.timesteps:]
                             self.net_var_curves[var][i].setData(iterations, net_data * squeeze, pen=group.color)
                         else:
@@ -110,7 +112,7 @@ class multi_group_plot_tab():
 
             for var in self.variables:
                 if hasattr(group, var):
-                    neuron_data = group['n.' + var, 0, 'np'][-self.timesteps:]
+                    neuron_data = group['n.' + var+add_str, 0, 'np'][-self.timesteps:]
                     iterations = group['n.iteration', 0, 'np'][-self.timesteps:]
                     if len(neuron_data.shape) > 1:
                         neuron_data = neuron_data[:, Network_UI.neuron_select_id]

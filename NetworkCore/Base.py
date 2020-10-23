@@ -29,7 +29,7 @@ class NetworkObjectBase:
 
     def __getitem__(self, key):
 
-        np_array_conversion= isinstance(key, tuple) and 'np' in key
+        np_array_conversion = isinstance(key, tuple) and 'np' in key
 
         if key in self.tag_shortcuts:
             if np_array_conversion:
@@ -38,11 +38,11 @@ class NetworkObjectBase:
                 return self.tag_shortcuts[key]
 
         if isinstance(key, tuple):
-            k=key[0]
-            index=key[1]
+            k = key[0]
+            index = key[1]
         else:
-            k=key
-            index=None
+            k = key
+            index = None
 
         result = []
         if k in self.tags or (k is type and isinstance(self, k)):

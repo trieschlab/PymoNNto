@@ -47,21 +47,21 @@ def run(attrs={'name': 'KWTA', 'ind': [], 'N_e': 900, 'plastic': 15000}):
                 2: SORN_init_neuron_vars(timescale=1),
                 3: SORN_init_afferent_synapses(transmitter='GLU', density='90%', distribution='uniform(0.1,1.0)', normalize=True),#20%#lognormal(0,[0.95#1]) #[13#0]% #, partition_compensation=True , partition_compensation=True #lognormal(0,0.95)
                 #4: SORN_init_afferent_synapses(transmitter='GABA', density='[30#1]%', distribution='uniform(0.0,1.0)', normalize=True),
-                #5: SORN_init_afferent_synapses(transmitter='GLU_cluster', density='90%', distribution='uniform(0.1,1.0)', normalize=True),
+                5: SORN_init_afferent_synapses(transmitter='GLU_cluster', density='90%', distribution='uniform(0.1,1.0)', normalize=True),
 
-                10.0: SORN_slow_syn(transmitter='GLU', strength='1.0', so=so),
+                10.0: SORN_slow_syn_simple(transmitter='GLU', strength='1.0', so=so), #todo: SORN_slow_syn_simple??????
                 10.1: SORN_IP_WTA_apply(),
                 10.15: WTA_refrac_apply(strengthfactor='[0.1#0]'),#0.1 #attrs['refrac']
                 10.2: SORN_generate_output_K_WTA_partitioned(partition_size=7, K='[0.02#1]'),
 
-                #10.3: SORN_slow_syn_simple(transmitter='GLU_cluster', strength='1.0'),
-                #10.4: SORN_generate_output_K_WTA_partitioned(partition_size=7, K='[0.02#1]', filter_temporal_output=False),
+                10.3: SORN_slow_syn_simple(transmitter='GLU_cluster', strength='1.0'),
+                10.4: SORN_generate_output_K_WTA_partitioned(partition_size=7, K='[0.02#1]', filter_temporal_output=False),
 
-                #10.5: SORN_slow_syn_simple(transmitter='GLU_cluster', strength='1.0'),
-                #10.6: SORN_generate_output_K_WTA_partitioned(partition_size=7, K='[0.02#1]', filter_temporal_output=False),
+                10.5: SORN_slow_syn_simple(transmitter='GLU_cluster', strength='1.0'),
+                10.6: SORN_generate_output_K_WTA_partitioned(partition_size=7, K='[0.02#1]', filter_temporal_output=False),
 
-                #10.7: SORN_slow_syn_simple(transmitter='GLU_cluster', strength='1.0'),
-                #10.8: SORN_generate_output_K_WTA_partitioned(partition_size=7, K='[0.02#1]', filter_temporal_output=False),
+                10.7: SORN_slow_syn_simple(transmitter='GLU_cluster', strength='1.0'),
+                10.8: SORN_generate_output_K_WTA_partitioned(partition_size=7, K='[0.02#1]', filter_temporal_output=False),
 
                 # 12.1: SORN_WTA_iSTDP(eta_iSTDP='[0.00015#2]'),
                 # 12.2: SORN_SN(syn_type='GABA'),
@@ -74,10 +74,10 @@ def run(attrs={'name': 'KWTA', 'ind': [], 'N_e': 900, 'plastic': 15000}):
 
                 18: WTA_refrac(decayfactor=0.5),
                 20: SORN_IP_WTA(h_ip='lognormal_real_mean([0.02#1], [0.2944#2])', eta_ip='[0.007#3]', target_clip_min=None, target_clip_max=None), #-1.0 #1.0 #0.007
-                21.1: SORN_STDP(transmitter='GLU', eta_stdp='[0.00015#4]', STDP_F={-1: 0.2, 0:2.0, 1: -1}),#, 0: 1 #[0.00015#7] #0.5, 0: 3.0
-                #21.2: SORN_STDP(transmitter='GLU_cluster', eta_stdp='[0.00015#5]', STDP_F={}),  #[0.00015#7]
+                21.1: SORN_STDP(transmitter='GLU', eta_stdp='[0.00015#4]', STDP_F={-1: 0.2, 1: -1}),#, 0: 1 #[0.00015#7] #0.5, 0: 3.0
+                21.2: SORN_STDP(transmitter='GLU_cluster', eta_stdp='[0.00015#5]', STDP_F={0: 2.0}),  #[0.00015#7]
                 22: SORN_SN(syn_type='GLU', behaviour_norm_factor=1.0),
-                #23: SORN_SN(syn_type='GLU_cluster', behaviour_norm_factor='[0.3#6]')#0.1
+                23: SORN_SN(syn_type='GLU_cluster', behaviour_norm_factor='[0.3#6]')#0.1
             })
 
 
@@ -87,8 +87,8 @@ def run(attrs={'name': 'KWTA', 'ind': [], 'N_e': 900, 'plastic': 15000}):
     #receptive_field = int(18*math.sqrt(attrs['N_e']/1400))
     print(receptive_field)
 
-    SynapseGroup(net=SORN, src=e_ng, dst=e_ng, tag='GLU,syn', connectivity='(s_id!=d_id)*in_box({})'.format(receptive_field), partition=True)#14
-    #SynapseGroup(net=SORN, src=e_ng, dst=e_ng, tag='GLU_cluster,syn', connectivity='(s_id!=d_id)*in_box({})'.format(receptive_field), partition=True)
+    SynapseGroup(net=SORN, src=e_ng, dst=e_ng, tag='GLU,syn', connectivity='(s_id!=d_id)*in_box({})'.format(receptive_field))#, partition=True)#14
+    SynapseGroup(net=SORN, src=e_ng, dst=e_ng, tag='GLU_cluster,syn', connectivity='(s_id!=d_id)*in_box({})'.format(receptive_field))#, partition=True)
     #SynapseGroup(net=SORN, src=e_ng, dst=e_ng, tag='GABA,GABA_same', connectivity='(s_id!=d_id)*in_box(10)', partition=True)
 
     e_ng.add_behaviour(9, SORN_external_input(strength=1.0, pattern_groups=[source]))
@@ -99,6 +99,8 @@ def run(attrs={'name': 'KWTA', 'ind': [], 'N_e': 900, 'plastic': 15000}):
     SORN.set_marked_variables(attrs['ind'], info=print_info, storage_manager=sm)
     SORN.initialize(info=False)
 
+    #print(e_ng['GLU'])
+    #print(SORN.SynapseGroups)
 
     ###################################################################################################################
 

@@ -64,7 +64,7 @@ class Box:
 #r = Ray_Line(5, 5, 1, 2)
 #print(b.ray_collision_distance(r))
 
-class Maze_vision_behaviour(Neuron_Behaviour):
+class Maze_vision_behaviour(Behaviour):
 
     def set_variables(self, neurons):
         self.add_tag('maze_vision_behaviour')
@@ -97,7 +97,7 @@ class Maze_vision_behaviour(Neuron_Behaviour):
 
 
 
-class Maze_sense_behaviour(Neuron_Behaviour):
+class Maze_sense_behaviour(Behaviour):
 
     def set_variables(self, neurons):
         self.add_tag('maze_sense_behaviour')
@@ -112,7 +112,7 @@ class Maze_sense_behaviour(Neuron_Behaviour):
         neurons.activity[mask] += 1
 
 
-class Maze_action_behaviour(Neuron_Behaviour):
+class Maze_action_behaviour(Behaviour):
 
     def set_variables(self, neurons):
         self.add_tag('maze_act_behaviour')
@@ -191,7 +191,7 @@ class Maze_action_behaviour(Neuron_Behaviour):
 
 
 
-class Maze_reward_behaviour(Neuron_Behaviour):
+class Maze_reward_behaviour(Behaviour):
 
     def set_variables(self, neurons):
         self.add_tag('Maze_reward_behaviour')
@@ -205,7 +205,7 @@ class Maze_reward_behaviour(Neuron_Behaviour):
 
 
 
-class Maze_punishment_behaviour(Neuron_Behaviour):
+class Maze_punishment_behaviour(Behaviour):
 
     def set_variables(self, neurons):
         self.add_tag('Maze_punishment_behaviour')

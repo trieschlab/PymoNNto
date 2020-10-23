@@ -1,7 +1,7 @@
 from NetworkBehaviour.Logic.Basics.BasicHomeostasis import *
 import scipy.sparse as sp
 
-class SORN_Input_collect(Neuron_Behaviour):
+class SORN_Input_collect(Behaviour):
 
     def set_variables(self, neurons):
         self.add_tag('collect')
@@ -80,7 +80,7 @@ class SORN_Input_collect(Neuron_Behaviour):
 
 
 
-class SORN_STDP(Neuron_Behaviour):
+class SORN_STDP(Behaviour):
 
     def set_variables(self, neurons):
         self.add_tag('STDP')
@@ -142,7 +142,7 @@ class SORN_STDP(Neuron_Behaviour):
 
 
 
-class SORN_SN(Neuron_Behaviour):
+class SORN_SN(Behaviour):
 
     def set_variables(self, neurons):
         self.add_tag('SN')
@@ -154,7 +154,7 @@ class SORN_SN(Neuron_Behaviour):
             self.normalize_synapse_attr('W', 'W', 1.0, neurons, self.syn_type)
 
 
-class SORN_iSTDP(Neuron_Behaviour):
+class SORN_iSTDP(Behaviour):
 
     def set_variables(self, neurons):
         self.add_tag('iSTDP')
@@ -242,7 +242,7 @@ class SORN_IP_TI(Time_Integration_Homeostasis):
 #            #neurons.T = np.clip(neurons.T, neurons.T_min, neurons.T_max) todo:???
 
 
-class SORN_SP(Neuron_Behaviour):
+class SORN_SP(Behaviour):
 
     def set_variables(self, neurons):
         self.add_tag('SP')
@@ -281,7 +281,7 @@ class SORN_SP(Neuron_Behaviour):
 
 
 
-class SORN_finish(Neuron_Behaviour):
+class SORN_finish(Behaviour):
 
     def set_variables(self, neurons):
         self.add_tag('finish')

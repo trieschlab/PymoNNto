@@ -1,7 +1,7 @@
 from NetworkCore.Neuron_Group import *
 
 
-class NeuronManualActivator(Neuron_Behaviour):
+class NeuronManualActivator(Behaviour):
 
     #def __init__(self, clip_min=0.0, clip_max=1.0, write_to='glu_inter_gamma_activity'):
     #    self.clip_min = clip_min
@@ -32,7 +32,7 @@ class NeuronManualActivator(Neuron_Behaviour):
             self.neurons.outside_activation = np.array(act)
 
 
-class NeuronActivator(Neuron_Behaviour):
+class NeuronActivator(Behaviour):
 
     #def __init__(self, write_to='glu_inter_gamma_activity', pattern_groups=None, clip_min=0.0, clip_max=1.0):
 
