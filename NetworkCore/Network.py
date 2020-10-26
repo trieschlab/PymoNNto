@@ -8,19 +8,17 @@ import copy
 
 class Network(NetworkObjectBase):
 
-    def __init__(self, tag=None, behaviour={}): #, NeuronGroups = [], SynapseGroups = [], initialize=True,
+    def __init__(self, tag=None, behaviour={}):
         super().__init__(tag)
 
-        self.NeuronGroups = []#NeuronGroups
-        self.SynapseGroups = []#SynapseGroups
+        self.NeuronGroups = []
+        self.SynapseGroups = []
 
         self.network_behaviour = behaviour
         self.add_behaviour_keys_dict(self.network_behaviour)
 
         self.iteration = 0
 
-        #if initialize:
-        #    self.initialize()
 
     def set_mechanisms(self, keys, enabeled):
         for key in keys:

@@ -1,4 +1,5 @@
 from NetworkBehaviour.Logic.Basics.BasicHomeostasis import *
+from NetworkBehaviour.Logic.Basics.Normalization import *
 
 class HomeostaticMechanism(Behaviour):
 
@@ -88,7 +89,7 @@ class GlutamateCacheConvergeAndNormalization(Behaviour):
             for s in neurons.afferent_synapses['GLU']:
                 s.W = np.sum(s.W_Caches, axis=0)
 
-            self.normalize_synapse_attr('W', 'W_Caches', neurons.weight_norm_factor, neurons, 'GLU')
+            normalize_synapse_attr('W', 'W_Caches', neurons.weight_norm_factor, neurons, 'GLU')
 
         for s in neurons.afferent_synapses['GLU']:
             s.W = np.clip(np.sum(s.W_Caches, axis=0), 0, None)#todo move to separate behaviour and do construction there

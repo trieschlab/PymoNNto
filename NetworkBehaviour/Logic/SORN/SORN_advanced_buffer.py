@@ -1,5 +1,5 @@
 from NetworkBehaviour.Input.Activator import *
-
+from NetworkBehaviour.Logic.Basics.Normalization import *
 
 ##########################################################################
 #Helper functions
@@ -122,7 +122,7 @@ class SORN_init_afferent_synapses(Behaviour):
         if self.normalize is not None and self.normalize is not False:
             if self.normalize==True:
                 self.normalize=1.0
-            self.normalize_synapse_attr('W', 'W', self.normalize, neurons, self.transmitter)
+            normalize_synapse_attr('W', 'W', self.normalize, neurons, self.transmitter)
 
         #for s in neurons.afferent_synapses[self.transmitter]:
         #    plt.hist(s.W.flatten()[s.W.flatten()>0],bins=100)
@@ -156,8 +156,8 @@ class SORN_temporal_synapses(Behaviour):
                 s.W = s.W_stable + s.W_temp
                 s.W[s.W < 0.0] = 0.0
 
-            self.normalize_synapse_attr('W', 'W_temp', neurons.weight_norm_factor * self.behaviour_norm_factor, neurons, self.syn_type)
-            self.normalize_synapse_attr('W', 'W_stable', neurons.weight_norm_factor * self.behaviour_norm_factor, neurons, self.syn_type)
+            normalize_synapse_attr('W', 'W_temp', neurons.weight_norm_factor * self.behaviour_norm_factor, neurons, self.syn_type)
+            normalize_synapse_attr('W', 'W_stable', neurons.weight_norm_factor * self.behaviour_norm_factor, neurons, self.syn_type)
 
             for s in neurons.afferent_synapses[self.syn_type]:
                 shift = s.W_temp * self.shift_factor
@@ -676,7 +676,7 @@ class SORN_SN(Behaviour):
                 for s in neurons.afferent_synapses[self.syn_type]:
                     s.W[s.W < 0.0] = 0.0
 
-            self.normalize_synapse_attr('W', 'W', neurons.weight_norm_factor*self.behaviour_norm_factor, neurons, self.syn_type)
+            normalize_synapse_attr('W', 'W', neurons.weight_norm_factor*self.behaviour_norm_factor, neurons, self.syn_type)
 
             if self.clip_max is not None:
                 for s in neurons.afferent_synapses[self.syn_type]:

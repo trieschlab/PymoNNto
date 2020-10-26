@@ -1,5 +1,6 @@
 from NetworkBehaviour.Logic.TREN.Helper.Functions_Helper import *
 from NetworkBehaviour.Input.Activator import *
+from NetworkBehaviour.Logic.Basics.Normalization import *
 
 class TREN_external_input(NeuronActivator):
 
@@ -72,7 +73,7 @@ class IntraGammaGABA(Behaviour):
 
         self.initialize_synapse_attr('W', self.GABA_density, 1.0, self.GABA_random_factor, neurons, 'GABA', all_neurons_same)
 
-        self.normalize_synapse_attr('W', 'W', self.GABA_Norm, neurons, 'GABA')
+        normalize_synapse_attr('W', 'W', self.GABA_Norm, neurons, 'GABA')
 
 
 

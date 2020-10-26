@@ -1,4 +1,5 @@
 from NetworkBehaviour.Input.Activator import *
+from NetworkBehaviour.Logic.Basics.Normalization import *
 
 #import matplotlib.pyplot as plt
 
@@ -121,7 +122,7 @@ class SORN_init_afferent_synapses(Behaviour):
         if self.normalize is not None and self.normalize is not False:
             if self.normalize==True:
                 self.normalize=1.0
-            self.normalize_synapse_attr('W', 'W', self.normalize, neurons, self.transmitter)
+            normalize_synapse_attr('W', 'W', self.normalize, neurons, self.transmitter)
 
         #for s in neurons.afferent_synapses[self.transmitter]:
         #    plt.hist(s.W.flatten()[s.W.flatten()>0],bins=100)
@@ -420,7 +421,7 @@ class SORN_SN(Behaviour):
 
     def new_iteration(self, neurons):
         if last_cycle_step(neurons):
-            self.normalize_synapse_attr('W', 'W', neurons.weight_norm_factor, neurons, self.syn_type)
+            normalize_synapse_attr('W', 'W', neurons.weight_norm_factor, neurons, self.syn_type)
             for s in neurons.afferent_synapses[self.syn_type]:
                 s.W=np.clip(s.W, 0, self.clip_max)
 
@@ -589,8 +590,8 @@ class SORN_init_variables(Neuron_Behaviour):
         for s in neurons.afferent_synapses['GABA']:
             s.W = s.get_random_synapse_mat()
 
-        self.normalize_synapse_attr('W', 'W', 1.0, neurons, 'GLU')
-        self.normalize_synapse_attr('W', 'W', 1.0, neurons, 'GABA')
+        normalize_synapse_attr('W', 'W', 1.0, neurons, 'GLU')
+        normalize_synapse_attr('W', 'W', 1.0, neurons, 'GABA')
 
     def new_iteration(self, neurons):
         return
