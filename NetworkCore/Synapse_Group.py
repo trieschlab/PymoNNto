@@ -9,6 +9,8 @@ class SynapseGroup(NetworkObjectBase):
     def __init__(self, src, dst, connectivity=None, net=None, tag=None, partition=False, partition_blocks='auto'):
         super().__init__(tag=tag)
 
+        self.add_tag(src.tags[0]+' => '+dst.tags[0])
+
         if net is not None:
             net.SynapseGroups.append(self)
             self.network = net
@@ -18,19 +20,18 @@ class SynapseGroup(NetworkObjectBase):
         self.enabled = True
         self.group_weighting = 1
 
+        self.description = {'connectivity': str(connectivity), 'partition':str(partition)}
+
         if connectivity is not None:
             self.set_connectivity(connectivity)
 
         if partition:
             self.partition(split_size=partition_blocks)
 
-
     def set_connectivity(self, connectivity):
         src = self.src
         dst = self.dst
         self.enabled = self.get_synapse_mat()
-
-
 
         s_id = np.tile(np.arange(src.size), (1, dst.size)).reshape(dst.size, src.size)
 
@@ -68,6 +69,7 @@ class SynapseGroup(NetworkObjectBase):
 
         if type(connectivity) == str:
             self.enabled = eval(connectivity)
+            #print(self.enabled)
         elif type(connectivity) == float or type(connectivity) == int:
             if connectivity >= 0:
                 self.enabled = (np.sqrt(
@@ -153,7 +155,10 @@ class SynapseGroup(NetworkObjectBase):
         #print(self.src.size, self.src.x.shape, self.src.y.shape, self.src.z.shape)
 
         for i in range(self.dst.size):
-            mask = self.enabled[i]
+            if type(self.enabled) is np.ndarray:
+                mask = self.enabled[i]
+            else:
+                mask = self.enabled
 
             if np.sum(mask)>0:
                 x = self.dst.x[i]
@@ -171,10 +176,10 @@ class SynapseGroup(NetworkObjectBase):
         return max_dx, max_dy, max_dz
 
 
-    def partition(self, receptive_field_size='auto', split_size='auto'):
+    def partition(self, split_size='auto'):#, receptive_field_size='auto'
 
-        if receptive_field_size == 'auto':
-            receptive_field_size = self.get_max_receptive_field_size()
+        #if receptive_field_size == 'auto':
+        #    receptive_field_size = self.get_max_receptive_field_size()
 
         if split_size == 'auto':
             best_block_size = 7
@@ -187,4 +192,6 @@ class SynapseGroup(NetworkObjectBase):
 
         #print('partition:', receptive_field_size, split_size)
 
-        self.network.partition_Synapse_Group(self, receptive_field_size=receptive_field_size, split_size=split_size)
+        self.network.partition_Synapse_Group3(self, steps=split_size)
+
+        #self.network.partition_Synapse_Group(self, receptive_field_size=self.get_max_receptive_field_size(), split_size=split_size)

@@ -1,10 +1,10 @@
-#from NetworkBehaviour.Logic.TREN.Neuron_Homeostais import *
-from NetworkBehaviour.Basics.BasicNeuronBehaviour import *
+#from NetworkBehaviour.Logic.Images.Neuron_Homeostais import *
+from NetworkBehaviour.Logic.Basics.BasicHomeostasis import *
 #import compiler
 import copy
 
 
-class NeuronRecorder(Neuron_Behaviour):
+class NeuronRecorder(Behaviour):
 
     def __init__(self, variables, gapwidth=0, tag=None, max_length=None):
         super().__init__()
@@ -14,8 +14,15 @@ class NeuronRecorder(Neuron_Behaviour):
         #self.init_kwargs={}
         self.gapwidth=gapwidth
         self.counter = 0
+        self.new_data_available=False
         self.variables = {}
         self.compiled = {}
+
+        for i, v in enumerate(variables):
+            print(v)
+        #    if v == 'np.mean(n.voltage)':
+        #        variables[i] = 'np.mean(n.voltage.numpy())'
+
         self.add_variables(variables)
         self.reset()
         self.active=True
@@ -45,11 +52,19 @@ class NeuronRecorder(Neuron_Behaviour):
     def set_variables(self, neurons):
         self.reset()
 
+    def is_new_data_available(self):
+        if self.new_data_available:
+            self.new_data_available = False
+            return True
+        else:
+            return False
+
     def new_iteration(self, neurons):
         if self.active and neurons.recording:
             n = neurons  # used for eval string "n.x"
             self.counter += 1
-            if self.counter > self.gapwidth:
+            if self.counter >= self.gapwidth:
+                self.new_data_available=True
                 self.counter = 0
                 for v in self.variables:
                     if self.compiled[v] is None:

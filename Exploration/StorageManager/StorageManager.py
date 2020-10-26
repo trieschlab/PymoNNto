@@ -1,25 +1,13 @@
 from configparser import ConfigParser
-import os
 import numpy as np
-import shutil
-
-import os
 import zipfile
 import time
-import scipy.misc
-
 from subprocess import call
-import io
 import os
-
 import pickle
-
 import imageio
 
-from PIL import Image
-
 #import matplotlib.pylab as plt
-
 #storage_manager_folder = '../../Data/StorageManager/'
 
 def get_data_folder():
@@ -33,7 +21,18 @@ def get_data_folder():
 
 class StorageManager:
 
+    def dict_to_folder_name(self, dict):
+        result = ''
+        for k, v in dict.items():
+            if result != '':
+                result += '_'
+            result += str(k).replace(' ', '')+'='+str(v).replace(' ', '')
+        return result
+
     def __init__(self, main_folder_name, folder_name=None, random_nr=False, print_msg=True, add_new_when_exists=True):
+
+        if type(main_folder_name) is dict:
+            main_folder_name = self.dict_to_folder_name(main_folder_name)
 
         storage_manager_folder = get_data_folder()+'/StorageManager/'
 
@@ -47,7 +46,7 @@ class StorageManager:
             folder_name = main_folder_name
 
         self.folder_name = folder_name
-        if type(random_nr)==bool and random_nr:
+        if type(random_nr) == bool and random_nr:
             self.folder_name += str(int(np.random.rand() * 10000))
         if type(random_nr) == int:
             self.folder_name += str(random_nr)

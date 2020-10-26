@@ -10,7 +10,6 @@ class NetworkObjectBase:
     def __init__(self, tag):
         self.tags = []
         self.clear_cache()
-        #self.add_tag(str(id(self)))
         if tag is not None:
             self.add_tag(tag)
 
@@ -30,7 +29,7 @@ class NetworkObjectBase:
 
     def __getitem__(self, key):
 
-        np_array_conversion= isinstance(key, tuple) and 'np' in key
+        np_array_conversion = isinstance(key, tuple) and 'np' in key
 
         if key in self.tag_shortcuts:
             if np_array_conversion:
@@ -39,11 +38,11 @@ class NetworkObjectBase:
                 return self.tag_shortcuts[key]
 
         if isinstance(key, tuple):
-            k=key[0]
-            index=key[1]
+            k = key[0]
+            index = key[1]
         else:
-            k=key
-            index=None
+            k = key
+            index = None
 
         result = []
         if k in self.tags or (k is type and isinstance(self, k)):
@@ -70,6 +69,15 @@ class NetworkObjectBase:
         for subtag in tag.split(','):
             self.tags.append(subtag)
         return self
+
+    def buffer_roll(self, mat, new=None):
+        #return np.roll(mat, 1, axis=0)
+        mat[1:len(mat)] = mat[0:len(mat) - 1]
+
+        if new is not None:
+            mat[0]=new
+
+        return mat
 
     def get_nparray(self, dim):
         return np.zeros(dim).astype(t)
@@ -99,10 +107,5 @@ class NetworkObjectBase:
             return np.array([result[0] for _ in range(dim[0])])
 
 
-    def get_buffer(self, dim, size):
+    def get_buffer_mat(self, dim, size):
         return np.array([self.get_nparray(dim) for _ in range(size)])
-
-
-
-    #def get_2d_representation(self, array, dim):
-    #    return array.reshape(dim)

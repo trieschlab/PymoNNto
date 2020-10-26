@@ -8,19 +8,17 @@ import copy
 
 class Network(NetworkObjectBase):
 
-    def __init__(self, tag=None, behaviour={}): #, NeuronGroups = [], SynapseGroups = [], initialize=True,
+    def __init__(self, tag=None, behaviour={}):
         super().__init__(tag)
 
-        self.NeuronGroups = []#NeuronGroups
-        self.SynapseGroups = []#SynapseGroups
+        self.NeuronGroups = []
+        self.SynapseGroups = []
 
         self.network_behaviour = behaviour
         self.add_behaviour_keys_dict(self.network_behaviour)
 
         self.iteration = 0
 
-        #if initialize:
-        #    self.initialize()
 
     def set_mechanisms(self, keys, enabeled):
         for key in keys:
@@ -101,7 +99,7 @@ class Network(NetworkObjectBase):
 
         print('initialize tren... Neurons: ', neuron_count, '|', len(self.NeuronGroups), ' blocks, Synapses: ', sysnape_count, '|', len(self.SynapseGroups),' blocks')
 
-    def initialize(self, evo_replace_param_list=None, info=False):
+    def initialize(self, evo_replace_param_list=None, info=False, warnings=True):
 
         if info:
             self.print_net_info()
@@ -121,6 +119,32 @@ class Network(NetworkObjectBase):
 
         self.set_variables()
         #self.save_network_state()
+
+        self.check_unique_tags(warnings)
+
+    def check_unique_tags(self,warnings=True):
+        unique_tags=[]
+        for ng in self.NeuronGroups:
+
+            if len(ng.tags) == 0:
+                ng.tags.append('NG')
+                print('no tag defined for NeuronGroup. "NG" tag added')
+
+            if ng.tags[0] in unique_tags:
+                counts=unique_tags.count(ng.tags[0])
+                new_tag=ng.tags[0]+chr(97+counts)
+                unique_tags.append(ng.tags[0])
+                if warnings:
+                    print('Warning: NeuronGroup Tag "'+ng.tags[0]+'" already in use. The first Tag of an Object should be unique and will be renamed to "'+new_tag+'". Multiple Tags can be sperated with a "," (NeuronGroup(..., tag="tag1,tag2,..."))')
+                ng.tags[0] = new_tag
+
+            else:
+                unique_tags.append(ng.tags[0])
+
+        #for sg in self.SynapseGroups:
+        #    if sg.tags[0] in unique_tags:
+        #        print('Warning: NeuronGroup Tag "' + sg.tags[0] + '" already in use. The first Tag of an Object should be unique. Multiple Tags can be sperated with a "," (SynapseGroup(..., tag="tag1,tag2,..."))')
+        #    unique_tags.append(sg.tags[0])
 
     def add_behaviour_key(self, key):
         self.behaviour_timesteps.append(key)
@@ -149,6 +173,7 @@ class Network(NetworkObjectBase):
         for key in behaviours:
             neuron_group.behaviour[key] = behaviours[key]
             neuron_group.behaviour[key].set_variables(neuron_group)
+            neuron_group.behaviour[key].check_unused_attrs()
 
 
         self.add_behaviour_keys_dict(behaviours)
@@ -187,10 +212,18 @@ class Network(NetworkObjectBase):
 
     def set_variables(self):
         for timestep in self.behaviour_timesteps:
+
+            if timestep in self.network_behaviour:
+                self.network_behaviour[timestep].set_variables(self)
+                self.network_behaviour[timestep].check_unused_attrs()
+
             for ng in self.NeuronGroups:
                 if timestep in ng.behaviour:
                     if not ng.behaviour[timestep].run_on_neuron_init_var:
                         ng.behaviour[timestep].set_variables(ng)
+                        ng.behaviour[timestep].check_unused_attrs()
+
+
 
     def set_synapses_to_neuron_groups(self):
         for ng in self.NeuronGroups:
@@ -212,19 +245,41 @@ class Network(NetworkObjectBase):
                     for tag in sg.tags+['All']:
                         ng.efferent_synapses[tag].append(sg)
 
-    def simulate_iteration(self):
+    def simulate_iteration(self, measure_behaviour_execution_time=False):
+
+        if measure_behaviour_execution_time:
+            time_measures={}
+
         self.iteration+=1
         for timestep in self.behaviour_timesteps:
 
-            if timestep in self.network_behaviour and self.network_behaviour[timestep].behaviour_enabled:#todo: Test
-                self.network_behaviour[timestep].new_iteration(self)
+            if timestep in self.network_behaviour and self.network_behaviour[timestep].behaviour_enabled:
+                if measure_behaviour_execution_time:
+                    start_time = time()
+                    self.network_behaviour[timestep].new_iteration(self)
+                    time_measures[timestep] = (time() - start_time) * 1000
+                else:
+                    self.network_behaviour[timestep].new_iteration(self)
 
             for ng in self.NeuronGroups:
                 ng.iteration=self.iteration
                 if timestep in ng.behaviour and ng.behaviour[timestep].behaviour_enabled:
-                    ng.behaviour[timestep].new_iteration(ng)
+                    if measure_behaviour_execution_time:
+                        start_time = time()
+                        ng.behaviour[timestep].new_iteration(ng)
+                        time_measures[timestep] = (time() - start_time) * 1000
+                    else:
+                        ng.behaviour[timestep].new_iteration(ng)
+
+        if measure_behaviour_execution_time:
+            return time_measures
+
 
     def simulate_iterations(self, iterations, batch_size=-1, measure_block_time=False, disable_recording=False):
+
+        if type(iterations) is str:
+            iterations=self['Clock', 0].time_to_iterations(iterations)
+
         time_diff=None
 
         if disable_recording:
@@ -259,13 +314,59 @@ class Network(NetworkObjectBase):
         return time_diff
 
 
-    def partition_Synapse_Groups(self, SynapseGroups=[]):
-        #todo: make sure that all mechanisms use "s.src" and "s.dst" and not "neurons"!
-        if SynapseGroups==[]:
-            SynapseGroups=self.SynapseGroups.copy()
+    #def partition_Synapse_Groups(self, SynapseGroups=[]):
+    #    #todo: make sure that all mechanisms use "s.src" and "s.dst" and not "neurons"!
+    #    if SynapseGroups==[]:
+    #        SynapseGroups=self.SynapseGroups.copy()
 
-        for sg in SynapseGroups:
-            self.partition_Synapse_Group(sg)
+    #    for sg in SynapseGroups:
+    #        self.partition_Synapse_Group(sg)
+
+    def partition_Synapse_Group3(self, synapse_group, steps):
+        return self.partition_Synapse_Group2(synapse_group, synapse_group.dst.partition_steps(steps))
+
+    def partition_Synapse_Group2(self, synapse_group, dst_groups):#todo:auto receptive field extraction (blocks dont need to be squared!)
+
+        rf_x, rf_y, rf_z = synapse_group.get_max_receptive_field_size()
+
+        syn_sub_groups=[]
+
+        for dst_subgroup in dst_groups:
+
+            src_x_start = np.min(dst_subgroup.x)-rf_x
+            src_x_end = np.max(dst_subgroup.x)+rf_x
+
+            src_y_start = np.min(dst_subgroup.y)-rf_y
+            src_y_end = np.max(dst_subgroup.y)+rf_y
+
+            src_z_start = np.min(dst_subgroup.z)-rf_z
+            src_z_end = np.max(dst_subgroup.z)+rf_z
+
+            src_mask = (synapse_group.src.x >= src_x_start) * (synapse_group.src.x <= src_x_end) * (synapse_group.src.y >= src_y_start) * (synapse_group.src.y <= src_y_end) * (synapse_group.src.z >= src_z_start) * (synapse_group.src.z <= src_z_end)
+
+            sg=SynapseGroup(synapse_group.src.subGroup(src_mask), dst_subgroup)
+
+            syn_sub_groups.append(sg)
+
+            # partition enabled update
+            if type(synapse_group.enabled) is np.ndarray:
+                mat_mask = dst_subgroup.mask[:, None] * src_mask[None, :]
+                sg.enabled = synapse_group.enabled[mat_mask].copy().reshape(sg.get_synapse_mat_dim())
+
+            # copy al attributes
+            sgd = synapse_group.__dict__
+            for key in sgd:
+                if key not in ['src', 'dst', 'enabled']:
+                    setattr(sg, key, copy.copy(sgd[key]))
+
+        #add sub Groups
+        for sg in syn_sub_groups:
+            self.SynapseGroups.append(sg)
+
+        #remove original SG
+        self.SynapseGroups.remove(synapse_group)
+
+        return syn_sub_groups
 
 
     def partition_Synapse_Group(self, syn_group, receptive_field_size=1, split_size=1):
@@ -311,7 +412,11 @@ class Network(NetworkObjectBase):
             return start, end
 
         #calculate sub Groups
-        sub_groups=[]
+        sub_groups = []
+
+        #src_masks = []
+        dst_masks = []
+
         for w_step in range(split_size[0]):          #x_steps
             src_x_start, src_x_end = get_start_end(w_step, 0, 'src')
             dst_x_start, dst_x_end = get_start_end(w_step, 0, 'dst')
@@ -322,8 +427,20 @@ class Network(NetworkObjectBase):
                     src_z_start, src_z_end = get_start_end(d_step, 2, 'src')
                     dst_z_start, dst_z_end = get_start_end(d_step, 2, 'dst')
 
-                    src_mask = (src.x>=src_x_start) * (src.x<=src_x_end) * (src.y>=src_y_start) * (src.y<=src_y_end) * (src.z>=src_z_start) * (src.z<=src_z_end)
-                    dst_mask = (dst.x>=dst_x_start) * (dst.x<=dst_x_end) * (dst.y>=dst_y_start) * (dst.y<=dst_y_end) * (dst.z>=dst_z_start) * (dst.z<=dst_z_end)
+                    src_mask = (src.x >= src_x_start) * (src.x <= src_x_end) * (src.y >= src_y_start) * (src.y <= src_y_end) * (src.z >= src_z_start) * (src.z <= src_z_end)
+                    dst_mask = (dst.x >= dst_x_start) * (dst.x <= dst_x_end) * (dst.y >= dst_y_start) * (dst.y <= dst_y_end) * (dst.z >= dst_z_start) * (dst.z <= dst_z_end)
+
+                    #remove duplicates
+                    #for old_src_mask in src_masks:
+                    #    src_mask[old_src_mask] *= False
+
+                    for old_dst_mask in dst_masks:
+                        dst_mask[old_dst_mask] *= False
+
+                    #print(np.sum(src_mask), np.sum(dst_mask))
+
+                    #src_masks.append(src_mask)
+                    dst_masks.append(dst_mask)
 
                     #import matplotlib.pyplot as plt
                     #plt.scatter(src.x, src.y, c=src_mask)

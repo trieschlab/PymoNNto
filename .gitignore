@@ -13,3 +13,4 @@ __pycache__
 *.log
 *.pyx
 *.pyc
+*.html
