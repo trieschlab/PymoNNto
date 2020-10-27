@@ -1,5 +1,5 @@
 import numpy as np
-from NetworkCore.Base import *
+from SORNSim.NetworkCore.Base import *
 from numpy.random import *
 
 class Behaviour(NetworkObjectBase):

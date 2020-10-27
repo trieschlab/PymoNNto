@@ -2,8 +2,8 @@ from time import time
 import numpy as np
 import random
 #from NetworkBehaviour.Input.Activator import *
-from NetworkCore.Base import *
-from NetworkCore.Synapse_Group import *
+from SORNSim.NetworkCore.Base import *
+from SORNSim.NetworkCore.Synapse_Group import *
 import copy
 
 class Network(NetworkObjectBase):

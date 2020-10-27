@@ -1,14 +1,10 @@
-from PyQt5 import QtCore
-from PyQt5.QtGui import *
-from PyQt5.QtWidgets import *
-import pyqtgraph as pg
-import numpy as np
+from SORNSim.Exploration.Network_UI.TabBase import *
 
 
-class afferent_syn_attr_plot_tab():
+class afferent_syn_attr_plot_tab(TabBase):
 
     def __init__(self, syn_vars, title='Aff Syn',timesteps=500):
-        self.title=title
+        super().__init__(title)
         self.syn_vars=syn_vars
         self.timesteps=timesteps
 

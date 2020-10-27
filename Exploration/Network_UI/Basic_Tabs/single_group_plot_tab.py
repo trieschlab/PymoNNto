@@ -1,14 +1,9 @@
-from PyQt5 import QtCore
-from PyQt5.QtGui import *
-from PyQt5.QtWidgets import *
-import pyqtgraph as pg
-import numpy as np
+from SORNSim.Exploration.Network_UI.TabBase import *
 
-
-class single_group_plot_tab():
+class single_group_plot_tab(TabBase):
 
     def __init__(self, variables, title='single group', timesteps=500):
-        self.title = title
+        super().__init__(title)
         self.variables = variables
         self.timesteps=timesteps
 

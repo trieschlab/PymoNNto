@@ -1,5 +1,5 @@
 #from NetworkBehaviour.Logic.Images.Neuron_Homeostais import *
-from NetworkBehaviour.Logic.Basics.BasicHomeostasis import *
+from SORNSim.NetworkBehaviour.Logic.Basics.BasicHomeostasis import *
 #import compiler
 import copy
 

@@ -1,4 +1,4 @@
-from NetworkCore.Neuron_Group import *
+from SORNSim.NetworkCore.Neuron_Group import *
 import math
 import numpy as np
 

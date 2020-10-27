@@ -1,19 +1,9 @@
-from PyQt5 import QtCore
-from PyQt5.QtGui import *
-from PyQt5.QtWidgets import *
-import pyqtgraph as pg
-import numpy as np
+from SORNSim.Exploration.Network_UI.TabBase import *
 
-import matplotlib.pyplot as plt
-
-
-#from X_Experimental.Functions import *
-
-
-class hist_tab():
+class hist_tab(TabBase):
 
     def __init__(self, title='Weight Dist.', timesteps=1000, mask_param='Input_Mask', mask_color_add=(-100, -100, -100)):#mask_param=None #
-        self.title = title
+        super().__init__(title)
         self.timesteps = timesteps
         self.mask_param = mask_param
         if self.mask_param is not None:

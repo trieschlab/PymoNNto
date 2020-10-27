@@ -1,4 +1,4 @@
-from NetworkCore.Base import *
+from SORNSim.NetworkCore.Base import *
 
 class PatternGroup(NetworkObjectBase):
 

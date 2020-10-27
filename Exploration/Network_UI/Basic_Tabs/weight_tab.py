@@ -1,16 +1,10 @@
-from PyQt5 import QtCore
-from PyQt5.QtGui import *
-from PyQt5.QtWidgets import *
-import pyqtgraph as pg
-import numpy as np
+from SORNSim.Exploration.Network_UI.TabBase import *
 
-
-class weight_tab():
+class weight_tab(TabBase):
 
     def __init__(self, title='Weights', weight_attrs=['W']):
-
+        super().__init__(title)
         self.weight_attrs = weight_attrs
-        self.title = title
 
     def add_recorder_variables(self, neuron_group, Network_UI):
         return

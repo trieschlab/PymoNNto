@@ -1,11 +1,10 @@
-from PyQt5.QtWidgets import *
-import numpy as np
+from SORNSim.Exploration.Network_UI.TabBase import *
+from SORNSim.Exploration.Visualization.Analysis_Plots import *
 
-
-class stability_tab():
+class stability_tab(TabBase):
 
     def __init__(self, parameter, title='stability', timesteps=500):
-        self.title = title
+        super().__init__(title)
         self.parameter=parameter
         self.timesteps=timesteps
 

@@ -1,17 +1,10 @@
-from PyQt5 import QtCore
-from PyQt5.QtGui import *
-from PyQt5.QtWidgets import *
-import pyqtgraph as pg
-import numpy as np
-
+from SORNSim.Exploration.Network_UI.TabBase import *
 import scipy.fftpack
 
-#import matplotlib.pyplot as plt
-
-class fourier_tab():
+class fourier_tab(TabBase):
 
     def __init__(self, parameter, title='fourier', timesteps=1000):
-        self.title = title
+        super().__init__(title)
         self.parameter = parameter
         self.timesteps=timesteps
 

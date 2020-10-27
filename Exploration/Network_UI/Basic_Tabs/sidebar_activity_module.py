@@ -1,13 +1,6 @@
-from PyQt5 import QtCore
-from PyQt5.QtGui import *
-from PyQt5.QtWidgets import *
-import pyqtgraph as pg
-import numpy as np
-#from Testing.SORN.SORN_Helper import *
+from SORNSim.Exploration.Network_UI.TabBase import *
 
-#import matplotlib.pyplot as plt
-
-class sidebar_activity_sub_module():
+class sidebar_activity_sub_module(TabBase):
 
     def __init__(self, add_color_dict={'output': (255, 255, 255), 'Input_Mask': (-100, -100, -100)}):
         self.add_color_dict = add_color_dict

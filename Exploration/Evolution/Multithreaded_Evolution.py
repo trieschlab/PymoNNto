@@ -1,9 +1,9 @@
 import sys
 sys.path.append('../../')
 
-from Exploration.Evolution.Evolution import *
+from SORNSim.Exploration.Evolution.Evolution import *
 from multiprocessing import Process, Queue, Pipe
-import Exploration.Evolution.Computing_Devices as comp_dev
+import SORNSim.Exploration.Evolution.Computing_Devices as comp_dev
 import subprocess
 import time
 import os

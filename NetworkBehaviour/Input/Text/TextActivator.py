@@ -1,4 +1,4 @@
-from NetworkBehaviour.Input.Pattern_Basics import *
+from SORNSim.NetworkBehaviour.Input.Pattern_Basics import *
 import random
 import numpy as np
 from collections import Counter

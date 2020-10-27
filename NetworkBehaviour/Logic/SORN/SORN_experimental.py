@@ -1,5 +1,5 @@
-from NetworkBehaviour.Input.Activator import *
-from NetworkBehaviour.Logic.SORN.SORN_advanced_buffer import *
+from SORNSim.NetworkBehaviour.Input.Activator import *
+from SORNSim.NetworkBehaviour.Logic.SORN.SORN_advanced_buffer import *
 
 
 

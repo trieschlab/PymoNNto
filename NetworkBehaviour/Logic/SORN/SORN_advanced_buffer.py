@@ -1,5 +1,5 @@
-from NetworkBehaviour.Input.Activator import *
-from NetworkBehaviour.Logic.Basics.Normalization import *
+from SORNSim.NetworkBehaviour.Input.Activator import *
+from SORNSim.NetworkBehaviour.Logic.Basics.Normalization import *
 
 ##########################################################################
 #Helper functions

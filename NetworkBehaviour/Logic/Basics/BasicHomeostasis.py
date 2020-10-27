@@ -1,4 +1,4 @@
-from NetworkCore.Behaviour import *
+from SORNSim.NetworkCore.Behaviour import *
 
 class Instant_Homeostasis(Behaviour):
 

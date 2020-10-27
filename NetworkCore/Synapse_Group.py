@@ -1,4 +1,4 @@
-from NetworkCore.Base import *
+from SORNSim.NetworkCore.Base import *
 
 import random
 #def str_eval_conn(eval_string, synapses, s_id, sx, sy, sz, d_id, dx, dy, dz):

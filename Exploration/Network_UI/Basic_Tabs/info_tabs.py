@@ -1,11 +1,7 @@
-from PyQt5 import QtCore
-from PyQt5.QtGui import *
-from PyQt5.QtWidgets import *
-import pyqtgraph as pg
-import numpy as np
+from SORNSim.Exploration.Network_UI.TabBase import *
 
 
-class info_tab():
+class info_tab(TabBase):
 
     def add_recorder_variables(self, neuron_group, Network_UI):
         return

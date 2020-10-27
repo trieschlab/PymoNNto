@@ -1,11 +1,10 @@
-from PyQt5.QtWidgets import *
-import pyqtgraph as pg
+from SORNSim.Exploration.Network_UI.TabBase import *
+from SORNSim.Exploration.Visualization.Visualization_Helper import *
 
-
-class criticality_tab():
+class criticality_tab(TabBase):
 
     def __init__(self, title='Criticality', param='output', mask_param='Input_Mask', timesteps=500, mask_color_add=(-100, -100, -100)):
-        self.title = title
+        super().__init__(title)
         self.param = param
         self.timesteps=timesteps
         self.mask_param = mask_param
@@ -138,7 +137,7 @@ class criticality_tab():
     def update_branching(self, Network_UI, group):
 
         #if not self.WP_init:
-        import Exploration.Analysis.WiltingPriesemann as WP
+        import SORNSim.Exploration.Analysis.WiltingPriesemann as WP
         #self.WP_init = True
 
         group_A_t = group[self.sum_tag, 0, 'np'].copy()[-1000:]

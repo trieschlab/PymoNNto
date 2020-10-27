@@ -1,72 +1,9 @@
-from Exploration.UI_Base import *
-
-#import pyqtgraph as pg
-#from X_Experimental.Functions import *
-#from Exploration.Visualization.Analysis_Plots import *
-#from Testing.SORN.SORN_Helper import *
-
-from Exploration.Network_UI.Basic_Tabs.sidebar_activity_module import *
-from Exploration.Network_UI.Tabs.sidebar_image_module import *
-from Exploration.Network_UI.Tabs.sidebar_grammar_module import *
-from Exploration.Network_UI.Basic_Tabs.sidebar_fast_forward_module import *
-from Exploration.Network_UI.Basic_Tabs.sidebar_save_load_module import *
-from Exploration.Network_UI.Basic_Tabs.multi_group_plot_tab import *
-from Exploration.Network_UI.Tabs.chain_tab import *
-from Exploration.Network_UI.Basic_Tabs.hist_tab import *
-from Exploration.Network_UI.Basic_Tabs.info_tabs import *
-from Exploration.Network_UI.Basic_Tabs.single_group_plot_tab import *
-from Exploration.Network_UI.Basic_Tabs.scatter_tab import *
-from Exploration.Network_UI.Basic_Tabs.stability_tab import *
-from Exploration.Network_UI.Basic_Tabs.weight_tab import *
-from Exploration.Network_UI.Tabs.reconstruction_tab import *
-from Exploration.Network_UI.Basic_Tabs.fourier_tab import *
-from Exploration.Network_UI.Basic_Tabs.partition_tab import *
-from Exploration.Network_UI.Tabs.sidebar_music_module import *
-from Exploration.Network_UI.Tabs.sidebar_drumbeat_module import *
-from Exploration.Network_UI.Basic_Tabs.spiketrain_tab import *
-from Exploration.Network_UI.Basic_Tabs.afferent_syn_attr_plot_tab import *
-from Exploration.Network_UI.Basic_Tabs.individual_weight_tab import *
-from Exploration.Network_UI.Tabs.sun_gravity_plot_tab import *
-from Exploration.Network_UI.Basic_Tabs.stdp_buffer_tab import *
-from Exploration.Network_UI.Basic_Tabs.criticality_tab import *
-from Exploration.Network_UI.Basic_Tabs.buffer_tab import *
-from Exploration.Network_UI.Basic_Tabs.PCA_tab import *
-from Exploration.Network_UI.Tabs.character_activation_tab import *
-
-def get_default_UI_modules():
-    return [
-    UI_sidebar_activity_module(1),
-    multi_group_plot_tab(['output', 'TH', 'weight_norm_factor', 'nox', 'refractory_counter']),
-    spiketrain_tab(parameter='output'),
-    weight_tab(weight_attrs=['W']),#, 'W_temp', 'W_stable'
-    stdp_buffer_tab(),
-    partition_tab(),
-    PCA_tab(),
-    sun_gravity_plot_tab(),
-    afferent_syn_attr_plot_tab(syn_vars=['slow_add', 'fast_add']),
-    sidebar_image_module(),
-    sidebar_grammar_module(),
-    sidebar_music_module(),
-    sidebar_drumbeat_module(),
-    #chain_tab(),
-    buffer_tab(),
-    individual_weight_tab(),
-    reconstruction_tab(),
-    hist_tab(),
-    criticality_tab(),
-    single_group_plot_tab({'activity':(0, 0, 0), 'excitation':(0, 0, 255), 'inhibition':(255, 0, 0), 'input_act':(255, 0, 255), 'TH':(0, 255, 0)}),
-    stability_tab(parameter='output'),
-    scatter_tab(x_var='excitation', y_var='inhibition'),
-    fourier_tab(parameter='output'),
-    character_activation_tab(),
-    info_tab(),
-    sidebar_fast_forward_module(),
-    sidebar_save_load_module()
-]
+from SORNSim.Exploration.UI_Base import *
+from SORNSim.NetworkBehaviour.Recorder.Recorder import *
 
 class Network_UI(UI_Base):
 
-    def __init__(self, network, modules=get_default_UI_modules(), label='SORN UI', group_tags=[], transmitters=[], storage_manager=None, group_display_count=None, reduced_layout=False):
+    def __init__(self, network, modules=[], label='SORN UI', group_tags=[], transmitters=[], storage_manager=None, group_display_count=None, reduced_layout=False):
         #network.simulate_iteration()
         self.recording = False
         if self.recording:
@@ -217,10 +154,17 @@ class Network_UI(UI_Base):
                 shapes[key] = (base_src.height, base_src.width)
             if hasattr(s, attr):
                 if base_src == s.src and base_dst == s.dst:
-                    results[key] += getattr(s, attr).numpy()#.copy()
+                    if type(getattr(s, attr)) is np.ndarray:
+                        results[key] += getattr(s, attr).copy()
+                    else:
+                        results[key] += getattr(s, attr).numpy()#tensorflow
                 else:
-                    mat_mask = s.dst.mask[:, None]*s.src.mask[None, :]
-                    results[key][mat_mask] += getattr(s, attr).flatten()
+                    if type(getattr(s, attr)) is np.ndarray:
+                        mat_mask = s.dst.mask[:, None]*s.src.mask[None, :]
+                        results[key][mat_mask] += getattr(s, attr).flatten()
+                    else:
+                        mat_mask = s.dst.mask[:, None]*s.src.mask[None, :]
+                        results[key][mat_mask] += getattr(s, attr).numpy().flatten()#tensorflow
 
         if neuron_id is not None:
             for key in results:

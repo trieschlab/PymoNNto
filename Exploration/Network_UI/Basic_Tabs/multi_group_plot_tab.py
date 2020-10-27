@@ -1,25 +1,23 @@
-from PyQt5 import QtCore
-from PyQt5.QtGui import *
-from PyQt5.QtWidgets import *
-import pyqtgraph as pg
-import numpy as np
+from SORNSim.Exploration.Network_UI.TabBase import *
 
-add_str='.numpy()'
-#add_str=''
+class multi_group_plot_tab(TabBase):
 
-class multi_group_plot_tab():
-
-    def __init__(self, variables, line_dict={}, title='Multi Group', timesteps=500):
-        self.title = title
+    def __init__(self, variables, line_dict={}, title='Multi Group', timesteps=500, tensorflow=False):
+        super().__init__(title)
         self.variables = variables
         self.line_dict = line_dict
-        self.timesteps=timesteps
+        self.timesteps = timesteps
+
+        if tensorflow:
+            self.add_str='.numpy()'
+        else:
+            self.add_str=''
 
     def add_recorder_variables(self, neuron_group, Network_UI):
         for var in self.variables:
             if hasattr(neuron_group, var):
-                Network_UI.add_recording_variable(neuron_group, 'n.'+var+add_str, timesteps=self.timesteps)
-                Network_UI.add_recording_variable(neuron_group, 'np.mean(n.'+var+add_str+')', timesteps=self.timesteps)
+                Network_UI.add_recording_variable(neuron_group, 'n.'+var+self.add_str, timesteps=self.timesteps)
+                Network_UI.add_recording_variable(neuron_group, 'np.mean(n.'+var+self.add_str+')', timesteps=self.timesteps)
 
         '''
         if hasattr(neuron_group, 'output'):
@@ -101,7 +99,7 @@ class multi_group_plot_tab():
 
                     for var in self.variables:
                         if hasattr(group, var):
-                            net_data = group['np.mean(n.'+var+add_str+')', 0, 'np'][-self.timesteps:]
+                            net_data = group['np.mean(n.'+var+self.add_str+')', 0, 'np'][-self.timesteps:]
                             iterations = group['n.iteration', 0, 'np'][-self.timesteps:]
                             self.net_var_curves[var][i].setData(iterations, net_data * squeeze, pen=group.color)
                         else:
@@ -112,7 +110,7 @@ class multi_group_plot_tab():
 
             for var in self.variables:
                 if hasattr(group, var):
-                    neuron_data = group['n.' + var+add_str, 0, 'np'][-self.timesteps:]
+                    neuron_data = group['n.' + var+self.add_str, 0, 'np'][-self.timesteps:]
                     iterations = group['n.iteration', 0, 'np'][-self.timesteps:]
                     if len(neuron_data.shape) > 1:
                         neuron_data = neuron_data[:, Network_UI.neuron_select_id]

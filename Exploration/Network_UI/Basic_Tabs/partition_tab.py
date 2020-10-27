@@ -1,14 +1,4 @@
-from PyQt5 import QtCore
-from PyQt5.QtGui import *
-from PyQt5.QtWidgets import *
-import pyqtgraph as pg
-import numpy as np
-
-import sys
-
-from PyQt5 import QtCore, QtGui, QtWidgets, uic
-
-import pyqtgraph as pg
+from SORNSim.Exploration.Network_UI.TabBase import *
 
 class DrawItem(pg.GraphicsObject):
 
@@ -102,10 +92,10 @@ class DrawItem(pg.GraphicsObject):
         return QtCore.QRectF(br)
 
 
-class partition_tab():
+class partition_tab(TabBase):
 
     def __init__(self, title='partition'):
-        self.title = title
+        super().__init__(title)
 
     def add_recorder_variables(self, neuron_group, Network_UI):
         return

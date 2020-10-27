@@ -1,7 +1,7 @@
-from PyQt5.QtWidgets import *
+from SORNSim.Exploration.Network_UI.TabBase import *
 
 
-class sidebar_fast_forward_module():
+class sidebar_fast_forward_module(TabBase):
 
     def add_recorder_variables(self, neuron_group, Network_UI):
         return

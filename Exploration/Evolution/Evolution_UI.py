@@ -3,7 +3,7 @@ sys.path.append('../../')
 
 from Exploration.UI_Base import *
 from functools import partial
-import Exploration.Evolution.Computing_Devices as comp_dev
+import SORNSim.Exploration.Evolution.Computing_Devices as comp_dev
 import os
 
 class EVO_UI(UI_Base):

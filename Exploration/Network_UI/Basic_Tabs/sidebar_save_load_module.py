@@ -1,6 +1,7 @@
-from NetworkCore.Base import *
-from Exploration.StorageManager.StorageManager import *
-from Exploration.Network_UI.Basic_Tabs.info_tabs import *
+from SORNSim.Exploration.Network_UI.TabBase import *
+from SORNSim.NetworkCore.Base import *
+from SORNSim.Exploration.StorageManager.StorageManager import *
+from SORNSim.Exploration.Network_UI.Basic_Tabs.info_tabs import *
 import copy
 import pickle
 import os
@@ -8,7 +9,7 @@ import os
 compile_class = type(compile('1+1', '<string>', 'eval'))
 base_obj_type = NetworkObjectBase
 
-class sidebar_save_load_module():
+class sidebar_save_load_module(TabBase):
 
     def add_recorder_variables(self, neuron_group, Network_UI):
         return
