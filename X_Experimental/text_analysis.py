@@ -1,7 +1,7 @@
-from NetworkBehaviour.Input.Text.TextActivator import *
+from SORNSim.NetworkBehaviour.Input.Text.TextActivator import *
 
-from Exploration.StorageManager.Storage_Manager_Dir_Select_Dialog import *
-from Exploration.StorageManager.StorageManager import *
+from SORNSim.Exploration.StorageManager.Storage_Manager_Dir_Select_Dialog import *
+from SORNSim.Exploration.StorageManager.StorageManager import *
 
 
 def show_html(str):

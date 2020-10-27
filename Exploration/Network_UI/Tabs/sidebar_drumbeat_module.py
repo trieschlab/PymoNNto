@@ -1,13 +1,8 @@
-from PyQt5 import QtCore
-from PyQt5.QtGui import *
-from PyQt5.QtWidgets import *
-import pyqtgraph as pg
-import numpy as np
+from SORNSim.Exploration.Network_UI.TabBase import *
+
 from Testing.Common.Classifier_Helper import *
-from PIL import Image
 
-
-class sidebar_drumbeat_module():
+class sidebar_drumbeat_module(TabBase):
 
     def add_recorder_variables(self, neuron_group, Network_UI):
         if hasattr(neuron_group, 'pattern_index'):

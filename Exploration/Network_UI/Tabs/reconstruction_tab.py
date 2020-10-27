@@ -1,17 +1,11 @@
-from PyQt5 import QtCore
-from PyQt5.QtGui import *
-from PyQt5.QtWidgets import *
-import pyqtgraph as pg
-import numpy as np
+from SORNSim.Exploration.Network_UI.TabBase import *
 
-from PyQt5.QtCore import QDate, Qt
+from SORNSim.Exploration.Visualization.Reconstruct_Analyze_Label.Reconstruct_Analyze_Label import *
 
-from Exploration.Visualization.Reconstruct_Analyze_Label.Reconstruct_Analyze_Label import *
-
-class reconstruction_tab():
+class reconstruction_tab(TabBase):
 
     def __init__(self, title='recon'):
-        self.title = title
+        super().__init__(title)
 
     def add_recorder_variables(self, neuron_group, Network_UI):
         return

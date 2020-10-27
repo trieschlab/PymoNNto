@@ -1,14 +1,9 @@
-from PyQt5 import QtCore
-from PyQt5.QtGui import *
-from PyQt5.QtWidgets import *
-import pyqtgraph as pg
+from SORNSim.Exploration.Network_UI.TabBase import *
+from SORNSim.NetworkBehaviour.Recorder.Recorder import *
 
-#from Testing.SORN.SORN_Helper import *
-from NetworkBehaviour.Recorder.Recorder import *
-#from Testing.Common.Classifier_Helper import *
 from Testing.Common.Grammar_Helper import *
 
-class sidebar_grammar_module():
+class sidebar_grammar_module(TabBase):
 
     def __init__(self, next_p=True, simu_p=True, noc_p=True, text_length=35):
         self.next_p=next_p

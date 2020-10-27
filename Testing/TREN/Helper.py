@@ -1,7 +1,7 @@
-from NetworkBehaviour.Structure.Structure import *
-from NetworkCore.Synapse_Group import *
-from NetworkCore.Network import *
-from NetworkBehaviour.Input.Images.MNIST_Patterns import *
+from SORNSim.NetworkBehaviour.Structure.Structure import *
+from SORNSim.NetworkCore.Synapse_Group import *
+from SORNSim.NetworkCore.Network import *
+from SORNSim.NetworkBehaviour.Input.Images.MNIST_Patterns import *
 
 import os
 import psutil

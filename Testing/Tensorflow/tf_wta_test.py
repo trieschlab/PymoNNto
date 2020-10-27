@@ -1,20 +1,20 @@
 import sys
 
 sys.path.append('../../')
-
-from NetworkCore.Network import *
-from NetworkCore.Synapse_Group import *
+from SORNSim.NetworkCore.Network import *
+from SORNSim.NetworkCore.Synapse_Group import *
+#from SORNSim.NetworkBehaviour.Logic.SORN.SORN_experimental import *
+#from SORNSim.NetworkBehaviour.Logic.SORN.SORN_WTA import *
+from SORNSim.NetworkBehaviour.Input.Text.TextActivator import *
+from SORNSim.NetworkBehaviour.Structure.Structure import *
+from SORNSim.NetworkBehaviour.Logic.TensorflowModules.TestNetwork import *
+from SORNSim.Exploration.StorageManager.StorageManager import *
 from Testing.Common.Grammar_Helper import *
-from NetworkBehaviour.Logic.SORN.SORN_experimental import *
-from NetworkBehaviour.Logic.SORN.SORN_WTA import *
-from NetworkBehaviour.Input.Text.TextActivator import *
-from NetworkBehaviour.Structure.Structure import *
-
-from NetworkBehaviour.Logic.TensorflowModules.TestNetwork import *
 
 if __name__ == '__main__':
-    from Exploration.Network_UI.Network_UI import *
-
+    from SORNSim.Exploration.Network_UI.Network_UI import *
+    from SORNSim.Exploration.Network_UI.DefaultTabs import *
+    from Exploration.Network_UI.MyDefaultTabs import *
 
 
 def run(attrs={'name': 'KWTA', 'ind': [], 'N_e': 900, 'plastic': 15000}):
@@ -28,6 +28,7 @@ def run(attrs={'name': 'KWTA', 'ind': [], 'N_e': 900, 'plastic': 15000}):
     sm.save_param_dict(attrs)
 
     source = FewSentencesGrammar(tag='grammar_act', output_size=attrs['N_e'], random_blocks=True, input_density=0.015, frequency_adjustment=True)#21
+
 
 
     SORN = Network()
@@ -92,7 +93,7 @@ def run(attrs={'name': 'KWTA', 'ind': [], 'N_e': 900, 'plastic': 15000}):
 
             sidebar_fast_forward_module(),
             sidebar_save_load_module(),
-            multi_group_plot_tab(['output']),
+            multi_group_plot_tab(['output'], tensorflow=True),
 
             # fourier_tab(parameter='voltage'),
             info_tab(),

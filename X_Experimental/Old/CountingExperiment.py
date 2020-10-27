@@ -1,10 +1,10 @@
-from NetworkBehaviour.Input.Old.CountingTaskActivator import *
+from SORNSim.NetworkBehaviour.Input.Old.CountingTaskActivator import *
 from Testing.Old.SORN_simple_behaviour import *
-from NetworkCore.Network import *
-from NetworkCore.Neuron_Group import *
-from NetworkCore.Synapse_Group import *
+from SORNSim.NetworkCore.Network import *
+from SORNSim.NetworkCore.Neuron_Group import *
+from SORNSim.NetworkCore.Synapse_Group import *
 
-from Exploration.StorageManager.StorageManager import *
+from SORNSim.Exploration.StorageManager.StorageManager import *
 from Testing.Common.Classifier_Helper import *
 
 

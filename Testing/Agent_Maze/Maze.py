@@ -1,4 +1,4 @@
-from NetworkBehaviour.Structure.Structure import *
+from SORNSim.NetworkBehaviour.Structure.Structure import *
 
 def pol2cart(theta, rho):
     x = rho * np.cos(theta)

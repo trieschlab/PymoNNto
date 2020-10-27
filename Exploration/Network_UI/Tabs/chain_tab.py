@@ -1,15 +1,9 @@
-from PyQt5 import QtCore
-from PyQt5.QtGui import *
-from PyQt5.QtWidgets import *
-import pyqtgraph as pg
-import numpy as np
+from SORNSim.Exploration.Network_UI.TabBase import *
 
-from Exploration.Visualization.Reconstruct_Analyze_Label.Reconstruct_Analyze_Label import *
-
-class chain_tab():
+class chain_tab(TabBase):
 
     def __init__(self, title='Chain'):
-        self.title = title
+        super().__init__(title)
 
     def add_recorder_variables(self, neuron_group, Network_UI):
         return

@@ -1,9 +1,5 @@
-from PyQt5 import QtCore
-from PyQt5.QtGui import *
-from PyQt5.QtWidgets import *
-import pyqtgraph as pg
-import numpy as np
-from PyQt5 import QtCore, QtGui, QtWidgets, uic
+from SORNSim.Exploration.Network_UI.TabBase import *
+
 from Testing.Agent_Maze.Maze import *
 
 class Maze_Draw_Item(pg.GraphicsObject):
@@ -65,10 +61,10 @@ class Maze_Draw_Item(pg.GraphicsObject):
         br.setBottom(max(br.right(), br.bottom()))
         return QtCore.QRectF(br)
 
-class maze_tab():
+class maze_tab(TabBase):
 
     def __init__(self, title='Maze'):
-        self.title = title
+        super().__init__(title)
         self.sidebar = True
 
     def add_recorder_variables(self, neuron_group, Network_UI):

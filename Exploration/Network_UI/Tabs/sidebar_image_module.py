@@ -1,12 +1,6 @@
-from PyQt5 import QtCore
-from PyQt5.QtGui import *
-from PyQt5.QtWidgets import *
-import pyqtgraph as pg
+from SORNSim.Exploration.Network_UI.TabBase import *
 
-#from Testing.SORN.SORN_Helper import *
-from Exploration.Visualization.Reconstruct_Analyze_Label.Reconstruct_Analyze_Label import *
-
-class sidebar_image_module():
+class sidebar_image_module(TabBase):
 
     def add_recorder_variables(self, neuron_group, Network_UI):
         return

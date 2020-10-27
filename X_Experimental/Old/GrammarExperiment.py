@@ -8,10 +8,10 @@ import sys; sys.path.append('.')
 from sklearn import linear_model
 
 from Testing.Old.SORN_simple_behaviour import *
-from NetworkBehaviour.Input.Old.GrammarTaskActivator_old import *
-from NetworkCore.Network import *
-from NetworkCore.Neuron_Group import *
-from NetworkCore.Synapse_Group import *
+from SORNSim.NetworkBehaviour.Input.Old.GrammarTaskActivator_old import *
+from SORNSim.NetworkCore.Network import *
+from SORNSim.NetworkCore.Neuron_Group import *
+from SORNSim.NetworkCore.Synapse_Group import *
 
 source = GrammarActivator(N_e=1600)
 

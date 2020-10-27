@@ -1,16 +1,16 @@
 import sys
 sys.path.append('../../')
 
-from NetworkCore.Network import *
-from NetworkCore.Synapse_Group import *
-from NetworkBehaviour.Structure.Structure import *
-from Exploration.StorageManager.StorageManager import *
+from SORNSim.NetworkCore.Network import *
+from SORNSim.NetworkCore.Synapse_Group import *
+from SORNSim.NetworkBehaviour.Structure.Structure import *
+from SORNSim.Exploration.StorageManager.StorageManager import *
 
-from NetworkBehaviour.Logic.TREN.Neuron_Homeostais import *
-from NetworkBehaviour.Logic.TREN.Neuron_Input import *
-from NetworkBehaviour.Logic.TREN.Neuron_Learning import *
+from SORNSim.NetworkBehaviour.Logic.TREN.Neuron_Homeostais import *
+from SORNSim.NetworkBehaviour.Logic.TREN.Neuron_Input import *
+from SORNSim.NetworkBehaviour.Logic.TREN.Neuron_Learning import *
 
-from NetworkBehaviour.Input.Images.Lines import *
+from SORNSim.NetworkBehaviour.Input.Images.Lines import *
 
 display = False
 so = True

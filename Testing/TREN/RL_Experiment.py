@@ -4,11 +4,11 @@ sys.path.append('../../tren2')
 
 import matplotlib.pylab as plt
 
-from NetworkBehaviour.Logic.TREN.Neuron_Learning import *
+from SORNSim.NetworkBehaviour.Logic.TREN.Neuron_Learning import *
 
-from NetworkCore.Network import *
-from NetworkCore.Neuron_Group import *
-from NetworkCore.Synapse_Group import *
+from SORNSim.NetworkCore.Network import *
+from SORNSim.NetworkCore.Neuron_Group import *
+from SORNSim.NetworkCore.Synapse_Group import *
 
 import os
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'

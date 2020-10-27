@@ -1,8 +1,8 @@
-import pyqtgraph as pg
+from SORNSim.Exploration.Network_UI.TabBase import *
+
 from Testing.Common.Classifier_Helper import *
 
-
-class sidebar_music_module():
+class sidebar_music_module(TabBase):
 
     def add_recorder_variables(self, neuron_group, Network_UI):
         if hasattr(neuron_group, 'pattern_index'):

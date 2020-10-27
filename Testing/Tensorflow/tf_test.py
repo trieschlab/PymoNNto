@@ -1,12 +1,12 @@
 import sys
 sys.path.append('../../')
-from NetworkCore.Network import *
-from NetworkCore.Synapse_Group import *
-from NetworkCore.Neuron_Group import *
-from NetworkBehaviour.Logic.TensorflowModules.test import *
+from SORNSim.NetworkCore.Network import *
+from SORNSim.NetworkCore.Synapse_Group import *
+from SORNSim.NetworkCore.Neuron_Group import *
+from SORNSim.NetworkBehaviour.Logic.TensorflowModules.test import *
 from matplotlib.pyplot import *
-from Exploration.Network_UI.Network_UI import *
-from NetworkBehaviour.Structure.Structure import *
+from SORNSim.Exploration.Network_UI.Network_UI import *
+from SORNSim.NetworkBehaviour.Structure.Structure import *
 
 
 

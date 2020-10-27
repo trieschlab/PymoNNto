@@ -1,21 +1,9 @@
-from PyQt5 import QtCore
-from PyQt5.QtGui import *
-from PyQt5.QtWidgets import *
-import pyqtgraph as pg
-import numpy as np
-
-from Exploration.Visualization.Reconstruct_Analyze_Label.Reconstruct_Analyze_Label import *
-
-from PyQt5 import QtCore, QtGui, QtWidgets, uic
-
-import pyqtgraph as pg
-
+from SORNSim.Exploration.Network_UI.TabBase import *
 
 def pol2cart(theta, rho):
     x = rho * np.cos(theta)
     y = rho * np.sin(theta)
     return x, y
-
 
 def cart2pol(x, y):
     theta = np.arctan2(y, x)
@@ -27,8 +15,6 @@ class DrawItem2(pg.GraphicsObject):
     def __init__(self, parent=None):
         super().__init__(parent)
         self.picture = QtGui.QPicture()
-
-
 
     #base_char_masks_dict
 
@@ -241,10 +227,10 @@ class DrawItem2(pg.GraphicsObject):
         br.setBottom(max(br.right()+10, br.bottom()+10))
         return QtCore.QRectF(br)
 
-class sun_gravity_plot_tab():
+class sun_gravity_plot_tab(TabBase):
 
     def __init__(self, title='Sun Gravity Plot'):
-        self.title = title
+        super().__init__(title)
 
     def add_recorder_variables(self, neuron_group, Network_UI):
         return

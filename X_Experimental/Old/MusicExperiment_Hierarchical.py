@@ -1,13 +1,13 @@
 import sys
 sys.path.append('../../')
 
-from NetworkBehaviour.Logic.SORN.SORN_advanced import *
-from NetworkBehaviour.Input.Music.MusicActivator import *
-from NetworkCore.Network import *
-from NetworkCore.Synapse_Group import *
+from SORNSim.NetworkBehaviour.Logic.SORN.SORN_advanced import *
+from SORNSim.NetworkBehaviour.Input.Music.MusicActivator import *
+from SORNSim.NetworkCore.Network import *
+from SORNSim.NetworkCore.Synapse_Group import *
 from Testing.Common.SORN_MusicHelper import *
-from NetworkBehaviour.Structure.Structure import *
-from Exploration.Visualization.SORN_visualization import *
+from SORNSim.NetworkBehaviour.Structure.Structure import *
+from Testing.Visualization.SORN_visualization import *
 
 
 display = False

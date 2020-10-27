@@ -50,7 +50,7 @@ def create_run_and_evaluate(ind=[], evolution=True):
     if evolution:
         return EvalF.get_Autoencoder_Score(tren, [tren.getNG('Cortex')[1]], 100)
 
-    import Exploration.Visualization.Pyplot_visualizer as pv
+    import Testing.Visualization.Pyplot_visualizer as pv
     pv.visualize_layers(tren, tren.getNG('Cortex'), LGN_PC_Neurons, v_split=True)#, Cortex_V2, Cortex_V3
     pv.show()
 

@@ -1,8 +1,8 @@
-from NetworkBehaviour.Recorder.Recorder import *
+from SORNSim.NetworkBehaviour.Recorder.Recorder import *
 from Testing.Common.Classifier_Helper import *
 
-from Exploration.Analysis.PCA import *
-from Exploration.Analysis.WiltingPriesemann import *
+from SORNSim.Exploration.Analysis.PCA import *
+from SORNSim.Exploration.Analysis.WiltingPriesemann import *
 
 def max_source_act_text(network, steps):
 

@@ -1,5 +1,5 @@
 import pypianoroll as piano
-from NetworkBehaviour.Recorder.Recorder import *
+from SORNSim.NetworkBehaviour.Recorder.Recorder import *
 from Testing.Common.Classifier_Helper import *
 from sklearn.multiclass import OneVsRestClassifier
 from sklearn.naive_bayes import ComplementNB

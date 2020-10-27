@@ -55,7 +55,7 @@ def eval_func(ind, visualize=False):
     print(score)
 
     if visualize:
-        import Exploration.Visualization.Pyplot_visualizer as pv
+        import Testing.Visualization.Pyplot_visualizer as pv
         #pv.matshow(inh_syn.GABA_Synapses[55].reshape(10, 10))
         #pv.plot(rec['n[10].avg'])
         pv.visualize_input_and_learned_patterns(network, Cortex_PC_Neurons, LGN_PC_Neurons, NN_eval=False)

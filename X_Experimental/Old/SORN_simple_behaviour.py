@@ -1,4 +1,4 @@
-from NetworkBehaviour.Logic.Basics.BasicHomeostasis import *
+from SORNSim.NetworkBehaviour.Logic.Basics.BasicHomeostasis import *
 import scipy.sparse as sp
 
 class SORN_Input_collect(Behaviour):
