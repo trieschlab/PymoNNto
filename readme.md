@@ -98,8 +98,7 @@ plt.plot(My_Network['n.activity', 0])
 plt.plot(My_Network['np.mean(n.activity)', 0], color='black')
 plt.show()
 ```
-
-![User interface example](both.png)
+![User interface example](https://raw.githubusercontent.com/gitmv/Self-Organizing-Recurrent-Network-Simulator/Images/both.png)
 
 ### Basic Code Structure - Tagging System
 
@@ -178,7 +177,7 @@ plt.plot(My_Network['np.mean(n.activity)', 0], color='black')
 plt.show()
 ```
 
-![User interface example](input.png)
+![User interface example](https://raw.githubusercontent.com/gitmv/Self-Organizing-Recurrent-Network-Simulator/Images/input.png)
 
 ### Basic Code Structure - User Interface
 
@@ -235,4 +234,4 @@ Network_UI(My_Network, modules=my_UI_modules, label='My_Network_UI', group_displ
 ```
 
 
-![User interface example](UI.png)
+![User interface example](https://raw.githubusercontent.com/gitmv/Self-Organizing-Recurrent-Network-Simulator/Images/UI.png)
