@@ -18,8 +18,8 @@ class NeuronRecorder(Behaviour):
         self.variables = {}
         self.compiled = {}
 
-        for i, v in enumerate(variables):
-            print(v)
+        #for i, v in enumerate(variables):
+        #    print(v)
         #    if v == 'np.mean(n.voltage)':
         #        variables[i] = 'np.mean(n.voltage.numpy())'
 

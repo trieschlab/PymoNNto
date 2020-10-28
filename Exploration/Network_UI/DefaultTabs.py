@@ -19,12 +19,12 @@ from SORNSim.Exploration.Network_UI.Basic_Tabs.buffer_tab import *
 from SORNSim.Exploration.Network_UI.Basic_Tabs.PCA_tab import *
 
 
-def get_default_UI_modules():
+def get_default_UI_modules(neuron_parameters=['output'], synapse_parameters=['W']):
     return [
-    UI_sidebar_activity_module(1),
-    multi_group_plot_tab(['output', 'TH', 'weight_norm_factor', 'nox', 'refractory_counter']),
-    spiketrain_tab(parameter='output'),
-    weight_tab(weight_attrs=['W']),#, 'W_temp', 'W_stable'
+    UI_sidebar_activity_module(1, add_color_dict={neuron_parameters[0]:(255, 255, 255)}),
+    multi_group_plot_tab(neuron_parameters),#['output', 'TH', 'weight_norm_factor', 'nox', 'refractory_counter']
+    spiketrain_tab(parameter=neuron_parameters[0]),
+    weight_tab(weight_attrs=synapse_parameters),#, 'W_temp', 'W_stable'
     stdp_buffer_tab(),
     partition_tab(),
     PCA_tab(),
@@ -33,10 +33,10 @@ def get_default_UI_modules():
     individual_weight_tab(),
     hist_tab(),
     criticality_tab(),
-    single_group_plot_tab({'activity':(0, 0, 0), 'excitation':(0, 0, 255), 'inhibition':(255, 0, 0), 'input_act':(255, 0, 255), 'TH':(0, 255, 0)}),
-    stability_tab(parameter='output'),
+    single_group_plot_tab({neuron_parameters[0]:(0, 0, 0), 'excitation':(0, 0, 255), 'inhibition':(255, 0, 0), 'input_act':(255, 0, 255), 'TH':(0, 255, 0)}),
+    stability_tab(parameter=neuron_parameters[0]),
     scatter_tab(x_var='excitation', y_var='inhibition'),
-    fourier_tab(parameter='output'),
+    fourier_tab(parameter=neuron_parameters[0]),
     info_tab(),
     sidebar_fast_forward_module(),
     sidebar_save_load_module()
