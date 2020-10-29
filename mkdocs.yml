@@ -1,0 +1,14 @@
+theme:
+    name: mkdocs
+    highlightjs: true
+    hljs_languages:
+        - yaml
+        - django
+
+nav:
+    - Home: index.md
+    - Introduction:
+        - Installation: Introduction/installation.md
+        - Installation2: Introduction/installation2.md
+    - Examples:
+        - Example1: Examples/example1.md
