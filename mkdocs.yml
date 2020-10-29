@@ -1,3 +1,11 @@
+site_name: Self-Organizing-Recurrent-Network-Simulator
+site_url: ""
+site_description: Project documentation with Markdown.
+site_author: Marius Vieth
+
+repo_url: https://github.com/gitmv/Self-Organizing-Recurrent-Network-Simulator
+edit_uri: ""
+
 theme:
     name: mkdocs
     highlightjs: true
@@ -12,3 +20,6 @@ nav:
         - Installation2: Introduction/installation2.md
     - Examples:
         - Example1: Examples/example1.md
+
+plugins:
+    - search
