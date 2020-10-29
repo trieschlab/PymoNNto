@@ -7,11 +7,11 @@ repo_url: https://github.com/gitmv/Self-Organizing-Recurrent-Network-Simulator
 edit_uri: ""
 
 theme:
-    name: mkdocs
+    name: readthedocs
     highlightjs: true
     hljs_languages:
         - yaml
-        - django
+        - rust
 
 nav:
     - Home: index.md
