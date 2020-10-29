@@ -8,6 +8,7 @@ edit_uri: ""
 
 theme:
     name: readthedocs
+    favicon: icon.png
     highlightjs: true
     hljs_languages:
         - yaml
