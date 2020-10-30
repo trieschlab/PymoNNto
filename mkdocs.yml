@@ -19,7 +19,9 @@ nav:
         - PIP installation: Introduction/PIP_installation.md
         - Manual installation: Introduction/Manual_installation.md
     - Tutorials:
-        - Basics: Examples/basics.md
+        - Basics: Tutorials/basics.md
+        - Synapses and Input: Tutorials/Synapses_and_Input.md
+        - User Interface: Tutorials/User_Interface.md
     - Examples:
         - Differential Equation: Examples/Differential_Equation.md
         - Tensorflow: Examples/Tensorflow.md
