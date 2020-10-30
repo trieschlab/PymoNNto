@@ -1,4 +1,4 @@
-## Basic Code Structure
+# Basic Code Structure
 
 The following code creates a network of 100 neurons with recurrent connections and simulates them for 1000 iterations. What is still missing are some behaviour modules. This modules have to be passed to the NeuronGrop to definde what the neurons are supposed to do at each timestep.
 
@@ -17,7 +17,7 @@ My_Network.initialize()
 My_Network.simulate_iterations(1000)
 ```
 
-### Basic Code Structure - Behaviour
+## Behaviour
 
 Each Behaviour Module has the following layout where `set_variables` is called when the Network is initialized, while
 `new_iteration` is called repeatedly every timestep. `neurons` points to the parent neuron group the behaviour belongs to.
@@ -36,7 +36,7 @@ class Basic_Behaviour(Behaviour):
     neurons.activity *= self.decay_factor
 ```
 
-### Basic Code Structure - Simple Example
+## Simple Example
 
 When we combine the previous code blocks we can add the `Basic_Behaviour` to the NeuronGroup.
 To plot the neurons activity over time, we also have to create a `NeuronRecorder`. Here the activity and the mean-activity are stored at each timestep.
@@ -83,7 +83,7 @@ plt.show()
 ```
 ![User interface example](https://raw.githubusercontent.com/gitmv/Self-Organizing-Recurrent-Network-Simulator/Images/both.png)
 
-### Basic Code Structure - Tagging System
+## Tagging System
 
 To access the tagged objects we can use the `[]` operator. `['my_tag']` gives you a list of all objects tagged with `my_tag`. Here are some examples:
 

@@ -1,3 +1,5 @@
+# Tensorflow Modules
+
 ```python
 class STDP_TF(TensorflowBehaviour):
 
@@ -9,7 +11,7 @@ class STDP_TF(TensorflowBehaviour):
         neurons.output_old = tf.Variable(neurons.get_neuron_vec(), dtype='float32')
 
         neurons.eta_stdp = tf.constant(self.get_init_attr('eta_stdp', 0.00015, neurons), dtype='float32')
-        
+
         self.syn_type = self.get_init_attr('syn_type', 'GLU', neurons)
 
     def new_iteration(self, neurons):

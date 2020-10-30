@@ -1,3 +1,5 @@
+# Differential Equation Modules
+
 ```python
 from SORNSim import *
 #SORNSim
@@ -19,6 +21,8 @@ net.simulate_iterations('1000*ms')
 plot(net['n.t', 0], net['n.v', 0])
 show()
 ```
+
+
 
 ```python
 #Brian2

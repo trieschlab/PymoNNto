@@ -1,4 +1,4 @@
-### Basic Code Structure - User Interface
+# User Interface
 
 If we want to controll and evaluate our model in realtime we can replace the `pyplot` functions, the `recorder` and the `simulate_iterations` with the following Code lines. Similar to the NeuronGroup, the Network_UI is also modular and consists of multiple UI_modules. We can choose them ourselfes or, like in this case, take some default_modules, which should work with most networks. One addition we have to make is to give NeuronGroup some shape with the help of the `get_squared_dim(100)` function, which returns a 10x10 grid `NeuronDimension` object. The neuron-behaviours are not affected by this. The NeuronGroup only receives some additional values like width, height, depth and the vectors x, y, z. The neurons positions can be plotted with `plt.scatter(My_Neurons.x, My_Neurons.y)`
 
