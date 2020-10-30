@@ -8,7 +8,6 @@ edit_uri: ""
 
 theme:
     name: readthedocs
-    favicon: icon.png
     highlightjs: true
     hljs_languages:
         - yaml
@@ -17,10 +16,13 @@ theme:
 nav:
     - Home: index.md
     - Introduction:
-        - Installation: Introduction/installation.md
-        - Installation2: Introduction/installation2.md
+        - PIP installation: Introduction/PIP_installation.md
+        - Manual installation: Introduction/Manual_installation.md
+    - Tutorials:
+        - Basics: Examples/basics.md
     - Examples:
-        - Example1: Examples/example1.md
+        - Differential Equation: Examples/Differential_Equation.md
+        - Tensorflow: Examples/Tensorflow.md
 
 plugins:
     - search
