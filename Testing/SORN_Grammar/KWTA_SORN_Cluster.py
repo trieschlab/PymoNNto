@@ -1,25 +1,20 @@
 import sys
+sys.path.append("..")
 
-#sys.path.append("..")
-#sys.path.append('../../')
-#sys.path.append('../../../')
+from SORNSim import *
 
-from SORNSim.NetworkCore.Network import *
-from SORNSim.NetworkCore.Synapse_Group import *
 from SORNSim.NetworkBehaviour.Logic.SORN.SORN_experimental import *
 from SORNSim.NetworkBehaviour.Logic.SORN.SORN_WTA import *
 from SORNSim.NetworkBehaviour.Input.Text.TextActivator import *
-from SORNSim.NetworkBehaviour.Structure.Structure import *
 
-from Testing.Common.Grammar_Helper import *
-
-from SORNSim.Exploration.StorageManager.StorageManager import *
-
+#from Testing.Common.Grammar_Helper import *
 
 if __name__ == '__main__':
-    from SORNSim.Exploration.Network_UI.Network_UI import *
-    from SORNSim.Exploration.Network_UI.DefaultTabs import *
+    from SORNSim.Exploration.Network_UI import *
     from Exploration.Network_UI.MyDefaultTabs import *
+#    from SORNSim.Exploration.Network_UI.Network_UI import *
+#    from SORNSim.Exploration.Network_UI.DefaultTabs import *
+
 
 
 

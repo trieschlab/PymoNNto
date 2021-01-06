@@ -1,5 +1,6 @@
 from brian2 import *
 #%matplotlib inline
+import time
 
 
 
@@ -8,8 +9,7 @@ from brian2 import *
 
 
 
-
-
+defaultclock.dt = 0.1*ms
 
 
 start_scope()
@@ -25,7 +25,9 @@ G.tau = 100*ms
 
 M = StateMonitor(G, 'v', record=True)
 
-run(1000*ms)
+t=time.time()
+run(10000*ms)
+print(time.time()-t)
 
 for vrec in M.v:
     plot(M.t, vrec/mV)

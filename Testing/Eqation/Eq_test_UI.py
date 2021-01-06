@@ -28,7 +28,7 @@ ng = NeuronGroup(net=net, size=get_squared_dim(100), behaviour={
     3: Variable(eq='tau=100*ms'),
     4: EquationModule(eq='dv/dt=(0*mV-v)/tau'),
 
-    100: NeuronRecorder(['n.v', 'n.t'], tag='my_rec')
+    100: Recorder(['n.v', 'n.t'], tag='my_rec')
 })
 
 net.initialize(info=False)

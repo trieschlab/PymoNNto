@@ -1,7 +1,6 @@
 import sys
 
 sys.path.append('../../')
-sys.path.append('../../../')
 
 from SORNSim.NetworkCore.Network import *
 from SORNSim.NetworkCore.Synapse_Group import *

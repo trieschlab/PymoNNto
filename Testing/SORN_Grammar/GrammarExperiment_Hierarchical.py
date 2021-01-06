@@ -9,7 +9,8 @@ from SORNSim.NetworkBehaviour.Structure.Structure import *
 from SORNSim.Exploration.StorageManager.StorageManager import *
 from Testing.Common.Grammar_Helper import *
 if __name__ == '__main__':
-    pass
+    from SORNSim.Exploration.Network_UI import *
+    from Exploration.Network_UI.MyDefaultTabs import *
 
 def run(attrs={'name':'hierarchical', 'ind':[], 'N_e':900, 'TS':[1], 'ff':True, 'fb':True, 'plastic':15000}):
 
@@ -139,7 +140,8 @@ def run(attrs={'name':'hierarchical', 'ind':[], 'N_e':900, 'TS':[1], 'ff':True, 
     ###################################################################################################################
 
     if __name__ == '__main__' and attrs.get('UI', False):
-        Network_UI(SORN, label='SORN UI default setup', storage_manager=sm, group_display_count=2, reduced_layout=False).show()
+        my_modules = get_default_UI_modules() + get_my_default_UI_modules()
+        Network_UI(SORN, modules=my_modules, label='SORN UI default setup', storage_manager=sm, group_display_count=2, reduced_layout=False).show()
 
 
     score = 0
