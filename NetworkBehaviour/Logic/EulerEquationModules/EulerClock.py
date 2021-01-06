@@ -1,4 +1,4 @@
-from NetworkCore.Behaviour import *
+from SORNSim.NetworkCore.Behaviour import *
 import numpy as np
 from sympy import symbols
 from sympy.physics.units import *

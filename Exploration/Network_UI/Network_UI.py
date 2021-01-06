@@ -104,8 +104,8 @@ class Network_UI(UI_Base):
                     rec_time_dict[rec_length].append(variable)
 
                 for rec_length in rec_time_dict:
-                    rec = NeuronRecorder(rec_time_dict[rec_length]+['n.iteration'], tag='UI_rec,rec_'+str(rec_length), max_length=rec_length)
-                    self.network.add_behaviours_to_neuron_group({10000+rec_length: rec}, group)
+                    rec = Recorder(rec_time_dict[rec_length] + ['n.iteration'], tag='UI_rec,rec_' + str(rec_length), max_length=rec_length)
+                    self.network.add_behaviours_to_object({10000+rec_length: rec}, group)
 
     #def rec(self, neuron_group, rec_length=-1):
     #    return neuron_group[self.rec_tag(rec_length),0]

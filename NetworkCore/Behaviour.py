@@ -4,7 +4,7 @@ from numpy.random import *
 
 class Behaviour(NetworkObjectBase):
     #modificaton_reset_vars = []
-    run_on_neuron_init_var = False
+    run_on_init = False
 
     def __init__(self, **kwargs):
         self.init_kwargs = kwargs

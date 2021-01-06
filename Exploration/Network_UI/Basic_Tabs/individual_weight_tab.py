@@ -83,8 +83,8 @@ class individual_weight_tab(TabBase):
                             self.plot.addItem(curve)
                             self.curves[k].append(curve)
 
-            self.my_syn_rec = NeuronRecorder(self.keys+['n.iteration'], tag=self.rec_name, gapwidth=10)
-            self.Network_UI.network.add_behaviours_to_neuron_group({10001: self.my_syn_rec}, group)
+            self.my_syn_rec = Recorder(self.keys + ['n.iteration'], tag=self.rec_name, gapwidth=10)
+            self.Network_UI.network.add_behaviours_to_object({10001: self.my_syn_rec}, group)
             self.current_ng = group
 
 

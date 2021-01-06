@@ -14,17 +14,17 @@ class Network(NetworkObjectBase):
         self.NeuronGroups = []
         self.SynapseGroups = []
 
-        self.network_behaviour = behaviour
-        self.add_behaviour_keys_dict(self.network_behaviour)
+        self.behaviour = behaviour
 
         self.iteration = 0
 
 
     def set_mechanisms(self, keys, enabeled):
         for key in keys:
-            for ng in self.NeuronGroups:
-                for mechansim in ng[key]:
+            for obj in self.all_behaviour_objects():
+                for mechansim in obj[key]:
                     mechansim.active = enabeled
+
 
     def deactivate_mechanisms(self, keys):
         self.set_mechanisms(keys, False)
@@ -33,25 +33,28 @@ class Network(NetworkObjectBase):
         self.set_mechanisms(keys, True)
 
     def recording_off(self):
-        for ng in self.NeuronGroups:
-            ng.recording = False
+        for obj in self.all_behaviour_objects():
+            obj.recording = False
 
     def recording_on(self):
-        for ng in self.NeuronGroups:
-            ng.recording = True
+        for obj in self.all_behaviour_objects():
+            obj.recording = True
+
+    def all_behaviour_objects(self):
+        return [self]+self.NeuronGroups+self.SynapseGroups
 
     def clear_recorder(self, keys=[]):
-        for ng in self.NeuronGroups:
-            for key in ng.behaviour:
-                if (keys in [] or key in keys) and hasattr(ng.behaviour[key], 'clear_recorder'):
-                    ng.behaviour[key].clear_recorder()
+        for obj in self.all_behaviour_objects():
+            for key in obj.behaviour:
+                if (keys in [] or key in keys) and hasattr(obj.behaviour[key], 'clear_recorder'):
+                    obj.behaviour[key].clear_recorder()
 
     def set_marked_variables(self, new_params, info=True, storage_manager=None):
         result = []
         result_names = []
-        for ng in self.NeuronGroups:
-            for key in ng.behaviour:
-                b=ng.behaviour[key]
+        for obj in self.all_behaviour_objects():
+            for key in obj.behaviour:
+                b=obj.behaviour[key]
                 for variable_key in b.init_kwargs:
                     while type(b.init_kwargs[variable_key]) is str and '[' in b.init_kwargs[variable_key] and ']' in b.init_kwargs[variable_key]:
                         s = b.init_kwargs[variable_key]
@@ -85,6 +88,13 @@ class Network(NetworkObjectBase):
     def find_objects(self, key):
         result = []
 
+        if key in self.behaviour:
+            result.append(self.behaviour)
+
+        for bk in self.behaviour:
+            behaviour = self.behaviour[bk]
+            result += behaviour[key]
+
         for ng in self.NeuronGroups:
             result += ng[key]
 
@@ -113,9 +123,13 @@ class Network(NetworkObjectBase):
 
         self.behaviour_timesteps = []
 
+        self.add_behaviour_keys_dict(self.behaviour)# todo: test
+
         for ng in self.NeuronGroups:
             self.add_behaviour_keys_dict(ng.behaviour)
 
+        for sg in self.SynapseGroups:
+            self.add_behaviour_keys_dict(sg.behaviour)
 
         self.set_variables()
         #self.save_network_state()
@@ -155,11 +169,11 @@ class Network(NetworkObjectBase):
             if not key in self.behaviour_timesteps:
                 self.add_behaviour_key(key)
 
-    def add_behaviours_to_neuron_groups(self, behaviours, neuron_groups):
-        for ng in neuron_groups:
-            self.add_behaviours_to_neuron_group(copy.copy(behaviours), ng)
+    def add_behaviours_to_objects(self, behaviours, net_objs):
+        for obj in net_objs:
+            self.add_behaviours_to_object(copy.copy(behaviours), obj)
 
-    def add_behaviours_to_neuron_group(self, behaviours, neuron_group):
+    def add_behaviours_to_object(self, behaviours, net_obj):
         self.clear_tag_cache()
         original = behaviours
         #if type(behaviours) == list:
@@ -171,58 +185,65 @@ class Network(NetworkObjectBase):
         #    behaviours = d
 
         for key in behaviours:
-            neuron_group.behaviour[key] = behaviours[key]
-            neuron_group.behaviour[key].set_variables(neuron_group)
-            neuron_group.behaviour[key].check_unused_attrs()
+            net_obj.behaviour[key] = behaviours[key]
+            net_obj.behaviour[key].set_variables(net_obj)
+            net_obj.behaviour[key].check_unused_attrs()
 
 
         self.add_behaviour_keys_dict(behaviours)
         return original
 
-    def remove_behaviours_from_neuron_groups(self, neuron_groups, keys=[], tags=[]):
-        for ng in neuron_groups:
-            self.remove_behaviours_from_neuron_group(ng, keys, tags)
+    def remove_behaviours_objects(self, net_objs, keys=[], tags=[]):
+        for obj in net_objs:
+            self.remove_behaviours_from_neuron_group(obj, keys, tags)
 
-    def remove_behaviours_from_neuron_group(self, neuron_group, keys=[], tags=[]):
+    def remove_behaviours_from_object(self, net_obj, keys=[], tags=[]):
         found=[]
         found+=keys
-        for key in neuron_group.behaviour:
+        for key in net_obj.behaviour:
             for tag in tags:
-                if tag in neuron_group.behaviour[key].tags:
+                if tag in net_obj.behaviour[key].tags:
                     found.append(key)
 
         found=list(set(found))#unique
 
         for key in found:
-            neuron_group.behaviour.pop(key)
+            net_obj.behaviour.pop(key)
 
         self.clear_tag_cache()
 
     def clear_tag_cache(self):
-        self.clear_cache()
 
-        for ng in self.NeuronGroups:
-            ng.clear_cache()
+        for obj in self.all_behaviour_objects():
+            obj.clear_cache()
 
-            for k in ng.behaviour:
-                ng.behaviour[k].clear_cache()
+            for k in obj.behaviour:
+                obj.behaviour[k].clear_cache()
 
-        for sg in self.SynapseGroups:
-            sg.clear_cache()
 
     def set_variables(self):
         for timestep in self.behaviour_timesteps:
 
-            if timestep in self.network_behaviour:
-                self.network_behaviour[timestep].set_variables(self)
-                self.network_behaviour[timestep].check_unused_attrs()
+            for obj in self.all_behaviour_objects():
 
+                if timestep in obj.behaviour:
+                    if not obj.behaviour[timestep].run_on_init:
+                        obj.behaviour[timestep].set_variables(obj)
+                        obj.behaviour[timestep].check_unused_attrs()
+
+            '''
             for ng in self.NeuronGroups:
                 if timestep in ng.behaviour:
                     if not ng.behaviour[timestep].run_on_neuron_init_var:
                         ng.behaviour[timestep].set_variables(ng)
                         ng.behaviour[timestep].check_unused_attrs()
 
+            for sg in self.SynapseGroups:
+                if timestep in sg.behaviour:
+                    if not sg.behaviour[timestep].run_on_synapse_init_var:
+                        sg.behaviour[timestep].set_variables(sg)
+                        sg.behaviour[timestep].check_unused_attrs()
+            '''
 
 
     def set_synapses_to_neuron_groups(self):
@@ -245,15 +266,30 @@ class Network(NetworkObjectBase):
                     for tag in sg.tags+['All']:
                         ng.efferent_synapses[tag].append(sg)
 
+
     def simulate_iteration(self, measure_behaviour_execution_time=False):
 
         if measure_behaviour_execution_time:
             time_measures={}
 
-        self.iteration+=1
+        self.iteration += 1
         for timestep in self.behaviour_timesteps:
 
-            if timestep in self.network_behaviour and self.network_behaviour[timestep].behaviour_enabled:
+            for net_obj in self.all_behaviour_objects():
+                net_obj.iteration=self.iteration
+                if timestep in net_obj.behaviour and net_obj.behaviour[timestep].behaviour_enabled:
+                    if measure_behaviour_execution_time:
+                        start_time = time()
+                        net_obj.behaviour[timestep].new_iteration(net_obj)
+                        time_measures[timestep] = (time() - start_time) * 1000
+                    else:
+                        net_obj.behaviour[timestep].new_iteration(net_obj)
+
+        if measure_behaviour_execution_time:
+            return time_measures
+
+            '''
+            if timestep in self.behaviour and self.behaviour[timestep].behaviour_enabled:
                 if measure_behaviour_execution_time:
                     start_time = time()
                     self.network_behaviour[timestep].new_iteration(self)
@@ -271,8 +307,16 @@ class Network(NetworkObjectBase):
                     else:
                         ng.behaviour[timestep].new_iteration(ng)
 
-        if measure_behaviour_execution_time:
-            return time_measures
+            for sg in self.SynapseGroups:
+                sg.iteration=self.iteration
+                if timestep in sg.behaviour and sg.behaviour[timestep].behaviour_enabled:
+                    if measure_behaviour_execution_time:
+                        start_time = time()
+                        sg.behaviour[timestep].new_iteration(sg)
+                        time_measures[timestep] = (time() - start_time) * 1000
+                    else:
+                        sg.behaviour[timestep].new_iteration(ng)
+            '''
 
 
     def simulate_iterations(self, iterations, batch_size=-1, measure_block_time=False, disable_recording=False):
@@ -344,7 +388,7 @@ class Network(NetworkObjectBase):
 
             src_mask = (synapse_group.src.x >= src_x_start) * (synapse_group.src.x <= src_x_end) * (synapse_group.src.y >= src_y_start) * (synapse_group.src.y <= src_y_end) * (synapse_group.src.z >= src_z_start) * (synapse_group.src.z <= src_z_end)
 
-            sg=SynapseGroup(synapse_group.src.subGroup(src_mask), dst_subgroup)
+            sg=SynapseGroup(synapse_group.src.subGroup(src_mask), dst_subgroup, net=None)
 
             syn_sub_groups.append(sg)
 
@@ -447,17 +491,21 @@ class Network(NetworkObjectBase):
                     #plt.scatter(dst.x+50, dst.y, c=dst_mask)
                     #plt.show()
 
-                    sg = SynapseGroup(syn_group.src.subGroup(src_mask), syn_group.dst.subGroup(dst_mask))
+                    beh = {}
+                    for k in syn_group.behaviour:
+                        beh[k] = copy.copy(syn_group.behaviour[k])
+
+                    sg = SynapseGroup(syn_group.src.subGroup(src_mask), syn_group.dst.subGroup(dst_mask), behaviour=beh)
 
                     #partition enabled update
                     if type(syn_group.enabled) is np.ndarray:
                         mat_mask = dst_mask[:, None] * src_mask[None, :]
-                        sg.enabled = syn_group.enabled[mat_mask].copy().reshape(sg.get_synapse_mat_dim())
+                        sg.enabled = syn_group.enabled[mat_mask].copy().reshape(sg.get_synapse_mat_dim(), net=None)
 
                     #copy al attributes
-                    sgd=syn_group.__dict__
+                    sgd = syn_group.__dict__
                     for key in sgd:
-                        if key not in ['src', 'dst', 'enabled']:
+                        if key not in ['behaviour', 'src', 'dst', 'enabled']:
                             setattr(sg, key, copy.copy(sgd[key]))
 
                     sub_groups.append(sg)

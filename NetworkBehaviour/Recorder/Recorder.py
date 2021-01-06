@@ -4,7 +4,7 @@ from SORNSim.NetworkBehaviour.Logic.Basics.BasicHomeostasis import *
 import copy
 
 
-class NeuronRecorder(Behaviour):
+class Recorder(Behaviour):
 
     def __init__(self, variables, gapwidth=0, tag=None, max_length=None):
         super().__init__()
@@ -92,7 +92,7 @@ class NeuronRecorder(Behaviour):
 
 
 
-class SynapseRecorder(NeuronRecorder):
+class SynapseGroupRecorder(Recorder):
 
     def __init__(self, variables, transmitter='GLU', gapwidth=0, tag=None, max_length=None):
         self.transmitter = transmitter

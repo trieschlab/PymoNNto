@@ -218,8 +218,8 @@ My_Network = Network()
 
 My_Neurons = NeuronGroup(net=My_Network, tag='my_neurons', size=get_squared_dim(100), behaviour={
     1: Basic_Behaviour(),
-    2: Input_Behaviour(),
-    9: NeuronRecorder(tag='my_recorder', variables=['n.activity', 'np.mean(n.activity)'])
+    2: Input_Behaviour()#,
+    #9: NeuronRecorder(tag='my_recorder', variables=['n.activity', 'np.mean(n.activity)'])
 })
 
 SynapseGroup(net=My_Network, src=My_Neurons, dst=My_Neurons, tag='GLUTAMATE')

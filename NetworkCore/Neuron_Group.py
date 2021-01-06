@@ -5,7 +5,7 @@ import copy
 
 class NeuronGroup(NetworkObjectBase):
 
-    def __init__(self, size, behaviour, net=None, tag=None):
+    def __init__(self, size, behaviour, net, tag=None):
         super().__init__(tag=tag)
 
         self.BaseNeuronGroup = self#used for subgroup reconstruction
@@ -31,16 +31,16 @@ class NeuronGroup(NetworkObjectBase):
         self.learning = True
         self.recording = True
 
-        self.behaviour = {}
-        if type(behaviour) == list:
-            for i, b in enumerate(behaviour):
-                self.behaviour[i] = copy.copy(b)
-        else:
-            for k in behaviour:
-                self.behaviour[k] = copy.copy(behaviour[k])
+        self.behaviour = behaviour #Todo: Test without copy
+        #if type(behaviour) == list:
+        #    for i, b in enumerate(behaviour):
+        #        self.behaviour[i] = copy.copy(b)
+        #else:
+        #    for k in behaviour:
+        #        self.behaviour[k] = copy.copy(behaviour[k])
 
         for k in self.behaviour:
-            if self.behaviour[k].run_on_neuron_init_var:
+            if self.behaviour[k].run_on_init:
                 self.behaviour[k].set_variables(self)
 
         self.id = np.arange(self.size)
@@ -67,10 +67,10 @@ class NeuronGroup(NetworkObjectBase):
             behaviour = self.behaviour[bk]
             result += behaviour[key]
 
-        for syn_key in self.afferent_synapses:
-            for syn in self.afferent_synapses[syn_key]:
-                if syn not in result:
-                    result += syn[key]
+        #for syn_key in self.afferent_synapses:
+        #    for syn in self.afferent_synapses[syn_key]:
+        #        if syn not in result:
+        #            result += syn[key]
 
         return result
 
@@ -338,11 +338,11 @@ class NeuronSubGroup:
 
         elif hasattr(self.BaseNeuronGroup, 'tf') and (type(attr) == self.BaseNeuronGroup.tf.python.ops.resource_variable_ops.ResourceVariable or type(attr) == self.BaseNeuronGroup.tf.python.framework.ops.EagerTensor):
             if attr.shape[0] != self.mask.shape[0]:
-                attr.assign(self.BaseNeuronGroup.tf.compat.v1.scatter_update(attr, [np.newaxis, self.id_mask], value))
+                self.BaseNeuronGroup.tf.compat.v1.scatter_update(attr, [np.newaxis, self.id_mask], value)
                 #setattr(self.BaseNeuronGroup, attr_name, self.BaseNeuronGroup.tf.compat.v1.scatter_update(attr, [np.newaxis, self.id_mask], value))
             else:
                 #setattr(self.BaseNeuronGroup, attr_name, self.BaseNeuronGroup.tf.compat.v1.scatter_update(attr, [self.id_mask], value))
-                attr.assign(self.BaseNeuronGroup.tf.compat.v1.scatter_update(attr, [self.id_mask], value))
+                self.BaseNeuronGroup.tf.compat.v1.scatter_update(attr, [self.id_mask], value)
 
 
         else:

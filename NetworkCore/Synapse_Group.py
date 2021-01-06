@@ -6,10 +6,11 @@ import random
 
 class SynapseGroup(NetworkObjectBase):
 
-    def __init__(self, src, dst, connectivity=None, net=None, tag=None, partition=False, partition_blocks='auto'):
+    def __init__(self, src, dst, net, connectivity=None, tag=None, partition=False, partition_blocks='auto', behaviour = {}):
         super().__init__(tag=tag)
 
-        self.add_tag(src.tags[0]+' => '+dst.tags[0])
+        if len(src.tags)>0 and len(dst.tags)>0:
+            self.add_tag(src.tags[0]+' => '+dst.tags[0])
 
         if net is not None:
             net.SynapseGroups.append(self)
@@ -27,6 +28,24 @@ class SynapseGroup(NetworkObjectBase):
 
         if partition:
             self.partition(split_size=partition_blocks)
+
+        self.behaviour = behaviour
+
+        for k in self.behaviour:
+            if self.behaviour[k].run_on_init:
+                self.behaviour[k].set_variables(self)
+
+    def find_objects(self, key):
+        result = []
+
+        if key in self.behaviour:
+            result.append(self.behaviour)
+
+        for bk in self.behaviour:
+            behaviour = self.behaviour[bk]
+            result += behaviour[key]
+
+        return result
 
     def set_connectivity(self, connectivity):
         src = self.src

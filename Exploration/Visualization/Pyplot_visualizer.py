@@ -28,9 +28,9 @@ class score_visualization_recorder(visualization_recorder):
 
     def __init__(self):
         super().__init__()
-        self.neu_rec = NeuronRecorder(['n.norm_value', 'n.output_activity_history[0]', 'n.activity'], gapwidth=100)
+        self.neu_rec = Recorder(['n.norm_value', 'n.output_activity_history[0]', 'n.activity'], gapwidth=100)
         self.recorderlist.append(self.neu_rec)
-        self.syn_rec = SynapseRecorder(['syn.GLU_Synapses'], gapwidth=1000)
+        self.syn_rec = SynapseGroupRecorder(['syn.GLU_Synapses'], gapwidth=1000)
         self.recorderlist.append(self.syn_rec)
 
     def visualize(self):
@@ -55,7 +55,7 @@ class activity_visualization_recorder(visualization_recorder):
 
     def __init__(self):
         super().__init__()
-        self.neu_rec = NeuronRecorder(['n[8].avg', 'n.norm_value', 'n.output_activity_history[0]', 'n.activity'], gapwidth=100)
+        self.neu_rec = Recorder(['n[8].avg', 'n.norm_value', 'n.output_activity_history[0]', 'n.activity'], gapwidth=100)
         self.recorderlist.append(self.neu_rec)
 
     def visualize(self):
@@ -86,7 +86,7 @@ class input_visualization_recorder(visualization_recorder):
 
     def __init__(self):#todo: LGN n[8]
         super().__init__()
-        self.neu_rec = NeuronRecorder(['n[8].avg', 'n.norm_value', 'n.output_activity_history[0]', 'n.activity'], gapwidth=100)
+        self.neu_rec = Recorder(['n[8].avg', 'n.norm_value', 'n.output_activity_history[0]', 'n.activity'], gapwidth=100)
         self.recorderlist.append(self.neu_rec)
 
     def visualize(self):
@@ -124,7 +124,7 @@ class weight_visualization_recorder(visualization_recorder):
 
     def __init__(self):
         super().__init__()
-        self.syn_rec = SynapseRecorder(['syn.GLU_Synapses'], gapwidth=100)
+        self.syn_rec = SynapseGroupRecorder(['syn.GLU_Synapses'], gapwidth=100)
         self.recorderlist.append(self.syn_rec)
 
     def visualize(self):
@@ -166,7 +166,7 @@ class firing_rate_visualization_recorder(visualization_recorder):
 
     def __init__(self):
         super().__init__()
-        self.neu_rec = NeuronRecorder(['n.output_activity_history[0]', 'n.pre_inhibition_act', 'n.activity', 'n.norm_value'], gapwidth=1)
+        self.neu_rec = Recorder(['n.output_activity_history[0]', 'n.pre_inhibition_act', 'n.activity', 'n.norm_value'], gapwidth=1)
         self.recorderlist.append(self.neu_rec)
 
     def visualize(self):

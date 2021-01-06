@@ -41,7 +41,6 @@ class weight_tab(TabBase):
         if self.weight_tab.isVisible() and len(Network_UI.network[Network_UI.neuron_select_group]) > 0:
 
             group = Network_UI.network[Network_UI.neuron_select_group, 0]
-
             #collect all synapse information
             syn_dict = {}
 
@@ -50,7 +49,8 @@ class weight_tab(TabBase):
             for transmitter in Network_UI.transmitters:
                 syn_dict[transmitter] = {}
                 for weight_attr in self.weight_attrs:
-                    syns = Network_UI.get_combined_syn_mats(group[transmitter], Network_UI.neuron_select_id, weight_attr)
+
+                    syns = Network_UI.get_combined_syn_mats(group.afferent_synapses[transmitter], Network_UI.neuron_select_id, weight_attr)
 
                     #print(np.sum(syns['GLU,syn,PC_1 => PC_1']), np.max(syns['GLU,syn,PC_1 => PC_1']))
 

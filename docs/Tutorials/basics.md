@@ -93,7 +93,7 @@ My_Network['my_neurons']
 
 My_Network['my_recorder']
 My_Neurons['my_recorder'] 
-=> [<SORNSim.NetworkBehaviour.Recorder.Recorder.NeuronRecorder object at 0x0000021F1B61D5E0>]
+=> [<SORNSim.NetworkBehaviour.Recorder.Recorder.Recorder object at 0x0000021F1B61D5E0>]
 
 My_Neurons['n.activity']
 My_Neurons['my_recorder', 0]['n.activity']
