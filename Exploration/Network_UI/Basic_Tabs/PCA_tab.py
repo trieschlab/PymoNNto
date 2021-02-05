@@ -34,17 +34,25 @@ class PCA_tab(TabBase):
             if len(Network_UI.network[Network_UI.neuron_select_group]) >= 0:
                 group=Network_UI.network[Network_UI.neuron_select_group, 0]
 
-                if hasattr(group, self.parameter):
+                try:
+                #if hasattr(group, self.parameter):
 
                     act = group['n.'+self.parameter, 0, 'np'][-self.timesteps:]
-                    pca = get_PCA(act, 100)
-                    svs = pca.singular_values_
-                    evr = pca.explained_variance_ratio_
-                    if len(svs) >= self.singular_value_count:
-                        self.singular_value_iterations.append(Network_UI.network.iteration)
-                        for i in range(self.singular_value_count):
-                            self.singular_value_histories[i].append(svs[i])
-                            self.sv_curves[i].setData(self.singular_value_iterations, self.singular_value_histories[i])
+                    try :
+                        pca = get_PCA(act, 100)
+                        svs = pca.singular_values_
+                        evr = pca.explained_variance_ratio_
+                        if len(svs) >= self.singular_value_count:
+                            self.singular_value_iterations.append(Network_UI.network.iteration)
+                            for i in range(self.singular_value_count):
+                                self.singular_value_histories[i].append(svs[i])
+                                self.sv_curves[i].setData(self.singular_value_iterations, self.singular_value_histories[i])
 
-                        self.pca_curve.setData(svs)
-                        self.evr_curve.setData(np.cumsum(np.round(evr, decimals=3)*100))
+                            self.pca_curve.setData(svs)
+                            self.evr_curve.setData(np.cumsum(np.round(evr, decimals=3)*100))
+                    except:
+                        print('not enough timesteps for PCA. waiting...')
+
+                except:
+                    print(self.parameter, "cannot be evaluated")
+

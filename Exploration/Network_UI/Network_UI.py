@@ -4,6 +4,9 @@ from SORNSim.NetworkBehaviour.Recorder.Recorder import *
 class Network_UI(UI_Base):
 
     def __init__(self, network, modules=[], label='SORN UI', group_tags=[], transmitters=[], storage_manager=None, group_display_count=None, reduced_layout=False):
+
+        network.clear_recorder()
+
         #network.simulate_iteration()
         self.recording = False
         if self.recording:
@@ -152,19 +155,25 @@ class Network_UI(UI_Base):
             if not key in results:
                 results[key] = np.zeros((base_dst.size, base_src.size))
                 shapes[key] = (base_src.height, base_src.width)
-            if hasattr(s, attr):
+            try:
+            #if hasattr(s, attr):
                 if base_src == s.src and base_dst == s.dst:
-                    if type(getattr(s, attr)) is np.ndarray:
-                        results[key] += getattr(s, attr).copy()
-                    else:
-                        results[key] += getattr(s, attr).numpy()#tensorflow
+                    results[key] += eval('s.'+attr).copy()
+                    #if type(getattr(s, attr)) is np.ndarray:
+                    #    results[key] += getattr(s, attr).copy()
+                    #else:
+                    #    results[key] += getattr(s, attr).numpy()#tensorflow
                 else:
-                    if type(getattr(s, attr)) is np.ndarray:
-                        mat_mask = s.dst.mask[:, None]*s.src.mask[None, :]
-                        results[key][mat_mask] += getattr(s, attr).flatten()
-                    else:
-                        mat_mask = s.dst.mask[:, None]*s.src.mask[None, :]
-                        results[key][mat_mask] += getattr(s, attr).numpy().flatten()#tensorflow
+                    mat_mask = s.dst.mask[:, None] * s.src.mask[None, :]
+                    results[key][mat_mask] += eval('s.'+attr).flatten()
+                    #if type(getattr(s, attr)) is np.ndarray:
+                    #    mat_mask = s.dst.mask[:, None]*s.src.mask[None, :]
+                    #    results[key][mat_mask] += getattr(s, attr).flatten()
+                    #else:
+                    #    mat_mask = s.dst.mask[:, None]*s.src.mask[None, :]
+                    #    results[key][mat_mask] += getattr(s, attr).numpy().flatten()#tensorflow
+            except:
+                print(attr, "cannot be evaluated")
 
         if neuron_id is not None:
             for key in results:
@@ -246,6 +255,7 @@ from io import StringIO
 import traceback
 from PyQt5 import QtCore
 from PyQt5.QtWidgets import *
+#import time
 
 def excepthook(excType, excValue, tracebackobj):
     """
@@ -279,9 +289,9 @@ def excepthook(excType, excValue, tracebackobj):
     #    f.close()
     #except IOError:
     #    pass
-    errorbox = QMessageBox()
-    errorbox.setText(str(notice) + str(msg) + str(versionInfo))
-    errorbox.exec_()
+    #errorbox = QMessageBox()
+    #errorbox.setText(str(notice) + str(msg) + str(versionInfo))
+    #errorbox.exec_()
 
 sys.excepthook = excepthook
 

@@ -54,4 +54,4 @@ plt.plot(My_Network['np.mean(n.activity)', 0], color='black')
 plt.show()
 ```
 
-![User interface example](https://raw.githubusercontent.com/gitmv/Self-Organizing-Recurrent-Network-Simulator/Images/input.png)
+![User interface example](https://raw.githubusercontent.com/trieschlab/SORNSim/Images/input.png)

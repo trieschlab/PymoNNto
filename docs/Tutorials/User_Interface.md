@@ -53,4 +53,4 @@ Network_UI(My_Network, modules=my_UI_modules, label='My_Network_UI', group_displ
 ```
 
 
-![User interface example](https://raw.githubusercontent.com/gitmv/Self-Organizing-Recurrent-Network-Simulator/Images/UI.png)
+![User interface example](https://raw.githubusercontent.com/trieschlab/SORNSim/Images/UI.png)

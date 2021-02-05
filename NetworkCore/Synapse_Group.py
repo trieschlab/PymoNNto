@@ -16,6 +16,8 @@ class SynapseGroup(NetworkObjectBase):
             net.SynapseGroups.append(self)
             self.network = net
 
+        self.recording = True
+
         self.src = src
         self.dst = dst
         self.enabled = True

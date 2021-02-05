@@ -91,7 +91,9 @@ class SORN_slow_syn_simpleTF(SORN_signal_propagation_base):
 
         for s in neurons.afferent_synapses[self.transmitter]:
 
-            s.slow_add = tf.multiply(tf.matmul(s.W, s.src.output), self.strength)
+            #print(s.W, s.src.output)
+
+            #s.slow_add = tf.multiply(tf.tensordot(s.W, s.src.output, axes=0), self.strength)#matmul???
 
             s.dst.activity.assign(tf.add(s.dst.activity, s.slow_add))
             if self.strength > 0:

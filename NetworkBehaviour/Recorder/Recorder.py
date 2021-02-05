@@ -6,7 +6,7 @@ import copy
 
 class Recorder(Behaviour):
 
-    def __init__(self, variables, gapwidth=0, tag=None, max_length=None):
+    def __init__(self, variables, gapwidth=0, tag=None, max_length=None, save_as_numpy=False):
         super().__init__()
         if tag is not None:
             self.add_tag(tag)
@@ -17,6 +17,7 @@ class Recorder(Behaviour):
         self.new_data_available=False
         self.variables = {}
         self.compiled = {}
+        self.save_as_numpy=save_as_numpy
 
         #for i, v in enumerate(variables):
         #    print(v)
@@ -29,7 +30,10 @@ class Recorder(Behaviour):
         self.max_length=max_length
 
     def add_varable(self, v):
-        self.variables[v] = []
+        if self.save_as_numpy:
+            self.variables[v] = np.array([])
+        else:
+            self.variables[v] = []
         self.compiled[v] = None
 
     def add_variables(self, vars):
@@ -47,7 +51,11 @@ class Recorder(Behaviour):
 
     def reset(self):
         for v in self.variables:
-            self.variables[v] = []
+            if self.save_as_numpy:
+                self.variables[v] = np.array([])
+            else:
+                self.variables[v] = []
+            #self.variables[v] = []
 
     def set_variables(self, neurons):
         self.reset()
@@ -62,6 +70,7 @@ class Recorder(Behaviour):
     def new_iteration(self, neurons):
         if self.active and neurons.recording:
             n = neurons  # used for eval string "n.x"
+            s = neurons
             self.counter += 1
             if self.counter >= self.gapwidth:
                 self.new_data_available=True
@@ -69,7 +78,17 @@ class Recorder(Behaviour):
                 for v in self.variables:
                     if self.compiled[v] is None:
                         self.compiled[v] = compile(v, '<string>', 'eval')
-                    self.variables[v].append(copy.copy(eval(self.compiled[v])))  # .copy()
+
+                    data = copy.copy(eval(self.compiled[v]))
+                    if self.save_as_numpy:
+                        if len(self.variables[v]) == 0:
+                            self.variables[v] = np.array([data])
+                        else:
+                            self.variables[v] = np.concatenate([self.variables[v], [data]], axis=0)
+                            #print(v, self.variables[v].shape, self.variables[v])
+                    else:
+                        self.variables[v].append(data)
+
         if self.max_length is not None:
             self.cut_length(self.max_length)
 
@@ -86,12 +105,17 @@ class Recorder(Behaviour):
         return np.swapaxes(np.array(x), 1, 0)
 
     def clear_recorder(self):
+        print('clear')
         for v in self.variables:
-            self.variables[v].clear()
+            if self.save_as_numpy:
+                self.variables[v] = np.array([])
+            else:
+                self.variables[v] = []
+            #self.variables[v].clear()
 
 
 
-
+'''
 class SynapseGroupRecorder(Recorder):
 
     def __init__(self, variables, transmitter='GLU', gapwidth=0, tag=None, max_length=None):
@@ -114,7 +138,7 @@ class SynapseGroupRecorder(Recorder):
 
     #def __getitem__(self, key):
     #    return np.array(self.variables[self.get_synapse_command(key)])
-
+'''
 
 
 

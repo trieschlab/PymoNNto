@@ -38,9 +38,9 @@ class NeuronDimension(Behaviour):
     #    super().__init__()
 
     def set_positions(self, width=1, height=1, depth=1):
-        self.neurons.x = np.array([i%width for i in range(self.neurons.size)]).astype(np.float32)
-        self.neurons.y = np.array([np.floor(i/width)%height for i in range(self.neurons.size)]).astype(np.float32)
-        self.neurons.z = np.array([np.floor(i/(width*height)) for i in range(self.neurons.size)]).astype(np.float32)
+        self.neurons.x = np.array([i%width for i in range(self.neurons.size)]).astype(t)
+        self.neurons.y = np.array([np.floor(i/width)%height for i in range(self.neurons.size)]).astype(t)
+        self.neurons.z = np.array([np.floor(i/(width*height)) for i in range(self.neurons.size)]).astype(t)
 
     def apply_pattern_transformation_function(self, transform_mat, hup, wup, depth):
 
@@ -131,7 +131,8 @@ class NeuronDimension(Behaviour):
         neurons.depth = self.depth
         neurons.size=self.width*self.height*self.depth
         self.set_positions(self.width, self.height, self.depth)
-        self.move(-(self.width-1)/2,-(self.height-1)/2,-(self.depth-1)/2)
+        if self.get_init_attr('centered', True, neurons):
+            self.move(-(self.width-1)/2,-(self.height-1)/2,-(self.depth-1)/2)
 
     def new_iteration(self, neurons):
         return

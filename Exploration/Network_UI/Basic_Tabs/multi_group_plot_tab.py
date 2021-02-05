@@ -2,39 +2,25 @@ from SORNSim.Exploration.Network_UI.TabBase import *
 
 class multi_group_plot_tab(TabBase):
 
-    def __init__(self, variables, line_dict={}, title='Multi Group', timesteps=500, tensorflow=False):
+    def __init__(self, variables, line_dict={}, title='Multi Group', timesteps=500):
         super().__init__(title)
         self.variables = variables
         self.line_dict = line_dict
         self.timesteps = timesteps
 
-        if tensorflow:
-            self.add_str='.numpy()'
-        else:
-            self.add_str=''
+        #if tensorflow:
+        #    self.add_str='.numpy()'
+        #else:
+        #    self.add_str=''
 
     def add_recorder_variables(self, neuron_group, Network_UI):
         for var in self.variables:
-            if hasattr(neuron_group, var):
-                Network_UI.add_recording_variable(neuron_group, 'n.'+var+self.add_str, timesteps=self.timesteps)
-                Network_UI.add_recording_variable(neuron_group, 'np.mean(n.'+var+self.add_str+')', timesteps=self.timesteps)
-
-        '''
-        if hasattr(neuron_group, 'output'):
-            recorder.add_varable('n.output')#???
-            recorder.add_varable('np.mean(n.output)')
-        if hasattr(neuron_group, 'TH'):
-            recorder.add_varable('n.TH')
-            recorder.add_varable('np.mean(n.TH)')
-        if hasattr(neuron_group, 'weight_norm_factor'):
-            recorder.add_varable('n.weight_norm_factor')
-            recorder.add_varable('np.mean(n.weight_norm_factor)')
-        if hasattr(neuron_group, 'nox'):
-            recorder.add_varable('n.nox')
-            recorder.add_varable('np.average(n.nox)')
-        if hasattr(neuron_group, 'refractory_counter'):
-            recorder.add_varable('n.refractory_counter')
-        '''
+            try:
+                print(var)
+                Network_UI.add_recording_variable(neuron_group, 'n.'+var, timesteps=self.timesteps)
+                Network_UI.add_recording_variable(neuron_group, 'np.mean(n.'+var+')', timesteps=self.timesteps)
+            except:
+                print('cannot add', var)
 
 
 
@@ -98,23 +84,23 @@ class multi_group_plot_tab(TabBase):
                     #squeeze = self.sliders[i].sliderPosition() / 100
 
                     for var in self.variables:
-                        if hasattr(group, var):
-                            net_data = group['np.mean(n.'+var+self.add_str+')', 0, 'np'][-self.timesteps:]
+                        try:#if hasattr(group, var):
+                            net_data = group['np.mean(n.'+var+')', 0, 'np'][-self.timesteps:]
                             iterations = group['n.iteration', 0, 'np'][-self.timesteps:]
                             self.net_var_curves[var][i].setData(iterations, net_data * squeeze, pen=group.color)
-                        else:
+                        except:#else:
                             self.net_var_curves[var][i].clear()
 
 
             group = Network_UI.network[Network_UI.neuron_select_group, 0]
 
             for var in self.variables:
-                if hasattr(group, var):
-                    neuron_data = group['n.' + var+self.add_str, 0, 'np'][-self.timesteps:]
+                try:#if hasattr(group, var):
+                    neuron_data = group['n.' + var, 0, 'np'][-self.timesteps:]
                     iterations = group['n.iteration', 0, 'np'][-self.timesteps:]
                     if len(neuron_data.shape) > 1:
                         neuron_data = neuron_data[:, Network_UI.neuron_select_id]
                     self.neuron_var_curves[var].setData(iterations, neuron_data)
-                else:
+                except:  #else:
                     self.neuron_var_curves[var].clear()
 

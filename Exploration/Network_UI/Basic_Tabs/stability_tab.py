@@ -9,8 +9,10 @@ class stability_tab(TabBase):
         self.timesteps=timesteps
 
     def add_recorder_variables(self, neuron_group, Network_UI):
-        if hasattr(neuron_group, self.parameter):
+        try:#if hasattr(neuron_group, self.parameter):
             Network_UI.add_recording_variable(neuron_group, 'n.'+self.parameter, timesteps=self.timesteps)
+        except:
+            print(self.parameter, 'cannot be added to recorder')
 
     def initialize(self, Network_UI):
         self.stab_tab = Network_UI.Next_Tab(self.title)
@@ -42,7 +44,9 @@ class stability_tab(TabBase):
                         group1 = Network_UI.network[group_tag1, 0]
                         group2 = Network_UI.network[group_tag2, 0]
 
-                        if hasattr(group1, self.parameter) and hasattr(group2, self.parameter):
+                        try:#if hasattr(group1, self.parameter) and hasattr(group2, self.parameter):
                             act1 = np.mean(np.array(group1['n.'+self.parameter, 0][-self.timesteps:]), axis=1)
                             act2 = np.mean(np.array(group2['n.'+self.parameter, 0][-self.timesteps:]), axis=1)
                             self.image_items[y][x].setImage(get_t_vs_tp1_mat(act1, act2, self.resolution_slider.sliderPosition(), False))
+                        except:
+                            print(self.parameter, 'cannot be evaluated')

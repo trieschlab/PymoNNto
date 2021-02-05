@@ -2,8 +2,9 @@ from SORNSim.Exploration.Network_UI.TabBase import *
 
 class hist_tab(TabBase):
 
-    def __init__(self, title='Weight Dist.', timesteps=1000, mask_param='Input_Mask', mask_color_add=(-100, -100, -100)):#mask_param=None #
+    def __init__(self, weight_attr='W', title='Weight Dist.', timesteps=1000, mask_param='Input_Mask', mask_color_add=(-100, -100, -100)):#mask_param=None #
         super().__init__(title)
+        self.weight_attr = weight_attr
         self.timesteps = timesteps
         self.mask_param = mask_param
         if self.mask_param is not None:
@@ -13,8 +14,9 @@ class hist_tab(TabBase):
 
 
     def add_recorder_variables(self, neuron_group, Network_UI):
-        if hasattr(neuron_group, 'output'):
-            Network_UI.add_recording_variable(neuron_group, 'n.output', self.timesteps)
+        return
+        #if hasattr(neuron_group, 'output'):
+        #    Network_UI.add_recording_variable(neuron_group, 'n.output', self.timesteps)
 
     def initialize(self, Network_UI):
         self.additionaltab = Network_UI.Next_Tab(self.title)
@@ -84,9 +86,9 @@ class hist_tab(TabBase):
             self.net_weight_hist_plots[transmitter].clear()
             self.weight_hist_plots[transmitter].clear()
 
-            glu_syns = group[transmitter]
+            glu_syns = group.afferent_synapses[transmitter]
             if len(glu_syns) > 0:
-                GLU_syn = Network_UI.get_combined_syn_mats(glu_syns)
+                GLU_syn = Network_UI.get_combined_syn_mats(glu_syns, None, self.weight_attr)
                 if len(GLU_syn) > 0:
                     GLU_syn = GLU_syn[list(GLU_syn.keys())[0]]
                     selected_neuron_GLU_syn = GLU_syn[Network_UI.neuron_select_id]

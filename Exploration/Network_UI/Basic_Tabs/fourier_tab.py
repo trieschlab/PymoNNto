@@ -9,8 +9,10 @@ class fourier_tab(TabBase):
         self.timesteps=timesteps
 
     def add_recorder_variables(self, neuron_group, Network_UI):
-        if hasattr(neuron_group, self.parameter):
+        try:#if hasattr(neuron_group, self.parameter):
             Network_UI.add_recording_variable(neuron_group, 'np.mean(n.'+self.parameter+')', timesteps=self.timesteps)
+        except:
+            print(self.parameter, 'cannot be added to recorder')
 
     def initialize(self, Network_UI):
         self.fourier_tab = Network_UI.Next_Tab(self.title)
@@ -41,35 +43,6 @@ class fourier_tab(TabBase):
         text.setPos(30, 0)
         exc_plt.addItem(text)
 
-        '''
-        Network_UI.Next_H_Block()
-
-        curves, inh_plt = Network_UI.Add_plot_curve('Inhibitory', colors=[(255, 0, 0)], legend=False, number_of_curves=6, return_plot=True, x_label='Frequency [Hz]', y_label='Amplitude')
-
-        self.inh_fft_curve, self.inh_alpha, self.inh_beta, self.inh_theta, self.inh_delta, self.inh_gamma = curves
-
-        self.inh_fft_curve.setData([0, 0], [0, 0.1])
-
-        text = pg.TextItem(text='Delta', anchor=(0.5, 0))
-        text.setPos(2, 0)
-        inh_plt.addItem(text)
-
-        text = pg.TextItem(text='Theta', anchor=(0.5, 0))
-        text.setPos(6, 0)
-        inh_plt.addItem(text)
-
-        text = pg.TextItem(text='Alpha', anchor=(0.5, 0))
-        text.setPos(11, 0)
-        inh_plt.addItem(text)
-
-        text = pg.TextItem(text='Beta', anchor=(0.5, 0))
-        text.setPos(22, 0)
-        inh_plt.addItem(text)
-
-        text = pg.TextItem(text='Gamma', anchor=(0, 0))
-        text.setPos(30, 0)
-        inh_plt.addItem(text)
-        '''
         Network_UI.Next_H_Block()
 
         #Network_UI.Next_H_Block()
@@ -123,7 +96,8 @@ class fourier_tab(TabBase):
             if len(Network_UI.network[Network_UI.neuron_select_group]) >= 0:
                 group=Network_UI.network[Network_UI.neuron_select_group, 0]
 
-                if hasattr(group, 'output'):
+                try:
+                #if hasattr(group, self.parameter):
 
                     cut = int(self.cut_slider.sliderPosition())
                     ms_per_cycle = int(self.ms_per_cycle_slider.sliderPosition())
@@ -136,7 +110,7 @@ class fourier_tab(TabBase):
 
                     #rec = group['rec_'+str(self.timesteps), 0]
                     #rec = Network_UI.rec(group, self.timesteps)
-                    exc_act = group['np.mean(n.output)', 0, 'np'][-self.timesteps:]
+                    exc_act = group['np.mean(n.'+self.parameter+')', 0, 'np'][-self.timesteps:]
                     N = len(exc_act)
                     T = ms_per_cycle / 1000
                     yf = scipy.fftpack.fft(exc_act)
@@ -159,6 +133,8 @@ class fourier_tab(TabBase):
                     self.exc_alpha.setData([min(max_x, 8), min(max_x, 13.9)], [0, 0], fillLevel=max_y, brush=(150, 150, 50, 50), pen=None)
                     self.exc_beta.setData([min(max_x, 14), min(max_x, 29.9)], [0, 0], fillLevel=max_y, brush=(200, 100, 50, 50), pen=None)
                     self.exc_gamma.setData([min(max_x, 30), min(max_x, 100)], [0, 0], fillLevel=max_y, brush=(250, 50, 50, 50), pen=None)
+                except:
+                    print(self.parameter, 'cannot be evaluated')
 
                 '''
                 if len(Network_UI.network[Network_UI.inh_group_name]) > 0:

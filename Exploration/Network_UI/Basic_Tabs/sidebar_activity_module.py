@@ -75,7 +75,8 @@ class sidebar_activity_sub_module(TabBase):
                     image[Network_UI.neuron_select_id, i] = Network_UI.neuron_select_color[i]
 
             for param, color in self.add_color_dict.items():
-                if hasattr(group, param):
+                try:
+                #if True:#hasattr(group, param):
                     data=eval(self.compiled[param])
 
                     if (type(data) == np.ndarray and data.dtype == np.dtype('bool')) or (type(data) == bool):
@@ -84,9 +85,10 @@ class sidebar_activity_sub_module(TabBase):
                     else:
                         for i in range(3):
                             image[:, i] += color[i]*data
+                except:
+                    print(param, "can not be evaluated")
 
             image=np.reshape(image, (group.height, group.width,3))
-
             self.image_item.setImage(np.rot90(image, 3), levels=(0, 255))
 
 class UI_sidebar_activity_module():

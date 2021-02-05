@@ -31,7 +31,7 @@ class NetworkObjectBase:
 
         np_array_conversion = isinstance(key, tuple) and 'np' in key
 
-        if key in self.tag_shortcuts:
+        if key in self.tag_shortcuts and type(self.tag_shortcuts[key]) is not np.ndarray:
             if np_array_conversion:
                 return np.array(self.tag_shortcuts[key])
             else:

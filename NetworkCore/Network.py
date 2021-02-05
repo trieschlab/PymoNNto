@@ -43,10 +43,10 @@ class Network(NetworkObjectBase):
     def all_behaviour_objects(self):
         return [self]+self.NeuronGroups+self.SynapseGroups
 
-    def clear_recorder(self, keys=[]):
+    def clear_recorder(self, keys=None):
         for obj in self.all_behaviour_objects():
             for key in obj.behaviour:
-                if (keys in [] or key in keys) and hasattr(obj.behaviour[key], 'clear_recorder'):
+                if (keys is None or key in keys) and hasattr(obj.behaviour[key], 'clear_recorder'):
                     obj.behaviour[key].clear_recorder()
 
     def set_marked_variables(self, new_params, info=True, storage_manager=None):
@@ -193,9 +193,9 @@ class Network(NetworkObjectBase):
         self.add_behaviour_keys_dict(behaviours)
         return original
 
-    def remove_behaviours_objects(self, net_objs, keys=[], tags=[]):
+    def remove_behaviours_from_objects(self, net_objs, keys=[], tags=[]):
         for obj in net_objs:
-            self.remove_behaviours_from_neuron_group(obj, keys, tags)
+            self.remove_behaviours_from_object(obj, keys, tags)
 
     def remove_behaviours_from_object(self, net_obj, keys=[], tags=[]):
         found=[]

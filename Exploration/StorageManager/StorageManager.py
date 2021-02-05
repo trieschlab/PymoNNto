@@ -10,13 +10,20 @@ import imageio
 #import matplotlib.pylab as plt
 #storage_manager_folder = '../../Data/StorageManager/'
 
-def get_data_folder():
+def get_data_folder(create_when_not_found=True):
     path='./'
     while os.path.isdir(path):
         if os.path.isdir(path+'Data/'):
             return os.path.abspath(path+'Data/').replace('\\', '/')
         path='../'+path
-    raise Exception('No "Data" folder found above current working directory! Please create dirctory: ".../Project/Data".')
+
+    if not os.path.exists('./Data'):
+        try:
+            os.mkdir('./Data')
+        except:
+            print('was not able to create Data folder')
+    return './Data'
+    #raise Exception('No "Data" folder found above current working directory! Please create dirctory: ".../Project/Data".')
 
 
 class StorageManager:

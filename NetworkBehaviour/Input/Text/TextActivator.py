@@ -588,7 +588,7 @@ class SingleWordGrammar(TextActivator_New):
 class FewSentencesGrammar(TextActivator_New):
 
     def get_text_blocks(self):
-        return [' fox eats meat.', ' boy drinks juice.']#, ' penguin likes ice.', ' deer lives in forest.', ' parrots can fly.'#' the fish swims.' , ' deer lives in the forest.',  , ]#, ' penguin.' #,  , ' the fish swims.' #, 'the fish swims.'
+        return [' fox eats meat.', ' boy drinks juice.', ' penguin likes ice.', ' deer lives in forest.', ' parrots can fly.']#' the fish swims.' , ' deer lives in the forest.',  , ]#, ' penguin.' #,  , ' the fish swims.' #, 'the fish swims.'
 
 class FewSentencesContextGrammar(TextActivator_New):
 

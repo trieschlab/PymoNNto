@@ -117,9 +117,6 @@ class UI_Base(QApplication):
         if number_of_curves == 1 and not return_list:
             curves = curves[0]
 
-
-
-
         if return_plot:
             return curves, plt
         else:
