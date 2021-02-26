@@ -29,7 +29,7 @@ My_Network = Network()
 My_Neurons = NeuronGroup(net=My_Network, tag='my_neurons', size=get_squared_dim(100), behaviour={
     1: Basic_Behaviour(),
     2: Input_Behaviour(),
-    3: SORN_Homeostasis(target_act=0.05),
+    3: Homeostasis(target_act=0.05),
     4: STDP(stdp_factor=0.00015),
     5: Normalization(norm_factor=10),
     9: Recorder(tag='my_recorder', variables=['n.voltage', 'np.mean(n.voltage)'])

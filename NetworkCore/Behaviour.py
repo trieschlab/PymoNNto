@@ -85,7 +85,7 @@ class Behaviour(NetworkObjectBase):
     def set_init_attrs_as_variables(self, object):
         for key in self.init_kwargs:
             setattr(object, key, self.get_init_attr(key, None, neurons=object))
-            #print('init', key)
+            print('init', key)
             #get_init_attr
 
     def check_unused_attrs(self):

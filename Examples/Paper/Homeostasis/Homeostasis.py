@@ -1,6 +1,6 @@
 from SORNSim.NetworkCore.Behaviour import *
 
-class SORN_Homeostasis(Behaviour):
+class Homeostasis(Behaviour):
 
     def set_variables(self, neurons):
         self.add_tag('Homeostatic_Mechanism')

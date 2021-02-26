@@ -1,3 +1,16 @@
+# Izhikevich Neuron SORNSim Implementation
+
+The following code creates a network of 100 neurons with recurrent connections and simulates them for 1000 iterations. What is still missing are some behaviour modules. This modules have to be passed to the NeuronGrop to definde what the neurons are supposed to do at each timestep.
+
+
+
+
+
+
+
+
+```python
+
 from SORNSim import *
 
 class Izhikevich_main(Behaviour):
@@ -82,3 +95,10 @@ plt.show()
 #from SORNSim.Exploration.Network_UI import *
 #my_UI_modules = get_default_UI_modules(['fired', 'v', 'u'], ['W'])
 #Network_UI(My_Network, modules=my_UI_modules, label='My_Network_UI', group_display_count=2).show()
+
+```
+
+
+
+
+

@@ -113,6 +113,11 @@ class SORN_init_afferent_synapses(Behaviour):
             else:
                 s.W = (s.get_synapse_mat()+1)*s.enabled #all same
 
+            #remove_auto_synapses
+            if s.src==s.dst:
+                for d in range(s.dst.size):
+                    s.W[d, d] = 0.0
+
             s.enabled *= (s.W > 0)
 
             s.slow_add=0
@@ -128,9 +133,18 @@ class SORN_init_afferent_synapses(Behaviour):
         #    plt.hist(s.W.flatten()[s.W.flatten()>0],bins=100)
         #    plt.show()
 
+        self.clip_min = self.get_init_attr('clip_min', 0.0, neurons)
+        self.clip_max = self.get_init_attr('clip_max', None, neurons)
+
 
     def new_iteration(self, neurons):
-        return
+        for s in neurons.afferent_synapses[self.transmitter]:
+            s.W = s.W*s.enabled
+
+        if self.clip_min is not None or self.clip_max is not None:
+            s.W = np.clip(s.W, self.clip_min, self.clip_max)
+
+
 
 
 class SORN_temporal_synapses(Behaviour):
@@ -540,7 +554,7 @@ class SORN_STDP_simple(Behaviour):
 
             # dw = neurons.eta_stdp * (to_new[:, None] * from_old[None, :] - to_old[:, None] * from_new[None, :])
 
-            s.W=np.clip(s.W + dw * s.enabled, 0.0, 1.0)
+            s.W=np.clip(s.W + dw, 0.0, 1.0)
 
 class SORN_STDP(Behaviour):
 
@@ -616,7 +630,7 @@ class SORN_STDP(Behaviour):
                 dw_pre_post = summed_up_dact[:, None] * pre_act[0][None, :]
                 dw_post_pre = post_act[0][:, None] * summed_up_sact[None, :]
 
-                s.dw = neurons.eta_stdp * (dw_pre_post+dw_post_pre) * s.enabled# * (neurons.timescale)
+                s.dw = neurons.eta_stdp * (dw_pre_post+dw_post_pre)# * (neurons.timescale)
 
                 setattr(s, self.weight_attr, getattr(s, self.weight_attr)+s.dw)
 
@@ -660,12 +674,12 @@ class SORN_SN(Behaviour):
 
         neurons.require_synapses(self.syn_type, warning=False)#suppresses error when synapse group does not exist
 
-        self.clip_min = self.get_init_attr('clip_min', None, neurons)
-        self.clip_max = self.get_init_attr('clip_max', None, neurons)
+        #self.clip_min = self.get_init_attr('clip_min', None, neurons)
+        #self.clip_max = self.get_init_attr('clip_max', None, neurons)
 
         self.only_positive_synapses = self.get_init_attr('only_positive_synapses', True, neurons)
-        if self.only_positive_synapses:
-            self.clip_min = self.get_init_attr('clip_min', 0.0, neurons)
+        #if self.only_positive_synapses:
+        #    self.clip_min = self.get_init_attr('clip_min', 0.0, neurons)
 
         self.behaviour_norm_factor = self.get_init_attr('behaviour_norm_factor', 1.0, neurons)
         neurons.weight_norm_factor = neurons.get_neuron_vec()+self.get_init_attr('neuron_norm_factor', 1.0, neurons)
@@ -678,13 +692,13 @@ class SORN_SN(Behaviour):
 
             normalize_synapse_attr('W', 'W', neurons.weight_norm_factor*self.behaviour_norm_factor, neurons, self.syn_type)
 
-            if self.clip_max is not None:
-                for s in neurons.afferent_synapses[self.syn_type]:
-                    s.W[s.W > self.clip_max] = self.clip_max
+            #if self.clip_max is not None:
+            #    for s in neurons.afferent_synapses[self.syn_type]:
+            #        s.W[s.W > self.clip_max] = self.clip_max
 
-            if self.clip_min is not None:
-                for s in neurons.afferent_synapses[self.syn_type]:
-                    s.W[s.W < self.clip_min] = self.clip_min
+            #if self.clip_min is not None:
+            #    for s in neurons.afferent_synapses[self.syn_type]:
+            #        s.W[s.W < self.clip_min] = self.clip_min
 
                 #s.W = np.clip(s.W, 0, self.clip_max)
 
@@ -714,7 +728,7 @@ class SORN_iSTDP(Behaviour):
             if last_cycle_step(neurons):
 
                 s.W += -s.dst.eta_istdp * ((1 - get_buffer(s.dst, 'n.excitation+n.inhibition', neurons.timescale, 0)[0] * (1 + 1.0 / s.dst.h_ip))[:, None] * get_buffer(s.src, 'output', neurons.timescale, 0)[0])#(s.dst.excitation+s.dst.inhibition)#s.iSTDP_src_lag_buffer[None, :]
-                s.W = np.clip(s.W, 0.001, 1.0)*s.enabled
+                s.W = np.clip(s.W, 0.001, 1.0)
 
                 #s.iSTDP_src_lag_buffer.fill(0)# *= 0
 

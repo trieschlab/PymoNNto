@@ -151,27 +151,17 @@ class Network_UI(UI_Base):
         for s in synapses:
             base_src = s.src.group_without_subGroup()
             base_dst = s.dst.group_without_subGroup()
-            key = ','.join(s.tags)#'{}x{}'.format(id(base_dst), id(base_src))
+            key = ','.join(s.tags)
             if not key in results:
                 results[key] = np.zeros((base_dst.size, base_src.size))
                 shapes[key] = (base_src.height, base_src.width)
             try:
-            #if hasattr(s, attr):
+                syn_mat=eval('s.'+attr)
                 if base_src == s.src and base_dst == s.dst:
-                    results[key] += eval('s.'+attr).copy()
-                    #if type(getattr(s, attr)) is np.ndarray:
-                    #    results[key] += getattr(s, attr).copy()
-                    #else:
-                    #    results[key] += getattr(s, attr).numpy()#tensorflow
+                    results[key] += syn_mat#.copy()
                 else:
                     mat_mask = s.dst.mask[:, None] * s.src.mask[None, :]
-                    results[key][mat_mask] += eval('s.'+attr).flatten()
-                    #if type(getattr(s, attr)) is np.ndarray:
-                    #    mat_mask = s.dst.mask[:, None]*s.src.mask[None, :]
-                    #    results[key][mat_mask] += getattr(s, attr).flatten()
-                    #else:
-                    #    mat_mask = s.dst.mask[:, None]*s.src.mask[None, :]
-                    #    results[key][mat_mask] += getattr(s, attr).numpy().flatten()#tensorflow
+                    results[key][mat_mask] += np.array(syn_mat).flatten() #np.array required if syn_mat is bool (enabled)
             except:
                 print(attr, "cannot be evaluated")
 

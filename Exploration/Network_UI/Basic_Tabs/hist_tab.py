@@ -48,6 +48,15 @@ class hist_tab(TabBase):
         self.min_hist_slider.setToolTip('slide to cut away smallest weights')
         Network_UI.Add_element(self.min_hist_slider)  # , stretch=0.1
 
+        Network_UI.Next_H_Block()
+        self.bin_slider = QSlider(1)  # QtCore.Horizontal
+        self.bin_slider.setMinimum(1)
+        self.bin_slider.setMaximum(100)
+        self.bin_slider.setSliderPosition(50)
+        self.bin_slider.mouseReleaseEvent = Network_UI.static_update_func
+        self.bin_slider.setToolTip('slide to change bin count')
+        Network_UI.Add_element(self.bin_slider)  # , stretch=0.1
+
         # self.Next_H_Block()
 
         #def wnwi_click(event):
@@ -80,6 +89,8 @@ class hist_tab(TabBase):
     def update_Synapse_Historgrams(self, Network_UI, group, input_mask, not_input_mask, net_color_input):
         msl = self.min_hist_slider.sliderPosition() * 0.001
 
+        bins = self.bin_slider.sliderPosition()
+
         for transmitter in Network_UI.transmitters:
             if self.mask_param is not None:
                 self.net_inp_weight_hist_plots[transmitter].clear()
@@ -88,10 +99,19 @@ class hist_tab(TabBase):
 
             glu_syns = group.afferent_synapses[transmitter]
             if len(glu_syns) > 0:
-                GLU_syn = Network_UI.get_combined_syn_mats(glu_syns, None, self.weight_attr)
-                if len(GLU_syn) > 0:
-                    GLU_syn = GLU_syn[list(GLU_syn.keys())[0]]
-                    selected_neuron_GLU_syn = GLU_syn[Network_UI.neuron_select_id]
+                GLU_syn_list = Network_UI.get_combined_syn_mats(glu_syns, None, self.weight_attr)
+                GLU_syn_list_en = Network_UI.get_combined_syn_mats(glu_syns, None, "enabled")
+                if len(GLU_syn_list) > 0:
+                    GLU_syn = GLU_syn_list[list(GLU_syn_list.keys())[0]]
+                    en_mask = GLU_syn_list_en[list(GLU_syn_list_en.keys())[0]].astype(bool)*(GLU_syn > msl)
+
+                    #GLU_syn = np.ma.array(GLU_syn, mask=en_mask)
+                    #GLU_syn = GLU_syn.flatten()
+                    #en_mask = en_mask.flatten()
+                    #print(GLU_syn.shape, en_mask.shape)
+                    #GLU_syn=GLU_syn[en_mask]
+
+
                     # print(GLU_syn.shape, selected_neuron_GLU_syn.shape)
 
                     # self.hist_plt.clear()
@@ -101,17 +121,17 @@ class hist_tab(TabBase):
 
                     if input_mask is not False and self.mask_param is not None:
                         self.net_inp_weight_hist_plots[transmitter].clear()
-                        y, x = np.histogram(GLU_syn[input_mask][GLU_syn[input_mask] > msl], bins=50)
+                        y, x = np.histogram(GLU_syn[input_mask][en_mask[input_mask]], bins=bins)#[GLU_syn[input_mask] > msl]
                         curve = pg.PlotCurveItem(x, y, stepMode=True, fillLevel=0, brush=net_color_input)
                         self.net_inp_weight_hist_plots[transmitter].addItem(curve)
 
                     self.net_weight_hist_plots[transmitter].clear()
-                    y, x = np.histogram(GLU_syn[not_input_mask][GLU_syn[not_input_mask] > msl], bins=50)
+                    y, x = np.histogram(GLU_syn[not_input_mask][en_mask[not_input_mask]], bins=bins)#[GLU_syn[not_input_mask] > msl]
                     curve = pg.PlotCurveItem(x, y, stepMode=True, fillLevel=0, brush=group.color)
                     self.net_weight_hist_plots[transmitter].addItem(curve)
 
                     self.weight_hist_plots[transmitter].clear()
-                    y, x = np.histogram(selected_neuron_GLU_syn[selected_neuron_GLU_syn > msl], bins=50)
+                    y, x = np.histogram(GLU_syn[Network_UI.neuron_select_id][en_mask[Network_UI.neuron_select_id]], bins=bins)#[selected_neuron_GLU_syn > msl]
                     curve = pg.PlotCurveItem(x, y, stepMode=True, fillLevel=0, brush=Network_UI.neuron_select_color)
                     self.weight_hist_plots[transmitter].addItem(curve)
 
