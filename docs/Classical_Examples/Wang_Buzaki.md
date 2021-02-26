@@ -1,9 +1,6 @@
 # Wang Buzaki SORNSim Implementation
 
-The following code creates a network of 100 neurons with recurrent connections and simulates them for 1000 iterations. What is still missing are some behaviour modules. This modules have to be passed to the NeuronGrop to definde what the neurons are supposed to do at each timestep.
-
-
-
+The following code creates a neuron which is updated with ruled derived from the "Wang Buzaki 1996" paper.
 
 
 

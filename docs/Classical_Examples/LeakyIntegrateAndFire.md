@@ -1,11 +1,7 @@
 # Leaky Integrate and Fire Neuron SORNSim Implementation
 
-The following code creates a network of 100 neurons with recurrent connections and simulates them for 1000 iterations. What is still missing are some behaviour modules. This modules have to be passed to the NeuronGrop to definde what the neurons are supposed to do at each timestep.
-
-
-
-
-
+The following code creates a network with 800 excitatory neurons, 200 inhibitory neurons and all the connections between them.
+The neurons are simple leaky integrate and fire neurons which receive inhibitory and excitatory input.
 
 
 

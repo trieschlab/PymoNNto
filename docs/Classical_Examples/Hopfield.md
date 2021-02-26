@@ -1,9 +1,8 @@
 # Hopfield Network SORNSim Implementation
 
-The following code creates a network of 100 neurons with recurrent connections and simulates them for 1000 iterations. What is still missing are some behaviour modules. This modules have to be passed to the NeuronGrop to definde what the neurons are supposed to do at each timestep.
-
-
-
+The following code creates a Hopfield Network which is trained with different MNIST images.
+The network switches from trianing to inference mode and back automatically every 100 iterations.
+Note, that the images do overlapp, which makes it quite hard for the network to differentiate them during the inference phase.
 
 
 
@@ -123,14 +122,8 @@ class Hopfield_input(Behaviour):
         if n.iteration % self.display_length == 0 or n.learning:
 
             n.v = self.mnist_images[np.random.randint(0, len(self.mnist_images))].copy()
-            #t = train_data[i] - rho
-            #np.random.randint(0, len(self.mnist_images))
-            #self.nr+=1
-            #if self.nr>=len(self.mnist_images):
-            #    self.nr=0
             if not n.learning:
                 n.v += (n.get_random_neuron_vec(density=0.5)-0.5)*2
-                #n.v[n.get_random_neuron_vec(density=0.1) > 0.0] = 1.0
 
             n.v-=self.rho
 

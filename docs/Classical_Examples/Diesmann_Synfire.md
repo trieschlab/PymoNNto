@@ -1,8 +1,8 @@
 # Diesmann Synfire Chain SORNSim Implementation
 
-The following code creates a network of 100 neurons with recurrent connections and simulates them for 1000 iterations. What is still missing are some behaviour modules. This modules have to be passed to the NeuronGrop to definde what the neurons are supposed to do at each timestep.
-
-
+The following code creates a synfire chain network with 10 neuron groups and 100 neurons per group. 
+The groups have feed forward connections and receive external and internal noise.
+Every neuron in the group is updated with rules derived from "Diesmann et al 1999".
 
 
 

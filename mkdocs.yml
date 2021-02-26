@@ -25,6 +25,15 @@ nav:
     - Examples:
         - Differential Equation: Examples/Differential_Equation.md
         - Tensorflow: Examples/Tensorflow.md
+    - Classical Examples:
+          - Brunel Hakim: Classical_Examples/Brunel_Hakim.md
+          - Diesmann_Synfire: Classical_Examples/Diesmann_Synfire.md
+          - Hindmarsh Rose: Classical_Examples/Hindmarsh_Rose.md
+          - Hodgkin Huxley: Classical_Examples/Hodgkin_Huxley.md
+          - Hopfield: Classical_Examples/Hopfield.md
+          - Izhikevich: Classical_Examples/Izhikevich.md
+          - Leaky Integrate And Fire: Classical_Examples/LeakyIntegrateAndFire.md
+          - Wang Buzaki: Classical_Examples/Wang_Buzaki.md
 
 plugins:
     - search
