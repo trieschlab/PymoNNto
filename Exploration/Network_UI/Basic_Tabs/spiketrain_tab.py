@@ -1,4 +1,4 @@
-from SORNSim.Exploration.Network_UI.TabBase import *
+from PymoNNto.Exploration.Network_UI.TabBase import *
 
 class spiketrain_tab(TabBase):
 
@@ -31,7 +31,7 @@ class spiketrain_tab(TabBase):
                 #if hasattr(group, self.parameter):
                     #rec = Network_UI.rec(group, self.timesteps)
 
-                    data = group['n.'+self.parameter, 0, 'np'][-self.timesteps:].astype(np.float32)
+                    data = group['n.'+self.parameter, 0, 'np'][-self.timesteps:].astype(np.float64)
                     if group_tag == Network_UI.neuron_select_group:
                         id=Network_UI.neuron_select_id
                         data[:, id-1:id+2] += 0.2

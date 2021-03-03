@@ -4,7 +4,7 @@ import sys
 import os
 import threading
 
-from SORNSim.Exploration.StorageManager.StorageManager import *
+from PymoNNto.Exploration.StorageManager.StorageManager import *
 
 
 def string_to_array(s):

@@ -1,4 +1,4 @@
-from SORNSim.NetworkCore.Network import *
+from PymoNNto.NetworkCore.Network import *
 import numpy as np
 import matplotlib.pylab as plt
 from collections import Counter
@@ -633,7 +633,7 @@ class Reconstruct_Analyze_Label_Network():
             for txt,xv,yv in zip(txt,x,y):
                 plt.annotate(txt.replace(' ','_'), (xv, yv))
 
-        return np.array(x).astype(np.float64), np.array(y).astype(np.float64)
+        return np.array(x).astype(def_dtype), np.array(y).astype(def_dtype)
 
     def get_transition_classes(self, transitions, frequencies):
 

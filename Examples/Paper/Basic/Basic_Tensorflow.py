@@ -1,4 +1,4 @@
-from SORNSim import *
+from PymoNNto import *
 
 import tensorflow as tf
 
@@ -53,6 +53,6 @@ import matplotlib.pyplot as plt
 plt.scatter(My_Neurons.x, My_Neurons.y)
 plt.show()
 
-from SORNSim.Exploration.Network_UI import *
+from PymoNNto.Exploration.Network_UI import *
 my_UI_modules = get_default_UI_modules(['voltage.numpy()'], ['W.numpy()'])
 Network_UI(My_Network, modules=my_UI_modules, label='My_Network_UI', group_display_count=1).show()

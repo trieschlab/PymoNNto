@@ -1,4 +1,4 @@
-from SORNSim.NetworkCore.Neuron_Group import *
+from PymoNNto.NetworkCore.Neuron_Group import *
 import math
 import numpy as np
 
@@ -38,9 +38,9 @@ class NeuronDimension(Behaviour):
     #    super().__init__()
 
     def set_positions(self, width=1, height=1, depth=1):
-        self.neurons.x = np.array([i%width for i in range(self.neurons.size)]).astype(t)
-        self.neurons.y = np.array([np.floor(i/width)%height for i in range(self.neurons.size)]).astype(t)
-        self.neurons.z = np.array([np.floor(i/(width*height)) for i in range(self.neurons.size)]).astype(t)
+        self.neurons.x = np.array([i%width for i in range(self.neurons.size)]).astype(def_dtype)
+        self.neurons.y = np.array([np.floor(i/width)%height for i in range(self.neurons.size)]).astype(def_dtype)
+        self.neurons.z = np.array([np.floor(i/(width*height)) for i in range(self.neurons.size)]).astype(def_dtype)
 
     def apply_pattern_transformation_function(self, transform_mat, hup, wup, depth):
 

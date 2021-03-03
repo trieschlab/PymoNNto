@@ -1,17 +1,17 @@
-from SORNSim.Exploration.Network_UI.Basic_Tabs.sidebar_activity_module import *
-from SORNSim.Exploration.Network_UI.Basic_Tabs.sidebar_fast_forward_module import *
-from SORNSim.Exploration.Network_UI.Basic_Tabs.sidebar_save_load_module import *
-from SORNSim.Exploration.Network_UI.Basic_Tabs.multi_group_plot_tab import *
-from SORNSim.Exploration.Network_UI.Basic_Tabs.hist_tab import *
-from SORNSim.Exploration.Network_UI.Basic_Tabs.info_tabs import *
-from SORNSim.Exploration.Network_UI.Basic_Tabs.single_group_plot_tab import *
-from SORNSim.Exploration.Network_UI.Basic_Tabs.stability_tab import *
-from SORNSim.Exploration.Network_UI.Basic_Tabs.weight_tab import *
-from SORNSim.Exploration.Network_UI.Basic_Tabs.fourier_tab import *
-from SORNSim.Exploration.Network_UI.Basic_Tabs.partition_tab import *
-from SORNSim.Exploration.Network_UI.Basic_Tabs.spiketrain_tab import *
-from SORNSim.Exploration.Network_UI.Basic_Tabs.individual_weight_tab import *
-from SORNSim.Exploration.Network_UI.Basic_Tabs.PCA_tab import *
+from PymoNNto.Exploration.Network_UI.Basic_Tabs.sidebar_activity_module import *
+from PymoNNto.Exploration.Network_UI.Basic_Tabs.sidebar_fast_forward_module import *
+from PymoNNto.Exploration.Network_UI.Basic_Tabs.sidebar_save_load_module import *
+from PymoNNto.Exploration.Network_UI.Basic_Tabs.multi_group_plot_tab import *
+from PymoNNto.Exploration.Network_UI.Basic_Tabs.hist_tab import *
+from PymoNNto.Exploration.Network_UI.Basic_Tabs.info_tabs import *
+from PymoNNto.Exploration.Network_UI.Basic_Tabs.single_group_plot_tab import *
+from PymoNNto.Exploration.Network_UI.Basic_Tabs.stability_tab import *
+from PymoNNto.Exploration.Network_UI.Basic_Tabs.weight_tab import *
+from PymoNNto.Exploration.Network_UI.Basic_Tabs.fourier_tab import *
+from PymoNNto.Exploration.Network_UI.Basic_Tabs.partition_tab import *
+from PymoNNto.Exploration.Network_UI.Basic_Tabs.spiketrain_tab import *
+from PymoNNto.Exploration.Network_UI.Basic_Tabs.individual_weight_tab import *
+from PymoNNto.Exploration.Network_UI.Basic_Tabs.PCA_tab import *
 
 
 def get_default_UI_modules(neuron_parameters=['output'], synapse_parameters=['W']):

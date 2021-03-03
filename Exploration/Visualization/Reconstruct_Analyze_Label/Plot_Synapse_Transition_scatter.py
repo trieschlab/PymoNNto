@@ -1,7 +1,7 @@
 import sys
 sys.path.append('../../../TREN2')
 sys.path.append('../../../tren2')
-from SORNSim.Exploration.StorageManager.StorageManager import *
+from PymoNNto.Exploration.StorageManager.StorageManager import *
 
 
 smg = StorageManagerGroup('SORN_Gram_train_time_100k')# SORN_One_layer_all_600

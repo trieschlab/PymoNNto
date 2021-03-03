@@ -1,5 +1,5 @@
 #from NetworkBehaviour.Logic.Images.Neuron_Homeostais import *
-from SORNSim.NetworkBehaviour.Logic.Basics.BasicHomeostasis import *
+from PymoNNto.NetworkBehaviour.Logic.Basics.BasicHomeostasis import *
 #import compiler
 import copy
 
@@ -150,7 +150,7 @@ class SynapseGroupRecorder(Recorder):
 
 '''
 
-class TRENNeuronRecorder(Neuron_Behaviour):
+class TRENRecorder(Neuron_Behaviour):
 
     def __init__(self, variables, behaviour_index=None, gapwidth=0):
         super().__init__()
@@ -202,7 +202,7 @@ class TRENNeuronRecorder(Neuron_Behaviour):
             return [name, None]
 
 
-class TRENSynapseRecorder(TRENNeuronRecorder):
+class TRENSynapseRecorder(TRENRecorder):
 
     def __init__(self, transmitter, variables, gapwidth=0):
         super().__init__(variables, gapwidth)

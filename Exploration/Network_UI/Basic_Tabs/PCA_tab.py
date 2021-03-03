@@ -1,5 +1,5 @@
-from SORNSim.Exploration.Network_UI.TabBase import *
-from SORNSim.Exploration.Analysis.PCA import *
+from PymoNNto.Exploration.Network_UI.TabBase import *
+from PymoNNto.Exploration.Analysis.PCA import *
 
 class PCA_tab(TabBase):
 

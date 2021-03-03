@@ -1,5 +1,5 @@
-from SORNSim.Exploration.Network_UI.TabBase import *
-from SORNSim.Exploration.Visualization.Analysis_Plots import *
+from PymoNNto.Exploration.Network_UI.TabBase import *
+from PymoNNto.Exploration.Visualization.Analysis_Plots import *
 
 class stability_tab(TabBase):
 

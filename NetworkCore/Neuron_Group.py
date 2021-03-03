@@ -1,6 +1,6 @@
-from SORNSim.NetworkCore.Base import *
-from SORNSim.NetworkCore.Behaviour import *
-from SORNSim.NetworkBehaviour.Recorder.Recorder import *
+from PymoNNto.NetworkCore.Base import *
+from PymoNNto.NetworkCore.Behaviour import *
+from PymoNNto.NetworkBehaviour.Recorder.Recorder import *
 import copy
 
 class NeuronGroup(NetworkObjectBase):

@@ -1,4 +1,4 @@
-from SORNSim.Exploration.Network_UI.TabBase import *
+from PymoNNto.Exploration.Network_UI.TabBase import *
 
 
 class afferent_syn_attr_plot_tab(TabBase):

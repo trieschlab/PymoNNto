@@ -1,4 +1,4 @@
-# Izhikevich Neuron SORNSim Implementation
+# Izhikevich Neuron PymoNNto Implementation
 
 The following code creates a network with 800 excitatory neurons, 200 inhibitory neurons and all the connections between them.
 The neurons have different parameters and are updated with rules derived form the original Izhikevich paper.
@@ -8,7 +8,7 @@ The neurons have different parameters and are updated with rules derived form th
 
 ```python
 
-from SORNSim import *
+from PymoNNto import *
 
 class Izhikevich_main(Behaviour):
 
@@ -89,7 +89,7 @@ plt.imshow(My_Network['n.fired', 0, 'np'].transpose(), cmap='gray', aspect='auto
 plt.show()
 
 
-#from SORNSim.Exploration.Network_UI import *
+#from PymoNNto.Exploration.Network_UI import *
 #my_UI_modules = get_default_UI_modules(['fired', 'v', 'u'], ['W'])
 #Network_UI(My_Network, modules=my_UI_modules, label='My_Network_UI', group_display_count=2).show()
 

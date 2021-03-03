@@ -1,4 +1,4 @@
-# Hodgkin Huxley SORNSim Implementation
+# Hodgkin Huxley PymoNNto Implementation
 
 The following code creates a Neuron with multiple Hodgkin Huxley segments. Over time the input current of the first compartment changes, which creates different spike patterns flowing through the segments.
 
@@ -6,7 +6,7 @@ The following code creates a Neuron with multiple Hodgkin Huxley segments. Over 
 
 ```python
 
-from SORNSim import *
+from PymoNNto import *
 import scipy as sp
 import matplotlib.pyplot as plt
 

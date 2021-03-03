@@ -1,4 +1,4 @@
-from SORNSim import *
+from PymoNNto import *
 
 class Basic_Behaviour(Behaviour):
 
@@ -48,7 +48,7 @@ import matplotlib.pyplot as plt
 plt.scatter(My_Neurons.x, My_Neurons.y)
 plt.show()
 
-from SORNSim.Exploration.Network_UI import *
+from PymoNNto.Exploration.Network_UI import *
 from Examples.Paper.Basic.Basic_Tab import *
 my_UI_modules = [MyUITab()] + get_default_UI_modules(['voltage'], ['W'])
 Network_UI(My_Network, modules=my_UI_modules, label='My_Network_UI', group_display_count=1).show()

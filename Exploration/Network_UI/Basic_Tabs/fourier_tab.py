@@ -1,4 +1,4 @@
-from SORNSim.Exploration.Network_UI.TabBase import *
+from PymoNNto.Exploration.Network_UI.TabBase import *
 import scipy.fftpack
 
 class fourier_tab(TabBase):

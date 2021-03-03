@@ -1,5 +1,5 @@
-from SORNSim.NetworkBehaviour.Input.Activator import *
-from SORNSim.NetworkBehaviour.Logic.Basics.Normalization import *
+from PymoNNto.NetworkBehaviour.Input.Activator import *
+from PymoNNto.NetworkBehaviour.Logic.Basics.Normalization import *
 
 ##########################################################################
 #Helper functions
@@ -20,7 +20,7 @@ def modular_activation_function(neurons):
         result -= neurons.TH
 
     if hasattr(neurons, 'digital_output') and neurons.digital_output:
-        result = (result >= 0.0).astype(np.float64)
+        result = (result >= 0.0).astype(def_dtype)
 
     if hasattr(neurons, 'refractory_counter_digital') and neurons.refractory_counter_digital is not None:
         result *= (neurons.refractory_counter_digital < neurons.refractory_counter_threshold)

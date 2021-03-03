@@ -1,4 +1,4 @@
-# Wang Buzaki SORNSim Implementation
+# Wang Buzaki PymoNNto Implementation
 
 The following code creates a neuron which is updated with ruled derived from the "Wang Buzaki 1996" paper.
 
@@ -8,7 +8,7 @@ The following code creates a neuron which is updated with ruled derived from the
 
 ```python
 
-from SORNSim import *
+from PymoNNto import *
 
 #https://brian2.readthedocs.io/en/stable/examples/frompapers.Wang_Buszaki_1996.html
 

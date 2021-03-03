@@ -4,7 +4,7 @@ We can add more behaviour modues to make the activity of the neurons more comple
 The for loops are not neccessary here, because we only have one SynapseGroup. This solution, however, also works with multiple Neuron- and SynapseGroups. With `synapse.src` and `synapse.dst` you can access the source and destination NeuronGroups assigned to a SynapseGroup.
 
 ```python
-from SORNSim import *
+from PymoNNto import *
 
 
 class Input_Behaviour(Behaviour):
@@ -37,7 +37,7 @@ My_Network = Network()
 My_Neurons = NeuronGroup(net=My_Network, tag='my_neurons', size=100, behaviour={
     1: Basic_Behaviour(),
     2: Input_Behaviour(),
-    9: NeuronRecorder(tag='my_recorder', variables=['n.activity', 'np.mean(n.activity)'])
+    9: Recorder(tag='my_recorder', variables=['n.activity', 'np.mean(n.activity)'])
 })
 
 SynapseGroup(net=My_Network, src=My_Neurons, dst=My_Neurons, tag='GLUTAMATE')
@@ -54,4 +54,4 @@ plt.plot(My_Network['np.mean(n.activity)', 0], color='black')
 plt.show()
 ```
 
-![User interface example](https://raw.githubusercontent.com/trieschlab/SORNSim/Images/input.png)
+![User interface example](https://raw.githubusercontent.com/trieschlab/PymoNNto/Images/input.png)

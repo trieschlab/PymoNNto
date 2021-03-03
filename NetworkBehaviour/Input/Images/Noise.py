@@ -9,7 +9,7 @@ class Noise_Pattern(PatternGroup):
         self.min = self.kwargs.get('min', 0)
 
     def get_pattern(self, neurons):
-        result=(np.random.rand(self.grid_channels, self.grid_height, self.grid_width)<self.density).astype(np.float64)
+        result=(np.random.rand(self.grid_channels, self.grid_height, self.grid_width)<self.density).astype(def_dtype)
         if not self.binary:
             result*=np.random.rand(self.size)
         return self.min+result*self.max

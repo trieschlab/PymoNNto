@@ -1,4 +1,4 @@
-from SORNSim.NetworkCore.Behaviour import *
+from PymoNNto.NetworkCore.Behaviour import *
 import tensorflow as tf
 
 class STDP_TF(Behaviour):

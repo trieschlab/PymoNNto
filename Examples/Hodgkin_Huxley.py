@@ -1,4 +1,4 @@
-from SORNSim import *
+from PymoNNto import *
 import scipy as sp
 import matplotlib.pyplot as plt
 

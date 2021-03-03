@@ -1,4 +1,4 @@
-from SORNSim.NetworkCore.Neuron_Group import *
+from PymoNNto.NetworkCore.Neuron_Group import *
 
 
 class NeuronManualActivator(Behaviour):

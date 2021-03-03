@@ -1,4 +1,4 @@
-from SORNSim.NetworkCore.Behaviour import *
+from PymoNNto.NetworkCore.Behaviour import *
 
 class Normalization(Behaviour):
 

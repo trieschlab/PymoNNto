@@ -1,5 +1,5 @@
-from SORNSim.Exploration.UI_Base import *
-from SORNSim.NetworkBehaviour.Recorder.Recorder import *
+from PymoNNto.Exploration.UI_Base import *
+from PymoNNto.NetworkBehaviour.Recorder.Recorder import *
 
 class Network_UI(UI_Base):
 
@@ -29,7 +29,7 @@ class Network_UI(UI_Base):
         self.reduced_layout=reduced_layout
 
         #for group in network[inh_group_name]:
-        #    network.add_behaviours_to_neuron_group({10000: NeuronRecorder(['np.mean(n.output)',
+        #    network.add_behaviours_to_neuron_group({10000: Recorder(['np.mean(n.output)',
         #                           'np.mean(n.TH)',
         #                           'n.TH',
         #                           'n.excitation',
@@ -74,7 +74,7 @@ class Network_UI(UI_Base):
 
                 group._rec_dict={}
 
-                #rec = NeuronRecorder([], tag='UI_rec')
+                #rec = Recorder([], tag='UI_rec')
                 #network.add_behaviours_to_neuron_group({10000: rec}, group)
 
                 for module in self.modules:

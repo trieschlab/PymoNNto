@@ -1,4 +1,4 @@
-from SORNSim import *
+from PymoNNto import *
 from Examples.Paper.Normalization.Normalization import *
 from Examples.Paper.STDP.STDP import *
 from Examples.Paper.Homeostasis.Homeostasis import *
@@ -52,7 +52,7 @@ import matplotlib.pyplot as plt
 plt.scatter(My_Neurons.x, My_Neurons.y)
 plt.show()
 
-from SORNSim.Exploration.Network_UI import *
+from PymoNNto.Exploration.Network_UI import *
 from Examples.Paper.Basic.Basic_Tab import *
 my_UI_modules = [MyUITab()] + get_default_UI_modules(['voltage', 'exhaustion'], ['W'])
 Network_UI(My_Network, modules=my_UI_modules, label='My_Network_UI', group_display_count=1).show()

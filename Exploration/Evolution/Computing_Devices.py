@@ -253,8 +253,8 @@ class Evolution_Server_SSH(Evolution_Server_Base):
     def transfer(self, evo_name):
         #compress
 
-        #shutil.make_archive(self.temp_zip_dir+evo_name, 'zip', '../../../Self-Organizing-Recurrent-Network-Simulator_Dev')
-        zipDir('../../../Self-Organizing-Recurrent-Network-Simulator_Dev/', self.temp_zip_dir+evo_name+'.zip', ['.git', '.idea', '\\StorageManager\\', '\\NetworkStates\\', '\\Evo\\', '\\__pycache__\\', '\\midis\\'])
+        #shutil.make_archive(self.temp_zip_dir+evo_name, 'zip', '../../../PymoNNto_Dev')
+        zipDir('../../../PymoNNto_Dev/', self.temp_zip_dir+evo_name+'.zip', ['.git', '.idea', '\\StorageManager\\', '\\NetworkStates\\', '\\Evo\\', '\\__pycache__\\', '\\midis\\'])
 
         #transfer
         #self.exec_cmd(self.get_transfer_cmd(evo_name))

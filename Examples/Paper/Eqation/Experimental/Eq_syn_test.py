@@ -1,12 +1,12 @@
 import sys
 sys.path.append('../../')
-from SORNSim.NetworkCore.Network import *
-from SORNSim.NetworkCore.Synapse_Group import *
-from SORNSim.NetworkBehaviour.Logic.EulerEquationModules.EulerClock import *
-from SORNSim.NetworkBehaviour.Logic.EulerEquationModules.VariableInitializer import *
-from SORNSim.NetworkBehaviour.Logic.EulerEquationModules.Equation import *
+from PymoNNto.NetworkCore.Network import *
+from PymoNNto.NetworkCore.Synapse_Group import *
+from PymoNNto.NetworkBehaviour.Logic.EulerEquationModules.EulerClock import *
+from PymoNNto.NetworkBehaviour.Logic.EulerEquationModules.VariableInitializer import *
+from PymoNNto.NetworkBehaviour.Logic.EulerEquationModules.Equation import *
 from matplotlib.pyplot import *
-from SORNSim.NetworkBehaviour.Structure.Structure import *
+from PymoNNto.NetworkBehaviour.Structure.Structure import *
 
 from Examples.Paper.Eqation.Experimental.event_based_processing import *
 

@@ -2,11 +2,11 @@ import time as time_p
 import sys
 sys.path.append('../../')
 start_time=time_p.time()
-from SORNSim import *
+from PymoNNto import *
 from matplotlib.pyplot import *
-from SORNSim.NetworkBehaviour.Logic.EulerEquationModules.EulerClock import *
-from SORNSim.NetworkBehaviour.Logic.EulerEquationModules.VariableInitializer import *
-from SORNSim.NetworkBehaviour.Logic.EulerEquationModules.Equation import *
+from PymoNNto.NetworkBehaviour.Logic.EulerEquationModules.EulerClock import *
+from PymoNNto.NetworkBehaviour.Logic.EulerEquationModules.VariableInitializer import *
+from PymoNNto.NetworkBehaviour.Logic.EulerEquationModules.Equation import *
 
 
 

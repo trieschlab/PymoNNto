@@ -57,7 +57,7 @@ class TestModuleNumpy(Behaviour):
         self.add_tag('TF_Test')
         #self.get_init_attr('step', '1*ms')
 
-        neurons.voltage = neurons.get_neuron_vec().astype(np.float32)+1
+        neurons.voltage = neurons.get_neuron_vec().astype(def_dtype)+1
         neurons.decrease = 0.9
 
         #v.assign(2.)

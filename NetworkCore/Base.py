@@ -3,7 +3,7 @@ import numpy as np
 from numpy.random import *
 
 
-t = np.float64
+def_dtype = np.float64
 
 class NetworkObjectBase:
 
@@ -80,7 +80,7 @@ class NetworkObjectBase:
         return mat
 
     def get_nparray(self, dim):
-        return np.zeros(dim).astype(t)
+        return np.zeros(dim).astype(def_dtype)
 
     def get_random_nparray(self, dim, density=None, clone_along_first_axis=False, rnd_code=None):#rnd_code=random_sample(dim)
         if rnd_code is None:
@@ -94,11 +94,11 @@ class NetworkObjectBase:
             result = eval(rnd_code)
 
         if density is None:
-            result = result.astype(t)
+            result = result.astype(def_dtype)
         elif type(density) == int or type(density) == float:
-            result = (result * (random_sample(dim) <= density)).astype(t)
+            result = (result * (random_sample(dim) <= density)).astype(def_dtype)
         elif type(density) is np.ndarray:
-            result = (result * (random_sample(dim) <= density[:, None])).astype(t)
+            result = (result * (random_sample(dim) <= density[:, None])).astype(def_dtype)
 
 
         if not clone_along_first_axis:

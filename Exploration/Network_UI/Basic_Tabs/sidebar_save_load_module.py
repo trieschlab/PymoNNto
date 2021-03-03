@@ -1,7 +1,7 @@
-from SORNSim.Exploration.Network_UI.TabBase import *
-from SORNSim.NetworkCore.Base import *
-from SORNSim.Exploration.StorageManager.StorageManager import *
-from SORNSim.Exploration.Network_UI.Basic_Tabs.info_tabs import *
+from PymoNNto.Exploration.Network_UI.TabBase import *
+from PymoNNto.NetworkCore.Base import *
+from PymoNNto.Exploration.StorageManager.StorageManager import *
+from PymoNNto.Exploration.Network_UI.Basic_Tabs.info_tabs import *
 import copy
 import pickle
 import os

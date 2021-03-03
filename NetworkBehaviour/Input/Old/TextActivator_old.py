@@ -114,7 +114,7 @@ class TextActivator_old(PatternGroup):
         return one_hot
 
     def char_index_to_one_hot(self, char_indx):
-        one_hot = np.zeros(self.A).astype(np.float64)
+        one_hot = np.zeros(self.A).astype(def_dtype)
         one_hot[char_indx] = 1
         return self.W.dot(one_hot)
 

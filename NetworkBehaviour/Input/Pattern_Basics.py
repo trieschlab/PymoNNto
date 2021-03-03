@@ -1,4 +1,4 @@
-from SORNSim.NetworkCore.Base import *
+from PymoNNto.NetworkCore.Base import *
 
 class PatternGroup(NetworkObjectBase):
 

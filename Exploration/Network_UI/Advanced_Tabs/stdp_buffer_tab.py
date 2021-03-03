@@ -1,4 +1,4 @@
-from SORNSim.Exploration.Network_UI.TabBase import *
+from PymoNNto.Exploration.Network_UI.TabBase import *
 
 class stdp_buffer_tab(TabBase):
 

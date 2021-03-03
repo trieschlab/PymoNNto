@@ -1,8 +1,8 @@
-from SORNSim.NetworkBehaviour.Logic.TensorflowModules.TensorflowBehaviour import *
+from PymoNNto.NetworkBehaviour.Logic.TensorflowModules.TensorflowBehaviour import *
 import numpy as np
 
-from SORNSim.NetworkBehaviour.Input.Activator import *
-from SORNSim.NetworkBehaviour.Logic.SORN.SORN_advanced_buffer import *
+from PymoNNto.NetworkBehaviour.Input.Activator import *
+from PymoNNto.NetworkBehaviour.Logic.SORN.SORN_advanced_buffer import *
 
 dtype = 'float32'
 

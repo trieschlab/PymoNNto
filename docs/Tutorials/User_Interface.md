@@ -5,7 +5,7 @@ If we want to controll and evaluate our model in realtime we can replace the `py
 
 
 ```python
-from SORNSim import *
+from PymoNNto import *
 
 
 class Input_Behaviour(Behaviour):
@@ -38,7 +38,7 @@ My_Network = Network()
 My_Neurons = NeuronGroup(net=My_Network, tag='my_neurons', size=get_squared_dim(100), behaviour={
     1: Basic_Behaviour(),
     2: Input_Behaviour(),
-    9: NeuronRecorder(tag='my_recorder', variables=['n.activity', 'np.mean(n.activity)'])
+    9: Recorder(tag='my_recorder', variables=['n.activity', 'np.mean(n.activity)'])
 })
 
 SynapseGroup(net=My_Network, src=My_Neurons, dst=My_Neurons, tag='GLUTAMATE')
@@ -47,10 +47,10 @@ My_Network.initialize()
 
 #My_Network.simulate_iterations(1000)
 
-from SORNSim.Exploration.Network_UI import *
+from PymoNNto.Exploration.Network_UI import *
 my_UI_modules=get_default_UI_modules(['activity'], ['W'])
 Network_UI(My_Network, modules=my_UI_modules, label='My_Network_UI', group_display_count=1).show()
 ```
 
 
-![User interface example](https://raw.githubusercontent.com/trieschlab/SORNSim/Images/UI.png)
+![User interface example](https://raw.githubusercontent.com/trieschlab/PymoNNto/Images/UI.png)

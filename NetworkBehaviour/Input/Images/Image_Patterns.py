@@ -31,8 +31,8 @@ class TNAP_Image_Patches(Pixel_Pattern):
 
         pil_image = Image.open(self.image_path)
         pil_image_gray = pil_image.convert('L')
-        image_rgb = np.array(pil_image).astype(np.float32)
-        white = np.array(pil_image_gray).astype(np.float32)
+        image_rgb = np.array(pil_image).astype(np.float64)
+        white = np.array(pil_image_gray).astype(np.float64)
 
         if self.dim_contains(['red']): red = image_rgb[:, :, 0]
         if self.dim_contains(['green']): green = image_rgb[:, :, 1]

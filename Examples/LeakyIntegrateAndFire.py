@@ -1,4 +1,4 @@
-from SORNSim import *
+from PymoNNto import *
 
 class LIF_main(Behaviour):
 
@@ -68,6 +68,6 @@ plt.imshow(My_Network['n.fired', 0, 'np'].transpose(),cmap='gray', aspect='auto'
 plt.show()
 
 
-#from SORNSim.Exploration.Network_UI import *
+#from PymoNNto.Exploration.Network_UI import *
 #my_UI_modules = get_default_UI_modules(['fired', 'v', 'u'], ['W'])
 #Network_UI(My_Network, modules=my_UI_modules, label='My_Network_UI', group_display_count=2).show()

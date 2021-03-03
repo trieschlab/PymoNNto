@@ -3,15 +3,15 @@ sys.path.append('../../')
 
 t=time.time()
 
-from SORNSim.NetworkCore.Network import *
-from SORNSim.NetworkCore.Synapse_Group import *
-from SORNSim.NetworkCore.Neuron_Group import *
-from SORNSim.NetworkBehaviour.Logic.EulerEquationModules.EulerClock import *
-from SORNSim.NetworkBehaviour.Logic.EulerEquationModules.VariableInitializer import *
-from SORNSim.NetworkBehaviour.Logic.EulerEquationModules.Equation import *
+from PymoNNto.NetworkCore.Network import *
+from PymoNNto.NetworkCore.Synapse_Group import *
+from PymoNNto.NetworkCore.Neuron_Group import *
+from PymoNNto.NetworkBehaviour.Logic.EulerEquationModules.EulerClock import *
+from PymoNNto.NetworkBehaviour.Logic.EulerEquationModules.VariableInitializer import *
+from PymoNNto.NetworkBehaviour.Logic.EulerEquationModules.Equation import *
 from matplotlib.pyplot import *
-from SORNSim.Exploration.Network_UI.Network_UI import *
-from SORNSim.NetworkBehaviour.Structure.Structure import *
+from PymoNNto.Exploration.Network_UI.Network_UI import *
+from PymoNNto.NetworkBehaviour.Structure.Structure import *
 
 
 

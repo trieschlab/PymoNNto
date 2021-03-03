@@ -4,7 +4,7 @@ The following code creates a network of 100 neurons with recurrent connections a
 
 
 ```python
-from SORNSim import *
+from PymoNNto import *
 
 My_Network = Network()
 
@@ -39,15 +39,15 @@ class Basic_Behaviour(Behaviour):
 ## Simple Example
 
 When we combine the previous code blocks we can add the `Basic_Behaviour` to the NeuronGroup.
-To plot the neurons activity over time, we also have to create a `NeuronRecorder`. Here the activity and the mean-activity are stored at each timestep.
+To plot the neurons activity over time, we also have to create a `Recorder`. Here the activity and the mean-activity are stored at each timestep.
 At the end the data is plotted.
 
-SORNSim has a tagging system to make access to the NeuronGroups, SynapseGroups, Behaviours and recorded variables inside of the network more convenient.
+PymoNNto has a tagging system to make access to the NeuronGroups, SynapseGroups, Behaviours and recorded variables inside of the network more convenient.
 
 The number in front of each behaviour (1 and 9) have to be positive and determine the order of execution for each module inside and accross NeuronGroups.
 
 ```python
-from SORNSim import *
+from PymoNNto import *
 
 
 class Basic_Behaviour(Behaviour):
@@ -65,7 +65,7 @@ My_Network = Network()
 
 My_Neurons = NeuronGroup(net=My_Network, tag='my_neurons', size=100, behaviour={
     1: Basic_Behaviour(),
-    9: NeuronRecorder(tag='my_recorder', variables=['n.activity', 'np.mean(n.activity)'])
+    9: Recorder(tag='my_recorder', variables=['n.activity', 'np.mean(n.activity)'])
 })
 
 SynapseGroup(net=My_Network, src=My_Neurons, dst=My_Neurons, tag='GLUTAMATE')
@@ -81,7 +81,7 @@ plt.plot(My_Network['n.activity', 0])
 plt.plot(My_Network['np.mean(n.activity)', 0], color='black')
 plt.show()
 ```
-![User interface example](https://raw.githubusercontent.com/trieschlab/SORNSim/Images/both.png)
+![User interface example](https://raw.githubusercontent.com/trieschlab/PymoNNto/Images/both.png)
 
 ## Tagging System
 
@@ -89,11 +89,11 @@ To access the tagged objects we can use the `[]` operator. `['my_tag']` gives yo
 
 ```python
 My_Network['my_neurons']
-=> [<SORNSim.NetworkCore.Neuron_Group.NeuronGroup object at 0x00000195F4878670>]
+=> [<PymoNNto.NetworkCore.Neuron_Group.NeuronGroup object at 0x00000195F4878670>]
 
 My_Network['my_recorder']
 My_Neurons['my_recorder'] 
-=> [<SORNSim.NetworkBehaviour.Recorder.Recorder.Recorder object at 0x0000021F1B61D5E0>]
+=> [<PymoNNto.NetworkBehaviour.Recorder.Recorder.Recorder object at 0x0000021F1B61D5E0>]
 
 My_Neurons['n.activity']
 My_Neurons['my_recorder', 0]['n.activity']

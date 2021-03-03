@@ -1,4 +1,4 @@
-from SORNSim import *
+from PymoNNto import *
 
 #https://brian2.readthedocs.io/en/stable/examples/frompapers.Hindmarsh_Rose_1984.html
 

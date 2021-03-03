@@ -1,6 +1,6 @@
 '''
-from SORNSim.Exploration.Network_UI.TabBase import *
-from SORNSim.NetworkBehaviour.Recorder.Recorder import *
+from PymoNNto.Exploration.Network_UI.TabBase import *
+from PymoNNto.NetworkBehaviour.Recorder.Recorder import *
 
 class individual_weight_tab(TabBase):
 
@@ -40,7 +40,7 @@ class individual_weight_tab(TabBase):
     def start_rec(self, group):
 
         # self.key = 'np.concatenate([s.W[:,np.where(s.dst.id=='+str(self.neuron_index)+')[0]][s.enabled[:,np.where(s.dst.id=='+str(self.neuron_index)+')[0]]] for s in n.afferent_synapses["All"]])'
-        # self.my_syn_rec = NeuronRecorder([self.key], tag=self.rec_name)
+        # self.my_syn_rec = Recorder([self.key], tag=self.rec_name)
 
         if len(group[self.rec_name]) == 0 or self.Network_UI.neuron_select_id != self.neuron_index:
 
@@ -152,8 +152,8 @@ class individual_weight_tab(TabBase):
 '''
 
 
-from SORNSim.Exploration.Network_UI.TabBase import *
-from SORNSim.NetworkBehaviour.Recorder.Recorder import *
+from PymoNNto.Exploration.Network_UI.TabBase import *
+from PymoNNto.NetworkBehaviour.Recorder.Recorder import *
 
 class individual_weight_tab(TabBase):
 
@@ -218,7 +218,7 @@ class individual_weight_tab(TabBase):
             self.neuron_index = self.Network_UI.neuron_select_id
 
             # self.key = 'np.concatenate([s.W[:,np.where(s.dst.id=='+str(self.neuron_index)+')[0]][s.enabled[:,np.where(s.dst.id=='+str(self.neuron_index)+')[0]]] for s in n.afferent_synapses["All"]])'
-            # self.my_syn_rec = NeuronRecorder([self.key], tag=self.rec_name)
+            # self.my_syn_rec = Recorder([self.key], tag=self.rec_name)
 
 
             #if self.my_syn_rec is not None:

@@ -1,9 +1,9 @@
-site_name: Self-Organizing-Recurrent-Network-Simulator
+site_name: PymoNNto
 site_url: ""
 site_description: Project documentation with Markdown.
 site_author: Marius Vieth
 
-repo_url: https://github.com/gitmv/Self-Organizing-Recurrent-Network-Simulator
+repo_url: https://github.com/trieschlab/SORNSim
 edit_uri: ""
 
 theme:

@@ -1,6 +1,6 @@
-from SORNSim.Exploration.Network_UI.TabBase import *
+from PymoNNto.Exploration.Network_UI.TabBase import *
 
-from SORNSim.Exploration.Visualization.Reconstruct_Analyze_Label.Reconstruct_Analyze_Label import *
+from PymoNNto.Exploration.Visualization.Reconstruct_Analyze_Label.Reconstruct_Analyze_Label import *
 
 class reconstruction_tab(TabBase):
 

@@ -2,10 +2,10 @@ import matplotlib
 matplotlib.use('Qt5Agg')
 import matplotlib.pyplot as plt
 
-from SORNSim.NetworkBehaviour.Input.Activator import *
-from SORNSim.NetworkCore.Neuron_Group import *
+from PymoNNto.NetworkBehaviour.Input.Activator import *
+from PymoNNto.NetworkCore.Neuron_Group import *
 
-import SORNSim.Exploration.Evolution.NetworkEvaluationFunctions as EvalF
+import PymoNNto.Exploration.Evolution.NetworkEvaluationFunctions as EvalF
 
 
 

@@ -103,7 +103,7 @@ class MNIST_Patterns(Pixel_Pattern):
 
 #onc, offc = get_LOG_On_Off(num[0])
 
-#offc=offc.astype(np.float32)
+#offc=offc.astype(np.float64)
 #offc/=np.max(offc)
 
 #plt.matshow(offc)

@@ -1,5 +1,5 @@
-from SORNSim.NetworkCore.Behaviour import *
-from SORNSim.NetworkBehaviour.Logic.EulerEquationModules.Helper.Helper import *
+from PymoNNto.NetworkCore.Behaviour import *
+from PymoNNto.NetworkBehaviour.Logic.EulerEquationModules.Helper.Helper import *
 import numpy as np
 
 

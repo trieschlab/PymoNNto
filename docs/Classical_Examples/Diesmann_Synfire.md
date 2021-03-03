@@ -1,4 +1,4 @@
-# Diesmann Synfire Chain SORNSim Implementation
+# Diesmann Synfire Chain PymoNNto Implementation
 
 The following code creates a synfire chain network with 10 neuron groups and 100 neurons per group. 
 The groups have feed forward connections and receive external and internal noise.
@@ -11,7 +11,7 @@ Every neuron in the group is updated with rules derived from "Diesmann et al 199
 
 ```python
 
-from SORNSim import *
+from PymoNNto import *
 
 #https://brian2.readthedocs.io/en/stable/examples/frompapers.Diesmann_et_al_1999.html
 
@@ -82,7 +82,7 @@ spikes = np.hstack(My_Network['n.spike'])
 plt.imshow(spikes.transpose(),cmap='gray', aspect='auto')
 plt.show()
 
-#from SORNSim.Exploration.Network_UI import *
+#from PymoNNto.Exploration.Network_UI import *
 #my_UI_modules = get_default_UI_modules(['spike', 'v'], ['W'])
 #Network_UI(My_Network, modules=my_UI_modules, label='My_Network_UI', group_display_count=10).show()
 

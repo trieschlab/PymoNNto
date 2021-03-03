@@ -1,4 +1,4 @@
-# Brunel Hakim SORNSim Implementation
+# Brunel Hakim PymoNNto Implementation
 
 The following code creates a network of 5000 neurons with recurrent connections and simulates them for 1000 iterations. 
 
@@ -6,7 +6,7 @@ The following code creates a network of 5000 neurons with recurrent connections 
 
 ```python
 
-from SORNSim import *
+from PymoNNto import *
 
 #https://brian2.readthedocs.io/en/stable/examples/frompapers.Brunel_Hakim_1999.html
 
@@ -45,7 +45,7 @@ class Brunel_Hakim_input(Behaviour):
 
     def set_variables(self, n):
         for s in n.afferent_synapses['GLUTAMATE']:
-            s.W = (s.get_random_synapse_mat(density=n.sparseness)>0.0).astype(t)*n.J
+            s.W = (s.get_random_synapse_mat(density=n.sparseness)>0.0).astype(def_dtype)*n.J
 
     def new_iteration(self, n):
         for s in n.afferent_synapses['GLUTAMATE']:
@@ -80,7 +80,7 @@ plt.imshow(My_Network['n.v', 0, 'np'].transpose(), cmap='gray', aspect='auto')
 plt.show()
 
 
-#from SORNSim.Exploration.Network_UI import *
+#from PymoNNto.Exploration.Network_UI import *
 #my_UI_modules = get_default_UI_modules(['fired', 'v', 'u'], ['W'])
 #Network_UI(My_Network, modules=my_UI_modules, label='My_Network_UI', group_display_count=2).show()
 

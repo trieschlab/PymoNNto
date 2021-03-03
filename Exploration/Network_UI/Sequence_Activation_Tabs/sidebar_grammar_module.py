@@ -1,5 +1,5 @@
-from SORNSim.Exploration.Network_UI.TabBase import *
-from SORNSim.NetworkBehaviour.Recorder.Recorder import *
+from PymoNNto.Exploration.Network_UI.TabBase import *
+from PymoNNto.NetworkBehaviour.Recorder.Recorder import *
 
 #from Testing.Common.Grammar_Helper import *
 
@@ -62,13 +62,13 @@ class sidebar_grammar_module(TabBase):
 
                 #Network_UI.network.recording_off()
 
-                Network_UI.network.add_behaviours_to_neuron_groups({100: NeuronRecorder(['n.output'], tag='pediction_rec')}, Network_UI.network['prediction_source'])
-                Network_UI.network.add_behaviours_to_neuron_groups({101: NeuronRecorder(['n.pattern_index'], tag='index_rec')}, Network_UI.network['text_input_group'])
+                Network_UI.network.add_behaviours_to_neuron_groups({100: Recorder(['n.output'], tag='pediction_rec')}, Network_UI.network['prediction_source'])
+                Network_UI.network.add_behaviours_to_neuron_groups({101: Recorder(['n.pattern_index'], tag='index_rec')}, Network_UI.network['text_input_group'])
 
                 #for ng in Network_UI.network['prediction_source']:
-                #    Network_UI.network.add_behaviours_to_neuron_group({100: NeuronRecorder(['n.output'], tag='pediction_rec')}, ng)
+                #    Network_UI.network.add_behaviours_to_neuron_group({100: Recorder(['n.output'], tag='pediction_rec')}, ng)
                 #for ng in Network_UI.network['text_input_group']:
-                #    Network_UI.network.add_behaviours_to_neuron_group({101: NeuronRecorder(['n.pattern_index'], tag='index_rec')}, ng)
+                #    Network_UI.network.add_behaviours_to_neuron_group({101: Recorder(['n.pattern_index'], tag='index_rec')}, ng)
 
 
                 Network_UI.network['grammar_act', 0].active = True

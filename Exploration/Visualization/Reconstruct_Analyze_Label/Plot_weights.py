@@ -1,4 +1,4 @@
-from SORNSim.Exploration.StorageManager.StorageManager import *
+from PymoNNto.Exploration.StorageManager.StorageManager import *
 
 #sm = StorageManager('X_1', 'X')
 #sm = StorageManager('RALN_Test_2_0', 'RALN_Test_2')

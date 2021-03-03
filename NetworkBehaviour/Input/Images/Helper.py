@@ -20,7 +20,7 @@ def rotatearoundpoint(p, rot, middle):
 
 def picture_to_array(image, max=1):
     pil_image_gray = image.convert('L')
-    result = np.array(pil_image_gray).astype(np.float32)
+    result = np.array(pil_image_gray).astype(np.float64)
     return result/np.maximum(max, np.max(image))
 
 
@@ -137,7 +137,7 @@ def get_multi_color_LOG_On_Off(c1, c2):
     on_center = (LOG > 0) * LOG
     off_center = (LOG < 0) * LOG * -1
 
-    return on_center.astype(np.float32), off_center.astype(np.float32)
+    return on_center.astype(np.float64), off_center.astype(np.float64)
 
 
 def get_LOG_On_Off(data, sigma=1):

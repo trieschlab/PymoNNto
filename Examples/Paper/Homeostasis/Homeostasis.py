@@ -1,4 +1,4 @@
-from SORNSim.NetworkCore.Behaviour import *
+from PymoNNto.NetworkCore.Behaviour import *
 
 class Homeostasis(Behaviour):
 
@@ -18,8 +18,8 @@ class Homeostasis(Behaviour):
 
     def new_iteration(self, neurons):
 
-        greater = ((neurons.voltage > self.max_ta) * -1).astype(t)
-        smaller = ((neurons.voltage < self.min_ta) * 1).astype(t)
+        greater = ((neurons.voltage > self.max_ta) * -1).astype(def_dtype)
+        smaller = ((neurons.voltage < self.min_ta) * 1).astype(def_dtype)
 
         greater *= neurons.voltage - self.max_ta
         smaller *= self.min_ta - neurons.voltage
