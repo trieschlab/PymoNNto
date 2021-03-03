@@ -15,7 +15,7 @@ activator.preprocess(training_steps, LGN_PC_Neurons)
 
 #LGN_PC_Neurons = get_default_Input_Pattern_Neurons(input_width=10, input_height=10, preprocessing_steps=training_steps)
 
-neu_rec = TRENNeuronRecorder(['output_activity_history[0]', 'input_activity_history[0]', 'activity', 'reward', 'norm_value'])
+neu_rec = TRENRecorder(['output_activity_history[0]', 'input_activity_history[0]', 'activity', 'reward', 'norm_value'])
 
 behaviour = {
     0: TRENNeuronDimension(2, 2, 1),

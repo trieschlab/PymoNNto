@@ -92,12 +92,12 @@ def run(ind=[]):
                     #6: SORN_diffuse_IP(h_ip=0.1, eta_ip=0.001, init_avg=0.1),
                     #6: SORN_diffuse_IP(h_ip='[0.1#1],+-50%', eta_ip='[0.001#2],+-50%', init_avg=0.1),
                     8: SORN_finish(),
-                    9: NeuronRecorder(['np.sum(n.x)', 'n.x', 'np.average(n.x)'])
+                    9: Recorder(['np.sum(n.x)', 'n.x', 'np.average(n.x)'])
                 }))
 
                 if i == 0:
                     SORN_layers_e[-1].add_behaviour(0, NeuronActivator(write_to='input', pattern_groups=[source]))#,source2
-                    input_recorders = [SORN_layers_e[-1].add_behaviour(11, NeuronRecorder(['n.input', 'n.pattern_index']))]
+                    input_recorders = [SORN_layers_e[-1].add_behaviour(11, Recorder(['n.input', 'n.pattern_index']))]
 
                 SORN_layers_i.append(NeuronGroup(size=int(0.2 * N_e), behaviour={
                     10: SORN_Input_collect(T_min=0.0, T_max=0.5),
@@ -244,14 +244,14 @@ def run(ind=[]):
 
         #for i, n in enumerate(SORN_layers_e):
         #    for b_key in n.behaviour:
-        #        if type(n.behaviour[b_key])==TRENNeuronRecorder_eval:
+        #        if type(n.behaviour[b_key])==TRENRecorder_eval:
         #            sm.save_recorder('L{}_{}_'.format(i, b_key), n.behaviour[b_key])
 
 
         # Step 9. Plot
-        # 10: TRENNeuronRecorder_eval(['n.T'], gapwidth=100)
+        # 10: TRENRecorder_eval(['n.T'], gapwidth=100)
         # import matplotlib.pyplot as plt
-        # plt.plot(SORN_1_e[TRENNeuronRecorder_eval][1]['n.T'])
+        # plt.plot(SORN_1_e[TRENRecorder_eval][1]['n.T'])
         # print(SORN_1_e[9]['np.sum(n.x)'])
         # print(SORN_1_e[9]['n.pattern_index'])
         # plt.show()

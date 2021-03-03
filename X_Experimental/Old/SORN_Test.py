@@ -17,7 +17,7 @@ SORN_1_e = NeuronGroup(size=1600, behaviour={
     6: SORN_IP(h_ip=0.1, eta_ip=0.001),
     7: SORN_SP(sp_prob=0.1, sp_init=0.001, syn_type='GLU'),
     8: SORN_finish(),
-    9: NeuronRecorder(['np.sum(n.x)', 'n.x', 'n.input', 'n.pattern_index'])
+    9: Recorder(['np.sum(n.x)', 'n.x', 'n.input', 'n.pattern_index'])
 })
 
 

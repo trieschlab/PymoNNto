@@ -350,7 +350,7 @@
 
 #    # print(LGN_PC_Neurons[TRENNeuronActivator].get_pattern_differences(np.ones(100)))
 #    # syn_rec = TRENSynapseRecorder('GLU', ['GLU_Synapses'])
-#    neu_rec = TRENNeuronRecorder(['output_activity_history[0]', 'input_activity_history[0]', 'activity'])  # activity
+#    neu_rec = TRENRecorder(['output_activity_history[0]', 'input_activity_history[0]', 'activity'])  # activity
 
 #    Cortex_PC_Neurons = TRENNeuronGroup(num_neurons, behaviour)
 

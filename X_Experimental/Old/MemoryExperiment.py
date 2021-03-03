@@ -49,12 +49,12 @@ while True:
                     5: SORN_IP_New(h_ip=0.1, eta_ip=0.001),  # '0.1,+-10%'
                     #6: SORN_diffuse_IP(h_ip=0.1, eta_ip=0.001, init_avg=0.1),
                     8: SORN_finish(),
-                    9: NeuronRecorder(['np.sum(n.x)', 'n.x'])
+                    9: Recorder(['np.sum(n.x)', 'n.x'])
                 }))
 
                 if i == 0:
                     SORN_layers_e[-1].add_behaviour(0, NeuronActivator(write_to='input', pattern_groups=[source]))
-                    input_recorders = [SORN_layers_e[-1].add_behaviour(11, NeuronRecorder(['n.input', 'n.pattern_index']))]
+                    input_recorders = [SORN_layers_e[-1].add_behaviour(11, Recorder(['n.input', 'n.pattern_index']))]
 
                 #todo: istdp
                 SORN_layers_i.append(NeuronGroup(size=int(0.2 * N_e), behaviour={

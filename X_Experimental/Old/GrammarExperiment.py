@@ -8,10 +8,10 @@ import sys; sys.path.append('.')
 from sklearn import linear_model
 
 from Testing.Old.SORN_simple_behaviour import *
-from SORNSim.NetworkBehaviour.Input.Old.GrammarTaskActivator_old import *
-from SORNSim.NetworkCore.Network import *
-from SORNSim.NetworkCore.Neuron_Group import *
-from SORNSim.NetworkCore.Synapse_Group import *
+from PymoNNto.NetworkBehaviour.Input.Old.GrammarTaskActivator_old import *
+from PymoNNto.NetworkCore.Network import *
+from PymoNNto.NetworkCore.Neuron_Group import *
+from PymoNNto.NetworkCore.Synapse_Group import *
 
 source = GrammarActivator(N_e=1600)
 
@@ -25,7 +25,7 @@ SORN_1_e = NeuronGroup(size=1600, behaviour={
     6: SORN_IP(h_ip=0.1, eta_ip=0.001),
     #7: SORN_SP(sp_prob=0.1, sp_init=0.001, syn_type='GLU'),
     8: SORN_finish(),
-    9: NeuronRecorder(['np.sum(n.x)', 'n.x', 'n.input', 'n.pattern_index'])
+    9: Recorder(['np.sum(n.x)', 'n.x', 'n.input', 'n.pattern_index'])
 })
 
 SORN_1_i = NeuronGroup(size=int(0.2 * 1600), behaviour={
@@ -49,7 +49,7 @@ steps_spont = 10000  # steps of spontaneous generation
 #steps_spont = 10000  # steps of spontaneous generation
 display = True
 
-recorder = SORN_1_e[NeuronRecorder]
+recorder = SORN_1_e[Recorder]
 
 
 

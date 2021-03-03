@@ -1,12 +1,12 @@
 import sys
 sys.path.append('../../')
 
-from SORNSim.NetworkBehaviour.Logic.SORN.SORN_advanced import *
-from SORNSim.NetworkBehaviour.Input.Text.TextActivator import *
-from SORNSim.NetworkCore.Network import *
-from SORNSim.NetworkCore.Synapse_Group import *
-from SORNSim.NetworkBehaviour.Structure.Structure import *
-from SORNSim.Exploration.StorageManager.StorageManager import *
+from PymoNNto.NetworkBehaviour.Logic.SORN.SORN_advanced import *
+from PymoNNto.NetworkBehaviour.Input.Text.TextActivator import *
+from PymoNNto.NetworkCore.Network import *
+from PymoNNto.NetworkCore.Synapse_Group import *
+from PymoNNto.NetworkBehaviour.Structure.Structure import *
+from PymoNNto.Exploration.StorageManager.StorageManager import *
 
 if __name__ == '__main__':
     pass
@@ -50,7 +50,7 @@ def run(tag='bruno', ind=[], par={'N_e':900}):
 
         30: SORN_finish(),
 
-        #100: NeuronRecorder(['np.mean(n.output)', 'np.mean(n.TH)', 'n.output', 'n.TH', 'n.excitation', 'n.inhibition', 'n.input_act'], tag='inh_out_rec')
+        #100: Recorder(['np.mean(n.output)', 'np.mean(n.TH)', 'n.output', 'n.TH', 'n.excitation', 'n.inhibition', 'n.input_act'], tag='inh_out_rec')
     })
 
     SynapseGroup(net=SORN, src=e_ng, dst=e_ng, tag='GLU', connectivity='s_id!=d_id')

@@ -34,7 +34,7 @@ def eval_func(ind, visualize=False):
 
     network = Network([LGN_PC_Neurons, Cortex_PC_Neurons], [feed_forward_syn, inh_syn])#recurrent_syn
 
-    #rec=network.add_behaviours_to_neuron_group([TRENNeuronRecorder_eval(['n[10].avg'], gapwidth=100)], Cortex_PC_Neurons)[0]
+    #rec=network.add_behaviours_to_neuron_group([TRENRecorder_eval(['n[10].avg'], gapwidth=100)], Cortex_PC_Neurons)[0]
     #network.simulate_iterations(100, 400, False)
 
     scores=[]

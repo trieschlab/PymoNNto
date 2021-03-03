@@ -1,4 +1,4 @@
-from SORNSim.Exploration.Evolution.Computing_Devices import *
+from PymoNNto.Exploration.Evolution.Computing_Devices import *
 
 
 class XPS_Server(Evolution_Server_Local_Windows):

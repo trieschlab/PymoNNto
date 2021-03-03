@@ -41,7 +41,7 @@ class TREN_Parameter_Exploration_UI(UI_Base):
 
         self.init_QT_Elements()
 
-        self.neu_rec = TRENNeuronRecorder_eval(['n.avg_act', 'n.norm_value', 'n.output_activity_history[0]', 'n.activity'], gapwidth=10)
+        self.neu_rec = TRENRecorder_eval(['n.avg_act', 'n.norm_value', 'n.output_activity_history[0]', 'n.activity'], gapwidth=10)
         self.syn_rec = TRENSynapseRecorder_eval(['syn.GLU_Synapses'], gapwidth=100)
 
         network.add_behaviours_to_neuron_group([self.neu_rec, self.syn_rec], self.Neuron_Group)
@@ -163,12 +163,12 @@ class TREN_Parameter_Exploration_UI(UI_Base):
         def act_hist_plt(ax): ax.hist(np.array(self.neu_rec['n.activity'])[:, 0], bins=20)
         self.draw_pyplot(act_hist_plt, xmax, ymax, xstep+1, ystep, xlim=1)
 
-        #def reward_hist_plt(ax): ax.hist(np.array(self.network.NeuronGroups[1][TRENNeuronRecorder].reward)[:, 0], bins=20)
+        #def reward_hist_plt(ax): ax.hist(np.array(self.network.NeuronGroups[1][TRENRecorder].reward)[:, 0], bins=20)
         #self.draw_pyplot(reward_hist_plt, xmax, ymax, xstep+1, ystep+1,xlim=1)
 
         #print('f')
 
-        #def norm_plt(ax): ax.plot(np.array(self.network.NeuronGroups[1][TRENNeuronRecorder].norm_value)[:, 0])
+        #def norm_plt(ax): ax.plot(np.array(self.network.NeuronGroups[1][TRENRecorder].norm_value)[:, 0])
         #self.draw_pyplot(norm_plt, xmax, ymax, xstep, ystep+1)
 
         #print('gg')
@@ -522,13 +522,13 @@ class QTUI_New(QWidget):
 
         self.draw_weights(xmax, ymax, xstep, ystep)
 
-        def act_hist_plt(ax): ax.hist(np.array(self.network.NeuronGroups[1][TRENNeuronRecorder].activity)[:, 0], bins=20)
+        def act_hist_plt(ax): ax.hist(np.array(self.network.NeuronGroups[1][TRENRecorder].activity)[:, 0], bins=20)
         self.draw_pyplot(act_hist_plt, xmax, ymax, xstep+1, ystep,xlim=1)
 
-        def reward_hist_plt(ax): ax.hist(np.array(self.network.NeuronGroups[1][TRENNeuronRecorder].reward)[:, 0], bins=20)
+        def reward_hist_plt(ax): ax.hist(np.array(self.network.NeuronGroups[1][TRENRecorder].reward)[:, 0], bins=20)
         self.draw_pyplot(reward_hist_plt, xmax, ymax, xstep+1, ystep+1,xlim=1)
 
-        def norm_plt(ax): ax.plot(np.array(self.network.NeuronGroups[1][TRENNeuronRecorder].norm_value)[:, 0])
+        def norm_plt(ax): ax.plot(np.array(self.network.NeuronGroups[1][TRENRecorder].norm_value)[:, 0])
         self.draw_pyplot(norm_plt, xmax, ymax, xstep, ystep+1)
 
 

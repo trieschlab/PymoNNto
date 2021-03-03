@@ -26,8 +26,8 @@ def run(ind=[]):
                 4: SORN_SN(syn_type='GLU'),
                 6: SORN_IP_TI(h_ip='0.04,+-0%', eta_ip='0.005,+-0%', integration_length=10, gap_percent=0),
                 8: SORN_finish(),
-                9: NeuronRecorder(['n.x', 'np.average(n.x)'])
-                #11: TRENNeuronRecorder_eval(['n.input', 'n.pattern_index'])
+                9: Recorder(['n.x', 'np.average(n.x)'])
+                #11: TRENRecorder_eval(['n.input', 'n.pattern_index'])
             })
 
             i_ng = NeuronGroup(tag='main_inh_group', size=int(0.2 * N_e), behaviour={

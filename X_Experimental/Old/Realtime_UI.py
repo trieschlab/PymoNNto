@@ -100,7 +100,7 @@ class TREN_Realtime_UI(UI_Base):
 
 
         variables=['n.norm_value', 'n.activity', 'n[8].avg', 'n.output_activity_history[0]', 'n.weight_change_sum']
-        self.neu_rec = TRENNeuronRecorder_eval(variables, gapwidth=10)
+        self.neu_rec = TRENRecorder_eval(variables, gapwidth=10)
         self.syn_rec = TRENSynapseRecorder_eval(['syn.GLU_Synapses'], gapwidth=10)
         network.add_behaviours_to_neuron_group([self.neu_rec, self.syn_rec], Cortex_PC_Neurons)
 

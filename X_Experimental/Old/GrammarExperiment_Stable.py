@@ -32,8 +32,8 @@ def run(ind=[], thread_index=None):
 
                            30: SORN_finish(),
 
-                           100: TRENNeuronRecorder_eval(['np.mean(n.output)', 'np.mean(n.TH)', 'n.output', 'n.TH', 'n.excitation', 'n.inhibition', 'n.input_act'], tag='out_rec', max_length=1000),
-                           101: TRENNeuronRecorder_eval(['n.pattern_index'], tag='inp_rec', max_length=1000)
+                           100: TRENRecorder_eval(['np.mean(n.output)', 'np.mean(n.TH)', 'n.output', 'n.TH', 'n.excitation', 'n.inhibition', 'n.input_act'], tag='out_rec', max_length=1000),
+                           101: TRENRecorder_eval(['n.pattern_index'], tag='inp_rec', max_length=1000)
                        })
 
     i_ng = NeuronGroup(tag='main_inh_group', size=get_squared_dim(int(0.2 * N_e)), behaviour={
@@ -49,7 +49,7 @@ def run(ind=[], thread_index=None):
 
         30: SORN_finish(),
 
-        100: TRENNeuronRecorder_eval(['np.mean(n.output)', 'np.mean(n.TH)', 'n.output', 'n.TH', 'n.excitation', 'n.inhibition', 'n.input_act'], tag='out_rec', max_length=1000)
+        100: TRENRecorder_eval(['np.mean(n.output)', 'np.mean(n.TH)', 'n.output', 'n.TH', 'n.excitation', 'n.inhibition', 'n.input_act'], tag='out_rec', max_length=1000)
     })
 
     ee_syn = SynapseGroup(src=e_ng, dst=e_ng, connectivity='s_id!=d_id').add_tag('GLU')  # .add_tag('sparse')

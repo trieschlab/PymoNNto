@@ -1,5 +1,5 @@
 import pypianoroll as piano
-from SORNSim.NetworkBehaviour.Recorder.Recorder import *
+from PymoNNto.NetworkBehaviour.Recorder.Recorder import *
 from Testing.Common.Classifier_Helper import *
 from sklearn.multiclass import OneVsRestClassifier
 from sklearn.naive_bayes import ComplementNB
@@ -143,9 +143,9 @@ def train_readout(SORN, steps_train, steps_test, source, display=True, stdp_off=
         SORN.deactivate_mechanisms('STDP')
 
     for ng in SORN['prediction_source']:
-        SORN.add_behaviours_to_neuron_group({100: NeuronRecorder(['n.output'], tag='prediction_rec')}, ng)
+        SORN.add_behaviours_to_neuron_group({100: Recorder(['n.output'], tag='prediction_rec')}, ng)
     for ng in SORN['text_input_group']:
-        SORN.add_behaviours_to_neuron_group({101: NeuronRecorder(['n.pattern_index'], tag='index_rec')}, ng)
+        SORN.add_behaviours_to_neuron_group({101: Recorder(['n.pattern_index'], tag='index_rec')}, ng)
 
     SORN.simulate_iterations(int(steps_train+steps_test), 100, measure_block_time=display)
 
@@ -270,9 +270,9 @@ def get_score_spontaneous_music(SORN, source, readout_layer, steps_spont, split_
         SORN.deactivate_mechanisms('STDP')
 
     for ng in SORN['prediction_source']:
-        SORN.add_behaviours_to_neuron_group({100: NeuronRecorder(['n.output'], tag='prediction_rec')}, ng)
+        SORN.add_behaviours_to_neuron_group({100: Recorder(['n.output'], tag='prediction_rec')}, ng)
     for ng in SORN['text_input_group']:
-        SORN.add_behaviours_to_neuron_group({101: NeuronRecorder(['n.pattern_index'], tag='index_rec')}, ng)
+        SORN.add_behaviours_to_neuron_group({101: Recorder(['n.pattern_index'], tag='index_rec')}, ng)
 
 
     SORN.clear_recorder()

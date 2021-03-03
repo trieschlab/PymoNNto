@@ -1,12 +1,12 @@
 import sys
 sys.path.append('../../')
 
-from SORNSim.NetworkBehaviour.Logic.SORN.SORN_advanced import *
-from SORNSim.NetworkBehaviour.Input.Text.TextActivator import *
-from SORNSim.NetworkCore.Network import *
-from SORNSim.NetworkCore.Synapse_Group import *
-from SORNSim.NetworkBehaviour.Structure.Structure import *
-from SORNSim.Exploration.StorageManager.StorageManager import *
+from PymoNNto.NetworkBehaviour.Logic.SORN.SORN_advanced import *
+from PymoNNto.NetworkBehaviour.Input.Text.TextActivator import *
+from PymoNNto.NetworkCore.Network import *
+from PymoNNto.NetworkCore.Synapse_Group import *
+from PymoNNto.NetworkBehaviour.Structure.Structure import *
+from PymoNNto.Exploration.StorageManager.StorageManager import *
 
 display = False
 
@@ -48,7 +48,7 @@ def run(tag='hierarchical', ind=[], par={'N_e':900}):
 
             30: SORN_finish(),
 
-            100: NeuronRecorder(['n.output'], tag='exc_out_rec')
+            100: Recorder(['n.output'], tag='exc_out_rec')
         })
 
         i_ng = NeuronGroup(net=SORN_Global, tag='main_inh_group', size=get_squared_dim(int(0.2 * par['N_e'])), behaviour={
@@ -65,7 +65,7 @@ def run(tag='hierarchical', ind=[], par={'N_e':900}):
 
             30: SORN_finish(),
 
-            100: NeuronRecorder(['n.output'], tag='inh_out_rec')
+            100: Recorder(['n.output'], tag='inh_out_rec')
         })
 
         ee_syn = SynapseGroup(net=SORN_Global, src=e_ng, dst=e_ng, connectivity='s_id!=d_id', tag='GLU,ee')
@@ -75,7 +75,7 @@ def run(tag='hierarchical', ind=[], par={'N_e':900}):
 
         if lag == 1:
             e_ng.add_behaviour(1, NeuronActivator(write_to='input', pattern_groups=[source]))  # ,source2
-            e_ng.add_behaviour(101, NeuronRecorder(['n.pattern_index'], tag='inp_rec'))
+            e_ng.add_behaviour(101, Recorder(['n.pattern_index'], tag='inp_rec'))
         else:
             #forward synapses
             ee_ff_syn = SynapseGroup(net=SORN_Global, src=last_e_ng, dst=e_ng, tag='GLU,eeff')

@@ -1,10 +1,10 @@
-from SORNSim.NetworkBehaviour.Input.Old.CountingTaskActivator import *
+from PymoNNto.NetworkBehaviour.Input.Old.CountingTaskActivator import *
 from Testing.Old.SORN_simple_behaviour import *
-from SORNSim.NetworkCore.Network import *
-from SORNSim.NetworkCore.Neuron_Group import *
-from SORNSim.NetworkCore.Synapse_Group import *
+from PymoNNto.NetworkCore.Network import *
+from PymoNNto.NetworkCore.Neuron_Group import *
+from PymoNNto.NetworkCore.Synapse_Group import *
 
-from SORNSim.Exploration.StorageManager.StorageManager import *
+from PymoNNto.Exploration.StorageManager.StorageManager import *
 from Testing.Common.Classifier_Helper import *
 
 
@@ -34,11 +34,11 @@ if True:
             1: SORN_Input_collect(T_min=0.0, T_max=0.5, lamb=syn, iteration_lag=i + 1, fixed_synapse_count=False),
             2: SORN_STDP(eta_stdp=0.001, prune_stdp=True),  # 0.005 False other exp
             3: SORN_SN(syn_type='GLU'), 6: SORN_IP(h_ip=0.1, eta_ip=0.001), 8: SORN_finish(),
-            9: NeuronRecorder(['np.sum(n.x)', 'n.x'])}))
+            9: Recorder(['np.sum(n.x)', 'n.x'])}))
 
         if i == 0:
             SORN_layers_e[-1].add_behaviour(0, NeuronActivator(write_to='input', pattern_groups=[source]))
-            SORN_layers_e[-1].add_behaviour(11, NeuronRecorder(['n.input', 'n.pattern_index']))
+            SORN_layers_e[-1].add_behaviour(11, Recorder(['n.input', 'n.pattern_index']))
 
         SORN_layers_i.append(NeuronGroup(size=int(0.2 * N_e),
                                          behaviour={10: SORN_Input_collect(T_min=0.0, T_max=0.5), 11: SORN_finish()}))
@@ -67,7 +67,7 @@ if True:
     #    6: SORN_IP(h_ip=0.1, eta_ip=0.001),
     #    #7: SORN_SP(sp_prob=0.1, sp_init=0.001, syn_type='GLU'),
     #    8: SORN_finish(),
-    #    9: TRENNeuronRecorder_eval(['np.sum(n.x)', 'n.x', 'n.input', 'n.pattern_index'])
+    #    9: TRENRecorder_eval(['np.sum(n.x)', 'n.x', 'n.input', 'n.pattern_index'])
     # })
 
     # SORN_1_i = NeuronGroup(size=int(0.2 * 200), behaviour={
@@ -81,7 +81,7 @@ if True:
 
     # SORN_Global = Network([SORN_1_e, SORN_1_i], [ee, ie, ei])
 
-    # recorder = SORN_layers_e[0][TRENNeuronRecorder_eval]
+    # recorder = SORN_layers_e[0][TRENRecorder_eval]
 
     sm.save_np('ee_weights_init', np.array(ee_syns[0].W.toarray()))
 

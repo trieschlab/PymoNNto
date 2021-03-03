@@ -1,12 +1,12 @@
 import sys
 sys.path.append('../../')
 
-from SORNSim.NetworkBehaviour.Logic.SORN.SORN_advanced import *
-from SORNSim.NetworkBehaviour.Input.Music.MusicActivator import *
-from SORNSim.NetworkCore.Network import *
-from SORNSim.NetworkCore.Synapse_Group import *
+from PymoNNto.NetworkBehaviour.Logic.SORN.SORN_advanced import *
+from PymoNNto.NetworkBehaviour.Input.Music.MusicActivator import *
+from PymoNNto.NetworkCore.Network import *
+from PymoNNto.NetworkCore.Synapse_Group import *
 from Testing.Common.SORN_MusicHelper import *
-from SORNSim.NetworkBehaviour.Structure.Structure import *
+from PymoNNto.NetworkBehaviour.Structure.Structure import *
 from Testing.Visualization.SORN_visualization import *
 
 
@@ -55,7 +55,7 @@ def run(tag, ind=[], par={'N_e':2000, 'TS':[1], 'ts_plastic':1000, 'ts_train':10
             30: SORN_finish(),
 
             #99: SynapseRecorder(['[np.sum(s.slow_add)]'], tag='ex_glu_syn_rec'),
-            #100: NeuronRecorder(['n.output'], tag='exc_out_rec')
+            #100: Recorder(['n.output'], tag='exc_out_rec')
         })
 
         i_ng = NeuronGroup(net=SORN, tag='inh_cell_{}'.format(lag), size=get_squared_dim(int(0.2 * (par['N_e']))), behaviour={
@@ -74,7 +74,7 @@ def run(tag, ind=[], par={'N_e':2000, 'TS':[1], 'ts_plastic':1000, 'ts_train':10
 
             30: SORN_finish(),
 
-            #100: NeuronRecorder(['n.output'], tag='inh_out_rec')
+            #100: Recorder(['n.output'], tag='inh_out_rec')
         })
 
         i_ng['structure', 0].stretch_to_equal_size(e_ng)
@@ -88,7 +88,7 @@ def run(tag, ind=[], par={'N_e':2000, 'TS':[1], 'ts_plastic':1000, 'ts_train':10
         if lag == 1:
             i_ng.add_behaviour(10, SORN_external_input(strength=1.0, pattern_groups=[source]))
             e_ng.add_behaviour(10, SORN_external_input(strength=1.0, pattern_groups=[source]))
-            #e_ng.add_behaviour(101, NeuronRecorder(['n.pattern_index'], tag='inp_rec'))
+            #e_ng.add_behaviour(101, Recorder(['n.pattern_index'], tag='inp_rec'))
         else:
             #forward synapses
             SynapseGroup(net=SORN, src=last_e_ng, dst=e_ng, tag='GLU,eeff')#.partition([10, 10], [4, 4])

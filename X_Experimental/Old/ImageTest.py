@@ -20,7 +20,7 @@ LGN_PC_Neurons = NeuronGroup(input_width * input_height, {0: NeuronDimension(inp
 
 print(LGN_PC_Neurons.size)
 
-#neu_rec = TRENNeuronRecorder(['output_activity_history[0]', 'input_activity_history[0]', 'activity'])#activity
+#neu_rec = TRENRecorder(['output_activity_history[0]', 'input_activity_history[0]', 'activity'])#activity
 
 behaviour = {
     0: NeuronDimension(input_width, input_height, 1),
