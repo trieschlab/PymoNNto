@@ -26,9 +26,7 @@ nav:
         - Homeostasis: Complex_Tutorial/Homeostasis.md
         - Normalization: Complex_Tutorial/Normlaization.md
         - STDP: Complex_Tutorial/STDP.md
-        - Complex Network: Complex_Tutorial/ComplexNetwork.md
-    - Behaviours:
-        -
+        - Complex Network: Complex_Tutorial/Complex.md
     - Classical Examples:
           - Brunel Hakim: Classical/Brunel_Hakim.md
           - Diesmann_Synfire: Classical/Diesmann_Synfire.md
