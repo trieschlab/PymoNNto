@@ -28,7 +28,7 @@ nav:
         - STDP: Complex_Tutorial/STDP.md
         - Complex Network: Complex_Tutorial/Complex.md
     - Classical Examples:
-          - Brunel Hakim<!--- Examples_Classical/Brunel_Hakim.py -->: Classical/Brunel_Hakim.md
+          - Brunel Hakim <!--- Examples_Classical/Brunel_Hakim.py -->: Classical/Brunel_Hakim.md
           - Diesmann_Synfire<!--- Examples_Classical/Diesmann_Synfire.py -->: Classical/Diesmann_Synfire.md
           - Hindmarsh Rose<!--- Examples_Classical/Hindmarsh_Rose.py -->: Classical/Hindmarsh_Rose.md
           - Hodgkin Huxley<!--- Examples_Classical/Hodgkin_Huxley.py -->: Classical/Hodgkin_Huxley.md
