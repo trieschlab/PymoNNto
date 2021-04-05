@@ -28,14 +28,14 @@ nav:
         - STDP: Complex_Tutorial/STDP.md
         - Complex Network: Complex_Tutorial/Complex.md
     - Classical Examples:
-          - Brunel Hakim: Classical/Brunel_Hakim.md?py=Examples_Classical/Brunel_Hakim.py
-          - Diesmann_Synfire: Classical/Diesmann_Synfire.md?py=Examples_Classical/Diesmann_Synfire.py
-          - Hindmarsh Rose: Classical/Hindmarsh_Rose.md?py=Examples_Classical/Hindmarsh_Rose.py
-          - Hodgkin Huxley: Classical/Hodgkin_Huxley.md?py=Examples_Classical/Hodgkin_Huxley.py
-          - Hopfield: Classical/Hopfield.md?py=Examples_Classical/Hopfield.py
-          - Izhikevich: Classical/Izhikevich.md?py=Examples_Classical/Izhikevich.py
-          - Leaky Integrate And Fire: Classical/LeakyIntegrateAndFire.md?py=Examples_Classical/LeakyIntegrateAndFire.py
-          - Wang Buzaki: Classical/Wang_Buzaki.md?py=Examples_Classical/Wang_Buzaki.py
+          - Brunel Hakim<!--- Examples_Classical/Brunel_Hakim.py -->: Classical/Brunel_Hakim.md
+          - Diesmann_Synfire<!--- Examples_Classical/Diesmann_Synfire.py -->: Classical/Diesmann_Synfire.md
+          - Hindmarsh Rose<!--- Examples_Classical/Hindmarsh_Rose.py -->: Classical/Hindmarsh_Rose.md
+          - Hodgkin Huxley<!--- Examples_Classical/Hodgkin_Huxley.py -->: Classical/Hodgkin_Huxley.md
+          - Hopfield<!--- Examples_Classical/Hopfield.py -->: Classical/Hopfield.md
+          - Izhikevich<!--- Examples_Classical/Izhikevich.py -->: Classical/Izhikevich.md
+          - Leaky Integrate And Fire<!--- Examples_Classical/LeakyIntegrateAndFire.py -->: Classical/LeakyIntegrateAndFire.md
+          - Wang Buzaki<!--- Examples_Classical/Wang_Buzaki.py -->: Classical/Wang_Buzaki.md
     - Experimental:
         - Differential Equation: Experimental/Differential_Equation.md
         - Tensorflow: Experimental/Tensorflow.md
