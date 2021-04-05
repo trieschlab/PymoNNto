@@ -24,18 +24,18 @@ nav:
         - User Interface: Basic_Tutorial/User_Interface.md
     - Complex Tutorial:
         - Homeostasis: Complex_Tutorial/Homeostasis.md
-        - Normalization: Complex_Tutorial/Normlaization.md
+        - Normalization: Complex_Tutorial/Normalization.md
         - STDP: Complex_Tutorial/STDP.md
         - Complex Network: Complex_Tutorial/Complex.md
     - Classical Examples:
-          - Brunel Hakim: Classical/Brunel_Hakim.md
-          - Diesmann_Synfire: Classical/Diesmann_Synfire.md
-          - Hindmarsh Rose: Classical/Hindmarsh_Rose.md
-          - Hodgkin Huxley: Classical/Hodgkin_Huxley.md
-          - Hopfield: Classical/Hopfield.md
-          - Izhikevich: Classical/Izhikevich.md
-          - Leaky Integrate And Fire: Classical/LeakyIntegrateAndFire.md
-          - Wang Buzaki: Classical/Wang_Buzaki.md
+          - Brunel Hakim: Classical/Brunel_Hakim.md                       <!--- Examples_Classical/Brunel_Hakim.py -->
+          - Diesmann_Synfire: Classical/Diesmann_Synfire.md               <!--- Examples_Classical/Diesmann_Synfire.py -->
+          - Hindmarsh Rose: Classical/Hindmarsh_Rose.md                   <!--- Examples_Classical/Hindmarsh_Rose.py -->
+          - Hodgkin Huxley: Classical/Hodgkin_Huxley.md                   <!--- Examples_Classical/Hodgkin_Huxley.py -->
+          - Hopfield: Classical/Hopfield.md                               <!--- Examples_Classical/Hopfield.py -->
+          - Izhikevich: Classical/Izhikevich.md                           <!--- Examples_Classical/Izhikevich.py -->
+          - Leaky Integrate And Fire: Classical/LeakyIntegrateAndFire.md  <!--- Examples_Classical/LeakyIntegrateAndFire.py -->
+          - Wang Buzaki: Classical/Wang_Buzaki.md                         <!--- Examples_Classical/Wang_Buzaki.py -->
     - Experimental:
         - Differential Equation: Experimental/Differential_Equation.md
         - Tensorflow: Experimental/Tensorflow.md
