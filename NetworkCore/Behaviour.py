@@ -16,6 +16,72 @@ class Behaviour(NetworkObjectBase):
         self.run_on_neuron_init_var = True
         return self
 
+    def diversity_string_to_vec2(self, ds, neurons):
+
+        if 'same(' in ds and ds[-1] == ')':
+            params=ds[5:-1].replace(' ', '').split(',')
+            if len(params) == 2:
+                #print('same', params)
+                return getattr(neurons[params[0], 0], params[1])
+
+        command = ds.split(';')
+        if (not '(' in ds and not ')' in ds) and not command[0].replace('.', '').replace('+', '').replace('-', '').isdigit():
+            return ds
+
+
+        if len(command) == 1:
+            if command[0].replace('.', '').replace('+', '').replace('-', '').isdigit():
+                result = float(command[0])
+
+            #else:
+            #    result = self.get_random_nparray((neurons.size), rnd_code=command[0])
+                #print(result, type(result))
+                return result
+
+        dist_cmd='uniform(low, high)'
+        if len(command) > 2 and not 'plot' in command[2]:# problem: , also in command
+            dist_cmd=command[2]
+
+            if 'smooth' in command[2]:
+                smoothing = float(command[2].replace('smooth', ''))
+                dist_cmd = 'np.sum([uniform(low, high, size=dim) for _ in range(smoothing)], axis=0)/smoothing'.replace('smoothing', str(smoothing))
+
+
+        if command[0].replace('.', '').replace('+', '').replace('-', '').isdigit():
+            min_v = float(command[0])
+            if '%' in command[1]:
+                max_v = min_v
+                if '-' in command[1]:
+                    min_v -= min_v / 100 * float(command[1].replace('+', '').replace('-', '').replace('%', ''))
+                if '+' in command[1]:
+                    max_v += max_v / 100 * float(command[1].replace('+', '').replace('-', '').replace('%', ''))
+            else:
+                max_v = float(command[1])
+
+            dist_cmd=dist_cmd.replace('low',str(min_v)).replace('high',str(max_v)).replace('min_v',str(min_v)).replace('max_v',str(max_v)).replace('min',str(min_v)).replace('max',str(max_v))
+        else:
+            dist_cmd=command[0]
+
+        if 'lognormal_real_mean' in command[0]:
+            parts = command[0].replace(')', '').replace(' ', '').split('(')
+            arguments = parts[1].split(',')
+            mean = float(arguments[0])
+            sigma = float(arguments[1])
+            mu = -np.power(sigma, 2) + np.log(mean)
+            dist_cmd = 'lognormal({}, {})'.format(mu, sigma)
+
+        result=self.get_random_nparray((neurons.size), rnd_code=dist_cmd)
+
+
+        if 'plot' in command[-1]:
+            import matplotlib.pyplot as plt
+            #print(result)
+            plt.hist(result, bins=30)
+            plt.show()
+
+
+        return result
+
     def diversity_string_to_vec(self, ds, neurons):
 
         if 'same(' in ds and ds[-1] == ')':

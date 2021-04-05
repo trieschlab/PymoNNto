@@ -1,4 +1,4 @@
-from NetworkBehaviour.Input.Images.PixelPattern import *
+from PymoNNto.NetworkBehaviour.Input.Images.PixelPattern import *
 
 class Line_Patterns(Pixel_Pattern):
 

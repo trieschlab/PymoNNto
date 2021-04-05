@@ -2,33 +2,29 @@ from PymoNNto import *
 import scipy as sp
 import matplotlib.pyplot as plt
 
+#multi compartment version of
 #https://hodgkin-huxley-tutorial.readthedocs.io/en/latest/_static/Hodgkin%20Huxley.html
-
-#def exp(x):
-#    return np.e**x
-
-#def exprel(x):
-#    return (exp(x) - 1)/x
+#with a simplified version of the cable theory to connect compartments
 
 class HH_main(Behaviour):
 
     def alpha_m(self, V):#Channel gating kinetics. Functions of membrane voltage
-        return 0.1*(V+40.0)/(1.0 - sp.exp(-(V+40.0) / 10.0))
+        return 0.1*(V+40.0)/(1.0 - np.exp(-(V+40.0) / 10.0))
 
     def beta_m(self, V): #Channel gating kinetics. Functions of membrane voltage
-        return 4.0*sp.exp(-(V+65.0) / 18.0)
+        return 4.0*np.exp(-(V+65.0) / 18.0)
 
     def alpha_h(self, V): #Channel gating kinetics. Functions of membrane voltage
-        return 0.07*sp.exp(-(V+65.0) / 20.0)
+        return 0.07*np.exp(-(V+65.0) / 20.0)
 
     def beta_h(self, V): #Channel gating kinetics. Functions of membrane voltage
-        return 1.0/(1.0 + sp.exp(-(V+35.0) / 10.0))
+        return 1.0/(1.0 + np.exp(-(V+35.0) / 10.0))
 
     def alpha_n(self, V): #Channel gating kinetics. Functions of membrane voltage
-        return 0.01*(V+55.0)/(1.0 - sp.exp(-(V+55.0) / 10.0))
+        return 0.01*(V+55.0)/(1.0 - np.exp(-(V+55.0) / 10.0))
 
     def beta_n(self, V): #Channel gating kinetics. Functions of membrane voltage
-        return 0.125*sp.exp(-(V+65) / 80.0)
+        return 0.125*np.exp(-(V+65) / 80.0)
 
     def I_Na(self, V, m, h): #Membrane current (in uA/cm^2) Sodium (Na = element name)
         return self.g_Na * m**3 * h * (V - self.E_Na)
@@ -44,6 +40,15 @@ class HH_main(Behaviour):
 
     def set_variables(self, n):
         self.set_init_attrs_as_variables(self)
+        #C_m = 1.0  # membrane capacitance, in uF/cm^2
+        #g_Na = 120.0  # Sodium (Na) maximum conductances, in mS/cm^2
+        #g_K = 36.0  # Postassium (K) maximum conductances, in mS/cm^2
+        #g_L = 0.3  # Leak maximum conductances, in mS/cm^2
+        #E_Na = 50.0  # Sodium (Na) Nernst reversal potentials, in mV
+        #E_K = -77.0  # Postassium (K) Nernst reversal potentials, in mV
+        #E_L = -54.387  # Leak Nernst reversal potentials, in mV
+
+        #b_r = 0.13 #Resistance between blocks in ohms between blocks
 
         self.dt = 0.01
 
@@ -53,33 +58,33 @@ class HH_main(Behaviour):
         n.n = np.array([n.get_neuron_vec()*self.n for i in range(self.blocks)])
         n.I = np.array([n.get_neuron_vec() for i in range(self.blocks)])
 
-        #C_m = 1.0  # membrane capacitance, in uF/cm^2
-        #g_Na = 120.0  # Sodium (Na) maximum conductances, in mS/cm^2
-        #g_K = 36.0  # Postassium (K) maximum conductances, in mS/cm^2
-        #g_L = 0.3  # Leak maximum conductances, in mS/cm^2
-        #E_Na = 50.0  # Sodium (Na) Nernst reversal potentials, in mV
-        #E_K = -77.0  # Postassium (K) Nernst reversal potentials, in mV
-        #E_L = -54.387  # Leak Nernst reversal potentials, in mV
+
 
 
     def new_iteration(self, neurons):
 
         v, h, m, n = neurons.v.copy(), neurons.h.copy(), neurons.m.copy(), neurons.n.copy()
 
-        r = 0.13
+        I = neurons.I*0
 
-        I=neurons.I*0
-
-        #external current first block on all neurons
+        #external current on first block of all neurons in group
         I[0, :] = self.I_inj(neurons.iteration)
-        #current form neighbouring blocks
-        for i in range(self.blocks-1):
-            #to next block
-            I[i + 1] += (-v[i]/r) * self.dt
 
-        #for i in range(self.blocks-1):
-        #    #to previous block
-        #    I[i] += (-v[i+1]/r) * self.dt
+
+        # Warning: this is a very simplified way to connect the compartments.
+        # The version is broadly based on the cable theory with a simple resistance between the compartments.
+        # It is NOT physically accurate and only there to demonstrate some form of spike propagation.
+        # Do not use this transition function for scientific research without further testing!
+
+        # current input to next block
+        for i in range(self.blocks-1):
+            I[i + 1] += ((v[i]-v[i+1])/self.b_r) * self.dt
+
+        # current input from previous block
+        for i in range(self.blocks-1):
+            I[i] += ((v[i + 1]-v[i])/self.b_r) * self.dt
+
+        ##############################################################
 
         neurons.v += ((I - self.I_Na(v, m, h) - self.I_K(v, n) - self.I_L(v)) / self.C_m) * self.dt
         neurons.m += (self.alpha_m(v)*(1.0-m) - self.beta_m(v)*m) * self.dt
@@ -91,7 +96,7 @@ class HH_main(Behaviour):
 My_Network = Network()
 
 N_e = NeuronGroup(net=My_Network, tag='excitatory_neurons', size=1, behaviour={
-    1: HH_main(blocks=20, v=-65, m=0.05, h=0.6, n=0.32, C_m=1.0, g_Na=120.0, g_K=36.0, g_L=0.3, E_Na=50.0, E_K=-77.0, E_L=-54.387),
+    1: HH_main(blocks=20, b_r=0.15, v=-65, m=0.05, h=0.6, n=0.32, C_m=1.0, g_Na=120.0, g_K=36.0, g_L=0.3, E_Na=50.0, E_K=-77.0, E_L=-54.387),
     9: Recorder(tag='my_recorder', variables=['n.v','n.m','n.h','n.n'])
 })
 
@@ -102,5 +107,11 @@ My_Network.initialize()
 My_Network.simulate_iterations(50000, measure_block_time=True)
 
 
-plt.imshow(My_Network['n.v', 0, 'np'][:, :, 0].transpose(),cmap='gray', aspect='auto', interpolation='none')
+data = My_Network['n.v', 0, 'np'][:, :, 0]#numpy array of first recorder \ only the forst neuron and all compartments
+
+for d in range(data.shape[1]):
+    plt.plot(data[:, d]-10*d)
+plt.show()
+
+plt.imshow(data.transpose(), cmap='gray', aspect='auto', interpolation='none')
 plt.show()

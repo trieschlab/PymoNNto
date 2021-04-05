@@ -1,4 +1,4 @@
-#from NetworkBehaviour.Logic.Images.Neuron_Homeostais import *
+#from PymoNNto.NetworkBehaviour.Logic.Images.Neuron_Homeostais import *
 from PymoNNto.NetworkBehaviour.Logic.Basics.BasicHomeostasis import *
 #import compiler
 import copy

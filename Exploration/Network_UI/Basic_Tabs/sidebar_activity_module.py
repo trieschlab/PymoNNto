@@ -17,9 +17,17 @@ class sidebar_activity_sub_module(TabBase):
             Network_UI.neuron_select_group = event.currentItem.neuron_group_tag
             w = Network_UI.network[Network_UI.neuron_select_group, 0].width
             h = Network_UI.network[Network_UI.neuron_select_group, 0].height
-            Network_UI.neuron_select_y = np.clip(int((h - 1) - np.trunc(event.pos().y())), 0, h - 1)
+            d = Network_UI.network[Network_UI.neuron_select_group, 0].depth
+            y_temp = int((h*d - 1) - np.trunc(event.pos().y())) #np.clip(int((h - 1) - np.trunc(event.pos().y())), 0, h - 1)
+
             Network_UI.neuron_select_x = np.clip(int(np.trunc(event.pos().x())), 0, w - 1)
-            Network_UI.neuron_select_id = Network_UI.neuron_select_y * w + Network_UI.neuron_select_x
+            Network_UI.neuron_select_y = np.clip(int(y_temp-np.trunc(y_temp/h)), 0, h - 1)
+            Network_UI.neuron_select_z = np.clip(int(np.trunc(y_temp/h)), 0, d - 1)
+
+            h_abs = np.clip(int(y_temp), 0, h * d - 1)
+            Network_UI.neuron_select_id = (h_abs) * w + Network_UI.neuron_select_x
+
+            print(Network_UI.neuron_select_x, Network_UI.neuron_select_y, Network_UI.neuron_select_z, Network_UI.neuron_select_id, ' ', event.pos().x(), event.pos().y())
             Network_UI.static_update_func()
 
         group_select_box=QComboBox()
@@ -88,7 +96,7 @@ class sidebar_activity_sub_module(TabBase):
                 except:
                     print(param, "can not be evaluated")
 
-            image=np.reshape(image, (group.height, group.width,3))
+            image=np.reshape(image, (group.height*group.depth, group.width, 3))#group.depth
             self.image_item.setImage(np.rot90(image, 3), levels=(0, 255))
 
 class UI_sidebar_activity_module():

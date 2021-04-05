@@ -1,5 +1,5 @@
-from NetworkBehaviour.Input.Activator import *
-from NetworkBehaviour.Logic.Basics.Normalization import *
+from PymoNNto.NetworkBehaviour.Input.Activator import *
+from PymoNNto.NetworkBehaviour.Logic.Basics.Normalization import *
 
 #import matplotlib.pyplot as plt
 

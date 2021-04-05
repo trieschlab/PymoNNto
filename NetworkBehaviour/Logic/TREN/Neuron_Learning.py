@@ -1,4 +1,4 @@
-from NetworkBehaviour.Logic.Basics.BasicHomeostasis import *
+from PymoNNto.NetworkBehaviour.Logic.Basics.BasicHomeostasis import *
 
 class STDP_base(Behaviour):
 

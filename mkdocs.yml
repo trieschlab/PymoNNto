@@ -18,22 +18,29 @@ nav:
     - Introduction:
         - PIP installation: Introduction/PIP_installation.md
         - Manual installation: Introduction/Manual_installation.md
-    - Tutorials:
-        - Basics: Tutorials/basics.md
-        - Synapses and Input: Tutorials/Synapses_and_Input.md
-        - User Interface: Tutorials/User_Interface.md
-    - Examples:
-        - Differential Equation: Examples/Differential_Equation.md
-        - Tensorflow: Examples/Tensorflow.md
+    - Basic Tutorial:
+        - Basics: Basic_Tutorial/basics.md
+        - Synapses and Input: Basic_Tutorial/Synapses_and_Input.md
+        - User Interface: Basic_Tutorial/User_Interface.md
+    - Complex Tutorial:
+        - Homeostasis: Complex_Tutorial/Homeostasis.md
+        - Normalization: Complex_Tutorial/Normlaization.md
+        - STDP: Complex_Tutorial/STDP.md
+        - Complex Network: Complex_Tutorial/ComplexNetwork.md
+    - Behaviours:
+        -
     - Classical Examples:
-          - Brunel Hakim: Classical_Examples/Brunel_Hakim.md
-          - Diesmann_Synfire: Classical_Examples/Diesmann_Synfire.md
-          - Hindmarsh Rose: Classical_Examples/Hindmarsh_Rose.md
-          - Hodgkin Huxley: Classical_Examples/Hodgkin_Huxley.md
-          - Hopfield: Classical_Examples/Hopfield.md
-          - Izhikevich: Classical_Examples/Izhikevich.md
-          - Leaky Integrate And Fire: Classical_Examples/LeakyIntegrateAndFire.md
-          - Wang Buzaki: Classical_Examples/Wang_Buzaki.md
+          - Brunel Hakim: Classical/Brunel_Hakim.md                       <!--- Examples_Classical/Brunel_Hakim.py -->
+          - Diesmann_Synfire: Classical/Diesmann_Synfire.md               <!--- Examples_Classical/Diesmann_Synfire.py -->
+          - Hindmarsh Rose: Classical/Hindmarsh_Rose.md                   <!--- Examples_Classical/Hindmarsh_Rose.py -->
+          - Hodgkin Huxley: Classical/Hodgkin_Huxley.md                   <!--- Examples_Classical/Hodgkin_Huxley.py -->
+          - Hopfield: Classical/Hopfield.md                               <!--- Examples_Classical/Hopfield.py -->
+          - Izhikevich: Classical/Izhikevich.md                           <!--- Examples_Classical/Izhikevich.py -->
+          - Leaky Integrate And Fire: Classical/LeakyIntegrateAndFire.md  <!--- Examples_Classical/LeakyIntegrateAndFire.py -->
+          - Wang Buzaki: Classical/Wang_Buzaki.md                         <!--- Examples_Classical/Wang_Buzaki.py -->
+    - Experimental:
+        - Differential Equation: Experimental/Differential_Equation.md
+        - Tensorflow: Experimental/Tensorflow.md
 
 plugins:
     - search

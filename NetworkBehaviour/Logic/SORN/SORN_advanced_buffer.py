@@ -303,7 +303,7 @@ class SORN_external_input(NeuronActivator):
         super().set_variables(neurons)
         self.strength = self.get_init_attr('strength', 1.0, neurons)
         neurons.input = np.zeros(neurons.size)
-        self.write_to = 'input'
+        self.write_to = self.get_init_attr('write_to', 'input', neurons)
         neurons.add_tag('text_input_group')
         #pre_syn = neurons.connected_NG_param_list('afferent_buffer_requirement', same_NG=True, search_behaviours=True)
         neurons.input_buffer = neurons.get_neuron_vec_buffer(neurons.timescale)#pre_syn[0][0]

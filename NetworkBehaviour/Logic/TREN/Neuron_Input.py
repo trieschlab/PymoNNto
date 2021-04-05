@@ -1,6 +1,6 @@
-from NetworkBehaviour.Logic.TREN.Helper.Functions_Helper import *
-from NetworkBehaviour.Input.Activator import *
-from NetworkBehaviour.Logic.Basics.Normalization import *
+from PymoNNto.NetworkBehaviour.Logic.TREN.Helper.Functions_Helper import *
+from PymoNNto.NetworkBehaviour.Input.Activator import *
+from PymoNNto.NetworkBehaviour.Logic.Basics.Normalization import *
 
 class TREN_external_input(NeuronActivator):
 

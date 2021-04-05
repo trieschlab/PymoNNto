@@ -1,4 +1,4 @@
-from NetworkCore.Behaviour import *
+from PymoNNto.NetworkCore.Behaviour import *
 import numpy as np
 
 import os

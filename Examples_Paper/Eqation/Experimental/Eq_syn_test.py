@@ -8,7 +8,7 @@ from PymoNNto.NetworkBehaviour.Logic.EulerEquationModules.Equation import *
 from matplotlib.pyplot import *
 from PymoNNto.NetworkBehaviour.Structure.Structure import *
 
-from Examples.Paper.Eqation.Experimental.event_based_processing import *
+from Examples_Paper.Eqation.Experimental.event_based_processing import *
 
 
 class my_beh1(Behaviour):

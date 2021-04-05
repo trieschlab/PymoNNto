@@ -27,6 +27,8 @@ def get_squared_dim(number_of_neurons, depth=1, round_up=True):
 
     w=divider
     h=int(number_of_neurons/divider)
+
+    print(w,h)
     return NeuronDimension(width=w, height=h, depth=depth)
 
 

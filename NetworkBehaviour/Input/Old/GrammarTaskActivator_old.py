@@ -1,6 +1,6 @@
 from collections import Counter
 
-from NetworkBehaviour.Input.Old.TextActivator_old import *
+from PymoNNto.NetworkBehaviour.Input.Old.TextActivator_old import *
 
 
 class FDTGrammarActivator(TextActivator_old):

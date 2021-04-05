@@ -1,4 +1,4 @@
-from NetworkBehaviour.Input.Pattern_Basics import *
+from PymoNNto.NetworkBehaviour.Input.Pattern_Basics import *
 
 class Noise_Pattern(PatternGroup):
 

@@ -1,5 +1,5 @@
-from NetworkBehaviour.Logic.Basics.BasicHomeostasis import *
-from NetworkBehaviour.Logic.Basics.Normalization import *
+from PymoNNto.NetworkBehaviour.Logic.Basics.BasicHomeostasis import *
+from PymoNNto.NetworkBehaviour.Logic.Basics.Normalization import *
 
 class HomeostaticMechanism(Behaviour):
 

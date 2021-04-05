@@ -1,8 +1,8 @@
-from NetworkBehaviour.Input.Pattern_Basics import *
-from NetworkBehaviour.Input.Images.Helper import *
+from PymoNNto.NetworkBehaviour.Input.Pattern_Basics import *
+from PymoNNto.NetworkBehaviour.Input.Images.Helper import *
 import hickle as hkl
 import os.path
-from NetworkBehaviour.Input.Images.PixelPattern import *
+from PymoNNto.NetworkBehaviour.Input.Images.PixelPattern import *
 
 mnist_folder = '../../../MNIST'
 mnist_preprocessed_patterns = mnist_folder+'/preprocessed_patterns.data'

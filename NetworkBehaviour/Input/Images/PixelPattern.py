@@ -1,6 +1,6 @@
-from NetworkBehaviour.Input.Images.Helper import *
-from NetworkCore.Base import *
-from NetworkBehaviour.Input.Pattern_Basics import *
+from PymoNNto.NetworkBehaviour.Input.Images.Helper import *
+from PymoNNto.NetworkCore.Base import *
+from PymoNNto.NetworkBehaviour.Input.Pattern_Basics import *
 
 class Pixel_Pattern(PatternGroup):
 
