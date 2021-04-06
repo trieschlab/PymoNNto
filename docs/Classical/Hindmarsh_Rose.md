@@ -10,7 +10,22 @@ The following code creates three neurons with different external input. All neur
 
 
 
-
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 ```python
 from PymoNNto import *
 
@@ -61,7 +76,16 @@ plt.plot(My_Network['n.x', 0, 'np'][:, 1])
 plt.show()
 plt.plot(My_Network['n.x', 0, 'np'][:, 2])
 plt.show()
-```
+```
+
+
+
+
+
+
+
+
+
 
 
 

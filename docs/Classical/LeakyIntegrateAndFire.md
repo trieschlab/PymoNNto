@@ -9,7 +9,22 @@ The neurons are simple leaky integrate and fire neurons which receive inhibitory
 
 
 
-
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 ```python
 from PymoNNto import *
 
@@ -84,7 +99,16 @@ plt.show()
 #from PymoNNto.Exploration.Network_UI import *
 #my_UI_modules = get_default_UI_modules(['fired', 'v', 'u'], ['W'])
 #Network_UI(My_Network, modules=my_UI_modules, label='My_Network_UI', group_display_count=2).show()
-```
+```
+
+
+
+
+
+
+
+
+
 
 
 

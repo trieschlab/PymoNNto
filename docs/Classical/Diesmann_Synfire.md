@@ -13,7 +13,22 @@ Every neuron in the group is updated with rules derived from "Diesmann et al 199
 
 
 
-
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 ```python
 from PymoNNto import *
 
@@ -89,7 +104,16 @@ plt.show()
 #from PymoNNto.Exploration.Network_UI import *
 #my_UI_modules = get_default_UI_modules(['spike', 'v'], ['W'])
 #Network_UI(My_Network, modules=my_UI_modules, label='My_Network_UI', group_display_count=10).show()
-```
+```
+
+
+
+
+
+
+
+
+
 
 
 

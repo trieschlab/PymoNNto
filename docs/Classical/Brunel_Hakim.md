@@ -2,13 +2,26 @@
 
 The following code creates a network of 5000 neurons with recurrent connections and simulates them for 1000 iterations. 
 
-...
 
 
 
 
 
-
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 ```python
 from PymoNNto import *
 import matplotlib.pyplot as plt
@@ -131,7 +144,16 @@ plt.show()
 #from PymoNNto.Exploration.Network_UI import *
 #my_UI_modules = get_default_UI_modules(['fired', 'v', 'u'], ['W'])
 #Network_UI(My_Network, modules=my_UI_modules, label='My_Network_UI', group_display_count=2).show()
-```
+```
+
+
+
+
+
+
+
+
+
 
 
 

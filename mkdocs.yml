@@ -27,15 +27,28 @@ nav:
         - Normalization: Complex_Tutorial/Normalization.md
         - STDP: Complex_Tutorial/STDP.md
         - Complex Network: Complex_Tutorial/Complex.md
+    - Behaviours:
+          - Default Homeostatic Mechanism <!--- Examples_Behaviour/Default_homeostatic_mechanism.py -->: Behaviours/Default_homeostatic_mechanism.md
+          - Image Input <!--- Examples_Behaviour/Image_Input.py -->: Behaviours/Image_Input.md
+          - Refractory Period <!--- Examples_Behaviour/Refractory_Period.py -->: Behaviours/Refractory_Period.md
+          - Simple Text Input <!--- Examples_Behaviour/Simple_Text_input.py -->: Behaviours/Simple_Text_input.md
+          - STDP Advanced <!--- Examples_Behaviour/STDP_Advanced.py -->: Behaviours/STDP_Advanced.md
+          - STDP Complex <!--- Examples_Behaviour/STDP_complex.py -->: Behaviours/STDP_complex.md
+          - STDP Simple <!--- Examples_Behaviour/STDP_simple.py -->: Behaviours/STDP_simple.md
+          - Synaptic Input <!--- Examples_Behaviour/Synaptic_Input.py -->: Behaviours/Synaptic_Input.md
+
+    - User Interface Tabs:
+          - OpenGLTab <!--- Examples_UI/OpenGLTab.py -->: UI/OpenGLTab.md
+
     - Classical Examples:
           - Brunel Hakim <!--- Examples_Classical/Brunel_Hakim.py -->: Classical/Brunel_Hakim.md
-          - Diesmann_Synfire<!--- Examples_Classical/Diesmann_Synfire.py -->: Classical/Diesmann_Synfire.md
-          - Hindmarsh Rose<!--- Examples_Classical/Hindmarsh_Rose.py -->: Classical/Hindmarsh_Rose.md
-          - Hodgkin Huxley<!--- Examples_Classical/Hodgkin_Huxley.py -->: Classical/Hodgkin_Huxley.md
-          - Hopfield<!--- Examples_Classical/Hopfield.py -->: Classical/Hopfield.md
-          - Izhikevich<!--- Examples_Classical/Izhikevich.py -->: Classical/Izhikevich.md
-          - Leaky Integrate And Fire<!--- Examples_Classical/LeakyIntegrateAndFire.py -->: Classical/LeakyIntegrateAndFire.md
-          - Wang Buzaki<!--- Examples_Classical/Wang_Buzaki.py -->: Classical/Wang_Buzaki.md
+          - Diesmann_Synfire <!--- Examples_Classical/Diesmann_Synfire.py -->: Classical/Diesmann_Synfire.md
+          - Hindmarsh Rose <!--- Examples_Classical/Hindmarsh_Rose.py -->: Classical/Hindmarsh_Rose.md
+          - Hodgkin Huxley <!--- Examples_Classical/Hodgkin_Huxley.py -->: Classical/Hodgkin_Huxley.md
+          - Hopfield <!--- Examples_Classical/Hopfield.py -->: Classical/Hopfield.md
+          - Izhikevich <!--- Examples_Classical/Izhikevich.py -->: Classical/Izhikevich.md
+          - Leaky Integrate And Fire <!--- Examples_Classical/LeakyIntegrateAndFire.py -->: Classical/LeakyIntegrateAndFire.md
+          - Wang Buzaki <!--- Examples_Classical/Wang_Buzaki.py -->: Classical/Wang_Buzaki.md
     - Experimental:
         - Differential Equation: Experimental/Differential_Equation.md
         - Tensorflow: Experimental/Tensorflow.md

@@ -10,7 +10,22 @@ The neurons have different parameters and are updated with rules derived form th
 
 
 
-
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 ```python
 from PymoNNto import *
 
@@ -96,7 +111,16 @@ plt.show()
 #from PymoNNto.Exploration.Network_UI import *
 #my_UI_modules = get_default_UI_modules(['fired', 'v', 'u'], ['W'])
 #Network_UI(My_Network, modules=my_UI_modules, label='My_Network_UI', group_display_count=2).show()
-```
+```
+
+
+
+
+
+
+
+
+
 
 
 

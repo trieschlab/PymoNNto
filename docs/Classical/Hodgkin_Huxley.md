@@ -8,7 +8,22 @@ The following code creates a Neuron with multiple Hodgkin Huxley segments. Over 
 
 
 
-
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 ```python
 from PymoNNto import *
 import scipy as sp
@@ -128,7 +143,16 @@ plt.show()
 plt.imshow(data.transpose(), cmap='gray', aspect='auto', interpolation='none')
 plt.show()
 
-```
+```
+
+
+
+
+
+
+
+
+
 
 
 

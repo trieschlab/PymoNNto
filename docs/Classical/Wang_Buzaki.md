@@ -10,7 +10,22 @@ The following code creates a neuron which is updated with ruled derived from the
 
 
 
-
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 ```python
 from PymoNNto import *
 
@@ -73,7 +88,16 @@ import matplotlib.pyplot as plt
 
 plt.plot(My_Network['n.v', 0, 'np'][:, 0])
 plt.show()
-```
+```
+
+
+
+
+
+
+
+
+
 
 
 

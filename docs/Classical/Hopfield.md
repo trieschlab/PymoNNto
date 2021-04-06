@@ -12,7 +12,22 @@ Note, that the images do overlapp, which makes it quite hard for the network to 
 
 
 
-
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 ```python
 from PymoNNto import *
 
@@ -165,7 +180,16 @@ My_Network.initialize()
 from PymoNNto.Exploration.Network_UI import *
 my_UI_modules = get_default_UI_modules(['v','energy'], ['W'])
 Network_UI(My_Network, modules=my_UI_modules, label='My_Network_UI', group_display_count=1).show()
-```
+```
+
+
+
+
+
+
+
+
+
 
 
 
