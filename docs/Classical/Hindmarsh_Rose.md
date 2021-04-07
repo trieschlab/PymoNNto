@@ -2,30 +2,6 @@
 
 The following code creates three neurons with different external input. All neurons are independent and updated with rules derived from "Hindmarsh Rose 1984".
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 ```python
 from PymoNNto import *
 

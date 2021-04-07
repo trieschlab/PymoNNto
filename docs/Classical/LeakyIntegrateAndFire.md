@@ -3,28 +3,6 @@
 The following code creates a network with 800 excitatory neurons, 200 inhibitory neurons and all the connections between them.
 The neurons are simple leaky integrate and fire neurons which receive inhibitory and excitatory input.
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 ```python
 from PymoNNto import *
 

@@ -8,18 +8,18 @@ class sidebar_drumbeat_module(TabBase):
         if hasattr(neuron_group, 'pattern_index'):
             Network_UI.add_recording_variable(neuron_group, 'n.pattern_index', timesteps=100)
 
-    def initialize(self, SORN_UI):
-        if len(SORN_UI.network['drum_act'])>0:
+    def initialize(self, Network_UI):
+        if len(Network_UI.network['drum_act'])>0:
 
             self.readout = None
 
             def learning_on_off(event):
-                SORN_UI.network.set_mechanisms(['STDP'], self.stdp_cb.isChecked())
+                Network_UI.network.set_mechanisms(['STDP'], self.stdp_cb.isChecked())
 
-            network = SORN_UI.network
+            network = Network_UI.network
             source = network['drum_act', 0]
 
-            p = SORN_UI.Add_plot(sidebar=True, title='Input')#,axisItems={'left': stringaxis})
+            p = Network_UI.Add_plot(sidebar=True, title='Input')#,axisItems={'left': stringaxis})
 
             self.scatter = pg.ScatterPlotItem()
             p.showGrid(y=True)
@@ -31,10 +31,10 @@ class sidebar_drumbeat_module(TabBase):
             p.setXRange(-1,self.n_notes_shown+1)
 
 
-    def update(self, SORN_UI):
-        if len(SORN_UI.network['drum_act'])>0:
+    def update(self, Network_UI):
+        if len(Network_UI.network['drum_act'])>0:
 
-            network = SORN_UI.network
+            network = Network_UI.network
             source = network['drum_act', 0]
             curr_output = np.array(network['n.pattern_index', 0][-self.n_notes_shown:])
 

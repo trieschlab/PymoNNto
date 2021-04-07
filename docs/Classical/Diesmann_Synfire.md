@@ -5,30 +5,6 @@ The groups have feed forward connections and receive external and internal noise
 Every neuron in the group is updated with rules derived from "Diesmann et al 1999".
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 ```python
 from PymoNNto import *
 

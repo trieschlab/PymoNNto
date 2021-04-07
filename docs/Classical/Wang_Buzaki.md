@@ -2,30 +2,6 @@
 
 The following code creates a neuron which is updated with ruled derived from the "Wang Buzaki 1996" paper.
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 ```python
 from PymoNNto import *
 

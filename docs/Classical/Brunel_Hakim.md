@@ -2,26 +2,6 @@
 
 The following code creates a network of 5000 neurons with recurrent connections and simulates them for 1000 iterations. 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 ```python
 from PymoNNto import *
 import matplotlib.pyplot as plt

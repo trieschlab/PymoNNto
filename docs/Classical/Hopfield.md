@@ -5,29 +5,6 @@ The network switches from trianing to inference mode and back automatically ever
 Note, that the images do overlapp, which makes it quite hard for the network to differentiate them during the inference phase.
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 ```python
 from PymoNNto import *
 

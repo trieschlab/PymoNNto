@@ -3,27 +3,6 @@
 The following code creates a Neuron with multiple Hodgkin Huxley segments. Over time the input current of the first compartment changes, which creates different spike patterns flowing through the segments.
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 ```python
 from PymoNNto import *
 import scipy as sp

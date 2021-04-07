@@ -88,5 +88,5 @@ class sidebar_fast_forward_module(TabBase):
         # self.Add_Sidebar_Element(self.ff_btn)
         h_layout.addWidget(self.ff_btn)
 
-    def update(self, SORN_UI):
+    def update(self, Network_UI):
         return

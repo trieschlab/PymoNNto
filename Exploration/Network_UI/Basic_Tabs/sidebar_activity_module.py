@@ -109,16 +109,16 @@ class UI_sidebar_activity_module():
         for module in self.sub_modules:
             module.add_recorder_variables(neuron_group, Network_UI)
 
-    def initialize(self, SORN_UI):
+    def initialize(self, Network_UI):
 
-        if SORN_UI.group_display_count is not None:
-            self.group_display_count=SORN_UI.group_display_count
+        if Network_UI.group_display_count is not None:
+            self.group_display_count=Network_UI.group_display_count
 
         self.sub_modules = []
         for i in range(self.group_display_count):
             self.sub_modules.append(sidebar_activity_sub_module(add_color_dict=self.add_color_dict))
-            self.sub_modules[-1].initialize(SORN_UI, np.minimum(i, len(SORN_UI.group_tags)))
+            self.sub_modules[-1].initialize(Network_UI, np.minimum(i, len(Network_UI.group_tags)))
 
-    def update(self, SORN_UI):
+    def update(self, Network_UI):
         for module in self.sub_modules:
-            module.update(SORN_UI)
+            module.update(Network_UI)

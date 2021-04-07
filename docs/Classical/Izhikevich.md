@@ -4,28 +4,6 @@ The following code creates a network with 800 excitatory neurons, 200 inhibitory
 The neurons have different parameters and are updated with rules derived form the original Izhikevich paper.
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 ```python
 from PymoNNto import *
 
