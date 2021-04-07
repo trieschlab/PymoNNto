@@ -1,0 +1,1 @@
+![User interface example](https://raw.githubusercontent.com/trieschlab/PymoNNto/Images/Char_Activation_Tab.png)

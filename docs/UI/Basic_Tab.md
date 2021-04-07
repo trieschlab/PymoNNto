@@ -1,4 +1,7 @@
-```python
+![User interface example](https://raw.githubusercontent.com/trieschlab/PymoNNto/Images/Basic_Tab.png)
+
+```python
+
 from PymoNNto.Exploration.Network_UI.TabBase import *
 
 class MyUITab(TabBase):
@@ -22,5 +25,6 @@ class MyUITab(TabBase):
 
         #...
 #ui_modules = [MyUITab()] + get_default_UI_modules()
-#Network_UI(my_network, modules=ui_modules, ...).show()
+#Network_UI(my_network, modules=ui_modules, ...).show()
+
 ```

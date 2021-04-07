@@ -1,4 +1,7 @@
-```python
+![User interface example](https://raw.githubusercontent.com/trieschlab/PymoNNto/Images/OpenGLTab.png)
+
+```python
+
 from PymoNNto.Exploration.Network_UI.TabBase import *
 import pyqtgraph.opengl as gl
 
@@ -62,5 +65,6 @@ class OpenGLTab(TabBase):
 
 #from Exploration.Network_UI.Advanced_Tabs.OpenGLTab import *
 #+ [OpenGLTab()]
-
+
+
 ```

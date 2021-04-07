@@ -18,7 +18,7 @@ nav:
     - Introduction:
         - PIP installation: Introduction/PIP_installation.md
         - Manual installation: Introduction/Manual_installation.md
-          -
+
     - Basic Tutorial:
         - Basics: Basic_Tutorial/basics.md
         - Synapses and Input: Basic_Tutorial/Synapses_and_Input.md
@@ -30,49 +30,50 @@ nav:
         - Normalization <!--- Examples_Paper/STDP_Hom_Norm/Normalization.py -->: Complex_Tutorial/Normalization.md
         - STDP <!--- Examples_Paper/STDP_Hom_Norm/STDP.py -->: Complex_Tutorial/STDP.md
         - Complex Network <!--- Examples_Paper/STDP_Hom_Norm/Complex.py -->: Complex_Tutorial/Complex.md
-          -
-    - Behaviours:
-          - Homeostasis: Complex_Tutorial/Homeostasis.md
-          - Normalization: Complex_Tutorial/Normalization.md
-          - STDP: Complex_Tutorial/STDP.md
 
-          - Default Homeostatic Mechanism <!--- Examples_Behaviour/Default_homeostatic_mechanism.py -->: Behaviours/Default_homeostatic_mechanism.md
-          - Image Input <!--- Examples_Behaviour/Image_Input.py -->: Behaviours/Image_Input.md
-          - Refractory Period <!--- Examples_Behaviour/Refractory_Period.py -->: Behaviours/Refractory_Period.md
-          - Simple Text Input <!--- Examples_Behaviour/Simple_Text_input.py -->: Behaviours/Simple_Text_input.md
-          - STDP Advanced <!--- Examples_Behaviour/STDP_Advanced.py -->: Behaviours/STDP_Advanced.md
-          - Synaptic Input <!--- Examples_Behaviour/Synaptic_Input.py -->: Behaviours/Synaptic_Input.md
+    - Behaviours:
+        - Homeostasis: Complex_Tutorial/Homeostasis.md
+        - Normalization: Complex_Tutorial/Normalization.md
+        - STDP: Complex_Tutorial/STDP.md
+
+        - Default Homeostatic Mechanism <!--- Examples_Behaviour/Default_homeostatic_mechanism.py -->: Behaviours/Default_homeostatic_mechanism.md
+        - Image Input <!--- Examples_Behaviour/Image_Input.py -->: Behaviours/Image_Input.md
+        - Refractory Period <!--- Examples_Behaviour/Refractory_Period.py -->: Behaviours/Refractory_Period.md
+        - Simple Text Input <!--- Examples_Behaviour/Simple_Text_input.py -->: Behaviours/Simple_Text_input.md
+        - STDP Advanced <!--- Examples_Behaviour/STDP_Advanced.py -->: Behaviours/STDP_Advanced.md
+        - Synaptic Input <!--- Examples_Behaviour/Synaptic_Input.py -->: Behaviours/Synaptic_Input.md
 
     - User Interface Tabs:
-          - User Interface <!--- Examples_Paper/Basic/Basic_Tab.py -->: UI/Basic_Tab.md
-          - OpenGL Tab <!--- Examples_UI/OpenGLTab.py -->: UI/OpenGLTab.md
+        - User Interface <!--- Examples_Paper/Basic/Basic_Tab.py -->: UI/Basic_Tab.md
+        - OpenGL Tab <!--- Examples_UI/OpenGLTab.py -->: UI/OpenGLTab.md
 
-          - Fourier Tab: UI/Fourier_Tab.md
-          - PCA Tab: UI/PCA_Tab.md
-          - Partition_Tab: UI/Partition_Tab.md
-          - Spiketrain Tab: UI/Spiketrain_Tab.md
-          - Weight Tab: UI/Weight_Tab.md
-          - Stability Tab: UI/Stability_Tab.md
-          - Single Group Tab: UI/Single_Group_Tab.md
-          - Multi Group Tab: UI/Multi_Group_Tab.md
-          - Info Tab: UI/Info_Tab.md
-          - Sidebar Activity: UI/Sidebar_Activity.md
-          - Sidebar Controll: UI/Sidebar_Controll.md
+        - Fourier Tab: UI/Fourier_Tab.md
+        - PCA Tab: UI/PCA_Tab.md
+        - Partition_Tab: UI/Partition_Tab.md
+        - Spiketrain Tab: UI/Spiketrain_Tab.md
+        - Weight Tab: UI/Weight_Tab.md
+        - Weight Distribution Tab: UI/Weight_Distribution_Tab.md
+        - Stability Tab: UI/Stability_Tab.md
+        - Single Group Tab: UI/Single_Group_Tab.md
+        - Multi Group Tab: UI/Multi_Group_Tab.md
+        - Info Tab: UI/Info_Tab.md
+        - Sidebar Activity: UI/Sidebar_Activity.md
+        - Sidebar Controll: UI/Sidebar_Controll.md
 
-          - Sun Gravity Plot Tab: UI/Sun_Gravity_Plot_Tab.md
-          - Char Activation Tab: UI/Char_Activation_Tab.md
-          - Reconstruction Tab: UI/Reconstruction_Tab.md
+        - Sun Gravity Plot Tab: UI/Sun_Gravity_Plot_Tab.md
+        - Char Activation Tab: UI/Char_Activation_Tab.md
+        - Reconstruction Tab: UI/Reconstruction_Tab.md
 
     - Classical Examples:
-          - Brunel Hakim <!--- Examples_Classical/Brunel_Hakim.py -->: Classical/Brunel_Hakim.md
-          - Diesmann_Synfire <!--- Examples_Classical/Diesmann_Synfire.py -->: Classical/Diesmann_Synfire.md
-          - Hindmarsh Rose <!--- Examples_Classical/Hindmarsh_Rose.py -->: Classical/Hindmarsh_Rose.md
-          - Hodgkin Huxley <!--- Examples_Classical/Hodgkin_Huxley.py -->: Classical/Hodgkin_Huxley.md
-          - Hopfield <!--- Examples_Classical/Hopfield.py -->: Classical/Hopfield.md
-          - Izhikevich <!--- Examples_Classical/Izhikevich.py -->: Classical/Izhikevich.md
-          - Leaky Integrate And Fire <!--- Examples_Classical/LeakyIntegrateAndFire.py -->: Classical/LeakyIntegrateAndFire.md
-          - Wang Buzaki <!--- Examples_Classical/Wang_Buzaki.py -->: Classical/Wang_Buzaki.md
-            -
+        - Brunel Hakim <!--- Examples_Classical/Brunel_Hakim.py -->: Classical/Brunel_Hakim.md
+        - Diesmann_Synfire <!--- Examples_Classical/Diesmann_Synfire.py -->: Classical/Diesmann_Synfire.md
+        - Hindmarsh Rose <!--- Examples_Classical/Hindmarsh_Rose.py -->: Classical/Hindmarsh_Rose.md
+        - Hodgkin Huxley <!--- Examples_Classical/Hodgkin_Huxley.py -->: Classical/Hodgkin_Huxley.md
+        - Hopfield <!--- Examples_Classical/Hopfield.py -->: Classical/Hopfield.md
+        - Izhikevich <!--- Examples_Classical/Izhikevich.py -->: Classical/Izhikevich.md
+        - Leaky Integrate And Fire <!--- Examples_Classical/LeakyIntegrateAndFire.py -->: Classical/LeakyIntegrateAndFire.md
+        - Wang Buzaki <!--- Examples_Classical/Wang_Buzaki.py -->: Classical/Wang_Buzaki.md
+
     - Experimental:
         - Differential Equation: Experimental/Differential_Equation.md
         - Tensorflow: Experimental/Tensorflow.md
