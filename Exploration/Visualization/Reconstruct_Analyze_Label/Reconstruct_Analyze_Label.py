@@ -204,7 +204,7 @@ class Reconstruct_Analyze_Label_Network():
                     match = False
             if match:
                 result += 1
-                if len(substring)>1:#exclude single characters
+                if len(substring)>1:#exclude default characters
                     text.append(string[s - 5:s + len(substring) + 5])
         #print(set(text))
         return result, np.unique(text)#list(set(text))

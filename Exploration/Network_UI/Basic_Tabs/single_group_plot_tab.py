@@ -3,7 +3,7 @@ import random
 
 class single_group_plot_tab(TabBase):
 
-    def __init__(self, variables={'output', 'excitation', 'inhibition', 'input_act', 'TH'}, title='single group', timesteps=500):
+    def __init__(self, variables={'output', 'excitation', 'inhibition', 'input_act', 'TH'}, title='default group', timesteps=500):
         super().__init__(title)
         self.variables = {}
         for i, v in enumerate(variables):

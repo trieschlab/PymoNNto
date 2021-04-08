@@ -1,3 +1,7 @@
+#Basic Tab
+
+Here we see the source code of a very minimalistic tab which is able to display two plots which show the mean voltage of the NeuronGroup and the voltage of the selected neuron over time.
+
 ![User interface example](https://raw.githubusercontent.com/trieschlab/PymoNNto/Images/Basic_Tab.png)
 
 ```python

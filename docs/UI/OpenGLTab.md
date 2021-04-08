@@ -1,3 +1,8 @@
+#OpenGL Tab Example
+PyQt and the pyplot modules can also be used to render 3D content with OpenGL.
+Here we see the source code of a simple tab, which displays the neuron grids on the left with some noise for the vertical position.
+The code creates a GLViewWidget with multiple GLBarGraphItems for each neuron. the color is then updated with bar.setColor()
+
 ![User interface example](https://raw.githubusercontent.com/trieschlab/PymoNNto/Images/OpenGLTab.png)
 
 ```python

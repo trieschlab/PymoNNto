@@ -169,7 +169,7 @@ def func(x, a, b, string=False):
 # Returns: dict with information from MR estimation
 #
 # Possible data formats (will be expanded in the future):
-# 1) single time series as numpy.array
+# 1) default time series as numpy.array
 # 2) multiple time series as list [numpy.array, numpy.array, ...]
 # 3) path to a .npy file with time series
 # 4) list of paths to multiple .npy files with time series
