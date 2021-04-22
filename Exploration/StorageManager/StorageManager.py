@@ -103,8 +103,7 @@ class StorageManager:
             new = True
 
         self.config_file_name = 'config.ini'
-        self.config = ConfigParser()
-        self.config.read(self.absolute_path+self.config_file_name)
+        self.config=None
 
         self.frame_counter = {}
 
@@ -112,6 +111,11 @@ class StorageManager:
             if print_msg:
                 print(self.absolute_path)
             self.save_param('time', time.time())
+
+    def init_config(self):
+        if self.config is None:
+            self.config = ConfigParser()
+            self.config.read(self.absolute_path + self.config_file_name)
 
     def save_recorder(self, tag, recorder, keys=[]):
         if type(keys) is str:
@@ -139,6 +143,7 @@ class StorageManager:
             self.save_param(key, d[key], section)
 
     def save_param(self, key, value, section='Parameters'):
+        self.init_config()
         if not self.config.has_section(section):
             self.config.add_section(section)
         self.config.set(section, key, str(value))
@@ -181,6 +186,7 @@ class StorageManager:
             self.frame_counter[key] = 0
 
     def load_param(self, key, section='Parameters', default=None, return_string=False):#casting!!!
+        self.init_config()
         try:
             s = self.config.get(section, key)
         except:
@@ -221,8 +227,7 @@ class SimpleStorageManager(StorageManager):
         self.absolute_path = folder
 
         self.config_file_name = 'config.ini'
-        self.config = ConfigParser()
-        self.config.read(self.absolute_path+self.config_file_name)
+        self.config = None
 
         self.frame_counter = {}
 
@@ -246,12 +251,12 @@ class StorageManagerGroup:
             if os.path.isdir(self.absolute_path+folder) and Tag in folder:
                 self.StorageManagerList.append(StorageManager(Tag, folder, add_new_when_exists=False, data_folder=data_folder))
 
-                app = folder.split('_')[1:]
-                if len(app) > 1:
-                    self.StorageManagerList[-1].save_param('appendix', app[1])
+                #app = folder.split('_')[1:]
+                #if len(app) > 1:
+                #    self.StorageManagerList[-1].save_param('appendix', app[1])
 
-                self.StorageManagerList[-1].save_param('folder_number', ct)
-                ct += 1
+                #self.StorageManagerList[-1].save_param('folder_number', ct)
+                #ct += 1
 
     def sort_by(self, param, section='Parameters'):
         self.StorageManagerList = sorted(self.StorageManagerList, key=lambda sm: sm.load_param(param, section, default=-np.inf))

@@ -15,10 +15,19 @@ class Default_Breed_And_Select:
         if len(self.parent.non_scored_individuals) == 0 and len(self.parent.running_individuals) == 0:
 
             survivours = self.natural_selection(self.parent.scored_individuals)
+
+            for s in survivours:# improve breed chance for older individuals (avoid high risk, high reward population)
+                bc = 1
+                if 'mate_chance' in s:
+                    bc = s['mate_chance']
+                s['mate_chance'] = (bc+s['score'])/2
+
             new_population = self.breed(survivours)
 
             for p in new_population:#remove scores
-                p.pop('score')
+                if 'score' in p:
+                    p.pop('score')
+            #optional: do not re-score individuals => put old individuals in "scored"
 
             print('new gen breeding... survivours', survivours)
 
@@ -68,12 +77,15 @@ class Default_Breed_And_Select:
             genome = {}
 
             for key in ind1.keys():
-                if key in ind2:
-                    g1 = np.random.normal(ind1[key], np.clip(ind1[key] * self.mutation, 0, None))
-                    g2 = np.random.normal(ind2[key], np.clip(ind2[key] * self.mutation, 0, None))
-                    genome[key] = random.choice([g1, g2])
-                else:
-                    print('not the same genes', ind1, ind2)
+                if key != 'mate_chance' and key != 'score':
+                    if key in ind2:
+                        g1 = np.random.normal(ind1[key], np.clip(ind1[key] * self.mutation, 0, None))
+                        g2 = np.random.normal(ind2[key], np.clip(ind2[key] * self.mutation, 0, None))
+                        genome[key] = random.choice([g1, g2])
+                    else:
+                        print('not the same genes', ind1, ind2)
+
+                genome['mate_chance'] = 1.0
 
         return genome
 
@@ -88,8 +100,8 @@ class Default_Breed_And_Select:
 
         weights = np.ones(len(individuals))
         for i, ind in enumerate(individuals):
-            if 'breed_chance' in ind:
-                weights[i] = ind['breed_chance']
+            if 'mate_chance' in ind:
+                weights[i] = ind['mate_chance']
 
         weights = weights / np.sum(weights)
 

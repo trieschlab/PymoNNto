@@ -1,7 +1,4 @@
 from PymoNNto.Exploration.Evolution.Interface_Functions import *
-import time
-
-#print(sys.argv)
 
 #print('genes: ', get_genome())
 #print('gene a: ', get_gene('a', None))

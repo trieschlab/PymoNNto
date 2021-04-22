@@ -1,4 +1,4 @@
-from Exploration.UI_Base import *
+from PymoNNto.Exploration.UI_Base import *
 from PymoNNto.Exploration.StorageManager.StorageManager import *
 from PymoNNto.Exploration.Evolution.EvolutionPlots import *
 

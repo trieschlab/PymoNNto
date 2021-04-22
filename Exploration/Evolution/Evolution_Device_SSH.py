@@ -1,6 +1,6 @@
 from PymoNNto.Exploration.Evolution.Evolution_Device_Multi_Thread import *
 import sys
-from Exploration.Evolution.SSH_Functions import *
+from PymoNNto.Exploration.Evolution.SSH_Functions import *
 
 def ssh_thread_worker(slave_file, name, user, host, password, root_folder, conn):
     print('ssh thread started')
@@ -10,13 +10,10 @@ def ssh_thread_worker(slave_file, name, user, host, password, root_folder, conn)
             genome = conn.recv()
             try:
                 ssh = get_ssh_connection(host, user, password)
-
                 cmd = 'cd ' + name + '/' +root_folder+ '; '
                 cmd += 'python3 ' + slave_file + ' genome=' + get_gene_id(genome)
                 ssh_stdin, ssh_stdout, ssh_stderr = ssh.exec_command(cmd)
-
                 results = get_response(ssh_stdout, ssh_stderr)
-
                 ssh.close()
 
                 success = False

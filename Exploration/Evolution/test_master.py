@@ -12,9 +12,9 @@ if __name__ == '__main__':
                     inactive_genome_info={'info': 'my_info'},
                     start_genomes=[genome],
                     devices={'single_thread': 0,
-                             'multi_thread': 0,
+                             'multi_thread': 4,
                              'ssh vieth@poppy.fias.uni-frankfurt.de': 0,
-                             'ssh marius@hey3kmuagjunsk2b.myfritz.net': 4,
+                             'ssh marius@hey3kmuagjunsk2b.myfritz.net': 0,
                              }
                     )
 

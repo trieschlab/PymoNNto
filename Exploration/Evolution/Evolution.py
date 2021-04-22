@@ -7,6 +7,7 @@ from PymoNNto.Exploration.Evolution.UI_Single_Evolution_Monitor import *
 import os.path
 import time
 
+
 class Evolution:
 
     def __init__(self, name, slave_file, individual_count=10, mutation=0.4, death_rate=0.5, devices={'single_thread':1}, constraints=[], start_genomes=[], inactive_genome_info={}):
@@ -53,7 +54,7 @@ class Evolution:
         for device_string, number_of_threads in devices.items():
             self.add_devices(device_string, number_of_threads)
 
-        if '/' in name or '.' in name or '\\' in name or name in ['Documents', 'Pictures', 'Music', 'Public', 'Videos', 'Dokumente', 'Bilder', 'Musik', 'Downloads', 'Öffetnlich']:
+        if is_invalid_evo_name(name):
             print('Error: For savety reasons some names and characters are forbidden to avoid the accidental removal of files or folders')
             self.devices = {}
 

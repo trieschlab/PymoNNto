@@ -2,6 +2,10 @@ from PymoNNto.Exploration.StorageManager.StorageManager import *
 import paramiko
 from scp import SCPClient
 
+def is_invalid_evo_name(name):
+    return '/' in name or '.' in name or ' ' in name or '   ' in name or '\\' in name or name in ['Documents', 'Pictures', 'Music', 'Public', 'Videos', 'Dokumente', 'Bilder', 'Musik', 'Downloads', 'Öffetnlich']
+
+
 def get_ssh_connection(host, user, password):
     ssh = paramiko.SSHClient()
     ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
@@ -40,7 +44,7 @@ def split_ssh_user_host_password_string(user_host_pw_str):
 def zip_project(Main_Folder, zip_file_path):
     zipDir(Main_Folder, zip_file_path, ['.git', '.zip', '.idea', '\\Evolution_Project_Clones\\', '\\StorageManager\\', '\\NetworkStates\\', '\\Evo\\', '\\__pycache__\\', '\\midis\\'])
 
-def get_epc_folder():
+def get_epc_folder(create=True):
     Data_Folder = get_data_folder()
     if Data_Folder != './Data':
         epc_folder = Data_Folder + '/Evolution_Project_Clones'
@@ -94,7 +98,7 @@ def transfer_project(name, user, host, password=None):
         cmd += 'unzip ' + name + '.zip -d ' + name + '; '  # unzip
         cmd += 'rm ' + name + '.zip'  # remove zip
         ssh_stdin, ssh_stdout, ssh_stderr = ssh.exec_command(cmd)
-        ssh_stdout.channel.recv_exit_status()
+        print(get_response(ssh_stdout, ssh_stderr))
 
         scp.close()
         ssh.close()
@@ -106,34 +110,36 @@ def get_Data(name, user, host, password):
     Data_Folder = get_data_folder()
     if Data_Folder != './Data':
 
-        src_path = name + '/'
-        src = src_path + 'Data.zip'
+        src = name + '/Data.zip'
         dst_path = get_epc_folder()+'/'+name+'/' #test.zip
         dst = dst_path + 'Data.zip'
+
+        print(src,dst_path,dst)
 
         ssh = get_ssh_connection(host, user, password)
 
         # zip project
-        cmd = 'cd ' + src_path + '/; '
-        cmd += 'zip -r Data.zip Data/; '
+        cmd = 'cd ' + name + ' ; '
+        cmd += 'zip -r Data.zip Data ;'
         ssh_stdin, ssh_stdout, ssh_stderr = ssh.exec_command(cmd)
+        print(get_response(ssh_stdout, ssh_stderr))
 
         # transfer
-        #print('Transfer zip to', host)
-
+        print('Transfer zip from', host)
         scp = SCPClient(ssh.get_transport())
-        scp.get(name + '/Data.zip', dst)
+        scp.get(src, dst)
 
         with zipfile.ZipFile(dst, "r") as zip_ref:
             zip_ref.extractall(dst_path)
 
         # remove zip
-        cmd = 'cd ' + src_path + '/; '
+        cmd = 'cd ' + name + '; '
         cmd += 'rm Data.zip; '
         ssh_stdin, ssh_stdout, ssh_stderr = ssh.exec_command(cmd)
+        print(get_response(ssh_stdout, ssh_stderr))
         os.remove(dst)
 
-        scp.close()
+        #scp.close()
         ssh.close()
     else:
         print('Error No root "Data" folder found')
@@ -151,14 +157,42 @@ def ssh_execute_evo(server, name):
 
     ssh.close()
 
-def ssh_stop_evo(server, name):
+def ssh_stop_evo(server, name, remove_evo=False):
     user, host, password = split_ssh_user_host_password_string(server)
     ssh = get_ssh_connection(host, user, password)
 
-    command = 'screen - XS ' + name + ' quit;'
+    command = 'screen -XS ' + name + ' quit;'
     ssh_stdin, ssh_stdout, ssh_stderr = ssh.exec_command(command)
     response = get_response(ssh_stdout, ssh_stderr)
     print(response)
 
+    if remove_evo:
+        command = 'rm -r ' + name
+        ssh_stdin, ssh_stdout, ssh_stderr = ssh.exec_command(command)
+        response = get_response(ssh_stdout, ssh_stderr)
+        print(response)
+
     ssh.close()
 
+def ssh_get_running(server):
+    user, host, password = split_ssh_user_host_password_string(server)
+    ssh = get_ssh_connection(host, user, password)
+
+    command = 'screen -ls'
+    ssh_stdin, ssh_stdout, ssh_stderr = ssh.exec_command(command)
+    response = get_response(ssh_stdout, ssh_stderr)
+    print(response)
+
+    result = []
+
+    for l in response:
+        if '	' in l:
+            dot_split = l.split('.')
+            if len(dot_split) > 1:
+                space_split = dot_split[1].split('	')
+                if len(space_split) > 0:
+                    result.append(space_split[0])
+
+    return result
+
+    ssh.close()

@@ -22,7 +22,9 @@ nav:
         - Basics: Basic_Tutorial/basics.md
         - Synapses and Input: Basic_Tutorial/Synapses_and_Input.md
         - User Interface <!--- Examples_Paper/Basic/Basic_Tab.py -->: Basic_Tutorial/User_Interface.md
-        - Tools: Basic_Tutorial/Tools.md
+        - Storage Manager: Basic_Tutorial/StorageManager.md
+        - Evolution: Basic_Tutorial/Evolution.md
+        - Other Tools: Basic_Tutorial/Tools.md
 
     - Complex Tutorial:
         - Homeostasis <!--- Examples_Paper/STDP_Hom_Norm/Homeostasis.py -->: Complex_Tutorial/Homeostasis.md
