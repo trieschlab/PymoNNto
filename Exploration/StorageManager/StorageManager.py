@@ -10,6 +10,10 @@ import imageio
 #import matplotlib.pylab as plt
 #storage_manager_folder = '../../Data/StorageManager/'
 
+def create_folder_if_not_exist(path):
+    if not os.path.exists(path):
+        os.mkdir(path)
+
 def get_data_folder(create_when_not_found=True):
     path='./'
     while os.path.isdir(path):
@@ -25,6 +29,21 @@ def get_data_folder(create_when_not_found=True):
     return './Data'
     #raise Exception('No "Data" folder found above current working directory! Please create dirctory: ".../Project/Data".')
 
+def zipDir(dirPath, zipPath, filter):
+    zipf = zipfile.ZipFile(zipPath, mode='w')
+    lenDirPath = len(dirPath)
+    for root, _, files in os.walk(dirPath):
+        for file in files:
+            filter_file=False
+            for f in filter:
+                if f in root or f in file+'\\':
+                    filter_file = True
+            if not filter_file:
+                filePath = os.path.join(root, file)
+                print(filePath)
+                zipf.write(filePath , filePath[lenDirPath :] )
+    zipf.close()
+
 
 class StorageManager:
 
@@ -36,12 +55,12 @@ class StorageManager:
             result += str(k).replace(' ', '')+'='+str(v).replace(' ', '')
         return result
 
-    def __init__(self, main_folder_name, folder_name=None, random_nr=False, print_msg=True, add_new_when_exists=True):
+    def __init__(self, main_folder_name, folder_name=None, random_nr=False, print_msg=True, add_new_when_exists=True, data_folder=get_data_folder()):
 
         if type(main_folder_name) is dict:
             main_folder_name = self.dict_to_folder_name(main_folder_name)
 
-        storage_manager_folder = get_data_folder()+'/StorageManager/'
+        storage_manager_folder = data_folder +'/StorageManager/'
 
         if not os.path.exists(storage_manager_folder):
             try:
@@ -161,11 +180,13 @@ class StorageManager:
         if reset_frame_counter:
             self.frame_counter[key] = 0
 
-    def load_param(self, key, section='Parameters', default=None):#casting!!!
+    def load_param(self, key, section='Parameters', default=None, return_string=False):#casting!!!
         try:
             s = self.config.get(section, key)
         except:
             return default
+        if return_string:
+            return s
         if len(s) > 0:
             if s=='True':
                 return True
@@ -184,22 +205,33 @@ class StorageManager:
     def load_np(self, key):
         return np.load(self.absolute_path + key + '.npy')
 
-    def copy_project_files(self):
+    def copy_project_files(self, base_folder='../../'):
         zf = zipfile.ZipFile(self.absolute_path+"backup.zip", "w")
-        for dirname, subdirs, files in os.walk('../../'):#
+        for dirname, subdirs, files in os.walk(base_folder):#
             #print(dirname, subdirs, files)
-            if dirname != '../../' and not 'Data' in dirname and not '.git' in dirname and not '.idea' in dirname:
+            if dirname != base_folder and not 'Data' in dirname and not '.git' in dirname and not '.idea' in dirname and not '.zip' in dirname:
                 zf.write(dirname)
                 for filename in files:
                     zf.write(os.path.join(dirname, filename))
         zf.close()
 
+class SimpleStorageManager(StorageManager):
+
+    def __init__(self, folder):
+        self.absolute_path = folder
+
+        self.config_file_name = 'config.ini'
+        self.config = ConfigParser()
+        self.config.read(self.absolute_path+self.config_file_name)
+
+        self.frame_counter = {}
+
 
 class StorageManagerGroup:
 
-    def __init__(self, Tag, main_folder_name=None):
+    def __init__(self, Tag, main_folder_name=None, data_folder=get_data_folder()):
 
-        storage_manager_folder = get_data_folder() + '/StorageManager/'
+        storage_manager_folder = data_folder + '/StorageManager/'
 
         if main_folder_name is None:
             main_folder_name = Tag
@@ -212,7 +244,7 @@ class StorageManagerGroup:
         ct = 0
         for folder in os.listdir(self.absolute_path):
             if os.path.isdir(self.absolute_path+folder) and Tag in folder:
-                self.StorageManagerList.append(StorageManager(Tag, folder, add_new_when_exists=False))
+                self.StorageManagerList.append(StorageManager(Tag, folder, add_new_when_exists=False, data_folder=data_folder))
 
                 app = folder.split('_')[1:]
                 if len(app) > 1:
@@ -244,7 +276,7 @@ class StorageManagerGroup:
         results = []
         for param in params:
             results.append(np.array(self.get_param_list(param, section)))
-            remove*=results[-1]!=None
+            remove*=(results[-1]!=None)*(results[-1]!=np.nan)
         results = np.array(results)
         if remove_None:
             results=results[:,remove]#np.where(results is not None)#.any(axis=1)
@@ -264,7 +296,7 @@ class StorageManagerGroup:
         key_q = parts[0]
 
         for sm in self.StorageManagerList:
-            param = sm.load_param(key_q)
+            param = sm.load_param(key_q, return_string=True)
             if param is not None:
                 new_q = query.replace(key_q, param)
                 if eval(new_q):

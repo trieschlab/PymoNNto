@@ -5,7 +5,7 @@ import matplotlib.pyplot as plt
 from PymoNNto.NetworkBehaviour.Input.Activator import *
 from PymoNNto.NetworkCore.Neuron_Group import *
 
-import PymoNNto.Exploration.Evolution.NetworkEvaluationFunctions as EvalF
+import PymoNNto.Exploration.Evolution_Old.NetworkEvaluationFunctions as EvalF
 
 
 

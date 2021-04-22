@@ -43,11 +43,11 @@ class Network_UI(UI_Base):
 
         self.main_window.keyPressEvent = self.keyPressEvent
 
-        self.group_display_count=group_display_count
+        self.group_display_count = group_display_count
 
         #self.exc_group_name = exc_group_name
         #self.inh_group_name = inh_group_name
-        self.group_tags=group_tags
+        self.group_tags = group_tags
         self.transmitters=transmitters
         self.pause = False
         self.update_without_state_change = False
@@ -60,8 +60,8 @@ class Network_UI(UI_Base):
         self.neuron_visible_groups = []
         #self.ts_group = 0
         #self.x_steps = 500
-        self.group_sliders=[]
-        self.neuron_select_color=(0,255,0,255)
+        self.group_sliders = []
+        self.neuron_select_color = (0, 255, 0, 255)
 
         self.modules = modules
 
@@ -72,7 +72,7 @@ class Network_UI(UI_Base):
         for group_tag in group_tags:
             for group in network[group_tag]:
 
-                group._rec_dict={}
+                group._rec_dict = {}
 
                 #rec = Recorder([], tag='UI_rec')
                 #network.add_behaviours_to_neuron_group({10000: rec}, group)

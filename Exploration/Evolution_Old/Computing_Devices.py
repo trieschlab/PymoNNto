@@ -162,11 +162,11 @@ class Evolution_Server_Base:
         return 'screen -ls'
 
     def get_plot_cmd(self, evo_name):
-        return 'cd ' + self.main_path + evo_name + "/Exploration/Evolution/; python3 Evo_Plots.py"
+        return 'cd ' + self.main_path + evo_name + "/Exploration/Evolution_Old/; python3 Evo_Plots.py"
 
     def get_Evo_Execute_cmd(self, evo_name, arguments):
         pexc=self.get_python_exec(arguments)
-        commands = 'cd ' + self.main_path + evo_name + '/Exploration/Evolution/; screen -dmS ' + evo_name + ' sh; screen -S ' + evo_name + ' -X stuff "' + pexc + ' \r\n"'
+        commands = 'cd ' + self.main_path + evo_name + '/Exploration/Evolution_Old/; screen -dmS ' + evo_name + ' sh; screen -S ' + evo_name + ' -X stuff "' + pexc + ' \r\n"'
         return commands
 
 class Evolution_Server_Local_Windows(Evolution_Server_Base):
@@ -224,10 +224,10 @@ class Evolution_Server_Local_Windows(Evolution_Server_Base):
         #return commands.replace('/', '\\'), True, path.replace('/', '\\')
 
     def get_plot_cmd(self, evo_name):
-        return 'python' + self.main_path + evo_name + '/Exploration/Evolution/Evo_Plots.py'
+        return 'python' + self.main_path + evo_name + '/Exploration/Evolution_Old/Evo_Plots.py'
 
     def execute(self, evo_name, arguments):
-        path = self.main_path + evo_name + '/Exploration/Evolution/'
+        path = self.main_path + evo_name + '/Exploration/Evolution_Old/'
         path=path.replace('/', '\\')
         pexc = self.get_python_exec(arguments, python='python')
         os.system("start cmd.exe "+path+" @cmd /k "+pexc)
@@ -265,7 +265,7 @@ class Evolution_Server_SSH(Evolution_Server_Base):
         dst = self.main_path+evo_name+'.zip'
         scp.put(src, dst)
 
-        ssh_stdin, ssh_stdout, ssh_stderr  = ssh.exec_command(self.get_extract_cmd(evo_name))
+        ssh_stdin, ssh_stdout, ssh_stderr = ssh.exec_command(self.get_extract_cmd(evo_name))
         ssh_stdout.channel.recv_exit_status()
 
         #extract
@@ -368,7 +368,7 @@ class Evolution_Server_SSH_Slurm(Evolution_Server_SSH):
 
     def get_Evo_Execute_cmd(self, evo_name, arguments):
         pexc=self.get_python_exec(arguments)
-        commands = 'cd ' + self.main_path + evo_name + '/Exploration/Evolution/; ' + self.get_slurm_Evo_Execute_cmd(evo_name, pexc, command='sbatch')
+        commands = 'cd ' + self.main_path + evo_name + '/Exploration/Evolution_Old/; ' + self.get_slurm_Evo_Execute_cmd(evo_name, pexc, command='sbatch')
         return commands
         #return self.ssh_wrap_cmd(commands)
 

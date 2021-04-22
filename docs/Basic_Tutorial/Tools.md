@@ -91,3 +91,48 @@ Only the SubSynapseGroups are added to MyNetwork and sg.dst as well as sg.src po
 SynapseGroup(net=MyNetwork, src=sourceNG, dst=destinationNG, tag='GLU', connectivity='(s_id!=d_id)*in_box(10)', partition=True)
 ```
 
+#Evolution
+
+The Evolution package can be used to automatically optimize network parameters.
+We are currently extending the evolution package to run on distributed devices and to be controlled with a separate user interface.
+
+In this example we see a simple evolution setup
+
+```python
+#folder/slave.py
+from PymoNNto.Exploration.Evolution.Interface_Functions import *
+
+print('genes: ', get_genome())
+print('gene a: ', get_gene('a', None))
+print('gene b: ', gene('b', 1))
+
+score = get_gene('a', 0) + get_gene('b', 0)
+
+set_score(score)
+```
+
+```python
+#master.py
+from PymoNNto.Exploration.Evolution.Evolution import *
+
+if __name__ == '__main__':
+    genome = {'a': 1, 'b': 2}
+
+    evo = Evolution(name='my_test_evo',
+                    slave_file='folder/slave.py',
+                    individual_count=10,
+                    mutation=0.04,
+                    death_rate=0.5,
+                    constraints=['b>=a+1', 'a <= 1', 'b>1.5'],
+                    inactive_genome_info={'info': 'my_info'},
+                    ui=False,
+                    start_genomes=[genome],
+                    devices={'single_thread': 0,
+                             'multi_thread': 5,
+                             'ssh user@host': 0,
+                             'ssh user2@host2': 0
+                             }
+                    )
+
+    evo.start()
+```

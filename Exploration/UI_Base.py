@@ -22,6 +22,8 @@ class UI_Base(QApplication):
     def __init__(self, network, label="Network_Test", create_sidebar=True):
         super().__init__(sys.argv)
 
+        self.reduced_layout = False
+
         self.network = network
 
         self.main_window = QWidget()

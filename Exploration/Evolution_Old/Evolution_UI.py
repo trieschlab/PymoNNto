@@ -3,7 +3,7 @@ sys.path.append('../../')
 
 from Exploration.UI_Base import *
 from functools import partial
-import PymoNNto.Exploration.Evolution.Computing_Devices as comp_dev
+import PymoNNto.Exploration.Evolution_Old.Computing_Devices as comp_dev
 import os
 
 class EVO_UI(UI_Base):
@@ -127,7 +127,7 @@ class EVO_UI(UI_Base):
 
             self.Next_H_Block(stretch=0.0)
 
-            self.Add_element(QLabel('New Evolution Name:'), stretch=0)
+            self.Add_element(QLabel('New Evolution_Old Name:'), stretch=0)
 
             evo_server.evo_name_edit = QLineEdit('Evo_name')
             self.Add_element(evo_server.evo_name_edit, stretch=4)

@@ -1,226 +1,217 @@
-import random
-
-import sys
-import os
-import threading
-
-from PymoNNto.Exploration.StorageManager.StorageManager import *
-
-
-def string_to_array(s):
-    s=s.replace(' ','')
-    result = []
-    s = s.replace(']', '')
-    parts = s.split('[')
-    for p in parts:
-        if p != '':
-            result.append([float(num) for num in p.split(',') if num != ''])
-    return result
-
-class Individual:
-    def __init__(self, params, lifetime=0):
-        self.parameters = params
-        self.fitness = -1
-        self.lifetime = lifetime
-
-
+from PymoNNto.Exploration.Evolution.Evolution_Device_Single_Thread import *
+from PymoNNto.Exploration.Evolution.Evolution_Device_Multi_Thread import *
+from PymoNNto.Exploration.Evolution.Evolution_Device_SSH import *
+from PymoNNto.Exploration.Evolution.Evolution_Base import *
+from PymoNNto.Exploration.Evolution.Breed_And_Selection_Module import *
+from PymoNNto.Exploration.Evolution.UI_Single_Evolution_Monitor import *
+import os.path
+import time
 
 class Evolution:
-    def __init__(self, evaluation_function, max_individual_count, generations=None, name='Evolution', mutation = 0.1, constraints=[], death_rate=0.5, param={}):
-        self.datafolder=get_data_folder()+'/Evo/'
 
-        if not os.path.exists(self.datafolder):
-            try:
-                os.mkdir(self.datafolder)
-            except:
-                print('evolution folder already exits')
+    def __init__(self, name, slave_file, individual_count=10, mutation=0.4, death_rate=0.5, devices={'single_thread':1}, constraints=[], start_genomes=[], inactive_genome_info={}):
 
-        self.name = name#+'_{}'.format(int(np.random.rand()*10000))
-        #print(self.name)
-        self.param=param
-        self.savestate = True
-        self.evaluation_function = evaluation_function
-        self.max_individual_count = max_individual_count
-        self.generations = generations
-        self.individuals = []
-        self.mutation = mutation
-        self.constraints = constraints
-        self.death_rate = death_rate
-        self.plot_progress=False
-        self.paused=False
+        self.Breed_And_Select = Default_Breed_And_Select(self, death_rate=death_rate, mutation=mutation, individual_count=individual_count, constraints=constraints)
 
+        self.name = name
 
-    def breed(self):
+        self.slave_file = slave_file
 
-        new_ind = []
+        self.devices = []
+        self.start_genomes = start_genomes
+        self.inactive_genome_info = inactive_genome_info
 
-        weights = np.array(self.set_get_ind_params("lifetime")).copy()
-        #weights -= min(weights)
-        weights = weights / np.sum(weights)
+        self.id_counter = 0
 
+        if not os.path.isfile(slave_file):
+            print('warning slave file not found')
 
+        if start_genomes==[]:
+            print('Error no genomes found')
 
-        for _ in range(self.max_individual_count-len(self.individuals)):
+        self.scored_individuals = []
+        self.running_individuals = []
 
-            parent1 = np.random.choice(self.individuals, 1, p=weights)[0]
-            parent2 = np.random.choice(self.individuals, 1, p=weights)[0]
+        self.gene_keys=[]
+        if len(self.start_genomes) > 0:
+            self.gene_keys = list(self.start_genomes[0].keys())
+            for genome in self.start_genomes:
+                if len(self.gene_keys) != len(genome):
+                    print('Error: start genomes do not have the same size')
+                for gene in genome:
+                    if gene not in self.gene_keys:
+                        print('Error: start genomes have different gene keys')
 
-            ind = [] #new individuals
-            for p_i in range(len(parent1.parameters)):
-                p1 = np.clip(np.random.normal(parent1.parameters[p_i], parent1.parameters[p_i]*self.mutation), 0, None)
-                p2 = np.clip(np.random.normal(parent2.parameters[p_i], parent2.parameters[p_i]*self.mutation), 0, None)
-                ind.append(random.choice([p1, p2]))
+                if not self.Breed_And_Select.is_valid_genome(genome):
+                    print('Error: start genome does not fulfill constraints', genome)
 
-            for constraint in self.constraints:
-                exec(constraint)
+            self.non_scored_individuals = self.Breed_And_Select.breed(start_genomes)
+            print(self.non_scored_individuals)
+        else:
+            print('Error no start genomes found')
 
-            new_ind.append(Individual(ind))
+        for device_string, number_of_threads in devices.items():
+            self.add_devices(device_string, number_of_threads)
 
-        self.individuals += new_ind
+        if '/' in name or '.' in name or '\\' in name or name in ['Documents', 'Pictures', 'Music', 'Public', 'Videos', 'Dokumente', 'Bilder', 'Musik', 'Downloads', 'Öffetnlich']:
+            print('Error: For savety reasons some names and characters are forbidden to avoid the accidental removal of files or folders')
+            self.devices = {}
 
-    def natural_selection(self):
+        for device in self.devices:
+            device.initialize()
 
-        kill_count = int(len(self.individuals)*self.death_rate)
+        self.ui = None
 
-        for _ in range(kill_count):
-            kill_ind = self.individuals[0]
-            for ind in self.individuals:
-                if ind.fitness < kill_ind.fitness:
-                    kill_ind = ind
+        return
 
-            self.individuals.remove(kill_ind)
+    def iteration(self):
+        for device in self.devices:
+            device.main_loop_update()
+        #time.sleep(1.0)
 
-    def set_get_ind_params(self, attr, values=None):
-        result = []
-        for i, ind in enumerate(self.individuals):
-            if values is not None and i < len(values):
-                setattr(ind, attr, values[i])
-            result.append(getattr(ind, attr))
+    def part_of_genome(self, small_genome, big_genome):
+        result = True
+        for key in small_genome:
+            if key!='score' and key not in big_genome or small_genome[key] != big_genome[key]:
+                result = False
         return result
 
 
-    def get_fitnesses(self, living_individuals):
-        return [self.evaluation_function(self.name, individual, self.param) for individual in living_individuals]
+    def new_score_event(self, genome):#called by devices
+        found = None
 
+        for g in self.running_individuals:
+            if self.part_of_genome(g, genome):
+                found = g
 
+        if found is not None:
+            self.running_individuals.remove(found)
+            found['score'] = genome['score']
+            self.scored_individuals.append(found)
+            self.Breed_And_Select.update_population()
+            print('+', genome)#g
 
-    def start(self, seed_individuals):
-        #self.start_input_thread()
-        self.individuals.clear()
+            if self.ui is not None:
+                self.ui.update()
 
-        generation = 0
-
-        self.save('Seed:', seed_individuals)
-        for ind in seed_individuals:
-
-            for constraint in self.constraints:
-                exec(constraint)
-
-            self.individuals.append(Individual(ind, 1))
-
-        self.breed()
-        self.save('Start:', self.set_get_ind_params('parameters'))
-
-        while self.generations is None or generation < self.generations:
-
-            while self.paused:
-                print('paused...')
-                time.sleep(10)
-
-            generation += 1
-
-            fitnesses = self.get_fitnesses(self.set_get_ind_params('parameters'))
-            self.set_get_ind_params('fitness', fitnesses)
-
-            #if self.plot_progress:
-            #    plt.plot(np.zeros(len(fitnesses))+generation, fitnesses)
-            #    plt.show()
-
-            new_lt = (np.array(self.set_get_ind_params('lifetime'))+np.array(self.set_get_ind_params('fitness', fitnesses)))/2
-            self.set_get_ind_params('lifetime', new_lt)
-
-
-            self.natural_selection()
-            self.save('Gen {} survivers:'.format(generation), self.set_get_ind_params('parameters'))
-            self.save('Gen {} fitnesses:'.format(generation), self.set_get_ind_params('fitness'))
-            self.save('Gen {} lifetime:'.format(generation), self.set_get_ind_params('lifetime'))
-            self.breed()
-            self.save('Gen {} breed:'.format(generation), self.set_get_ind_params('parameters'))
-
-
-    def get_evo_file(self):
-        return self.datafolder+self.name+".txt"
-
-    def evo_file_exists(self):
-        return os.path.exists(self.get_evo_file())
-
-    def save(self, message, data):
-        print(message, data)
-        if self.savestate:
-            f = open(self.get_evo_file(), "a")
-            f.write(message+" {}".format(data)+"\n")
-            f.close()
-
-
-
-
-    def continue_evo(self, file):
-        f = open(self.datafolder+file, "r")
-        population = None
-        for line in f.readlines():
-            if 'survivers:' in line:
-                population=string_to_array(line[line.index('['):-1])
-                print(population)
-        f.close()
-
-        if population is not None:
-            name=file.split('.')[0]
-            print('setting target file to '+name)
-            self.name = name
-            print('starting evolution...')
-            self.save('Continue...', population)
-            self.start(population)
         else:
-            print('no individuals found')
+            self.error_event(genome, 'processed gene not found in running_individuals | running:' + str(self.running_individuals)+' scored:'+str(self.scored_individuals))
 
-    #add history saving
-    #plot progress in UI Window
-    #add plot and dim reduction
+    def error_event(self, genome, message):#called by devices
+        print('failed', message, genome)
 
-    def start_input_thread(self):
+        found = None
+        for g in self.running_individuals:
+            if self.part_of_genome(g, genome):
+                found = g
 
-        def input_collect_function():
-            while True:
-                for line in sys.stdin:
-                    if line and line != '\n':
-                        line=line.replace('\r', '').replace('\n', '')
-                        if '[' in line and ']' in line:
-                            print('adding individual(s)...')
-                            genes = string_to_array(line)
-                            for gene in genes:
-                                if len(self.individuals[0].parameters) == len(gene):
-                                    ind = Individual(genes)
-                                    ind.fitness = np.max(self.set_get_ind_params('fitness'))
-                                    ind.lifetime = np.max(self.set_get_ind_params('lifetime'))
-                                    self.individuals.append(ind)
-                                    print('Individial added:', gene)
-                                else:
-                                    print('wrong number of genes in', gene)
-                        elif 'pause' in line:
-                            self.paused = True
-                            print('evolution stopped')
-                        elif 'start' in line:
-                            self.paused = False
-                            print('evolution continued')
-                        elif line.isdigit():
-                            if hasattr(self,'thread_count'):
-                                self.thread_count=int(line)
-                                print('thread count set to ' + line)
-                        elif line.replace('.','').isdigit():
-                            self.mutation=float(line)
-                            print('mutation rate set to', line)
-                        else:
-                            print('unknown command' + line)
-                time.sleep(1)
+        if found is not None:
+            self.running_individuals.remove(found)
+            self.non_scored_individuals.append(found)
+            print('move genome from running_individuals back to non_scored_individuals...')
+        else:
+            print('not able to find failed genome in running_individuals. Maybe the genome was changed during processing')
 
-        threading.Thread(target=input_collect_function).start()
+
+    def add_device(self, device_string):
+        if device_string == 'single_thread':
+            self.devices.append(Evolution_Device_Single_Thread(device_string, self))
+        if device_string == 'multi_thread':
+            self.devices.append(Evolution_Device_Multi_Thread(device_string, self))
+        if 'ssh' in device_string:
+            self.devices.append(Evolution_Device_SSH(device_string, self))
+
+    def add_devices(self, device_string, number_of_threads):
+        # move folder to remote device if needed
+        for _ in range(number_of_threads):
+            self.add_device(device_string)
+
+        if len(self.devices) > 0:
+            self.devices[-1].initialize_device_group()
+
+    def _run_evo(self, ui=True):
+        for device in self.devices:
+            device.start()
+
+        if ui:
+            self.ui = UI_Single_Evolution_Monitor(self)
+            self.ui.show()
+        else:
+            self.active = True
+            while self.active:
+                for device in self.devices:
+                    device.main_loop_update()
+                time.sleep(0.01)
+
+        for device in self.devices:
+            device.stop()
+
+    def continue_evolution(self, ui=True):
+
+        genomes = []
+
+        smg = StorageManagerGroup(self.name)
+
+        smg.sort_by('gen')
+        gens = smg.get_param_list('gen', remove_None=True)
+        last_full_gen = np.max(gens)-1
+        for sm in smg['gen=='+str(last_full_gen)]:
+            genome = {}
+            try:
+                valid=True
+                for key in self.gene_keys:
+                    genome[key] = sm.load_param(key)
+                    if genome[key] is None:
+                        valid = False
+                genome['score'] = sm.load_param('score')
+                if genome['score'] is not None and valid:
+                    genomes.append(genome)
+            except:
+                print('failed to load gene from', sm.folder_name)
+
+        if len(genomes)!=0:
+            self.scored_individuals = genomes
+            self.running_individuals = []
+            self.non_scored_individuals = []
+            self.Breed_And_Select.generation = last_full_gen
+
+        print('Continuing', self.name, 'at generation', last_full_gen, 'with the following genomes:')
+        print(self.scored_individuals)
+
+        self.Breed_And_Select.update_population()
+
+        self._run_evo(ui)
+
+    def start(self, ui=True):
+        folder = get_data_folder()+'/StorageManager/'+self.name
+        if not os.path.isdir(folder):
+
+            self._run_evo(ui)
+            return True
+        else:
+            print('Warning:', folder, 'already exists. Remove folder or try continue_evolution() instead of start()')
+            return False
+
+    def stop(self):
+        for device in self.devices:
+            device.stop()
+
+    def get_next_genome(self):
+        result = None
+        if len(self.non_scored_individuals) > 0:
+            result = self.non_scored_individuals[0]
+            self.non_scored_individuals.pop(0)
+            self.running_individuals.append(result)
+
+        #if result is None and len(self.running_individuals) > 0:
+        #    result = self.running_individuals[0]
+
+        if result is not None:
+            result = result.copy()
+            result['evo_name'] = self.name
+            result['gen'] = self.Breed_And_Select.generation
+            result['id'] = self.id_counter
+            self.id_counter += 1
+            result.update(self.inactive_genome_info)
+
+        return result

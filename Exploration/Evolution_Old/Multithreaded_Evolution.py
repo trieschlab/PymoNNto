@@ -1,9 +1,9 @@
 import sys
 sys.path.append('../../')
 
-from PymoNNto.Exploration.Evolution.Evolution import *
+from PymoNNto.Exploration.Evolution_Old.Evolution import *
 from multiprocessing import Process, Queue, Pipe
-import PymoNNto.Exploration.Evolution.Computing_Devices as comp_dev
+import PymoNNto.Exploration.Evolution_Old.Computing_Devices as comp_dev
 import subprocess
 import time
 import os
@@ -56,7 +56,7 @@ def remote_evaluation_func_wrapper(device, param, conn):
                 if hasattr(device, 'slurm_wrapper'):
                     pexec = device.get_slurm_Evo_Execute_cmd(name, pexec, command='srun')
 
-                output = device.exec_cmd('cd '+device.main_path+name+'/Exploration/Evolution/; '+pexec)
+                output = device.exec_cmd('cd '+device.main_path+name+'/Exploration/Evolution_Old/; '+pexec)
 
                 fitness = output.split(' ')[-1].replace('\r', '').replace('\n', '')
                 if fitness.replace('.', '').isnumeric():
@@ -116,15 +116,15 @@ class Multithreaded_Evolution(Evolution):
     #        self.remove_process()
 
 
-    def __init__(self, import_file, func_name, max_individual_count, generations=None, thread_count=1, name='Evolution', mutation=0.1, constraints=[], death_rate=0.5, param={}, distributed=False):
+    def __init__(self, import_file, func_name, max_individual_count, generations=None, thread_count=1, name='Evolution_Old', mutation=0.1, constraints=[], death_rate=0.5, param={}, distributed=False):
         #exec('from ' + import_file + ' import *')
 
         self.import_file = import_file
         self.func_name = func_name
 
         #ensure that both parameters exist in param file
-        params['import_file'] = import_file
-        params['func_name'] = func_name
+        param['import_file'] = import_file
+        param['func_name'] = func_name
 
         super().__init__(None, max_individual_count, generations, name, mutation=mutation, constraints=constraints, death_rate=death_rate, param=param)
 

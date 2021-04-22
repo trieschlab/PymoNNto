@@ -4,6 +4,7 @@ import random
 #from NetworkBehaviour.Input.Activator import *
 from PymoNNto.NetworkCore.Base import *
 from PymoNNto.NetworkCore.Synapse_Group import *
+from PymoNNto.Exploration.Evolution.Interface_Functions import *
 import copy
 
 class Network(NetworkObjectBase):
@@ -49,9 +50,8 @@ class Network(NetworkObjectBase):
                 if (keys is None or key in keys) and hasattr(obj.behaviour[key], 'clear_recorder'):
                     obj.behaviour[key].clear_recorder()
 
-    def set_marked_variables(self, new_params, info=True, storage_manager=None):
-        result = []
-        result_names = []
+    def set_marked_variables(self, info=True, storage_manager=None):
+        current_genome={}
         for obj in self.all_behaviour_objects():
             for key in obj.behaviour:
                 b=obj.behaviour[key]
@@ -63,27 +63,16 @@ class Network(NetworkObjectBase):
                         end = s.index(']')
                         internal = s[start+1: end].split('#')
                         default_value = float(internal[0])
-                        index = int(internal[1])
+                        gene_key = internal[1]
 
-                        if new_params is not None and index < len(new_params):
-                            default_value = new_params[index]
+                        current_genome[gene_key] = get_gene(gene_key, default_value)
 
-                        while len(result) <= index:
-                            result.append(0)
-                            result_names.append('???')
-                        result[index] = default_value
-                        result_names[index]=variable_key
-
-                        b.init_kwargs[variable_key] = s[:start]+'{:.15f}'.format(default_value).rstrip('0').rstrip('.')+s[end+1:]
-                        #print(b.init_kwargs[variable_key])
+                        b.init_kwargs[variable_key] = s[:start]+'{:.15f}'.format(current_genome[gene_key]).rstrip('0').rstrip('.')+s[end+1:]
         if info:
-            print(result)
-            print(result_names)
+            print('default genome:', current_genome)
 
         if storage_manager is not None:
-            storage_manager.save_param(key='evolution_params', value=result)
-
-        return result
+            storage_manager.save_param(key='evolution_params', value=current_genome)
 
     def find_objects(self, key):
         result = []
@@ -109,7 +98,9 @@ class Network(NetworkObjectBase):
 
         print('initialize tren... Neurons: ', neuron_count, '|', len(self.NeuronGroups), ' blocks, Synapses: ', sysnape_count, '|', len(self.SynapseGroups),' blocks')
 
-    def initialize(self, evo_replace_param_list=None, info=False, warnings=True):
+    def initialize(self, evo_replace_param_list=None, info=False, warnings=True, storage_manager=None):
+
+        self.set_marked_variables(info=info, storage_manager=storage_manager)
 
         if info:
             self.print_net_info()

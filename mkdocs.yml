@@ -16,8 +16,7 @@ theme:
 nav:
     - Home: index.md
     - Introduction:
-        - PIP installation: Introduction/PIP_installation.md
-        - Manual installation: Introduction/Manual_installation.md
+        - Installation: Introduction/installation.md
 
     - Basic Tutorial:
         - Basics: Basic_Tutorial/basics.md
