@@ -3,24 +3,26 @@ import numpy as np
 
 class Default_Breed_And_Select:
 
-    def __init__(self, parent, death_rate, mutation, individual_count, constraints):
+    def __init__(self, parent, death_rate, mutation, individual_count, constraints, avoid_high_risk_high_reward_individuals=True):
         self.parent = parent
         self.death_rate = death_rate
         self.mutation = mutation
         self.individual_count = individual_count
-        self.generation=1
-        self.constraints=constraints
+        self.generation = 1
+        self.constraints = constraints
+        self.avoid_high_risk_high_reward_individuals=avoid_high_risk_high_reward_individuals
 
     def update_population(self):
         if len(self.parent.non_scored_individuals) == 0 and len(self.parent.running_individuals) == 0:
 
             survivours = self.natural_selection(self.parent.scored_individuals)
 
-            for s in survivours:# improve breed chance for older individuals (avoid high risk, high reward population)
-                bc = 1
-                if 'mate_chance' in s:
-                    bc = s['mate_chance']
-                s['mate_chance'] = (bc+s['score'])/2
+            if self.avoid_high_risk_high_reward_individuals:
+                for s in survivours:# improve breed chance for older individuals (avoid high risk, high reward population)
+                    bc = 1
+                    if 'mate_chance' in s:
+                        bc = s['mate_chance']
+                    s['mate_chance'] = (bc+s['score'])/2
 
             new_population = self.breed(survivours)
 

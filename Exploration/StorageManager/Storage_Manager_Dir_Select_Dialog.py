@@ -1,13 +1,9 @@
-from PyQt5 import QtCore
-from PyQt5.QtGui import *
-from PyQt5.QtWidgets import *
-import pyqtgraph as pg
-import numpy as np
-
-import sys
-import os
-
 from Exploration.StorageManager.StorageManager import *
+from PyQt5.QtWidgets import *
+import sys
+from PyQt5.QtGui import *
+import PymoNNto
+from PyQt5 import QtCore
 
 
 class SM_D_S_Dialog(QDialog):
@@ -17,6 +13,15 @@ class SM_D_S_Dialog(QDialog):
         layout = QVBoxLayout()
         self.setLayout(layout)
 
+        path = PymoNNto.__file__.replace('__init__.py', '')
+        if 'win' in sys.platform and sys.platform != 'darwin':
+            import ctypes
+            myappid = 'mv.Pymonnto.ui.1'  # arbitrary string mycompany.myproduct.subproduct.version
+            ctypes.windll.shell32.SetCurrentProcessExplicitAppUserModelID(myappid)
+
+        app_icon = QIcon()
+        app_icon.addFile(path + 'icon3232.png', QtCore.QSize(32, 32))
+        self.setWindowIcon(app_icon)
 
         self.listWidget=QListWidget()
 

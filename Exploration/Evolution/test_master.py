@@ -6,7 +6,7 @@ if __name__ == '__main__':
     evo = Evolution(name='my_test_evo',
                     slave_file='test_slave.py', #Exploration/Evolution/
                     individual_count=10,
-                    mutation=0.4,
+                    mutation=0.04,
                     death_rate=0.5,
                     constraints=['b>=a', 'a<=1', 'b>= 2'],
                     inactive_genome_info={'info': 'my_info'},

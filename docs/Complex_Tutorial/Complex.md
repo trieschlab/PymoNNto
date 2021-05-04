@@ -1,8 +1,11 @@
 # Complex Example Implementation
 
+![User interface example](https://raw.githubusercontent.com/trieschlab/PymoNNto/Images/flowchart_complex.png)
+
 The following network utilizes the Homeostasis, the Normalization and the STDP behaviour from the current section.
 
-```python
+```python
+
 from PymoNNto import *
 from Examples_Paper.STDP_Hom_Norm.Normalization import *
 from Examples_Paper.STDP_Hom_Norm.STDP import *
@@ -61,5 +64,6 @@ from PymoNNto.Exploration.Network_UI import *
 from Examples_Paper.Basic.Basic_Tab import *
 
 my_UI_modules = [MyUITab()] + get_default_UI_modules(['voltage', 'exhaustion'], ['W'])
-Network_UI(My_Network, modules=my_UI_modules, label='My_Network_UI', group_display_count=1).show()
+Network_UI(My_Network, modules=my_UI_modules, label='My_Network_UI', group_display_count=1).show()
+
 ```

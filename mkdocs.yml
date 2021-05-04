@@ -15,60 +15,58 @@ theme:
 
 nav:
     - Home: index.md
-    - Introduction:
-        - Installation: Introduction/installation.md
 
-    - Basic Tutorial:
-        - Basics: Basic_Tutorial/basics.md
-        - Synapses and Input: Basic_Tutorial/Synapses_and_Input.md
-        - User Interface <!--- Examples_Paper/Basic/Basic_Tab.py -->: Basic_Tutorial/User_Interface.md
-        - Storage Manager: Basic_Tutorial/StorageManager.md
-        - Evolution: Basic_Tutorial/Evolution.md
-        - Other Tools: Basic_Tutorial/Tools.md
+    - Introduction:
+        - -Installation: Introduction/installation.md
+        - -Basics: Basic_Tutorial/basics.md
+
+    - Tools:
+        - -Tagging System ['tag']: Basic_Tutorial/Tagging.md
+        - -User Interface <!--- Examples_Paper/Basic/Basic_Tab.py -->: Basic_Tutorial/User_Interface.md
+        - -Storage Manager: Basic_Tutorial/StorageManager.md
+        - -Evolution: Basic_Tutorial/Evolution.md
+        - -Other Tools: Basic_Tutorial/Tools.md
 
     - Complex Tutorial:
-        - Homeostasis <!--- Examples_Paper/STDP_Hom_Norm/Homeostasis.py -->: Complex_Tutorial/Homeostasis.md
-        - Normalization <!--- Examples_Paper/STDP_Hom_Norm/Normalization.py -->: Complex_Tutorial/Normalization.md
-        - STDP <!--- Examples_Paper/STDP_Hom_Norm/STDP.py -->: Complex_Tutorial/STDP.md
-        - Complex Network <!--- Examples_Paper/STDP_Hom_Norm/Complex.py -->: Complex_Tutorial/Complex.md
+        - -Homeostasis <!--- Examples_Paper/STDP_Hom_Norm/Homeostasis.py -->: Complex_Tutorial/Homeostasis.md
+        - -Normalization <!--- Examples_Paper/STDP_Hom_Norm/Normalization.py -->: Complex_Tutorial/Normalization.md
+        - -STDP <!--- Examples_Paper/STDP_Hom_Norm/STDP.py -->: Complex_Tutorial/STDP.md
+        - -Complex Network <!--- Examples_Paper/STDP_Hom_Norm/Complex.py -->: Complex_Tutorial/Complex.md
 
     - Behaviours:
-        - Homeostasis: Complex_Tutorial/Homeostasis.md
-        - Normalization: Complex_Tutorial/Normalization.md
-        - STDP: Complex_Tutorial/STDP.md
+        - -Homeostasis: Complex_Tutorial/Homeostasis.md
+        - -Normalization: Complex_Tutorial/Normalization.md
+        - -STDP: Complex_Tutorial/STDP.md
 
-        - Default Homeostatic Mechanism <!--- Examples_Behaviour/Default_homeostatic_mechanism.py -->: Behaviours/Default_homeostatic_mechanism.md
-        - Image Input <!--- Examples_Behaviour/Image_Input.py -->: Behaviours/Image_Input.md
-        - Refractory Period <!--- Examples_Behaviour/Refractory_Period.py -->: Behaviours/Refractory_Period.md
-        - Simple Text Input <!--- Examples_Behaviour/Simple_Text_input.py -->: Behaviours/Simple_Text_input.md
-        - STDP Advanced <!--- Examples_Behaviour/STDP_Advanced.py -->: Behaviours/STDP_Advanced.md
-        - Synaptic Input <!--- Examples_Behaviour/Synaptic_Input.py -->: Behaviours/Synaptic_Input.md
+        - -Default Homeostatic Mechanism <!--- Examples_Behaviour/Default_homeostatic_mechanism.py -->: Behaviours/Default_homeostatic_mechanism.md
+        - -Image Input <!--- Examples_Behaviour/Image_Input.py -->: Behaviours/Image_Input.md
+        - -Refractory Period <!--- Examples_Behaviour/Refractory_Period.py -->: Behaviours/Refractory_Period.md
+        - -Simple Text Input <!--- Examples_Behaviour/Simple_Text_input.py -->: Behaviours/Simple_Text_input.md
+        - -STDP Advanced <!--- Examples_Behaviour/STDP_Advanced.py -->: Behaviours/STDP_Advanced.md
+        - -Synaptic Input <!--- Examples_Behaviour/Synaptic_Input.py -->: Behaviours/Synaptic_Input.md
 
     - User Interface Tabs:
-        - Default Tabs:  UI/Default.md
-
-        - Advanced Tabs: UI/Advanced_Tabs.md
-
-        - Text Input Tabs: UI/Text_Input_Tabs.md
-
-        - Basic Tab <!--- Examples_Paper/Basic/Basic_Tab.py -->: UI/Basic_Tab.md
-        - OpenGL Tab <!--- Examples_UI/OpenGLTab.py -->: UI/OpenGLTab.md
+        - -Default Tabs:  UI/Default.md
+        - -Advanced Tabs: UI/Advanced_Tabs.md
+        - -Text Input Tabs: UI/Text_Input_Tabs.md
+        - -Basic Tab <!--- Examples_Paper/Basic/Basic_Tab.py -->: UI/Basic_Tab.md
+        - -OpenGL Tab <!--- Examples_UI/OpenGLTab.py -->: UI/OpenGLTab.md
 
 
 
     - Classical Examples:
-        - Brunel Hakim <!--- Examples_Classical/Brunel_Hakim.py -->: Classical/Brunel_Hakim.md
-        - Diesmann_Synfire <!--- Examples_Classical/Diesmann_Synfire.py -->: Classical/Diesmann_Synfire.md
-        - Hindmarsh Rose <!--- Examples_Classical/Hindmarsh_Rose.py -->: Classical/Hindmarsh_Rose.md
-        - Hodgkin Huxley <!--- Examples_Classical/Hodgkin_Huxley.py -->: Classical/Hodgkin_Huxley.md
-        - Hopfield <!--- Examples_Classical/Hopfield.py -->: Classical/Hopfield.md
-        - Izhikevich <!--- Examples_Classical/Izhikevich.py -->: Classical/Izhikevich.md
-        - Leaky Integrate And Fire <!--- Examples_Classical/LeakyIntegrateAndFire.py -->: Classical/LeakyIntegrateAndFire.md
-        - Wang Buzaki <!--- Examples_Classical/Wang_Buzaki.py -->: Classical/Wang_Buzaki.md
+        - -Brunel Hakim <!--- Examples_Classical/Brunel_Hakim.py -->: Classical/Brunel_Hakim.md
+        - -Diesmann_Synfire <!--- Examples_Classical/Diesmann_Synfire.py -->: Classical/Diesmann_Synfire.md
+        - -Hindmarsh Rose <!--- Examples_Classical/Hindmarsh_Rose.py -->: Classical/Hindmarsh_Rose.md
+        - -Hodgkin Huxley <!--- Examples_Classical/Hodgkin_Huxley.py -->: Classical/Hodgkin_Huxley.md
+        - -Hopfield <!--- Examples_Classical/Hopfield.py -->: Classical/Hopfield.md
+        - -Izhikevich <!--- Examples_Classical/Izhikevich.py -->: Classical/Izhikevich.md
+        - -Leaky Integrate And Fire <!--- Examples_Classical/LeakyIntegrateAndFire.py -->: Classical/LeakyIntegrateAndFire.md
+        - -Wang Buzaki <!--- Examples_Classical/Wang_Buzaki.py -->: Classical/Wang_Buzaki.md
 
     - Experimental:
-        - Differential Equation - Brian 2 - Hybrid: Experimental/Differential_Equation.md
-        - Tensorflow: Experimental/Tensorflow.md
+        - -Differential Equation - Brian 2 - Hybrid: Experimental/Differential_Equation.md
+        - -Tensorflow: Experimental/Tensorflow.md
 
 plugins:
     - search

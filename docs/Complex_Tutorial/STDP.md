@@ -10,9 +10,10 @@ Since the weight change depends on the temporal relation between current and pre
 This stdp module is a NeuronGroup module, therefore it iterates over all the synapses of a given NeuronGroup of a specific type (GLUTAMATE).
 By removing the for-loop, a similar module could, however, also be added to the behaviour of a SynapseGroups directly. 
 
-![User interface example](https://raw.githubusercontent.com/trieschlab/PymoNNto/Images/STDP_vg.png)
+<img width="300" src="https://raw.githubusercontent.com/trieschlab/PymoNNto/Images/STDP_beh.png"><img width="300" src="https://raw.githubusercontent.com/trieschlab/PymoNNto/Images/STDP_vg.png"><br>
 
-```python
+```python
+
 from PymoNNto.NetworkCore.Behaviour import *
 
 class STDP(Behaviour):
@@ -36,5 +37,6 @@ class STDP(Behaviour):
             s.W = np.clip(s.W+dw*s.enabled, 0.0, 10.0)
 
         neurons.voltage_old = neurons.voltage.copy()
-
+
+
 ```

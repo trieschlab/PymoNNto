@@ -1,5 +1,6 @@
 import sys
 sys.path.append('../../')
+import time
 
 t=time.time()
 
@@ -12,12 +13,6 @@ from PymoNNto.NetworkBehaviour.Logic.EulerEquationModules.Equation import *
 from matplotlib.pyplot import *
 from PymoNNto.Exploration.Network_UI.Network_UI import *
 from PymoNNto.NetworkBehaviour.Structure.Structure import *
-
-
-
-
-
-
 
 
 

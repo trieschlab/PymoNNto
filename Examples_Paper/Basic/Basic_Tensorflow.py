@@ -1,16 +1,23 @@
 from PymoNNto import *
-
 import tensorflow as tf
-
 
 class Basic_Behaviour_Tensorflow(Behaviour):
 
     def set_variables(self, neurons):
-        neurons.voltage = tf.Variable(neurons.get_random_neuron_vec(), dtype='float32')
-        self.leak_factor = tf.constant(0.9, dtype='float32')
+        neurons.voltage = tf.Variable(neurons.get_neuron_vec(), dtype='float32')
+        neurons.spike = tf.Variable(neurons.get_neuron_vec(), dtype='float32')
+        self.threshold = tf.constant(0.5, dtype='float32')
 
     def new_iteration(self, neurons):
-        neurons.voltage.assign(tf.multiply(neurons.voltage, self.leak_factor))
+        firing = tf.greater(neurons.voltage, self.threshold)
+        neurons.spike.assign(tf.cast(firing, dtype='float32'))#spikes
+
+        not_firing = tf.cast(tf.math.logical_not(firing), dtype='float32')#reset
+        neurons.voltage.assign(tf.multiply(neurons.voltage, not_firing))
+
+        new_voltage = tf.multiply(neurons.voltage, 0.9)#voltage decay
+        rnd_act = tf.constant(neurons.get_random_neuron_vec(density=0.01), dtype='float32')
+        neurons.voltage.assign(tf.add(new_voltage, rnd_act)) #noise
 
 
 class Input_Behaviour_Tensorflow(Behaviour):
@@ -21,18 +28,15 @@ class Input_Behaviour_Tensorflow(Behaviour):
 
     def new_iteration(self, neurons):
         for synapse in neurons.afferent_synapses['GLUTAMATE']:
-            W_act_mul = tf.linalg.matvec(synapse.W, synapse.src.voltage)
-            delta_act = tf.divide(W_act_mul, synapse.src.size)
+            W_act_mul = tf.linalg.matvec(synapse.W, synapse.src.spike)
+            delta_act = tf.divide(W_act_mul, synapse.src.size/10.0)
             neurons.voltage.assign(tf.add(neurons.voltage, delta_act))
-
-        rnd_act = tf.constant(neurons.get_random_neuron_vec(density=0.01), dtype='float32')
-        neurons.voltage.assign(tf.add(neurons.voltage, rnd_act))
 
 
 
 My_Network = Network()
 
-My_Neurons = NeuronGroup(net=My_Network, tag='my_neurons', size=get_squared_dim(100), behaviour={
+My_Neurons = NeuronGroup(net=My_Network, tag='my_neurons', size=get_squared_dim(1000), behaviour={
     1: Basic_Behaviour_Tensorflow(),
     2: Input_Behaviour_Tensorflow(),
     9: Recorder(tag='my_recorder', variables=['n.voltage.numpy()', 'np.mean(n.voltage.numpy())'])

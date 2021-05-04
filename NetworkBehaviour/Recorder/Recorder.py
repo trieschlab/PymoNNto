@@ -3,31 +3,26 @@ from PymoNNto.NetworkBehaviour.Logic.Basics.BasicHomeostasis import *
 #import compiler
 import copy
 
-
 class Recorder(Behaviour):
+    visualization_module_outputs = []
 
     def __init__(self, variables, gapwidth=0, tag=None, max_length=None, save_as_numpy=False):
         super().__init__()
         if tag is not None:
             self.add_tag(tag)
         self.add_tag('recorder')
-        #self.init_kwargs={}
-        self.gapwidth=gapwidth
+
+        self.gapwidth = gapwidth
         self.counter = 0
         self.new_data_available=False
         self.variables = {}
         self.compiled = {}
-        self.save_as_numpy=save_as_numpy
-
-        #for i, v in enumerate(variables):
-        #    print(v)
-        #    if v == 'np.mean(n.voltage)':
-        #        variables[i] = 'np.mean(n.voltage.numpy())'
+        self.save_as_numpy = save_as_numpy
 
         self.add_variables(variables)
         self.reset()
-        self.active=True
-        self.max_length=max_length
+        self.active = True
+        self.max_length = max_length
 
     def add_varable(self, v):
         if self.save_as_numpy:
@@ -40,9 +35,6 @@ class Recorder(Behaviour):
         for v in vars:
             self.add_varable(v)
 
-    #def __getitem__(self, key):
-    #    return np.array(self.variables[key])
-
     def find_objects(self, key):
         result = []
         if key in self.variables:
@@ -51,11 +43,7 @@ class Recorder(Behaviour):
 
     def reset(self):
         for v in self.variables:
-            if self.save_as_numpy:
-                self.variables[v] = np.array([])
-            else:
-                self.variables[v] = []
-            #self.variables[v] = []
+            self.add_varable(v)
 
     def set_variables(self, neurons):
         self.reset()
@@ -67,27 +55,36 @@ class Recorder(Behaviour):
         else:
             return False
 
-    def new_iteration(self, neurons):
-        if self.active and neurons.recording:
-            n = neurons  # used for eval string "n.x"
-            s = neurons
+    def get_data_v(self, variable, parent_obj):
+        n = parent_obj  # used for eval string "n.x"
+        s = parent_obj
+        neurons = parent_obj
+        synapse = parent_obj
+
+        return copy.copy(eval(self.compiled[variable]))
+
+    def save_data_v(self, data, variable):
+        if self.save_as_numpy:
+            if len(self.variables[variable]) == 0:
+                self.variables[variable] = np.array([data])
+            else:
+                self.variables[variable] = np.concatenate([self.variables[variable], [data]], axis=0)
+        else:
+            self.variables[variable].append(data)
+
+    def new_iteration(self, parent_obj):
+        if self.active and parent_obj.recording:
+
             self.counter += 1
             if self.counter >= self.gapwidth:
-                self.new_data_available=True
+                self.new_data_available = True
                 self.counter = 0
                 for v in self.variables:
                     if self.compiled[v] is None:
                         self.compiled[v] = compile(v, '<string>', 'eval')
-
-                    data = copy.copy(eval(self.compiled[v]))
-                    if self.save_as_numpy:
-                        if len(self.variables[v]) == 0:
-                            self.variables[v] = np.array([data])
-                        else:
-                            self.variables[v] = np.concatenate([self.variables[v], [data]], axis=0)
-                            #print(v, self.variables[v].shape, self.variables[v])
-                    else:
-                        self.variables[v].append(data)
+                    data = self.get_data_v(v, parent_obj)
+                    if data is not None:
+                        self.save_data_v(data, v)
 
         if self.max_length is not None:
             self.cut_length(self.max_length)
@@ -96,10 +93,13 @@ class Recorder(Behaviour):
         if max_length is not None:
             for v in self.variables:
                 while len(self.variables[v]) > max_length:
-                    self.variables[v].pop(0)
+                    if self.save_as_numpy:
+                        print('not implemented')
+                    else:
+                        self.variables[v].pop(0)
 
     def swaped(self, name):
-        return self.swap(getattr(self, name))
+        return self.swap(self.variables[name])#getattr(self, name)
 
     def swap(self, x):
         return np.swapaxes(np.array(x), 1, 0)
@@ -107,13 +107,49 @@ class Recorder(Behaviour):
     def clear_recorder(self):
         print('clear')
         for v in self.variables:
-            if self.save_as_numpy:
-                self.variables[v] = np.array([])
-            else:
-                self.variables[v] = []
-            #self.variables[v].clear()
+            self.add_varable(v)
 
+class EventRecorder(Recorder):
 
+    def __init__(self, variables, tag=None):
+        super().__init__(variables, gapwidth=0, tag=tag, max_length=None, save_as_numpy=True)
+
+    def find_objects(self, key):
+
+        result = []
+        if key in self.variables:
+            result.append(self.variables[key])
+
+        if type(key) is str and key[-2:] == '.t' and key[:-2] in self.variables:
+            result.append(self.variables[key[:-2]][:, 0])
+
+        if type(key) is str and key[-2:] == '.i' and key[:-2] in self.variables:
+            result.append(self.variables[key[:-2]][:, 1])
+
+        return result
+
+    def get_data_v(self, variable, parent_obj):
+        n = parent_obj  # used for eval string "n.x"
+        s = parent_obj
+        neurons = parent_obj
+        synapse = parent_obj
+
+        data = eval(self.compiled[variable])
+        indices = np.where(data != 0)[0]
+
+        if len(indices) > 0:
+            result = []
+            for i in indices:
+                result.append([parent_obj.iteration, i])
+            return result
+        else:
+            return None
+
+    def save_data_v(self, data, variable):
+        if len(self.variables[variable]) == 0:
+            self.variables[variable] = np.array(data)
+        else:
+            self.variables[variable] = np.concatenate([self.variables[variable], data], axis=0)
 
 '''
 class SynapseGroupRecorder(Recorder):

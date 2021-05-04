@@ -1,5 +1,5 @@
-from PymoNNto.Exploration.Evolution.Evolution_Device import *
-from multiprocessing import Process, Queue, Pipe
+from Exploration.Evolution.Devices.Evolution_Device import *
+from multiprocessing import Process, Pipe
 #import subprocess
 #import time
 #import os

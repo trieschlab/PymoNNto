@@ -52,7 +52,7 @@ One useful aspect is that you can run the evolution on different devices.
 We also initialize them with 'device_id':number_of_threads
 
 'single_thread': 1 (runs individuals on the local main thread. number_of_threads should always be 1)<br>
-'multi_thread': 4  (creates (4) parallel threads in the local computer)<br>
+'multi_thread': 4  (creates (4) parallel threads on the local computer)<br>
 'ssh user@host password':5 (we can create (5) threads on remote ssh devices)<br>
 'ssh user2@host2':4 (the password is optional when you can have set up your ssh keys already)<br>
 
@@ -101,6 +101,11 @@ In this tab we can start, stop, refresh and remove the current evolution. The cu
 Each evolution instance has a unique Folder like Project/Data/Evolution_Project_Clones/evo_name.
 If the evolution is run on the local device, the Project is copied into this folder.
 If the evolution is run on a remote device, the copy is located in .../user/evo_name and the Project/Data/Evolution_Project_Clones/evo_name is only an empty shell, with some settings and a copy of the results.
+
+When we create a new evolution instance, PymoNNto automatically creates a file similar to the previous master.py which is executed when we click on start.
+The name of the file is execute_evolution.py and it is located in the copied project folder.
+
+Note that the slave file path has to be set relative to this file.
 
 ```python
 #master.py

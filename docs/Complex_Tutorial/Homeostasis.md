@@ -15,9 +15,10 @@ The same homeostatic principle can be used in different contexts.
 Instead of regulating the voltage, the module can be repurposed to increase or decrease the sizes of the neurons synapses, to regulate the firing threshold or to dynamically adapt a plasticity rule.
 All this requires only minor modifications.
 
-![User interface example](https://raw.githubusercontent.com/trieschlab/PymoNNto/Images/HM_vg.png)
+<img width="300" src="https://raw.githubusercontent.com/trieschlab/PymoNNto/Images/Homeostasis.png"><img width="300" src="https://raw.githubusercontent.com/trieschlab/PymoNNto/Images/HM_vg.png"><br>
 
-```python
+```python
+
 from PymoNNto.NetworkCore.Behaviour import *
 
 class Homeostasis(Behaviour):
@@ -47,5 +48,6 @@ class Homeostasis(Behaviour):
         change = (greater + smaller) * self.adj_strength
         neurons.exhaustion += change
 
-        neurons.voltage -= neurons.exhaustion
+        neurons.voltage -= neurons.exhaustion
+
 ```

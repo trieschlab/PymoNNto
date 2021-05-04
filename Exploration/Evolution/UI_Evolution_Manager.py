@@ -44,7 +44,7 @@ class UI_Evolution_Manager(UI_Base):
     def __init__(self):
         super().__init__(None, label='Evolution Monitor', create_sidebar=True)
 
-        ssm = SimpleStorageManager(get_epc_folder())
+        ssm = SimpleStorageManager(get_epc_folder()+'/')
         servers = eval(ssm.load_param('servers', default="[]"))#['local', 'ssh vieth@poppy.fias.uni-frankfurt.de', 'ssh marius@hey3kmuagjunsk2b.myfritz.net', '+']
         self.listwidget2 = QListWidget()
         self.listwidget2.addItems(['+', 'local']+servers)
@@ -93,7 +93,8 @@ class UI_Evolution_Manager(UI_Base):
         self.add_btn.clicked.connect(self.on_add_click)
 
         for dir in os.listdir(get_epc_folder()):
-            tab = self.add_tab(dir)
+            if os.path.isdir(get_epc_folder()+'/'+dir):
+                self.add_tab(dir)
 
 
     def update_status(self, tab, name):
@@ -130,6 +131,7 @@ class UI_Evolution_Manager(UI_Base):
 
         tab.ssm = SimpleStorageManager(folder)
         tab.server = tab.ssm.load_param('server', default=None)
+
         tab.gene_keys = tab.ssm.load_param('gene_keys', default=None)
         if tab.gene_keys is not None:
             tab.gene_keys = eval(tab.gene_keys)#should return list like ['a', 'b', 'c', 'd', 'e']  todo:save on evo start
@@ -217,7 +219,7 @@ class UI_Evolution_Manager(UI_Base):
 
         tab.folder = get_epc_folder() + '/' + name + '/'
 
-        self.update_status(tab,name)
+        self.update_status(tab, name)
 
     def on_server_select(self):
         server_str = self.listwidget2.currentItem().text()
@@ -225,7 +227,7 @@ class UI_Evolution_Manager(UI_Base):
             text, ok = QInputDialog.getText(self.main_window, 'Add...', 'Add computing device "ssh user@host" or "ssh user@host password"')
             if ok and text != '+':
                 self.listwidget2.addItem(text)
-                ssm = SimpleStorageManager(get_epc_folder())
+                ssm = SimpleStorageManager(get_epc_folder()+'/')
                 print(ssm.absolute_path)
                 ssm.save_param('servers', eval(ssm.load_param('servers', default="[]"))+[text])
 

@@ -1,6 +1,5 @@
-import numpy as np
 from PymoNNto.NetworkCore.Base import *
-from numpy.random import *
+from PymoNNto.Exploration.Evolution.Interface_Functions import *
 
 class Behaviour(NetworkObjectBase):
     #modificaton_reset_vars = []
@@ -11,10 +10,29 @@ class Behaviour(NetworkObjectBase):
         self.used_attr_keys = []
         self.behaviour_enabled = self.get_init_attr('behaviour_enabled', True, None)
         super().__init__(tag=self.get_init_attr('tag', None, None))
+        self.add_tag(self.__class__.__name__)
 
     def run_on_neuron_init(self):
         self.run_on_neuron_init_var = True
         return self
+
+    def set_gene_variables(self):
+        current_genome = {}
+        for variable_key in self.init_kwargs:
+            while type(self.init_kwargs[variable_key]) is str and '[' in self.init_kwargs[variable_key] and ']' in \
+                    self.init_kwargs[variable_key]:
+                s = self.init_kwargs[variable_key]
+
+                start = s.index('[')
+                end = s.index(']')
+                internal = s[start + 1: end].split('#')
+                default_value = float(internal[0])
+                gene_key = internal[1]
+
+                current_genome[gene_key] = get_gene(gene_key, default_value)
+
+                self.init_kwargs[variable_key] = s[:start] + '{:.15f}'.format(current_genome[gene_key]).rstrip('0').rstrip('.') + s[end + 1:]
+        return current_genome
 
     def diversity_string_to_vec2(self, ds, neurons):
 
@@ -186,6 +204,12 @@ class Behaviour(NetworkObjectBase):
     #def get_shared_variable(self, name):
     #    return None
 
+
+    def visualize_module(self):
+        from Exploration.Visualization import Module_visualizer as drawer
+        md = drawer.module_drawer()
+        md.add_module(self)
+        md.show()
 
 
     def initialize_synapse_attr(self, target_attr, density, equal_range, random_range, neurons, synapse_type, all_neurons_same=False):

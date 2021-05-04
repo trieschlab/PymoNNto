@@ -9,6 +9,7 @@ import numpy as np
 #from Exploration.Visualization.Visualization_Helper import *
 
 import sys
+import PymoNNto
 
 sys._excepthook = sys.excepthook
 def exception_hook(exctype, value, traceback):
@@ -17,10 +18,37 @@ def exception_hook(exctype, value, traceback):
     sys.exit(1)
 sys.excepthook = exception_hook
 
+
+
 class UI_Base(QApplication):
 
     def __init__(self, network, label="Network_Test", create_sidebar=True):
         super().__init__(sys.argv)
+
+        path = PymoNNto.__file__.replace('__init__.py', '')
+
+        if 'win' in sys.platform and sys.platform != 'darwin':
+            import ctypes
+            myappid = 'mv.Pymonnto.ui.1'  # arbitrary string mycompany.myproduct.subproduct.version
+            ctypes.windll.shell32.SetCurrentProcessExplicitAppUserModelID(myappid)
+
+        app_icon = QIcon()
+        app_icon.addFile(path + 'icon3232.png', QtCore.QSize(32, 32))
+        self.setWindowIcon(app_icon)
+
+        #app_icon.addFile(path + 'icon.png')
+        #app_icon.addFile(path+'icon1616.png', QtCore.QSize(16, 16))
+        #app_icon.addFile(path + 'icon2424.png', QtCore.QSize(24, 24))
+
+        #app_icon.addFile(path + 'icon4848.png', QtCore.QSize(48, 48))
+        #app_icon.addFile(path+'icon6464.png', QtCore.QSize(64, 64))
+        #app_icon.addFile(path+'icon128128.png', QtCore.QSize(128, 128))
+        #app_icon.addFile(path+'icon256256.png', QtCore.QSize(256, 256))
+
+
+        #tray=QSystemTrayIcon(app_icon, parent=self)
+        #tray.show()
+
 
         self.reduced_layout = False
 

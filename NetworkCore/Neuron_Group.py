@@ -1,5 +1,3 @@
-from PymoNNto.NetworkCore.Base import *
-from PymoNNto.NetworkCore.Behaviour import *
 from PymoNNto.NetworkBehaviour.Recorder.Recorder import *
 import copy
 
@@ -61,7 +59,7 @@ class NeuronGroup(NetworkObjectBase):
         result = []
 
         if key in self.behaviour:
-            result.append(self.behaviour)
+            result.append(self.behaviour[key])
 
         for bk in self.behaviour:
             behaviour = self.behaviour[bk]
@@ -214,6 +212,20 @@ class NeuronGroup(NetworkObjectBase):
 
     def mask_var(self, var):
         return var
+
+    def visualize_module(self, show_dimension=True, show_recorder=True, only_feed_forward_connections=False):
+        from PymoNNto.Exploration.Visualization import Module_visualizer as drawer
+        md = drawer.module_drawer()
+
+        for k in sorted(list(self.behaviour.keys())):
+            b = self.behaviour[k]
+            b.set_gene_variables()
+            if (b.__class__.__name__ != 'Recorder' or show_recorder) and (b.__class__.__name__ != 'NeuronDimension' or show_dimension):
+                md.add_module(b)
+
+        md.add_flow_chart(only_feed_forward_connections)
+
+        md.show()
 
     '''
     def get_neuron_behaviour_parameter_list(self, neurons, param):

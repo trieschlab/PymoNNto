@@ -4,8 +4,8 @@ import random
 #from NetworkBehaviour.Input.Activator import *
 from PymoNNto.NetworkCore.Base import *
 from PymoNNto.NetworkCore.Synapse_Group import *
-from PymoNNto.Exploration.Evolution.Interface_Functions import *
 import copy
+import time
 
 class Network(NetworkObjectBase):
 
@@ -50,24 +50,13 @@ class Network(NetworkObjectBase):
                 if (keys is None or key in keys) and hasattr(obj.behaviour[key], 'clear_recorder'):
                     obj.behaviour[key].clear_recorder()
 
-    def set_marked_variables(self, info=True, storage_manager=None):
-        current_genome={}
+    def set_gene_variables(self, info=True, storage_manager=None):
+        current_genome = {}
+
         for obj in self.all_behaviour_objects():
             for key in obj.behaviour:
-                b=obj.behaviour[key]
-                for variable_key in b.init_kwargs:
-                    while type(b.init_kwargs[variable_key]) is str and '[' in b.init_kwargs[variable_key] and ']' in b.init_kwargs[variable_key]:
-                        s = b.init_kwargs[variable_key]
-
-                        start = s.index('[')
-                        end = s.index(']')
-                        internal = s[start+1: end].split('#')
-                        default_value = float(internal[0])
-                        gene_key = internal[1]
-
-                        current_genome[gene_key] = get_gene(gene_key, default_value)
-
-                        b.init_kwargs[variable_key] = s[:start]+'{:.15f}'.format(current_genome[gene_key]).rstrip('0').rstrip('.')+s[end+1:]
+                b = obj.behaviour[key]
+                current_genome.update(b.set_gene_variables())
         if info:
             print('default genome:', current_genome)
 
@@ -98,15 +87,12 @@ class Network(NetworkObjectBase):
 
         print('initialize tren... Neurons: ', neuron_count, '|', len(self.NeuronGroups), ' blocks, Synapses: ', sysnape_count, '|', len(self.SynapseGroups),' blocks')
 
-    def initialize(self, evo_replace_param_list=None, info=False, warnings=True, storage_manager=None):
+    def initialize(self, info=False, warnings=True, storage_manager=None):
 
-        self.set_marked_variables(info=info, storage_manager=storage_manager)
+        self.set_gene_variables(info=info, storage_manager=storage_manager)
 
         if info:
             self.print_net_info()
-
-        if evo_replace_param_list is not None:
-            self.set_marked_variables(evo_replace_param_list)
 
         #self.old_param_list = self.get_all_params()
 
@@ -222,6 +208,7 @@ class Network(NetworkObjectBase):
                         obj.behaviour[timestep].set_variables(obj)
                         obj.behaviour[timestep].check_unused_attrs()
 
+
             '''
             for ng in self.NeuronGroups:
                 if timestep in ng.behaviour:
@@ -332,11 +319,11 @@ class Network(NetworkObjectBase):
 
         for t in range(int(outside_it)):
             if measure_block_time:
-                start_time = time()
+                start_time = time.time()
             for i in range(int(block_iterations)):
                 self.simulate_iteration()
             if measure_block_time:
-                time_diff = (time() - start_time) * 1000
+                time_diff = (time.time() - start_time) * 1000
 
                 print('\r{}xBatch: {}/{} ({}%) {:.3f}ms'.format(block_iterations,t+1, outside_it, int(100/outside_it*(t+1)),time_diff), end='')#, end='')
 

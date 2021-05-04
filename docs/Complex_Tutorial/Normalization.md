@@ -9,7 +9,10 @@ If the normalized sum of weights should be other than one, we can use the scalin
 Because the normalization can include multiple synapse groups, summation and division is performed during for-loops.
 To avoid division by zero, each calculated normalization value is increased by one if it is zero before the scaled normalization is applied.
 
-```python
+<img width="300" src="https://raw.githubusercontent.com/trieschlab/PymoNNto/Images/Normalization_beh.png"><br>
+
+```python
+
 from PymoNNto.NetworkCore.Behaviour import *
 
 class Normalization(Behaviour):
@@ -30,5 +33,6 @@ class Normalization(Behaviour):
         neurons.temp_weight_sum /= self.norm_factor
 
         for s in neurons.afferent_synapses[self.syn_type]:
-            s.W = s.W / (s.dst.temp_weight_sum[:, None] + (s.dst.temp_weight_sum[:, None] == 0))
+            s.W = s.W / (s.dst.temp_weight_sum[:, None] + (s.dst.temp_weight_sum[:, None] == 0))
+
 ```

@@ -36,6 +36,8 @@ class Basic_Behaviour(Behaviour):
     neurons.activity *= self.decay_factor
 ```
 
+<img width="300" src="https://raw.githubusercontent.com/trieschlab/PymoNNto/Images/Basic_Behaviour.png"><br>
+
 ## Simple Example
 
 When we combine the previous code blocks we can add the `Basic_Behaviour` to the NeuronGroup.
@@ -81,25 +83,65 @@ plt.plot(My_Network['n.activity', 0])
 plt.plot(My_Network['np.mean(n.activity)', 0], color='black')
 plt.show()
 ```
-![User interface example](https://raw.githubusercontent.com/trieschlab/PymoNNto/Images/both.png)
 
-## Tagging System
+# Synapses and Input
 
-To access the tagged objects we can use the `[]` operator. `['my_tag']` gives you a list of all objects tagged with `my_tag`. Here are some examples:
+We can add more behaviour modues to make the activity of the neurons more complex. Here the module `Input_Behaviour` is added. In `set_variables` the synapse matrix is created, which stores one weight-value from each neuron to each neuron. The Function `new_iteration` defines how the information is propagated to each neuron (dot product) and adds some term for random input. 
+The for loops are not neccessary here, because we only have one SynapseGroup. This solution, however, also works with multiple Neuron- and SynapseGroups. With `synapse.src` and `synapse.dst` you can access the source and destination NeuronGroups assigned to a SynapseGroup.
 
 ```python
-My_Network['my_neurons']
-=> [<PymoNNto.NetworkCore.Neuron_Group.NeuronGroup object at 0x00000195F4878670>]
+from PymoNNto import *
 
-My_Network['my_recorder']
-My_Neurons['my_recorder'] 
-=> [<PymoNNto.NetworkBehaviour.Recorder.Recorder.Recorder object at 0x0000021F1B61D5E0>]
 
-My_Neurons['n.activity']
-My_Neurons['my_recorder', 0]['n.activity']
-=> [[array(data iteration 1), array(data iteration 2), array(data iteration 3), ...]]
+class Input_Behaviour(Behaviour):
 
-My_Neurons['n.activity', 0] 
-is equivalent to 
-My_Neurons['n.activity'][0] 
+  def set_variables(self, neurons):
+    for synapse in neurons.afferent_synapses['GLUTAMATE']:
+        synapse.W = synapse.get_random_synapse_mat(density=0.1)
+
+  def new_iteration(self, neurons):
+    for synapse in neurons.afferent_synapses['GLUTAMATE']:
+        neurons.activity += synapse.W.dot(synapse.src.activity)/synapse.src.size
+
+    neurons.activity += neurons.get_random_neuron_vec(density=0.01)
+
+
+
+class Basic_Behaviour(Behaviour):
+
+  def set_variables(self, neurons):
+    neurons.activity = neurons.get_random_neuron_vec()
+    self.decay_factor = 0.99
+
+  def new_iteration(self, neurons):
+    neurons.activity *= self.decay_factor
+
+
+
+My_Network = Network()
+
+My_Neurons = NeuronGroup(net=My_Network, tag='my_neurons', size=100, behaviour={
+    1: Basic_Behaviour(),
+    2: Input_Behaviour(),
+    9: Recorder(tag='my_recorder', variables=['n.activity', 'np.mean(n.activity)'])
+})
+
+SynapseGroup(net=My_Network, src=My_Neurons, dst=My_Neurons, tag='GLUTAMATE')
+
+My_Network.initialize()
+
+My_Network.simulate_iterations(1000)
+
+
+
+import matplotlib.pyplot as plt
+plt.plot(My_Network['n.activity', 0])
+plt.plot(My_Network['np.mean(n.activity)', 0], color='black')
+plt.show()
 ```
+
+<img width="300" src="https://raw.githubusercontent.com/trieschlab/PymoNNto/Images/Input_Behaviour.png"><br>
+
+![User interface example](https://raw.githubusercontent.com/trieschlab/PymoNNto/Images/input.png)
+
+<img width="300" src="https://raw.githubusercontent.com/trieschlab/PymoNNto/Images/voltages.png"><img width="300" src="https://raw.githubusercontent.com/trieschlab/PymoNNto/Images/spikes.png"><br>

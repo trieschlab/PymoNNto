@@ -49,7 +49,7 @@ class sidebar_activity_sub_module(TabBase):
         self.image_item.mouseClickEvent = mce
 
         def group_changed(select_index):
-            tag=Network_UI.group_tags[select_index]
+            tag = Network_UI.group_tags[select_index]
             Network_UI.neuron_select_group = tag
             self.image_item.neuron_group_tag = tag
             Network_UI.neuron_visible_groups[index] = tag

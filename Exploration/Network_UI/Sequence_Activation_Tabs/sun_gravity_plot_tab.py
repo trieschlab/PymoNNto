@@ -248,13 +248,13 @@ class sun_gravity_plot_tab(TabBase):
             #stringaxis = pg.AxisItem(orientation='left')
             #stringaxis.setTicks([ydict.items()])
 
-            for group in  Network_UI.network.NeuronGroups:
+            for group in Network_UI.network.NeuronGroups:
                 group.buffer_posx, group.buffer_posy = pol2cart(group.get_random_neuron_vec() * 2 * np.pi, group.get_random_neuron_vec() * 100)
 
             def c(event):
                 for group in event.currentItem.groups:
                     dx = group.buffer_posx-event.pos().x()
-                    dy = group.buffer_posy-event.pos().y()*-1
+                    dy = group.buffer_posy-event.pos().y() * -1
                     d = np.sqrt(dx*dx+dy*dy)
 
                     indices = np.where(d<1)[0]
@@ -277,15 +277,15 @@ class sun_gravity_plot_tab(TabBase):
 
             if Network_UI.network['grammar_act', 0] is not None: 
                 source = Network_UI.network['grammar_act'][0]
-                self.base_char_masks_dict=dict([(char, source.get_activation(i, Network_UI.network['prediction_source', 0])) for i, char in enumerate(source.alphabet)])
+                self.base_char_masks_dict = dict([(char, source.get_activation(i, Network_UI.network['prediction_source', 0])) for i, char in enumerate(source.alphabet)])
 
             elif Network_UI.network['drum_act', 0] is not None: 
                 source = Network_UI.network['drum_act'][0]
-                self.base_char_masks_dict=dict([(source.instruments[char], source.get_activation(i, Network_UI.network['prediction_source', 0])) for i, char in enumerate(source.alphabet)])
+                self.base_char_masks_dict = dict([(source.instruments[char], source.get_activation(i, Network_UI.network['prediction_source', 0])) for i, char in enumerate(source.alphabet)])
             
             elif Network_UI.network['music_act', 0] is not None: 
                 source = Network_UI.network['music_act'][0]
-                self.base_char_masks_dict=dict([(source.midi_index_to_notestring(char), source.get_activation(i, Network_UI.network['prediction_source', 0])) for i, char in enumerate(source.alphabet)])
+                self.base_char_masks_dict = dict([(source.midi_index_to_notestring(char), source.get_activation(i, Network_UI.network['prediction_source', 0])) for i, char in enumerate(source.alphabet)])
             
 
             Network_UI.Next_H_Block()
