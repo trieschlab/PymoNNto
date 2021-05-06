@@ -19,6 +19,10 @@ class Network(NetworkObjectBase):
 
         self.iteration = 0
 
+        for k in self.behaviour:
+            if self.behaviour[k].set_variables_on_init:
+                self.behaviour[k].set_variables(self)
+
 
     def set_mechanisms(self, keys, enabeled):
         for key in keys:
@@ -87,6 +91,12 @@ class Network(NetworkObjectBase):
 
         print('initialize tren... Neurons: ', neuron_count, '|', len(self.NeuronGroups), ' blocks, Synapses: ', sysnape_count, '|', len(self.SynapseGroups),' blocks')
 
+    def save_descriptions(self, storage_manager=None):
+        if storage_manager is not None:
+            return #todo: implement
+            #storage_manager.save_param(key, value, section='Parameters')
+
+
     def initialize(self, info=False, warnings=True, storage_manager=None):
 
         self.set_gene_variables(info=info, storage_manager=storage_manager)
@@ -112,6 +122,8 @@ class Network(NetworkObjectBase):
         #self.save_network_state()
 
         self.check_unique_tags(warnings)
+
+        self.save_descriptions(storage_manager)
 
     def check_unique_tags(self,warnings=True):
         unique_tags=[]
@@ -204,7 +216,7 @@ class Network(NetworkObjectBase):
             for obj in self.all_behaviour_objects():
 
                 if timestep in obj.behaviour:
-                    if not obj.behaviour[timestep].run_on_init:
+                    if not obj.behaviour[timestep].set_variables_on_init:
                         obj.behaviour[timestep].set_variables(obj)
                         obj.behaviour[timestep].check_unused_attrs()
 
@@ -344,6 +356,7 @@ class Network(NetworkObjectBase):
     #    for sg in SynapseGroups:
     #        self.partition_Synapse_Group(sg)
 
+    '''
     def partition_Synapse_Group3(self, synapse_group, steps):
         return self.partition_Synapse_Group2(synapse_group, synapse_group.dst.partition_steps(steps))
 
@@ -389,8 +402,9 @@ class Network(NetworkObjectBase):
         self.SynapseGroups.remove(synapse_group)
 
         return syn_sub_groups
+    '''
 
-
+    '''
     def partition_Synapse_Group(self, syn_group, receptive_field_size=1, split_size=1):
 
         src = syn_group.src
@@ -496,6 +510,7 @@ class Network(NetworkObjectBase):
         self.SynapseGroups.remove(syn_group)
 
         return sub_groups
+    '''
 
 
 

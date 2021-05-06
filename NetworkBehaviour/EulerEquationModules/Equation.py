@@ -1,10 +1,6 @@
 from PymoNNto.NetworkCore.Behaviour import *
-from PymoNNto.NetworkBehaviour.Logic.EulerEquationModules.Helper.Helper import *
-import numpy as np
 from sympy import symbols
-import sympy.physics.units as units
-from sympy import symbols
-from sympy.physics.units import *
+
 
 class EquationModule(Behaviour):
 

@@ -1,4 +1,5 @@
 from PymoNNto.NetworkCore.Base import *
+import copy
 
 import random
 #def str_eval_conn(eval_string, synapses, s_id, sx, sy, sz, d_id, dx, dy, dz):
@@ -6,7 +7,7 @@ import random
 
 class SynapseGroup(NetworkObjectBase):
 
-    def __init__(self, src, dst, net, connectivity=None, tag=None, partition=False, partition_blocks='auto', behaviour = {}):
+    def __init__(self, src, dst, net, connectivity=None, tag=None, behaviour={}):
         super().__init__(tag=tag)
 
         if len(src.tags)>0 and len(dst.tags)>0:
@@ -23,18 +24,10 @@ class SynapseGroup(NetworkObjectBase):
         self.enabled = True
         self.group_weighting = 1
 
-        self.description = {'connectivity': str(connectivity), 'partition':str(partition)}
-
-        if connectivity is not None:
-            self.set_connectivity(connectivity)
-
-        if partition:
-            self.partition(split_size=partition_blocks)
-
         self.behaviour = behaviour
 
         for k in self.behaviour:
-            if self.behaviour[k].run_on_init:
+            if self.behaviour[k].set_variables_on_init:
                 self.behaviour[k].set_variables(self)
 
     def find_objects(self, key):
@@ -49,6 +42,7 @@ class SynapseGroup(NetworkObjectBase):
 
         return result
 
+    '''
     def set_connectivity(self, connectivity):
         src = self.src
         dst = self.dst
@@ -97,6 +91,7 @@ class SynapseGroup(NetworkObjectBase):
                     np.power(np.abs(sx - dx), 2) + np.power(np.abs(sy - dy), 2)) <= connectivity) * (s_id != d_id)
         else:
             self.enabled = connectivity(self, s_id, sx, sy, sz, d_id, dx, dy, dz)
+    '''
 
 
     def set_var(self, key, value):
@@ -196,7 +191,26 @@ class SynapseGroup(NetworkObjectBase):
 
         return max_dx, max_dy, max_dz
 
+    def get_sub_synapse_group(self, src_mask, dst_mask):
+        result = SynapseGroup(self.src.subGroup(src_mask), self.dst.subGroup(dst_mask), net=None, behaviour={})
 
+        # partition enabled update
+        if type(self.enabled) is np.ndarray:
+            mat_mask = dst_mask[:, None] * src_mask[None, :]
+            result.enabled = self.enabled[mat_mask].copy().reshape(result.get_synapse_mat_dim())
+
+        # copy al attributes
+        sgd = self.__dict__
+        for key in sgd:
+            if key == 'behaviour':
+                for k in self.behaviour:
+                    result.behaviour[k] = copy.copy(self.behaviour[k])
+            elif key not in ['src', 'dst', 'enabled']:
+                setattr(result, key, copy.copy(sgd[key]))
+
+        return result
+
+    '''
     def partition(self, split_size='auto'):#, receptive_field_size='auto'
 
         #if receptive_field_size == 'auto':
@@ -216,3 +230,4 @@ class SynapseGroup(NetworkObjectBase):
         self.network.partition_Synapse_Group3(self, steps=split_size)
 
         #self.network.partition_Synapse_Group(self, receptive_field_size=self.get_max_receptive_field_size(), split_size=split_size)
+    '''

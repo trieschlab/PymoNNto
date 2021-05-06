@@ -1,28 +1,30 @@
-#from PymoNNto.NetworkBehaviour.Logic.Images.Neuron_Homeostais import *
-from PymoNNto.NetworkBehaviour.Logic.Basics.BasicHomeostasis import *
-#import compiler
+from PymoNNto.NetworkCore.Behaviour import *
 import copy
+
 
 class Recorder(Behaviour):
     visualization_module_outputs = []
 
     def __init__(self, variables, gapwidth=0, tag=None, max_length=None, save_as_numpy=False):
-        super().__init__()
-        if tag is not None:
-            self.add_tag(tag)
+        super().__init__(tag=tag, variables=variables, gapwidth=gapwidth, max_length=max_length, save_as_numpy=save_as_numpy)
+        #if tag is not None:
+        #    self.add_tag(tag)
         self.add_tag('recorder')
 
-        self.gapwidth = gapwidth
+        self.gapwidth = self.get_init_attr('gapwidth', 0)
         self.counter = 0
         self.new_data_available=False
         self.variables = {}
         self.compiled = {}
-        self.save_as_numpy = save_as_numpy
+        self.save_as_numpy = self.get_init_attr('save_as_numpy', False)
 
-        self.add_variables(variables)
+        self.add_variables(self.get_init_attr('variables', []))
         self.reset()
         self.active = True
-        self.max_length = max_length
+        self.max_length = self.get_init_attr('max_length', None)
+
+    def set_variables(self, neurons):
+        self.reset()
 
     def add_varable(self, v):
         if self.save_as_numpy:
@@ -45,8 +47,7 @@ class Recorder(Behaviour):
         for v in self.variables:
             self.add_varable(v)
 
-    def set_variables(self, neurons):
-        self.reset()
+
 
     def is_new_data_available(self):
         if self.new_data_available:

@@ -18,41 +18,43 @@ nav:
 
     - Introduction:
         - -Installation: Introduction/installation.md
-        - -Basics: Basic_Tutorial/basics.md
+        - -Basics: Introduction/basics2.md
+        - -User Interface: Introduction/User_Interface.md
 
     - Tools:
-        - -Tagging System ['tag']: Basic_Tutorial/Tagging.md
-        - -User Interface <!--- Examples_Paper/Basic/Basic_Tab.py -->: Basic_Tutorial/User_Interface.md
-        - -Storage Manager: Basic_Tutorial/StorageManager.md
-        - -Evolution: Basic_Tutorial/Evolution.md
-        - -Other Tools: Basic_Tutorial/Tools.md
+        - -Tagging System ['tag']: Tools/Tagging.md
+        - -Storage Manager: Tools/StorageManager.md
+        - -Evolution: Tools/Evolution.md
+        - -Cython: Tools/cython.md
 
-    - Complex Tutorial:
+    - Complex Behaviour Tutorial:
         - -Homeostasis <!--- Examples_Paper/STDP_Hom_Norm/Homeostasis.py -->: Complex_Tutorial/Homeostasis.md
         - -Normalization <!--- Examples_Paper/STDP_Hom_Norm/Normalization.py -->: Complex_Tutorial/Normalization.md
         - -STDP <!--- Examples_Paper/STDP_Hom_Norm/STDP.py -->: Complex_Tutorial/STDP.md
         - -Complex Network <!--- Examples_Paper/STDP_Hom_Norm/Complex.py -->: Complex_Tutorial/Complex.md
 
     - Behaviours:
-        - -Homeostasis: Complex_Tutorial/Homeostasis.md
-        - -Normalization: Complex_Tutorial/Normalization.md
-        - -STDP: Complex_Tutorial/STDP.md
+        - -Neuron Dimension: Behaviours/Neuron_Dimension.md
+        - -Recorder: Behaviours/Recorder.md
+        - -Event Recorder: Behaviours/Event_Recorder.md
 
         - -Default Homeostatic Mechanism <!--- Examples_Behaviour/Default_homeostatic_mechanism.py -->: Behaviours/Default_homeostatic_mechanism.md
         - -Image Input <!--- Examples_Behaviour/Image_Input.py -->: Behaviours/Image_Input.md
         - -Refractory Period <!--- Examples_Behaviour/Refractory_Period.py -->: Behaviours/Refractory_Period.md
         - -Simple Text Input <!--- Examples_Behaviour/Simple_Text_input.py -->: Behaviours/Simple_Text_input.md
         - -STDP Advanced <!--- Examples_Behaviour/STDP_Advanced.py -->: Behaviours/STDP_Advanced.md
-        - -Synaptic Input <!--- Examples_Behaviour/Synaptic_Input.py -->: Behaviours/Synaptic_Input.md
+
+    -Synapse Behaviours:
+        - -Receptive fields and connectivity: Synapse_Behaviours/Receptive_Fields.md
+        - -Partition: Synapse_Behaviours/Partition.md
 
     - User Interface Tabs:
+        - -Custom UI Tab <!--- Examples_Paper/Basic/Basic_Tab.py -->: UI/cutom_ui_tab.md
         - -Default Tabs:  UI/Default.md
         - -Advanced Tabs: UI/Advanced_Tabs.md
         - -Text Input Tabs: UI/Text_Input_Tabs.md
         - -Basic Tab <!--- Examples_Paper/Basic/Basic_Tab.py -->: UI/Basic_Tab.md
         - -OpenGL Tab <!--- Examples_UI/OpenGLTab.py -->: UI/OpenGLTab.md
-
-
 
     - Classical Examples:
         - -Brunel Hakim <!--- Examples_Classical/Brunel_Hakim.py -->: Classical/Brunel_Hakim.md

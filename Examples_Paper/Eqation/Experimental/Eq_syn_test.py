@@ -2,9 +2,7 @@ import sys
 sys.path.append('../../')
 from PymoNNto.NetworkCore.Network import *
 from PymoNNto.NetworkCore.Synapse_Group import *
-from PymoNNto.NetworkBehaviour.Logic.EulerEquationModules.EulerClock import *
-from PymoNNto.NetworkBehaviour.Logic.EulerEquationModules.VariableInitializer import *
-from PymoNNto.NetworkBehaviour.Logic.EulerEquationModules.Equation import *
+from NetworkBehaviour.EulerEquationModules.Equation import *
 from matplotlib.pyplot import *
 from PymoNNto.NetworkBehaviour.Structure.Structure import *
 

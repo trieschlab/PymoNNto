@@ -40,7 +40,7 @@ My_Neurons = NeuronGroup(net=My_Network, tag='my_neurons', size=get_squared_dim(
     10: EventRecorder(tag='my_event_recorder', variables=['n.spike'])
 })
 
-My_Neurons.visualize_module(False)#, only_feed_forward_connections=True
+#My_Neurons.visualize_module()#, only_feed_forward_connections=True
 
 my_syn = SynapseGroup(net=My_Network, src=My_Neurons, dst=My_Neurons, tag='GLUTAMATE')
 

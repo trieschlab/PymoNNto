@@ -2,9 +2,9 @@ content = [
     "docs/index.md",
     "docs/Introduction/installation.md",
     "docs/Introduction/installation2.md",
-    "docs/Basic_Tutorial/basics.md",
-    "docs/Basic_Tutorial/Synapses_and_Input.md",
-    "docs/Basic_Tutorial/User_Interface.md"]
+    "docs/Tools/basics.md",
+    "docs/Tools/Synapses_and_Input.md",
+    "docs/Tools/User_Interface.md"]
 
 
 f = open("readme.md", "w")

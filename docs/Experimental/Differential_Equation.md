@@ -12,9 +12,9 @@ sys.path.append('../../')
 start_time=time_p.time()
 from PymoNNto import *
 from matplotlib.pyplot import *
-from PymoNNto.NetworkBehaviour.Logic.EulerEquationModules.EulerClock import *
-from PymoNNto.NetworkBehaviour.Logic.EulerEquationModules.VariableInitializer import *
-from PymoNNto.NetworkBehaviour.Logic.EulerEquationModules.Equation import *
+from NetworkBehaviour.EulerEquationModules import *
+from NetworkBehaviour.EulerEquationModules import *
+from NetworkBehaviour.EulerEquationModules.Equation import *
 
 net = Network()
 

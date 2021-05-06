@@ -19,6 +19,7 @@ class NeuronGroup(NetworkObjectBase):
 
         if net is not None:
             net.NeuronGroups.append(self)
+            self.network = net
 
         self.size = size
         self.afferent_synapses = {} #set by Network
@@ -38,7 +39,7 @@ class NeuronGroup(NetworkObjectBase):
         #        self.behaviour[k] = copy.copy(behaviour[k])
 
         for k in self.behaviour:
-            if self.behaviour[k].run_on_init:
+            if self.behaviour[k].set_variables_on_init:
                 self.behaviour[k].set_variables(self)
 
         self.id = np.arange(self.size)
@@ -167,7 +168,7 @@ class NeuronGroup(NetworkObjectBase):
 
         return result
 
-    def partition_size(self, block_size = 7):
+    def partition_size(self, block_size=7):
 
         w = block_size#int((self.src.width/block_size+self.dst.width/block_size)/2)
         h = block_size#int((self.src.height/block_size+self.dst.height/block_size)/2)
@@ -178,7 +179,7 @@ class NeuronGroup(NetworkObjectBase):
         else:
             return self.partition_steps(split_size)
 
-    def partition_steps(self, steps=[1, 1, 1]):
+    def partition_masks(self, steps=[1, 1, 1]):
 
         dst_min = [np.min(p) for p in [self.x, self.y, self.z]]
         dst_max = [np.max(p) for p in [self.x, self.y, self.z]]
@@ -205,9 +206,12 @@ class NeuronGroup(NetworkObjectBase):
                         sub_group_mask[old_dst_mask] *= False
                     masks.append(sub_group_mask)
 
-                    results.append(self.subGroup(sub_group_mask))
+                    results.append(sub_group_mask)
 
         return results
+
+    def partition_steps(self, steps=[1, 1, 1]):
+        return [self.subGroup(mask) for mask in self.partition_masks(steps)]
 
 
     def mask_var(self, var):

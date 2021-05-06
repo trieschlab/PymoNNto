@@ -1,6 +1,4 @@
 from PymoNNto.NetworkCore.Behaviour import *
-from PymoNNto.NetworkBehaviour.Logic.EulerEquationModules.Helper.Helper import *
-import numpy as np
 
 
 class Variable(Behaviour):

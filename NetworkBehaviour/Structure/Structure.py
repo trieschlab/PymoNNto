@@ -1,4 +1,4 @@
-from PymoNNto.NetworkCore.Neuron_Group import *
+from PymoNNto.NetworkCore.Behaviour import *
 import math
 import numpy as np
 
@@ -28,13 +28,13 @@ def get_squared_dim(number_of_neurons, depth=1, round_up=True):
     w=divider
     h=int(number_of_neurons/divider)
 
-    print(w,h)
+    print('set network size to', w, 'x', h)
     return NeuronDimension(width=w, height=h, depth=depth)
 
 
 class NeuronDimension(Behaviour):
 
-    run_on_init = True
+    set_variables_on_init = True
 
     #def __init__(self, width=1, height=1, depth=1):
     #    super().__init__()
@@ -118,7 +118,7 @@ class NeuronDimension(Behaviour):
         self.height = self.get_init_attr('height', 1, neurons)
         self.depth = self.get_init_attr('depth', 1, neurons)
 
-        for pg in self.get_init_attr('input_pattern_groups', [], neurons):
+        for pg in self.get_init_attr('input_patterns', [], neurons):
             dim = pg.get_pattern_dimension()#.reconstruct_pattern(None)
             if len(dim) > 0: self.height = np.maximum(self.height, dim[0])
             if len(dim) > 1: self.width = np.maximum(self.width, dim[1])
@@ -138,8 +138,6 @@ class NeuronDimension(Behaviour):
 
     def new_iteration(self, neurons):
         return
-
-
 
 
 

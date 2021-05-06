@@ -12,6 +12,8 @@ from PymoNNto.NetworkCore.Synapse_Group import *
 
 from pyqtgraph.graphicsItems.GraphicsObject import GraphicsObject
 
+import inspect
+
 class Module_draw_item(pg.GraphicsObject):
 
     def __init__(self, module_name, inputs, outputs, attributes, module_type, init_vars=None, x=0, y=0, onlyff=False):
@@ -47,7 +49,7 @@ class Module_draw_item(pg.GraphicsObject):
 
         self.get_arrow_positions()
 
-        self.attributes = attributes
+        self.attributes = sorted(attributes)
         self.module_type = module_type
 
         self.red = (237, 85, 59, 255)
@@ -82,7 +84,21 @@ class Module_draw_item(pg.GraphicsObject):
 
         return x, y
 
+    def set_font_smaller_than(self, painter, text, max_width, text_size):
+        tw=max_width
 
+        while tw >= max_width:
+            qf = QFont("Arial")
+            qf.setPointSizeF(text_size)
+
+            text_size -= 0.1
+
+            fm = QFontMetrics(qf)
+            # qf.setStretch(2)
+            painter.setFont(qf)
+            tw = fm.width(text)
+
+        return fm
 
     def draw_arrow(self, painter, pos, text, color):
         x=pos.x()
@@ -110,19 +126,21 @@ class Module_draw_item(pg.GraphicsObject):
         painter.setPen(pg.mkPen(color=(0, 0, 0, 255)))
         painter.setBrush(pg.mkBrush(color=(0, 0, 0, 255)))
 
-        text_size=4.0
-        tw = self.nob_size * self.size * 5
+        fm = self.set_font_smaller_than(painter, text, self.nob_size * self.size * 5, self.size / 100.0 * 4.0)
 
-        while tw >= self.nob_size * self.size * 5:
-            qf = QFont("Arial")
-            qf.setPointSizeF(self.size / 100.0 * text_size)
+        #text_size=4.0
+        #tw = self.nob_size * self.size * 5
 
-            text_size -= 0.1
+        #while tw >= self.nob_size * self.size * 5:
+        #    qf = QFont("Arial")
+        #    qf.setPointSizeF(self.size / 100.0 * text_size)
 
-            fm = QFontMetrics(qf)
-            # qf.setStretch(2)
-            painter.setFont(qf)
-            tw = fm.width(text)
+        #    text_size -= 0.1
+
+        #    fm = QFontMetrics(qf)
+        #    # qf.setStretch(2)
+        #    painter.setFont(qf)
+        #    tw = fm.width(text)
 
 
         painter.drawText(QtCore.QPointF(x - fm.width(text) / 2.0, y + fm.height() / 4), text)  # + self.nob_size * self.size / 2  float(fm.height())/20.0
@@ -313,14 +331,19 @@ class Module_draw_item(pg.GraphicsObject):
         painter.setPen(pg.mkPen(color=color))
         painter.setBrush(pg.mkBrush(color=color))
 
-        qf = QFont("Arial")
-        qf.setPointSizeF(self.size/100.0*7.0)
+
+
+        text = self.module_name.replace('_', ' ')
+        fm = self.set_font_smaller_than(painter, text, self.size - self.border * self.size * 3, text_size=self.size/100.0*7.0)
+
+        #qf = QFont("Arial")
+        #qf.setPointSizeF(self.size/100.0*7.0)
         #qf.setUnderline(True)
         #qf.setBold(True)
-        fm = QFontMetrics(qf)
+        #fm = QFontMetrics(qf)
         # qf.setStretch(2)
-        painter.setFont(qf)
-        text = self.module_name.replace('_', ' ')
+        #painter.setFont(qf)
+
         painter.drawText(int(self.x+0.5*self.size-fm.width(text)/2), self.y-int(self.size - self.border * self.size * 1.5-fm.height()/2), text)
 
         qf = QFont("Arial")
@@ -456,6 +479,20 @@ class module_drawer(UI_Base):
         ng = NeuronGroup_read_write_event(1, {}, None)
         sg = SynapseGroup_read_write_event(ng, ng, None)
 
+        main_arg = ng
+        module_type = 'PymoNNto Neuron-Group Module'
+        synapse_beh_arg_names = ['s', 'S', 'syn', 'Syn', 'SYN', 'syns', 'Syns', 'SYNS', 'synapse', 'Synapse', 'SYNAPSE', 'synapses', 'Synapses', 'SYNAPSES']
+        func1_arg_names = inspect.getfullargspec(module_copy.set_variables).args
+        func2_arg_names = inspect.getfullargspec(module_copy.new_iteration).args
+        for s in synapse_beh_arg_names:
+            if s in func1_arg_names or s in func2_arg_names:
+                main_arg = sg
+                module_type = 'PymoNNto Synapse-Group Module'
+
+        if module_copy.set_variables_on_init:
+            module_type += ' (init set var)'
+
+
         #ng = NeuronGroup(1, {}, None)
         #sg = SynapseGroup(ng, ng, None)
 
@@ -499,7 +536,7 @@ class module_drawer(UI_Base):
         sg.set_write_event_function(write_sg)
 
 
-        created_vars_set = analyze_function(module_copy, 'set_variables', ng, sg)
+        created_vars_set = analyze_function(module_copy, 'set_variables', ng, sg, main_arg)
         write_vars_set = ng.variable_writes + sg.variable_writes#[var for var in ng.variable_writes + sg.variable_writes if var not in created_vars_set]
         read_vars_set = ng.variable_reads + sg.variable_reads#[var for var in ng.variable_reads + sg.variable_reads if var not in created_vars_set]
 
@@ -507,7 +544,7 @@ class module_drawer(UI_Base):
 
         reset_vars()
 
-        created_vars_it = analyze_function(module_copy, 'new_iteration', ng, sg)
+        created_vars_it = analyze_function(module_copy, 'new_iteration', ng, sg, main_arg)
         write_vars_it = ng.variable_writes + sg.variable_writes#[var for var in ng.variable_writes + sg.variable_writes if var not in created_vars_it]
         read_vars_it = ng.variable_reads + sg.variable_reads#[var for var in ng.variable_reads + sg.variable_reads if var not in created_vars_it]
 
@@ -534,7 +571,7 @@ class module_drawer(UI_Base):
             attributes.remove('tag')
         if 'behaviour_enabled' in attributes:
             attributes.remove('behaviour_enabled')
-        module_type = 'PymoNNto Neuron-Group Module'  # self.parent.__class__.__name__ + ' Module'
+          # self.parent.__class__.__name__ + ' Module'
 
         #inputs = list(set(read_vars_set + read_vars_it))
         #outputs = list(set(write_vars_set + write_vars_it))
@@ -654,7 +691,7 @@ class SynapseGroup_read_write_event(SynapseGroup):
             self.wef(self, attr_name)
         super().__setattr__(attr_name, val)
 
-def analyze_function(object, function_name, ng, sg):
+def analyze_function(object, function_name, ng, sg, arg):
     ng_dict_backup = copy.copy(ng.__dict__)
     sg_dict_backup = copy.copy(sg.__dict__)
 
@@ -664,7 +701,7 @@ def analyze_function(object, function_name, ng, sg):
 
     while not finished:
         try:
-            getattr(object, function_name)(ng)
+            getattr(object, function_name)(arg)
 
             finished = True
         except Exception as e:
@@ -704,4 +741,8 @@ def analyze_function(object, function_name, ng, sg):
     created_variables_sg = ['s.'+var for var in sg.__dict__ if var not in sg_dict_backup]
 
     return created_variables_ng+created_variables_sg #used_variable_keys_ng+used_variable_keys_sg+
+
+
+
+
 

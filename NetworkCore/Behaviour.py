@@ -3,7 +3,7 @@ from PymoNNto.Exploration.Evolution.Interface_Functions import *
 
 class Behaviour(NetworkObjectBase):
     #modificaton_reset_vars = []
-    run_on_init = False
+    set_variables_on_init = False
 
     def __init__(self, **kwargs):
         self.init_kwargs = kwargs
@@ -177,7 +177,11 @@ class Behaviour(NetworkObjectBase):
             if not key in self.used_attr_keys:
                 print('Warning: "'+key+'" not used in set_variables of '+str(self)+' behaviour! Make sure that "'+key+'" is spelled correctly and get_init_attr('+key+',...) is called in set_variables. Valid attributes are:'+str(self.used_attr_keys))
 
-    def get_init_attr(self, key, default, neurons=None, do_not_diversify=False, search_other_behaviours=False):
+    def get_init_attr(self, key, default, neurons=None, do_not_diversify=False, search_other_behaviours=False, required=False):
+
+        if required and not key in self.init_kwargs:
+            print('Warning:',key,'has to be specified for the behaviour to run properly.', self)
+
         self.used_attr_keys.append(key)
 
         result = self.init_kwargs.get(key, default)

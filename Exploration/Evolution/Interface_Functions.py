@@ -61,7 +61,7 @@ def get_gene_id(gene):
 def get_gene_file(gene):
     return gene['evo_name']+' gen'+str(gene['gen']) + ' id' + str(gene['id'])
 
-def set_score(score):
+def set_score(score, non_evo_storage_manager=None):
     global evolution_genome
 
     if evolution_genome is not None:
@@ -72,7 +72,9 @@ def set_score(score):
         sm.save_param_dict(evolution_genome)
         print('evolution score set to #'+str(score)+'#')
     else:
-        print('no genome found for score')
+        print('score='+str(score)+' (no genome found)')
+        if non_evo_storage_manager is not None:
+            non_evo_storage_manager.save_param('score', score)
 
     # reset and reload when next get_gene is called
 

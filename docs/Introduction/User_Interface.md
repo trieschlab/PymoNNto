@@ -1,3 +1,16 @@
+#User Interface
+
+To control and evaluate the model from the "Basics" section with PymoNNto's interactive graphical user interface we can replace the pyplot functions, the recorder and the simulate_iterations with code to launch the Network_UI.
+
+Like other parts of PymoNNto, the Network_UI is modular.
+It consists of multiple UI_modules, which we can be freely chosen.
+Here, we use the function get_default_UI_modules to get a list of standard modules applicable to most networks.
+
+To correctly render the output, some UI_modules require additional specifications or adjustment of the code.
+In this example, the sidebar_activity_module, displays the activity of the neurons on a grid and allows to select individual neurons.
+The size of the grid is specified as a property of the neuron group via a NeuronDimension module (here replaced with get_squared_dim(100)), which creates spatial coordinates for each neuron stored in the vectors x, y and z.
+
+```python
 from PymoNNto import *
 
 class Basic_Behaviour(Behaviour):
@@ -32,35 +45,22 @@ My_Network = Network()
 
 My_Neurons = NeuronGroup(net=My_Network, tag='my_neurons', size=get_squared_dim(100), behaviour={
     1: Basic_Behaviour(),
-    2: Input_Behaviour(),
-    9: Recorder(tag='my_recorder', variables=['n.voltage', 'np.mean(n.voltage)']),
-    10: EventRecorder(tag='my_event_recorder', variables=['n.spike'])
+    2: Input_Behaviour()
 })
 
-#My_Neurons.visualize_module()
+My_Neurons.visualize_module()
 
 my_syn = SynapseGroup(net=My_Network, src=My_Neurons, dst=My_Neurons, tag='GLUTAMATE')
 
 My_Network.initialize()
 
-#my_syn.enabeled = my_syn.W > 0
-
 My_Network.simulate_iterations(1000, measure_block_time=True)
 
-import matplotlib.pyplot as plt
-plt.plot(My_Network['n.voltage', 0])
-plt.plot(My_Network['np.mean(n.voltage)', 0], color='black')
-plt.axhline(My_Neurons['Basic_Behaviour', 0].threshold)
-plt.xlabel('iterations')
-plt.ylabel('voltage')
-plt.show()
-
-plt.plot(My_Network['n.spike.t', 0], My_Network['n.spike.i', 0], '.k')
-plt.xlabel('iterations')
-plt.ylabel('neuron index')
-plt.show()
 
 from PymoNNto.Exploration.Network_UI import *
-from Examples_Paper.Basic.Basic_Tab import *
-my_UI_modules = [MyUITab()] + get_default_UI_modules(['voltage', 'spike'], ['W'])
+my_UI_modules = get_default_UI_modules(['voltage', 'spike'], ['W'])
 Network_UI(My_Network, modules=my_UI_modules, label='My_Network_UI', group_display_count=1).show()
+
+```
+
+<img width="600" src="https://raw.githubusercontent.com/trieschlab/PymoNNto/Images/Basic_Tab.png"><br>

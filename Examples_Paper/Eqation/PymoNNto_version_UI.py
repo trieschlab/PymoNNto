@@ -5,12 +5,7 @@ import time
 t=time.time()
 
 from PymoNNto.NetworkCore.Network import *
-from PymoNNto.NetworkCore.Synapse_Group import *
-from PymoNNto.NetworkCore.Neuron_Group import *
-from PymoNNto.NetworkBehaviour.Logic.EulerEquationModules.EulerClock import *
-from PymoNNto.NetworkBehaviour.Logic.EulerEquationModules.VariableInitializer import *
-from PymoNNto.NetworkBehaviour.Logic.EulerEquationModules.Equation import *
-from matplotlib.pyplot import *
+from NetworkBehaviour.EulerEquationModules.Equation import *
 from PymoNNto.Exploration.Network_UI.Network_UI import *
 from PymoNNto.NetworkBehaviour.Structure.Structure import *
 
