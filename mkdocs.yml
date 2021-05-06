@@ -44,7 +44,7 @@ nav:
         - -Simple Text Input <!--- Examples_Behaviour/Simple_Text_input.py -->: Behaviours/Simple_Text_input.md
         - -STDP Advanced <!--- Examples_Behaviour/STDP_Advanced.py -->: Behaviours/STDP_Advanced.md
 
-    -Synapse Behaviours:
+    - Synapse Behaviours:
         - -Receptive fields and connectivity: Synapse_Behaviours/Receptive_Fields.md
         - -Partition: Synapse_Behaviours/Partition.md
 
