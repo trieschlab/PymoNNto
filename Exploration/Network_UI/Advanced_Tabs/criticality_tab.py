@@ -111,7 +111,7 @@ class criticality_tab(TabBase):
             self.WP_test_execute = False
 
             #if self.WPT_init:
-            import Exploration.Analysis.WP_testing as WPT
+            import PymoNNto.Exploration.Analysis.WP_testing as WPT
             import mrestimator as mre
             #self.WPT_init = True
 

@@ -68,7 +68,7 @@ class OpenGLTab(TabBase):
                     c = np.clip(c, 0, 1)
                     n.bars[i].setColor(c)
 
-#from Exploration.Network_UI.Advanced_Tabs.OpenGLTab import *
+#from PymoNNto.Exploration.Network_UI.Advanced_Tabs.OpenGLTab import *
 #+ [OpenGLTab()]
 
 

@@ -1,4 +1,4 @@
-from Exploration.StorageManager.StorageManager import *
+from PymoNNto.Exploration.StorageManager.StorageManager import *
 from PyQt5.QtWidgets import *
 import sys
 from PyQt5.QtGui import *

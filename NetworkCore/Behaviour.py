@@ -210,7 +210,7 @@ class Behaviour(NetworkObjectBase):
 
 
     def visualize_module(self, vmi=None, vmo=None, vma=None):
-        from Exploration.Visualization import Module_visualizer as drawer
+        from PymoNNto.Exploration.Visualization import Module_visualizer as drawer
         self.visualization_module_inputs = vmi
         self.visualization_module_outputs = vmo
         self.visualization_module_attributes = vma
