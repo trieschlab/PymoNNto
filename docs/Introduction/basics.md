@@ -29,7 +29,7 @@ In this example we define a variable `activity` and a `decay_factor`. The activi
 class Basic_Behaviour(Behaviour):
 
   def set_variables(self, neurons):
-    neurons.activity = neurons.get_random_neuron_vec()
+    neurons.activity = neurons.get_neuron_vec('uniform')
     self.decay_factor = 0.99
 
   def new_iteration(self, neurons):
@@ -55,7 +55,7 @@ from PymoNNto import *
 class Basic_Behaviour(Behaviour):
 
   def set_variables(self, neurons):
-    neurons.activity = neurons.get_random_neuron_vec()
+    neurons.activity = neurons.get_neuron_vec('uniform')
     self.decay_factor = 0.99
 
   def new_iteration(self, neurons):
@@ -97,20 +97,20 @@ class Input_Behaviour(Behaviour):
 
   def set_variables(self, neurons):
     for synapse in neurons.afferent_synapses['GLUTAMATE']:
-        synapse.W = synapse.get_random_synapse_mat(density=0.1)
+        synapse.W = synapse.get_synapse_mat('uniform',density=0.1)
 
   def new_iteration(self, neurons):
     for synapse in neurons.afferent_synapses['GLUTAMATE']:
         neurons.activity += synapse.W.dot(synapse.src.activity)/synapse.src.size
 
-    neurons.activity += neurons.get_random_neuron_vec(density=0.01)
+    neurons.activity += neurons.get_neuron_vec('uniform',density=0.01)
 
 
 
 class Basic_Behaviour(Behaviour):
 
   def set_variables(self, neurons):
-    neurons.activity = neurons.get_random_neuron_vec()
+    neurons.activity = neurons.get_neuron_vec('uniform')
     self.decay_factor = 0.99
 
   def new_iteration(self, neurons):

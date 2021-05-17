@@ -25,7 +25,7 @@ class UI_Base(QApplication):
     def __init__(self, network, label="Network_Test", create_sidebar=True):
         super().__init__(sys.argv)
 
-        path = PymoNNto.__file__.replace('__init__.py', '')
+        path = PymoNNto.__file__.replace('__init__.py', '')+ 'icon3232.png'
 
         if 'win' in sys.platform and sys.platform != 'darwin':
             import ctypes
@@ -33,7 +33,7 @@ class UI_Base(QApplication):
             ctypes.windll.shell32.SetCurrentProcessExplicitAppUserModelID(myappid)
 
         app_icon = QIcon()
-        app_icon.addFile(path + 'icon3232.png', QtCore.QSize(32, 32))
+        app_icon.addFile(path, QtCore.QSize(32, 32))
         self.setWindowIcon(app_icon)
 
         #app_icon.addFile(path + 'icon.png')

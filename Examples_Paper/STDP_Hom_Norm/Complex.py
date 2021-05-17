@@ -15,13 +15,13 @@ class Basic_Behaviour(Behaviour):
         neurons.voltage[firing] = 0.0#reset
 
         neurons.voltage *= 0.9 #voltage decay
-        neurons.voltage += neurons.get_random_neuron_vec(density=0.01) #noise
+        neurons.voltage += neurons.get_neuron_vec('uniform',density=0.01) #noise
 
 class Input_Behaviour(Behaviour):
 
     def set_variables(self, neurons):
         for synapse in neurons.afferent_synapses['GLUTAMATE']:
-            synapse.W = synapse.get_random_synapse_mat(density=0.1)
+            synapse.W = synapse.get_synapse_mat('uniform', density=0.1)
             synapse.enabled = synapse.W > 0
 
     def new_iteration(self, neurons):

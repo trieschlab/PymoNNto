@@ -1,4 +1,4 @@
-from Exploration.Evolution.Devices.Evolution_Device import *
+from PymoNNto.Exploration.Evolution.Devices.Evolution_Device import *
 
 class Evolution_Device_Single_Thread(Evolution_Device):
 

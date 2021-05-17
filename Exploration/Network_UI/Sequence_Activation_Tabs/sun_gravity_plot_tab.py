@@ -38,11 +38,11 @@ class DrawItem2(pg.GraphicsObject):
 
     def compute_and_apply_attraction(self, group, movement_speed_fac, anti_gravity_exp, random_movement_fac, weight_exp, attractor_rad_fac, attractor_rads):
 
-            #group.buffer_posx += (group.get_random_neuron_vec() - 0.5)*0.1
-            #group.buffer_posy += (group.get_random_neuron_vec() - 0.5)*0.1
+            #group.buffer_posx += (group.get_neuron_vec('uniform') - 0.5)*0.1
+            #group.buffer_posy += (group.get_neuron_vec('uniform') - 0.5)*0.1
 
-            group.add_x = (group.get_random_neuron_vec() - 0.5) * random_movement_fac# + (-group.buffer_posx)*p2
-            group.add_y = (group.get_random_neuron_vec() - 0.5) * random_movement_fac# + (-group.buffer_posy)*p2#np.sin(group.buffer_posy/lb*2*np.pi)*10*p2
+            group.add_x = (group.get_neuron_vec('uniform') - 0.5) * random_movement_fac# + (-group.buffer_posx)*p2
+            group.add_y = (group.get_neuron_vec('uniform') - 0.5) * random_movement_fac# + (-group.buffer_posy)*p2#np.sin(group.buffer_posy/lb*2*np.pi)*10*p2
 
             for sg in group.afferent_synapses['GLU']:
                 theta_src, rho_src = cart2pol(sg.src.buffer_posx, sg.src.buffer_posy)
@@ -249,7 +249,7 @@ class sun_gravity_plot_tab(TabBase):
             #stringaxis.setTicks([ydict.items()])
 
             for group in Network_UI.network.NeuronGroups:
-                group.buffer_posx, group.buffer_posy = pol2cart(group.get_random_neuron_vec() * 2 * np.pi, group.get_random_neuron_vec() * 100)
+                group.buffer_posx, group.buffer_posy = pol2cart(group.get_neuron_vec('uniform') * 2 * np.pi, group.get_neuron_vec('uniform') * 100)
 
             def c(event):
                 for group in event.currentItem.groups:

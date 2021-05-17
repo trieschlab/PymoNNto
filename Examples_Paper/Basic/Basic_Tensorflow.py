@@ -7,6 +7,7 @@ class Basic_Behaviour_Tensorflow(Behaviour):
         neurons.voltage = tf.Variable(neurons.get_neuron_vec(), dtype='float32')
         neurons.spike = tf.Variable(neurons.get_neuron_vec(), dtype='float32')
         self.threshold = tf.constant(0.5, dtype='float32')
+        self.decay_factor = tf.constant(0.9, dtype='float32')
 
     def new_iteration(self, neurons):
         firing = tf.greater(neurons.voltage, self.threshold)
@@ -15,8 +16,8 @@ class Basic_Behaviour_Tensorflow(Behaviour):
         not_firing = tf.cast(tf.math.logical_not(firing), dtype='float32')#reset
         neurons.voltage.assign(tf.multiply(neurons.voltage, not_firing))
 
-        new_voltage = tf.multiply(neurons.voltage, 0.9)#voltage decay
-        rnd_act = tf.constant(neurons.get_random_neuron_vec(density=0.01), dtype='float32')
+        new_voltage = tf.multiply(neurons.voltage, self.decay_factor)#voltage decay
+        rnd_act = tf.constant(neurons.get_neuron_vec('uniform', density=0.01), dtype='float32')
         neurons.voltage.assign(tf.add(new_voltage, rnd_act)) #noise
 
 
@@ -24,7 +25,7 @@ class Input_Behaviour_Tensorflow(Behaviour):
 
     def set_variables(self, neurons):
         for syn in neurons.afferent_synapses['GLUTAMATE']:
-            syn.W = tf.Variable(syn.get_random_synapse_mat(density=0.1), dtype='float32')
+            syn.W = tf.Variable(syn.get_synapse_mat('uniform', density=0.1), dtype='float32')
 
     def new_iteration(self, neurons):
         for synapse in neurons.afferent_synapses['GLUTAMATE']:

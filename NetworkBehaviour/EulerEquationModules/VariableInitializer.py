@@ -1,5 +1,5 @@
 from PymoNNto.NetworkCore.Behaviour import *
-
+from PymoNNto.NetworkBehaviour.EulerEquationModules.Helper import *
 
 class Variable(Behaviour):
 

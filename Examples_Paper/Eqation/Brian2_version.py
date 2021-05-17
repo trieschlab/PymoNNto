@@ -26,7 +26,7 @@ M = StateMonitor(G, 'v', record=True)
 print('t1', time.time()-start_time)
 
 start_time=time.time()
-run(100000*ms)
+run(1000*ms)
 print('t2', time.time()-start_time)
 
 for vrec in M.v:

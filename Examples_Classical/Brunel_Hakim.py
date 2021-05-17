@@ -34,7 +34,7 @@ class Brunel_Hakim_main(Behaviour):
         #n.xi = n.get_neuron_vec()
 
     def new_iteration(self, n):
-        #xi = (n.get_random_neuron_vec(density=0.5)>0)
+        #xi = (n.get_neuron_vec('uniform',density=0.5)>0)
         xi = np.random.normal(loc=0.0, scale=1.0, size=n.size)*13#*5
 
         #xi = np.sqrt(1/tau)*np.random.normal(loc=0.0, scale=1.0, size=n.size)
@@ -62,7 +62,7 @@ class Brunel_Hakim_input(Behaviour):
 
     def set_variables(self, n):
         for s in n.afferent_synapses['GLUTAMATE']:
-            s.W = (s.get_random_synapse_mat()<n.sparseness).astype(def_dtype) * (-n.J)#density=n.sparseness
+            s.W = (s.get_synapse_mat('uniform')<n.sparseness).astype(def_dtype) * (-n.J)#density=n.sparseness
 
             #print(s.W)
 

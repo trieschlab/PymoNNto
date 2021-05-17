@@ -7,7 +7,7 @@ class Diesmann_main(Behaviour):
     def set_variables(self, n):
         self.set_init_attrs_as_variables(self)
         n.dt = 0.01
-        n.v = n.get_neuron_vec() - self.Vr + n.get_random_neuron_vec() * (self.Vt - self.Vr)
+        n.v = n.get_neuron_vec() - self.Vr + n.get_neuron_vec('uniform') * (self.Vt - self.Vr)
         n.x = n.get_neuron_vec()
         n.y = n.get_neuron_vec()
 
@@ -16,7 +16,7 @@ class Diesmann_main(Behaviour):
 
         n.v += (-(v - self.Vr) + x) * (1. / self.taum) * n.dt#: volt
         n.x += (-x + y) * (1. / self.taupsp) * n.dt#: volt
-        n.y += (-y * (1. / self.taupsp) + 25.27 + (39.24 ** 0.5) * n.get_random_neuron_vec()*10) * n.dt#: volt
+        n.y += (-y * (1. / self.taupsp) + 25.27 + (39.24 ** 0.5) * n.get_neuron_vec('uniform')*10) * n.dt#: volt
 
         n.spike = (n.v > self.Vt)
         n.v[n.spike] = self.Vr
@@ -28,7 +28,7 @@ class Diesmann_input(Behaviour):
         self.set_init_attrs_as_variables(self)
 
         for s in n.afferent_synapses['GLUTAMATE']:
-            s.W = s.get_random_synapse_mat()
+            s.W = s.get_synapse_mat('uniform')
 
         #[k for k in range((int(i/group_size)+1)*group_size, (int(i/group_size)+2)*group_size) if i<N_pre-group_size]
 
@@ -37,7 +37,7 @@ class Diesmann_input(Behaviour):
             n.v += np.sum(s.W[:, s.src.spike], axis=1)
 
         if self.external_noise:
-            n.v += n.get_random_neuron_vec()
+            n.v += n.get_neuron_vec('uniform')
 
 
 #Pinput = SpikeGeneratorGroup(85, np.arange(85), np.random.randn(85) + 50)

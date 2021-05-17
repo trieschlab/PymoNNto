@@ -2,7 +2,8 @@
 
 The following code creates a network of 5000 neurons with recurrent connections and simulates them for 1000 iterations. 
 
-```python
+```python
+
 from PymoNNto import *
 import matplotlib.pyplot as plt
 #https://brian2.readthedocs.io/en/stable/examples/frompapers.Brunel_Hakim_1999.html
@@ -39,7 +40,7 @@ class Brunel_Hakim_main(Behaviour):
         #n.xi = n.get_neuron_vec()
 
     def new_iteration(self, n):
-        #xi = (n.get_random_neuron_vec(density=0.5)>0)
+        #xi = (n.get_neuron_vec('uniform',density=0.5)>0)
         xi = np.random.normal(loc=0.0, scale=1.0, size=n.size)*13#*5
 
         #xi = np.sqrt(1/tau)*np.random.normal(loc=0.0, scale=1.0, size=n.size)
@@ -67,7 +68,7 @@ class Brunel_Hakim_input(Behaviour):
 
     def set_variables(self, n):
         for s in n.afferent_synapses['GLUTAMATE']:
-            s.W = (s.get_random_synapse_mat()<n.sparseness).astype(def_dtype) * (-n.J)#density=n.sparseness
+            s.W = (s.get_synapse_mat('uniform')<n.sparseness).astype(def_dtype) * (-n.J)#density=n.sparseness
 
             #print(s.W)
 
@@ -123,7 +124,8 @@ plt.show()
 
 #from PymoNNto.Exploration.Network_UI import *
 #my_UI_modules = get_default_UI_modules(['fired', 'v', 'u'], ['W'])
-#Network_UI(My_Network, modules=my_UI_modules, label='My_Network_UI', group_display_count=2).show()
+#Network_UI(My_Network, modules=my_UI_modules, label='My_Network_UI', group_display_count=2).show()
+
 ```
 
 

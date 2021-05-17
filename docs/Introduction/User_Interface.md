@@ -6,9 +6,20 @@ Like other parts of PymoNNto, the Network_UI is modular.
 It consists of multiple UI_modules, which we can be freely chosen.
 Here, we use the function get_default_UI_modules to get a list of standard modules applicable to most networks.
 
+get_default_UI_modules receives a list of neuron variable names as well as a list of all the synapse variable names we want to display.
+The first neuron variable in the list will be used to set the brightness of the network activity grid module (blue rectangle on image)
+
+Network_UI is initialized with the Network object, the ui module list, the window title.
+Additional to this, the attribute group_display_count defines how much activity grid modules we want to display, in case we want to see multiple NeuronGroups at once.
+The base color of the grid module can be defined by setting the MyNeuronGroup.color=(r,g,b,alpha) variable.
+
+We can also set group_tags=[] and transmitters=[] (lists of strings) manually if we only want to display groups with certain tags or transmitters.
+
+If we set reduced_layout to True we can remove the axis labels of the plots, so we get bigger plotting areas and a cleaner look.
+
 To correctly render the output, some UI_modules require additional specifications or adjustment of the code.
 In this example, the sidebar_activity_module, displays the activity of the neurons on a grid and allows to select individual neurons.
-The size of the grid is specified as a property of the neuron group via a NeuronDimension module (here replaced with get_squared_dim(100)), which creates spatial coordinates for each neuron stored in the vectors x, y and z.
+The size of the grid is specified as a property of the neuron group via a NeuronDimension module (here replaced with get_squared_dim(100) to get a 10x10 grid), which creates spatial coordinates for each neuron stored in the vectors x, y and z.
 
 ```python
 from PymoNNto import *
@@ -26,13 +37,13 @@ class Basic_Behaviour(Behaviour):
         neurons.voltage[firing] = 0.0#reset
 
         neurons.voltage *= self.leak_factor #voltage decay
-        neurons.voltage += neurons.get_random_neuron_vec(density=0.01) #noise
+        neurons.voltage += neurons.get_neuron_vec('uniform',density=0.01) #noise
 
 class Input_Behaviour(Behaviour):
 
     def set_variables(self, neurons):
         for synapse in neurons.afferent_synapses['GLUTAMATE']:
-            synapse.W = synapse.get_random_synapse_mat(density=0.1)
+            synapse.W = synapse.get_synapse_mat('uniform', density=0.1)
             synapse.enabled = synapse.W > 0
 
     def new_iteration(self, neurons):

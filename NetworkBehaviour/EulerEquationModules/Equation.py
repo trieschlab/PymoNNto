@@ -1,8 +1,9 @@
 from PymoNNto.NetworkCore.Behaviour import *
+from PymoNNto.NetworkBehaviour.EulerEquationModules.Helper import *
 from sympy import symbols
 
 
-class EquationModule(Behaviour):
+class Equation(Behaviour):
 
     def set_variables(self, neurons):
         n=neurons

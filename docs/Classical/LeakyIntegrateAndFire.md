@@ -3,14 +3,15 @@
 The following code creates a network with 800 excitatory neurons, 200 inhibitory neurons and all the connections between them.
 The neurons are simple leaky integrate and fire neurons which receive inhibitory and excitatory input.
 
-```python
+```python
+
 from PymoNNto import *
 
 class LIF_main(Behaviour):
 
     def set_variables(self, n):
         self.set_init_attrs_as_variables(n)
-        n.v = n.get_random_neuron_vec()*n.v_rest
+        n.v = n.get_neuron_vec('uniform')*n.v_rest
         n.fired = n.get_neuron_vec() > 0
         n.dt = 0.1
 
@@ -26,13 +27,13 @@ class LIF_input(Behaviour):
 
     def set_variables(self, n):
         for s in n.afferent_synapses['All']:
-            s.W = s.get_random_synapse_mat()
+            s.W = s.get_synapse_mat('uniform')
 
         n.I = n.get_neuron_vec()
 
     def new_iteration(self, n):
 
-        n.I = 90 * n.get_random_neuron_vec()
+        n.I = 90 * n.get_neuron_vec('uniform')
 
         for s in n.afferent_synapses['GLUTAMATE']:
             n.I += np.sum(s.W[:, s.src.fired], axis=1)
@@ -76,7 +77,8 @@ plt.show()
 
 #from PymoNNto.Exploration.Network_UI import *
 #my_UI_modules = get_default_UI_modules(['fired', 'v', 'u'], ['W'])
-#Network_UI(My_Network, modules=my_UI_modules, label='My_Network_UI', group_display_count=2).show()
+#Network_UI(My_Network, modules=my_UI_modules, label='My_Network_UI', group_display_count=2).show()
+
 ```
 
 

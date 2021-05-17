@@ -1,23 +1,28 @@
-https://pymonnto.readthedocs.io/
-
+https://pymonnto.readthedocs.io/
+
+
+
 # PymoNNto
 The "Python modular neural network toolbox" allows you to create different Neuron-Groups, define their Behaviour and connect them with Synapse-Groups.
 
 With this Simulator you can create all kinds of biological plausible networks, which, for example, mimic the learning mechanisms of cortical structures.
 
-<img width="200" src="https://raw.githubusercontent.com/trieschlab/PymoNNto/Images/logo.png">
+<img width="200" src="https://raw.githubusercontent.com/trieschlab/PymoNNto/Images/logo.png">
+
 # Installation
 
 ## PIP Installation
 
 PymoNNto requires Python3 and can be installen via pip with the following command:
 
-`pip install PymoNNto`
+`pip install PymoNNto`
+
 ## Manual Installation
 
 If you want to extend the PymoNNto code you can also clone the git repository and manually install the packages defined in requirements.txt
 
-
+
+
 # Basic Code Structure
 
 The following code creates a network of 100 neurons with recurrent connections and simulates them for 1000 iterations. What is still missing are some behaviour modules. This modules have to be passed to the NeuronGrop to definde what the neurons are supposed to do at each timestep.
@@ -49,7 +54,7 @@ In this example we define a variable `activity` and a `decay_factor`. The activi
 class Basic_Behaviour(Behaviour):
 
   def set_variables(self, neurons):
-    neurons.activity = neurons.get_random_neuron_vec()
+    neurons.activity = neurons.get_neuron_vec('uniform')
     self.decay_factor = 0.99
 
   def new_iteration(self, neurons):
@@ -73,7 +78,7 @@ from PymoNNto import *
 class Basic_Behaviour(Behaviour):
 
   def set_variables(self, neurons):
-    neurons.activity = neurons.get_random_neuron_vec()
+    neurons.activity = neurons.get_neuron_vec('uniform')
     self.decay_factor = 0.99
 
   def new_iteration(self, neurons):
@@ -122,7 +127,8 @@ My_Neurons['my_recorder', 0]['n.activity']
 My_Neurons['n.activity', 0] 
 is equivalent to 
 My_Neurons['n.activity'][0] 
-```
+```
+
 # Synapses and Input
 
 We can add more behaviour modues to make the activity of the neurons more complex. Here the module `Input_Behaviour` is added. In `set_variables` the synapse matrix is created, which stores one weight-value from each neuron to each neuron. The Function `new_iteration` defines how the information is propagated to each neuron (dot product) and adds some term for random input. 
@@ -136,20 +142,20 @@ class Input_Behaviour(Behaviour):
 
   def set_variables(self, neurons):
     for synapse in neurons.afferent_synapses['GLUTAMATE']:
-        synapse.W = synapse.get_random_synapse_mat(density=0.1)
+        synapse.W = synapse.get_synapse_mat('uniform',density=0.1)
 
   def new_iteration(self, neurons):
     for synapse in neurons.afferent_synapses['GLUTAMATE']:
         neurons.activity += synapse.W.dot(synapse.src.activity)/synapse.src.size
 
-    neurons.activity += neurons.get_random_neuron_vec(density=0.01)
+    neurons.activity += neurons.get_neuron_vec('uniform',density=0.01)
 
 
 
 class Basic_Behaviour(Behaviour):
 
   def set_variables(self, neurons):
-    neurons.activity = neurons.get_random_neuron_vec()
+    neurons.activity = neurons.get_neuron_vec('uniform')
     self.decay_factor = 0.99
 
   def new_iteration(self, neurons):
@@ -179,7 +185,8 @@ plt.plot(My_Network['np.mean(n.activity)', 0], color='black')
 plt.show()
 ```
 
-![User interface example](https://raw.githubusercontent.com/trieschlab/PymoNNto/Images/input.png)
+![User interface example](https://raw.githubusercontent.com/trieschlab/PymoNNto/Images/input.png)
+
 # User Interface
 
 If we want to controll and evaluate our model in realtime we can replace the `pyplot` functions, the `recorder` and the `simulate_iterations` with the following Code lines. Similar to the NeuronGroup, the Network_UI is also modular and consists of multiple UI_modules. We can choose them ourselfes or, like in this case, take some default_modules, which should work with most networks. One addition we have to make is to give NeuronGroup some shape with the help of the `get_squared_dim(100)` function, which returns a 10x10 grid `NeuronDimension` object. The neuron-behaviours are not affected by this. The NeuronGroup only receives some additional values like width, height, depth and the vectors x, y, z. The neurons positions can be plotted with `plt.scatter(My_Neurons.x, My_Neurons.y)`
@@ -194,20 +201,20 @@ class Input_Behaviour(Behaviour):
 
   def set_variables(self, neurons):
     for synapse in neurons.afferent_synapses['GLUTAMATE']:
-        synapse.W = synapse.get_random_synapse_mat(density=0.1)
+        synapse.W = synapse.get_synapse_mat('uniform',density=0.1)
 
   def new_iteration(self, neurons):
     for synapse in neurons.afferent_synapses['GLUTAMATE']:
         neurons.activity += synapse.W.dot(synapse.src.activity)/synapse.src.size
 
-    neurons.activity += neurons.get_random_neuron_vec(density=0.01)
+    neurons.activity += neurons.get_neuron_vec('uniform',density=0.01)
 
 
 
 class Basic_Behaviour(Behaviour):
 
   def set_variables(self, neurons):
-    neurons.activity = neurons.get_random_neuron_vec()
+    neurons.activity = neurons.get_neuron_vec('uniform')
     self.decay_factor = 0.99
 
   def new_iteration(self, neurons):
@@ -235,4 +242,5 @@ Network_UI(My_Network, modules=my_UI_modules, label='My_Network_UI', group_displ
 ```
 
 
-![User interface example](https://raw.githubusercontent.com/trieschlab/PymoNNto/Images/UI.png)
+![User interface example](https://raw.githubusercontent.com/trieschlab/PymoNNto/Images/UI.png)
+

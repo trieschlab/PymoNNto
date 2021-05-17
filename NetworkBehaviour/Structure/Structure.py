@@ -2,6 +2,13 @@ from PymoNNto.NetworkCore.Behaviour import *
 import math
 import numpy as np
 
+#np.tile(src.x, (1, dst.size)).reshape(dst.size, src.size)
+def vec_to_mat(vec, repeat_count):
+    return np.tile(vec, (1, repeat_count)).reshape(repeat_count, vec.shape[0])
+
+#np.tile(dst.x, (1, src.size)).reshape(src.size, dst.size).transpose()
+def vec_to_mat_transposed(vec, repeat_count):
+    return vec_to_mat(vec, repeat_count).transpose()
 
 def rotation_matrix(axis, theta):
     """
@@ -112,8 +119,6 @@ class NeuronDimension(Behaviour):
 
 
     def set_variables(self, neurons):
-        self.add_tag('structure')
-
         self.width = self.get_init_attr('width', 1, neurons)
         self.height = self.get_init_attr('height', 1, neurons)
         self.depth = self.get_init_attr('depth', 1, neurons)

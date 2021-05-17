@@ -217,7 +217,7 @@ class Module_draw_item(pg.GraphicsObject):
                 if h > 0:
                     add = 200 * abs(distance)  # -200*h
                 else:
-                    add = -300 * abs(distance)  # -200*h
+                    add = -300 - 200 * abs(distance)  # -200*h
 
                 center.setY(center.y() + add)
                 from_right_2 = QtCore.QPointF(from_right.x(), (center.y() + from_right.y()) / 2.0)
@@ -578,13 +578,13 @@ class module_drawer(UI_Base):
 
         attributes = list(set(attributes))
 
-        if hasattr(module_copy, 'visualization_module_inputs'):
+        if hasattr(module_copy, 'visualization_module_inputs') and module_copy.visualization_module_inputs is not None:
             inputs = module_copy.visualization_module_inputs
 
-        if hasattr(module_copy, 'visualization_module_outputs'):
+        if hasattr(module_copy, 'visualization_module_outputs') and module_copy.visualization_module_outputs is not None:
             outputs = module_copy.visualization_module_outputs
 
-        if hasattr(module_copy, 'visualization_module_attributes'):
+        if hasattr(module_copy, 'visualization_module_attributes') and module_copy.visualization_module_attributes is not None:
             attributes = module_copy.visualization_module_attributes
 
 
@@ -605,13 +605,13 @@ def set_read_event_function(object, ref):
         if attr_name in ['wef', 'ref', 'current_dict'] or self.current_dict is None or attr_name in self.current_dict:
             return super().__getattribute__(attr_name)
         self.ref(self, attr_name)
-        return super().__getattribute__(attr_name)#self.get_random_neuron_vec()
+        return super().__getattribute__(attr_name)#self.get_neuron_vec('uniform')
 
     def __getattribute__(self, attr_name):
         if attr_name in ['wef', 'ref', 'current_dict'] or self.current_dict is None or attr_name in self.current_dict:
             return super().__getattribute__(attr_name)
         self.ref(self, attr_name)
-        return super().__getattribute__(attr_name)#self.get_random_neuron_vec()
+        return super().__getattribute__(attr_name)#self.get_neuron_vec('uniform')
 
     object.__getattr__ = __getattr__
     object.__getattribute__ = __getattribute__
@@ -647,13 +647,13 @@ class NeuronGroup_read_write_event(NeuronGroup):
         if attr_name in ['wef', 'ref', 'current_dict'] or self.current_dict is None or attr_name in self.current_dict:
             return super().__getattribute__(attr_name)
         self.ref(self, attr_name)
-        return super().__getattribute__(attr_name)#self.get_random_neuron_vec()
+        return super().__getattribute__(attr_name)#self.get_neuron_vec('uniform')
 
     def __getattribute__(self, attr_name):
         if attr_name in ['wef', 'ref', 'current_dict'] or self.current_dict is None or attr_name in self.current_dict:
             return super().__getattribute__(attr_name)
         self.ref(self, attr_name)
-        return super().__getattribute__(attr_name)#self.get_random_neuron_vec()
+        return super().__getattribute__(attr_name)#self.get_neuron_vec('uniform')
 
     def __setattr__(self, attr_name, val):
         if self.wef is not None:
@@ -678,13 +678,13 @@ class SynapseGroup_read_write_event(SynapseGroup):
         if attr_name in ['wef', 'ref', 'current_dict'] or self.current_dict is None or attr_name in self.current_dict:
             return super().__getattribute__(attr_name)
         self.ref(self, attr_name)
-        return super().__getattribute__(attr_name)#self.get_random_synapse_mat()
+        return super().__getattribute__(attr_name)#self.get_synapse_mat('uniform')
 
     def __getattribute__(self, attr_name):
         if attr_name in ['wef', 'ref', 'current_dict'] or self.current_dict is None or attr_name in self.current_dict:
             return super().__getattribute__(attr_name)
         self.ref(self, attr_name)
-        return super().__getattribute__(attr_name)#self.get_random_synapse_mat()
+        return super().__getattribute__(attr_name)#self.get_synapse_mat('uniform')
 
     def __setattr__(self, attr_name, val):
         if self.wef is not None:

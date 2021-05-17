@@ -4,7 +4,8 @@ The following code creates a network with 800 excitatory neurons, 200 inhibitory
 The neurons have different parameters and are updated with rules derived form the original Izhikevich paper.
 
 
-```python
+```python
+
 from PymoNNto import *
 
 class Izhikevich_main(Behaviour):
@@ -16,8 +17,8 @@ class Izhikevich_main(Behaviour):
         n.b += n.get_neuron_vec()
         n.c += n.get_neuron_vec()
         n.d += n.get_neuron_vec()
-        n.v *= n.get_random_neuron_vec()
-        n.u *= n.get_random_neuron_vec()
+        n.v *= n.get_neuron_vec('uniform')
+        n.u *= n.get_neuron_vec('uniform')
         n.fired = n.get_neuron_vec() > 0
         n.dt = 0.5
 
@@ -35,11 +36,11 @@ class Izhikevich_input(Behaviour):
 
     def set_variables(self, n):
         for s in n.afferent_synapses['All']:
-            s.W = s.get_random_synapse_mat()
+            s.W = s.get_synapse_mat('uniform')
 
     def new_iteration(self, n):
 
-        n.I = 20 * n.get_random_neuron_vec()
+        n.I = 20 * n.get_neuron_vec('uniform')
 
         for s in n.afferent_synapses['GLUTAMATE']:
             n.I += 0.5 * np.sum(s.W[:, s.src.fired], axis=1)
@@ -88,7 +89,8 @@ plt.show()
 
 #from PymoNNto.Exploration.Network_UI import *
 #my_UI_modules = get_default_UI_modules(['fired', 'v', 'u'], ['W'])
-#Network_UI(My_Network, modules=my_UI_modules, label='My_Network_UI', group_display_count=2).show()
+#Network_UI(My_Network, modules=my_UI_modules, label='My_Network_UI', group_display_count=2).show()
+
 ```
 
 

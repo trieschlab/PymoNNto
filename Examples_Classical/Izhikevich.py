@@ -9,8 +9,8 @@ class Izhikevich_main(Behaviour):
         n.b += n.get_neuron_vec()
         n.c += n.get_neuron_vec()
         n.d += n.get_neuron_vec()
-        n.v *= n.get_random_neuron_vec()
-        n.u *= n.get_random_neuron_vec()
+        n.v *= n.get_neuron_vec('uniform')
+        n.u *= n.get_neuron_vec('uniform')
         n.fired = n.get_neuron_vec() > 0
         n.dt = 0.5
 
@@ -28,11 +28,11 @@ class Izhikevich_input(Behaviour):
 
     def set_variables(self, n):
         for s in n.afferent_synapses['All']:
-            s.W = s.get_random_synapse_mat()
+            s.W = s.get_synapse_mat('uniform')
 
     def new_iteration(self, n):
 
-        n.I = 20 * n.get_random_neuron_vec()
+        n.I = 20 * n.get_neuron_vec('uniform')
 
         for s in n.afferent_synapses['GLUTAMATE']:
             n.I += 0.5 * np.sum(s.W[:, s.src.fired], axis=1)

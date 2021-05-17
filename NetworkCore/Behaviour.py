@@ -209,17 +209,20 @@ class Behaviour(NetworkObjectBase):
     #    return None
 
 
-    def visualize_module(self):
+    def visualize_module(self, vmi=None, vmo=None, vma=None):
         from Exploration.Visualization import Module_visualizer as drawer
+        self.visualization_module_inputs = vmi
+        self.visualization_module_outputs = vmo
+        self.visualization_module_attributes = vma
         md = drawer.module_drawer()
         md.add_module(self)
         md.show()
 
 
-    def initialize_synapse_attr(self, target_attr, density, equal_range, random_range, neurons, synapse_type, all_neurons_same=False):
-        for s in neurons.afferent_synapses[synapse_type]:
-            s.enabled *= s.get_random_synapse_mat(density, all_neurons_same) > 0.0
-            setattr(s, target_attr, s.enabled*(s.get_synapse_mat()+equal_range+s.get_random_synapse_mat(1.0, all_neurons_same)*random_range))#s.shape_mat*#neurons.GABA_strength+neurons.min_GABA_strength
+    #def initialize_synapse_attr(self, target_attr, density, equal_range, random_range, neurons, synapse_type, all_neurons_same=False):
+    #    for s in neurons.afferent_synapses[synapse_type]:
+    #        s.enabled *= s.get_synapse_mat('uniform',density=density, clone_along_first_axis=all_neurons_same) > 0.0
+    #        setattr(s, target_attr, s.enabled*(s.get_synapse_mat()+equal_range+s.get_synapse_mat('uniform',density=1.0, clone_along_first_axis=all_neurons_same)*random_range))#s.shape_mat*#neurons.GABA_strength+neurons.min_GABA_strength
 
 
 

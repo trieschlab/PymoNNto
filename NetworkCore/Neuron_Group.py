@@ -103,14 +103,18 @@ class NeuronGroup(NetworkObjectBase):
                 print('warning: no efferent {} synapses found'.format(name))
             self.efferent_synapses[name] = []
 
-    def get_neuron_vec(self):
-        return self.get_nparray((self.size))
+    #def get_neuron_vec(self):
+    #    return self.get_nparray((self.size))
+
+    def get_neuron_vec(self, mode='zeros()', scale=None, density=None, plot=False):# mode in ['zeros', 'zeros()', 'ones', 'ones()', 'uniform(...)', 'lognormal(...)', 'normal(...)', ...]
+        return self._get_mat(mode=mode, dim=(self.size), scale=scale, density=density, plot=plot)
 
     def get_neuron_vec_buffer(self, buffer_size):
         return self.get_buffer_mat((self.size), buffer_size)
 
-    def get_random_neuron_vec(self, density=1.0):
-        return self.get_random_nparray((self.size), density)
+    #def get_random_neuron_vec(self, density=1.0):#r
+    #    print("warning: use get_neuron_vec('uniform',...) instead of get_random_neuron_vec")
+    #    return self.get_random_nparray((self.size), density)
 
     #def get_shared_variables(self, name, avoid_None=True):
     #    result=[]
@@ -177,7 +181,7 @@ class NeuronGroup(NetworkObjectBase):
         if split_size[0]<2 and split_size[1]<2 and split_size[2]<2:
             return [self]
         else:
-            return self.partition_steps(split_size)
+            return self.split_grid_into_sub_group_blocks(split_size)
 
     def partition_masks(self, steps=[1, 1, 1]):
 
@@ -210,9 +214,25 @@ class NeuronGroup(NetworkObjectBase):
 
         return results
 
-    def partition_steps(self, steps=[1, 1, 1]):
+    def split_grid_into_sub_group_blocks(self, steps=[1, 1, 1]):
         return [self.subGroup(mask) for mask in self.partition_masks(steps)]
 
+
+    def get_subgroup_receptive_field_mask(self, subgroup, xyz_rf=[1,1,1]):
+        rf_x, rf_y, rf_z = xyz_rf
+
+        src_x_start = np.min(subgroup.x) - rf_x
+        src_x_end = np.max(subgroup.x) + rf_x
+
+        src_y_start = np.min(subgroup.y) - rf_y
+        src_y_end = np.max(subgroup.y) + rf_y
+
+        src_z_start = np.min(subgroup.z) - rf_z
+        src_z_end = np.max(subgroup.z) + rf_z
+
+        mask = (self.x >= src_x_start) * (self.x <= src_x_end) * (self.y >= src_y_start) * (self.y <= src_y_end) * (self.z >= src_z_start) * (self.z <= src_z_end)
+
+        return mask
 
     def mask_var(self, var):
         return var
@@ -366,7 +386,4 @@ class NeuronSubGroup:
 
     def group_without_subGroup(self):
         return self.BaseNeuronGroup
-
-
-
 

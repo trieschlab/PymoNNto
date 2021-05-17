@@ -4,7 +4,7 @@ class LIF_main(Behaviour):
 
     def set_variables(self, n):
         self.set_init_attrs_as_variables(n)
-        n.v = n.get_random_neuron_vec()*n.v_rest
+        n.v = n.get_neuron_vec('uniform')*n.v_rest
         n.fired = n.get_neuron_vec() > 0
         n.dt = 0.1
 
@@ -20,13 +20,13 @@ class LIF_input(Behaviour):
 
     def set_variables(self, n):
         for s in n.afferent_synapses['All']:
-            s.W = s.get_random_synapse_mat()
+            s.W = s.get_synapse_mat('uniform')
 
         n.I = n.get_neuron_vec()
 
     def new_iteration(self, n):
 
-        n.I = 90 * n.get_random_neuron_vec()
+        n.I = 90 * n.get_neuron_vec('uniform')
 
         for s in n.afferent_synapses['GLUTAMATE']:
             n.I += np.sum(s.W[:, s.src.fired], axis=1)

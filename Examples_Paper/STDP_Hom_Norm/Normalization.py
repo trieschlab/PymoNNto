@@ -3,7 +3,6 @@ from PymoNNto.NetworkCore.Behaviour import *
 class Normalization(Behaviour):
 
     def set_variables(self, neurons):
-        self.add_tag('Normalization')
         self.syn_type = self.get_init_attr('syn_type', 'GLUTAMATE', neurons)
         self.norm_factor = self.get_init_attr('norm_factor', 1.0, neurons)
         neurons.temp_weight_sum = neurons.get_neuron_vec()

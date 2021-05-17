@@ -6,7 +6,7 @@ from Examples_Paper.STDP_Hom_Norm.Homeostasis import *
 class Basic_Behaviour(Behaviour):
 
     def set_variables(self, neurons):
-        neurons.voltage = neurons.get_random_neuron_vec()
+        neurons.voltage = neurons.get_neuron_vec('uniform')
         self.leak_factor = 0.9
 
     def new_iteration(self, neurons):
@@ -16,13 +16,13 @@ class Input_Behaviour(Behaviour):
 
     def set_variables(self, neurons):
         for synapse in neurons.afferent_synapses['GLUTAMATE']:
-            synapse.W = synapse.get_random_synapse_mat(density=0.1)
+            synapse.W = synapse.get_synapse_mat('uniform', density=0.1)
 
     def new_iteration(self, neurons):
         for synapse in neurons.afferent_synapses['GLUTAMATE']:
             neurons.voltage += synapse.W.dot(synapse.src.voltage)/synapse.src.size
 
-        neurons.voltage += neurons.get_random_neuron_vec(density=0.01)
+        neurons.voltage += neurons.get_neuron_vec('uniform',density=0.01)
 
 My_Network = Network()
 

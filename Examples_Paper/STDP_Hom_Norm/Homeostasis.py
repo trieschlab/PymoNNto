@@ -3,8 +3,6 @@ from PymoNNto.NetworkCore.Behaviour import *
 class Homeostasis(Behaviour):
 
     def set_variables(self, neurons):
-        self.add_tag('Homeostatic_Mechanism')
-
         target_act = self.get_init_attr('target_voltage', 0.05, neurons)
 
         self.max_ta = self.get_init_attr('max_ta', target_act, neurons)

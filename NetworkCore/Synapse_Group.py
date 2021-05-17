@@ -7,7 +7,7 @@ import random
 
 class SynapseGroup(NetworkObjectBase):
 
-    def __init__(self, src, dst, net, connectivity=None, tag=None, behaviour={}):
+    def __init__(self, src, dst, net, tag=None, behaviour={}):
         super().__init__(tag=tag)
 
         if len(src.tags)>0 and len(dst.tags)>0:
@@ -29,6 +29,7 @@ class SynapseGroup(NetworkObjectBase):
         for k in self.behaviour:
             if self.behaviour[k].set_variables_on_init:
                 self.behaviour[k].set_variables(self)
+
 
     def find_objects(self, key):
         result = []
@@ -107,8 +108,8 @@ class SynapseGroup(NetworkObjectBase):
         return self.dst.size, self.src.size#self.get_dest_size(), self.get_src_size()
 
 
-    def get_synapse_mat(self):
-        return np.zeros(self.get_synapse_mat_dim())
+    #def get_synapse_mat(self):
+    #    return np.zeros(self.get_synapse_mat_dim())
 
     def get_random_synapse_mat_fixed(self, min_number_of_synapses=0):
         dim = self.get_synapse_mat_dim()
@@ -119,8 +120,21 @@ class SynapseGroup(NetworkObjectBase):
                 result[i, synapses] = np.random.rand(len(synapses))
         return result#*np.random.rand(dim)
 
-    def get_random_synapse_mat(self, density=1.0, clone_along_first_axis=False, rnd_code=None):
-        return self.get_random_nparray((self.get_synapse_mat_dim()), density, clone_along_first_axis, rnd_code=rnd_code)*self.enabled
+    #def get_random_synapse_mat(self, density=1.0, clone_along_first_axis=False, rnd_code=None):
+    #    print("warning: use get_synapse_mat('uniform',...) instead of get_random_synapse_mat")
+    #    return self.get_random_nparray((self.get_synapse_mat_dim()), density, clone_along_first_axis, rnd_code=rnd_code)*self.enabled
+
+    def get_synapse_mat(self, mode='zeros()', scale=None, density=None, only_enabled=True, clone_along_first_axis=False, plot=False):# mode in ['zeros', 'zeros()', 'ones', 'ones()', 'uniform(...)', 'lognormal(...)', 'normal(...)']
+        result = self._get_mat(mode=mode, dim=(self.get_synapse_mat_dim()), scale=scale, density=density, plot=plot)
+
+        if clone_along_first_axis:
+            result = np.array([result[0] for _ in range(self.get_synapse_mat_dim()[0])])
+
+        if only_enabled:
+            result *= self.enabled
+
+        return result
+
 
     def get_synapse_group_size_factor(self, synapse_group, synapse_type):
 
@@ -205,7 +219,7 @@ class SynapseGroup(NetworkObjectBase):
             if key == 'behaviour':
                 for k in self.behaviour:
                     result.behaviour[k] = copy.copy(self.behaviour[k])
-            elif key not in ['src', 'dst', 'enabled']:
+            elif key not in ['src', 'dst', 'enabled', '_mat_eval_dict']:
                 setattr(result, key, copy.copy(sgd[key]))
 
         return result
@@ -231,3 +245,4 @@ class SynapseGroup(NetworkObjectBase):
 
         #self.network.partition_Synapse_Group(self, receptive_field_size=self.get_max_receptive_field_size(), split_size=split_size)
     '''
+

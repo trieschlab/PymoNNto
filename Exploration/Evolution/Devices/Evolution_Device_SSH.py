@@ -1,4 +1,4 @@
-from Exploration.Evolution.Devices.Evolution_Device_Multi_Thread import *
+from PymoNNto.Exploration.Evolution.Devices.Evolution_Device_Multi_Thread import *
 import sys
 from PymoNNto.Exploration.Evolution.SSH_Functions import *
 

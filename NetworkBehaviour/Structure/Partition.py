@@ -18,16 +18,18 @@ class Partition(Behaviour):
 
             dst_subgroup = synapses.dst.subGroup(dst_mask)
 
-            src_x_start = np.min(dst_subgroup.x) - rf_x
-            src_x_end = np.max(dst_subgroup.x) + rf_x
+            src_mask = synapses.src.get_subgroup_receptive_field_mask(dst_subgroup, [rf_x, rf_y, rf_z])
 
-            src_y_start = np.min(dst_subgroup.y) - rf_y
-            src_y_end = np.max(dst_subgroup.y) + rf_y
+            #src_x_start = np.min(dst_subgroup.x) - rf_x
+            #src_x_end = np.max(dst_subgroup.x) + rf_x
 
-            src_z_start = np.min(dst_subgroup.z) - rf_z
-            src_z_end = np.max(dst_subgroup.z) + rf_z
+            #src_y_start = np.min(dst_subgroup.y) - rf_y
+            #src_y_end = np.max(dst_subgroup.y) + rf_y
 
-            src_mask = (synapses.src.x >= src_x_start) * (synapses.src.x <= src_x_end) * (synapses.src.y >= src_y_start) * (synapses.src.y <= src_y_end) * (synapses.src.z >= src_z_start) * (synapses.src.z <= src_z_end)
+            #src_z_start = np.min(dst_subgroup.z) - rf_z
+            #src_z_end = np.max(dst_subgroup.z) + rf_z
+
+            #src_mask = (synapses.src.x >= src_x_start) * (synapses.src.x <= src_x_end) * (synapses.src.y >= src_y_start) * (synapses.src.y <= src_y_end) * (synapses.src.z >= src_z_start) * (synapses.src.z <= src_z_end)
 
             syn_sub_groups.append(synapses.get_sub_synapse_group(src_mask, dst_mask))
 

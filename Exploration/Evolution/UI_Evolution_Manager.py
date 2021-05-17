@@ -44,6 +44,8 @@ class UI_Evolution_Manager(UI_Base):
     def __init__(self):
         super().__init__(None, label='Evolution Monitor', create_sidebar=True)
 
+        self.tabs.currentChanged.connect(self.On_Tab_Changed)
+
         ssm = SimpleStorageManager(get_epc_folder()+'/')
         servers = eval(ssm.load_param('servers', default="[]"))#['local', 'ssh vieth@poppy.fias.uni-frankfurt.de', 'ssh marius@hey3kmuagjunsk2b.myfritz.net', '+']
         self.listwidget2 = QListWidget()
@@ -95,6 +97,24 @@ class UI_Evolution_Manager(UI_Base):
         for dir in os.listdir(get_epc_folder()):
             if os.path.isdir(get_epc_folder()+'/'+dir):
                 self.add_tab(dir)
+
+    def set_text(self, ssm, edit, text):
+        data = ssm.load_param(text, default='', return_string=True)
+        if data is not None and data != '':
+            edit.setText(data)
+
+    def On_Tab_Changed(self, i):
+        if hasattr(self.tabs.currentWidget(), 'ssm'):
+            ssm = self.tabs.currentWidget().ssm
+            self.set_text(ssm, self.evo_name_edit, 'name')
+            self.set_text(ssm, self.slave_file_edit, 'slave_file')
+            self.set_text(ssm, self.inactive_genome_info_edit, 'inactive_genome_info')
+            self.set_text(ssm, self.thread_number_edit, 'thread_number')
+            self.set_text(ssm, self.individual_count_edit, 'individual_count')
+            self.set_text(ssm, self.mutation_edit, 'mutation')
+            self.set_text(ssm, self.death_rate_edit, 'death_rate')
+            self.set_text(ssm, self.start_genomes_edit, 'start_genomes')
+            self.set_text(ssm, self.constraints_edit, 'constraints')
 
 
     def update_status(self, tab, name):
@@ -220,6 +240,7 @@ class UI_Evolution_Manager(UI_Base):
         tab.folder = get_epc_folder() + '/' + name + '/'
 
         self.update_status(tab, name)
+        self.On_Tab_Changed(None)
 
     def on_server_select(self):
         server_str = self.listwidget2.currentItem().text()
@@ -253,6 +274,16 @@ class UI_Evolution_Manager(UI_Base):
                     folder = get_epc_folder()+'/'+name+'/'
                     ssm = SimpleStorageManager(folder)
                     ssm.save_param('server', server_str)
+
+                    ssm.save_param('name', name)
+                    ssm.save_param('slave_file', self.slave_file_edit.text())
+                    ssm.save_param('inactive_genome_info', self.inactive_genome_info_edit.text())
+                    ssm.save_param('thread_number', self.thread_number_edit.text())
+                    ssm.save_param('individual_count', self.individual_count_edit.text())
+                    ssm.save_param('mutation', self.mutation_edit.text())
+                    ssm.save_param('death_rate', self.death_rate_edit.text())
+                    ssm.save_param('start_genomes', self.start_genomes_edit.text())
+                    ssm.save_param('constraints', self.constraints_edit.text())
 
                     exec_file = """
 from PymoNNto.Exploration.Evolution.Evolution import *

@@ -1,15 +1,28 @@
 import numpy as np
 
 from numpy.random import *
-
+from numpy import *
 
 def_dtype = np.float64
+
+def lognormal_real_mean(mean=1.0, sigma=1.0, size=1):
+    mu = -np.power(sigma, 2) + np.log(mean)
+    return lognormal(mu, sigma, size=size)
+
+def is_number(s):
+    """ Returns True is string is a number. """
+    try:
+        float(s)
+        return True
+    except ValueError:
+        return False
 
 class NetworkObjectBase:
 
     def __init__(self, tag):
         self.tags = []
         self.clear_cache()
+        self._mat_eval_dict = {}
         if tag is not None:
             self.add_tag(tag)
 
@@ -81,6 +94,45 @@ class NetworkObjectBase:
 
     def get_nparray(self, dim):
         return np.zeros(dim).astype(def_dtype)
+
+    def _get_mat(self, mode, dim, scale=None, density=None, plot=False): # mode in ['zeros', 'zeros()', 'ones', 'ones()', 'uniform(...)', 'lognormal(...)', 'normal(...)']
+
+        if type(mode) == int or type(mode) == float:
+            mode = 'ones()*'+str(mode)
+
+        if '(' not in mode and ')' not in mode:
+            mode += '()'
+
+        if mode not in self._mat_eval_dict:
+            if 'zeros' in mode or 'ones' in mode:
+                a1 = 'shape=dim'
+            else:
+                a1 = 'size=dim'
+            if '()' in mode:#no arguments => no comma
+                ev_str = mode.replace(')', a1+')')
+            else:
+                ev_str = mode.replace(')', ','+a1+')')
+
+            self._mat_eval_dict[mode] = compile(ev_str, '<string>', 'eval')
+
+        result = eval(self._mat_eval_dict[mode])
+
+        if density is not None:
+            if type(density) == int or type(density) == float:
+                result = (result * (random_sample(dim) <= density))
+            elif type(density) is np.ndarray:
+                result = (result * (random_sample(dim) <= density[:, None]))
+
+        if scale is not None:
+            result *= scale
+
+        if plot:
+            import matplotlib.pyplot as plt
+            plt.hist(result.flatten(), bins=30)
+            plt.show()
+
+        return result.astype(def_dtype)
+
 
     def get_random_nparray(self, dim, density=None, clone_along_first_axis=False, rnd_code=None):#rnd_code=random_sample(dim)
         if rnd_code is None:

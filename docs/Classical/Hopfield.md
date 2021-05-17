@@ -5,7 +5,8 @@ The network switches from trianing to inference mode and back automatically ever
 Note, that the images do overlapp, which makes it quite hard for the network to differentiate them during the inference phase.
 
 
-```python
+```python
+
 from PymoNNto import *
 
 #https://github.com/crypto-code/Hopfield-Network/blob/4cc079d14c97157503567ea8fbdf6582b13ae140/network.py#L93
@@ -124,8 +125,8 @@ class Hopfield_input(Behaviour):
             #if self.nr>=len(self.mnist_images):
             #    self.nr=0
             if not n.learning:
-                n.v += (n.get_random_neuron_vec(density=0.5)-0.5)*2
-                #n.v[n.get_random_neuron_vec(density=0.1) > 0.0] = 1.0
+                n.v += (n.get_neuron_vec('uniform',density=0.5)-0.5)*2
+                #n.v[n.get_neuron_vec('uniform',density=0.1) > 0.0] = 1.0
 
             n.v-=self.rho
 
@@ -156,7 +157,8 @@ My_Network.initialize()
 
 from PymoNNto.Exploration.Network_UI import *
 my_UI_modules = get_default_UI_modules(['v','energy'], ['W'])
-Network_UI(My_Network, modules=my_UI_modules, label='My_Network_UI', group_display_count=1).show()
+Network_UI(My_Network, modules=my_UI_modules, label='My_Network_UI', group_display_count=1).show()
+
 ```
 
 

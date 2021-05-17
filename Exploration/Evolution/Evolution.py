@@ -1,5 +1,5 @@
-from Exploration.Evolution.Devices.Evolution_Device_Single_Thread import *
-from Exploration.Evolution.Devices.Evolution_Device_SSH import *
+from PymoNNto.Exploration.Evolution.Devices.Evolution_Device_Single_Thread import *
+from PymoNNto.Exploration.Evolution.Devices.Evolution_Device_SSH import *
 from PymoNNto.Exploration.Evolution.Breed_And_Selection_Module import *
 from PymoNNto.Exploration.Evolution.UI_Single_Evolution_Monitor import *
 import os.path

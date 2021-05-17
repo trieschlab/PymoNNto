@@ -1,5 +1,7 @@
+from PymoNNto.NetworkBehaviour.Structure.Structure import *
 from PymoNNto.NetworkCore.Behaviour import *
 from PymoNNto.NetworkCore.Synapse_Group import *
+
 
 class Remove_Autapses(Behaviour):
     set_variables_on_init = True
@@ -28,13 +30,17 @@ class Receptive_Fields(Behaviour):
         dst = synapses.dst
         #synapses.enabled = synapses.get_synapse_mat()
 
-        s_id = np.tile(np.arange(src.size), (1, dst.size)).reshape(dst.size, src.size)
+        s_id = np.tile(np.arange(src.size), (1, dst.size)).reshape(dst.size, src.size)#vec_to_mat(np.arange(src.size), dst.size) #
 
         sx = None
         sy = None
         sz = None
 
         if hasattr(src, 'x') and hasattr(src, 'y') and hasattr(src, 'z'):
+            #sx = vec_to_mat(src.x, dst.size)
+            #sy = vec_to_mat(src.y, dst.size)
+            #sz = vec_to_mat(src.z, dst.size)
+
             sx = np.tile(src.x, (1, dst.size)).reshape(dst.size, src.size)
             sy = np.tile(src.y, (1, dst.size)).reshape(dst.size, src.size)
             sz = np.tile(src.z, (1, dst.size)).reshape(dst.size, src.size)

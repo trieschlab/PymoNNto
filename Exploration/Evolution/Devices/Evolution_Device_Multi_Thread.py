@@ -1,4 +1,4 @@
-from Exploration.Evolution.Devices.Evolution_Device import *
+from PymoNNto.Exploration.Evolution.Devices.Evolution_Device import *
 from multiprocessing import Process, Pipe
 #import subprocess
 #import time

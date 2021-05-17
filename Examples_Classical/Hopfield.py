@@ -116,8 +116,8 @@ class Hopfield_input(Behaviour):
             #if self.nr>=len(self.mnist_images):
             #    self.nr=0
             if not n.learning:
-                n.v += (n.get_random_neuron_vec(density=0.5)-0.5)*2
-                #n.v[n.get_random_neuron_vec(density=0.1) > 0.0] = 1.0
+                n.v += (n.get_neuron_vec('uniform',density=0.5)-0.5)*2
+                #n.v[n.get_neuron_vec('uniform',density=0.1) > 0.0] = 1.0
 
             n.v-=self.rho
 

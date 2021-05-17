@@ -4,21 +4,18 @@ class Instant_Homeostasis(Behaviour):
 
     def get_measurement_param(self, n):
         if self.compiled_mp is None:
-            self.compiled_mp=compile(self.measurement_param, '<string>', 'eval')
+            self.compiled_mp = compile(self.measurement_param, '<string>', 'eval')
 
         result = eval(self.compiled_mp)
-        #if self.measure_group_sum:
-        #    result = np.sum(getattr(n, self.measurement_param))/n.size
-        #else:
-        #    result = getattr(n, self.measurement_param)
-        if self.measurement_min is not None: result *= result > self.measurement_min
+
+        if self.measurement_min is not None: result = np.clip(result, self.measurement_min, None)
         if self.measurement_max is not None: result = np.clip(result, None, self.measurement_max)
         return result
 
     def add_to_target_param(self, neurons, add):
-        val=getattr(neurons, self.adjustment_param)+add
+        val = getattr(neurons, self.adjustment_param)+add
         if self.target_clip_min is not None or self.target_clip_max is not None:
-            val=np.clip(val, self.target_clip_min, self.target_clip_max)
+            val = np.clip(val, self.target_clip_min, self.target_clip_max)
         setattr(neurons, self.adjustment_param, val)
 
 
@@ -66,7 +63,6 @@ class Instant_Homeostasis(Behaviour):
         self.adjustment_param = self.get_init_attr('adjustment_param', None, neurons)       #name of neurons target attribute
 
         self.measurement_param = self.get_init_attr('measurement_param', None, neurons)     #name of parameter to be measured
-        self.measure_group_sum = self.get_init_attr('measure_group_sum', False, neurons)    #measure the group activity insted of individual neurons
 
         self.measurement_min = self.get_init_attr('measurement_min', None, neurons)         #minumum value which can be measured (below=0)
         self.measurement_max = self.get_init_attr('measurement_max', None, neurons)         #maximum value which can be measured (above=max)
@@ -84,8 +80,6 @@ class Instant_Homeostasis(Behaviour):
 class Time_Integration_Homeostasis(Instant_Homeostasis):
 
     def get_measurement_param(self, n):
-        #if self.measure_group_sum and type(self.average) is np.ndarray:
-        #    self.average = np.average(self.average)
 
         value = super().get_measurement_param(n)
         self.average = (self.average * self.integration_length + value) / (self.integration_length+1)
@@ -96,5 +90,6 @@ class Time_Integration_Homeostasis(Instant_Homeostasis):
 
         self.integration_length = self.get_init_attr('integration_length', 1, neurons)      #factor that determines the inertia of the leaky integrator (0=instant) (a*i)/(1+i)
 
-        #self.average = neurons.get_neuron_vec()+1
-        self.average = self.get_init_attr('init_avg', 0, neurons)                          #initialize average measurement for each neuron
+        self.average = self.get_init_attr('init_avg', (self.min_th+self.max_th)/2, neurons)                          #initialize average measurement for each neuron
+
+#Time_Integration_Homeostasis().visualize_module(vmi=['measure'], vmo=['adjust'], vma=['measurement_param','adjustment_param','threshold','integration_length','...'])

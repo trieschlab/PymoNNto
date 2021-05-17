@@ -1,3 +1,1 @@
-```python
-
-```
+```pythonclass refractory(Behaviour):    def set_variables(self, neurons):        neurons.refractory_counter_analog = neurons.get_neuron_vec()        self.decayfactor = self.get_init_attr('decayfactor', 0.5, neurons)        self.strengthfactor = self.get_init_attr('strengthfactor', 1.0, neurons)    def new_iteration(self, neurons):        neurons.refractory_counter *= self.decayfactor        neurons.refractory_counter += neurons.output        neurons.activity -= neurons.refractory_counter * self.strengthfactor```
