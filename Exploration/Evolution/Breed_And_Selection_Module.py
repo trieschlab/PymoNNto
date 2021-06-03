@@ -1,16 +1,27 @@
 import random
 import numpy as np
+from PymoNNto.Exploration.Evolution.Interface_Functions import *
 
 class Default_Breed_And_Select:
 
-    def __init__(self, parent, death_rate, mutation, individual_count, constraints, avoid_high_risk_high_reward_individuals=True):
+    def __init__(self, parent, death_rate, mutation, individual_count, constraints, additional_evo_params={}):
         self.parent = parent
         self.death_rate = death_rate
         self.mutation = mutation
         self.individual_count = individual_count
         self.generation = 1
         self.constraints = constraints
-        self.avoid_high_risk_high_reward_individuals=avoid_high_risk_high_reward_individuals
+
+        if 'no_high_risk_inds' in additional_evo_params:
+            self.avoid_high_risk_high_reward_individuals = additional_evo_params['no_high_risk_inds']
+        else:
+            self.avoid_high_risk_high_reward_individuals = True
+
+        if 're_eval_inds' in additional_evo_params:
+            self.re_evaluate_genomes = additional_evo_params['re_eval_inds']
+        else:
+            self.re_evaluate_genomes = True
+
 
     def update_population(self):
         if len(self.parent.non_scored_individuals) == 0 and len(self.parent.running_individuals) == 0:
@@ -27,9 +38,9 @@ class Default_Breed_And_Select:
             new_population = self.breed(survivours)
 
             for p in new_population:#remove scores
-                if 'score' in p:
-                    p.pop('score')
-            #optional: do not re-score individuals => put old individuals in "scored"
+                if self.re_evaluate_genomes or p not in survivours:
+                    if 'score' in p:
+                        p.pop('score')
 
             print('new gen breeding... survivours', survivours)
 
@@ -37,6 +48,12 @@ class Default_Breed_And_Select:
             self.parent.running_individuals = []
             self.parent.scored_individuals = []
             self.generation += 1
+
+            if not self.re_evaluate_genomes:
+                for s in survivours:
+                    set_score(s['score'], _genome=s)#create files
+                    self.parent.new_score_event(s)#move from non_scored_individuals to scored_individuals
+
 
     def natural_selection(self, individuals):
         result = individuals.copy()

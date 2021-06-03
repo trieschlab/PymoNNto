@@ -38,11 +38,9 @@ nav:
         - -Recorder: Behaviours/Recorder.md
         - -Event Recorder: Behaviours/Event_Recorder.md
 
-        - -Default Homeostatic Mechanism <!--- Examples_Behaviour/Default_homeostatic_mechanism.py -->: Behaviours/Default_homeostatic_mechanism.md
-        - -Image Input <!--- Examples_Behaviour/Image_Input.py -->: Behaviours/Image_Input.md
-        - -Refractory Period <!--- Examples_Behaviour/Refractory_Period.py -->: Behaviours/Refractory_Period.md
-        - -Simple Text Input <!--- Examples_Behaviour/Simple_Text_input.py -->: Behaviours/Simple_Text_input.md
-        - -STDP Advanced <!--- Examples_Behaviour/STDP_Advanced.py -->: Behaviours/STDP_Advanced.md
+        - -Default Homeostatic Mechanism: Behaviours/Default_homeostatic_mechanism.md
+        - -Refractory Period: Behaviours/Refractory_Period.md
+        - -NOX Diffusion: Behaviours/NOX_Diffusion.md
 
     - Synapse Behaviours:
         - -Receptive fields and connectivity: Synapse_Behaviours/Receptive_Fields.md

@@ -19,93 +19,68 @@ class Behaviour(NetworkObjectBase):
     def set_gene_variables(self):
         current_genome = {}
         for variable_key in self.init_kwargs:
-            while type(self.init_kwargs[variable_key]) is str and '[' in self.init_kwargs[variable_key] and ']' in \
-                    self.init_kwargs[variable_key]:
+            while type(self.init_kwargs[variable_key]) is str and '[' in self.init_kwargs[variable_key] and ']' in self.init_kwargs[variable_key]:
                 s = self.init_kwargs[variable_key]
 
                 start = s.index('[')
                 end = s.index(']')
-                internal = s[start + 1: end].split('#')
-                default_value = float(internal[0])
-                gene_key = internal[1]
+
+                content = s[start + 1: end]
+
+                if '#' in content:
+                    parts = content.split('#')
+                    default_value = float(parts[0])
+                    gene_key = parts[1]
+                else:
+                    gene_key = content
+                    default_value = None
 
                 current_genome[gene_key] = get_gene(gene_key, default_value)
 
                 self.init_kwargs[variable_key] = s[:start] + '{:.15f}'.format(current_genome[gene_key]).rstrip('0').rstrip('.') + s[end + 1:]
         return current_genome
 
-    def diversity_string_to_vec2(self, ds, neurons):
+    def evaluate_diversity_string(self, ds, neurons_or_synapses):
 
         if 'same(' in ds and ds[-1] == ')':
-            params=ds[5:-1].replace(' ', '').split(',')
+            params = ds[5:-1].replace(' ', '').split(',')
             if len(params) == 2:
-                #print('same', params)
-                return getattr(neurons[params[0], 0], params[1])
+                return getattr(neurons_or_synapses[params[0], 0], params[1])
 
-        command = ds.split(';')
-        if (not '(' in ds and not ')' in ds) and not command[0].replace('.', '').replace('+', '').replace('-', '').isdigit():
-            return ds
+        plot = False
+        if ';plot' in ds:
+            ds = ds.replace(';plot', '')
+            plot = True
 
+        result = ds
 
-        if len(command) == 1:
-            if command[0].replace('.', '').replace('+', '').replace('-', '').isdigit():
-                result = float(command[0])
+        if is_number(ds):
+            result = float(ds)
 
-            #else:
-            #    result = self.get_random_nparray((neurons.size), rnd_code=command[0])
-                #print(result, type(result))
-                return result
+        if '%' in ds and is_number(ds.replace('%', '')):
+            result = float(ds.replace('%', ''))/100.0
 
-        dist_cmd='uniform(low, high)'
-        if len(command) > 2 and not 'plot' in command[2]:# problem: , also in command
-            dist_cmd=command[2]
+        if '(' in ds and ')' in ds:#is function
+            if type(neurons_or_synapses).__name__ == "NeuronGroup":
+                result = neurons_or_synapses.get_neuron_vec(ds)
 
-            if 'smooth' in command[2]:
-                smoothing = float(command[2].replace('smooth', ''))
-                dist_cmd = 'np.sum([uniform(low, high, size=dim) for _ in range(smoothing)], axis=0)/smoothing'.replace('smoothing', str(smoothing))
+            if type(neurons_or_synapses).__name__ == "SynapseGroup":
+                result = neurons_or_synapses.get_synapse_mat(ds)
 
-
-        if command[0].replace('.', '').replace('+', '').replace('-', '').isdigit():
-            min_v = float(command[0])
-            if '%' in command[1]:
-                max_v = min_v
-                if '-' in command[1]:
-                    min_v -= min_v / 100 * float(command[1].replace('+', '').replace('-', '').replace('%', ''))
-                if '+' in command[1]:
-                    max_v += max_v / 100 * float(command[1].replace('+', '').replace('-', '').replace('%', ''))
-            else:
-                max_v = float(command[1])
-
-            dist_cmd=dist_cmd.replace('low',str(min_v)).replace('high',str(max_v)).replace('min_v',str(min_v)).replace('max_v',str(max_v)).replace('min',str(min_v)).replace('max',str(max_v))
-        else:
-            dist_cmd=command[0]
-
-        if 'lognormal_real_mean' in command[0]:
-            parts = command[0].replace(')', '').replace(' ', '').split('(')
-            arguments = parts[1].split(',')
-            mean = float(arguments[0])
-            sigma = float(arguments[1])
-            mu = -np.power(sigma, 2) + np.log(mean)
-            dist_cmd = 'lognormal({}, {})'.format(mu, sigma)
-
-        result=self.get_random_nparray((neurons.size), rnd_code=dist_cmd)
-
-
-        if 'plot' in command[-1]:
-            import matplotlib.pyplot as plt
-            #print(result)
-            plt.hist(result, bins=30)
-            plt.show()
-
+        if plot:
+            if type(result) == np.ndarray:
+                import matplotlib.pyplot as plt
+                plt.hist(result, bins=30)
+                plt.show()
 
         return result
 
+    '''
     def diversity_string_to_vec(self, ds, neurons):
 
         if 'same(' in ds and ds[-1] == ')':
-            params=ds[5:-1].replace(' ', '').split(',')
+            params = ds[5:-1].replace(' ', '').split(',')
             if len(params) == 2:
-                #print('same', params)
                 return getattr(neurons[params[0], 0], params[1])
 
         command = ds.split(';')
@@ -165,6 +140,7 @@ class Behaviour(NetworkObjectBase):
 
 
         return result
+    '''
 
     def set_init_attrs_as_variables(self, object):
         for key in self.init_kwargs:
@@ -192,7 +168,7 @@ class Behaviour(NetworkObjectBase):
                     result = b.init_kwargs.get(key, result)
 
         if not do_not_diversify and type(result) is str and neurons is not None:
-            result = self.diversity_string_to_vec(result, neurons)
+            result = self.evaluate_diversity_string(result, neurons)
 
         return result
 

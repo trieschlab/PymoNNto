@@ -18,11 +18,11 @@ def set_evolution_genome_from_string(gene_str):
 
 def set_genome(genome):
     #print('set genome to', genome)
-    if 'evo_name' in genome:
-        global evolution_genome
-        evolution_genome = genome
-    else:
-        print('no evo_name key in evolution for', genome)
+    global evolution_genome
+    evolution_genome = genome
+
+    if not 'evo_name' in genome:
+        print('warning: no evo_name key in evolution for', genome)
 
 def get_genome():
     if evolution_genome is None:
@@ -61,16 +61,22 @@ def get_gene_id(gene):
 def get_gene_file(gene):
     return gene['evo_name']+' gen'+str(gene['gen']) + ' id' + str(gene['id'])
 
-def set_score(score, non_evo_storage_manager=None):
+def set_score(score, non_evo_storage_manager=None, _genome=None):
     global evolution_genome
+
+    if _genome is not None:
+        evolution_genome = _genome
 
     if evolution_genome is not None:
         if 'score' in evolution_genome:#only when setscore is called multiple times on accident...
             evolution_genome.pop('score')
-        sm = StorageManager(main_folder_name=get_gene('evo_name', None), folder_name=get_gene_file(evolution_genome), print_msg=False, add_new_when_exists=False)
-        evolution_genome['score'] = score
-        sm.save_param_dict(evolution_genome)
-        print('evolution score set to #'+str(score)+'#')
+        if 'evo_name' in evolution_genome and 'gen' in evolution_genome and 'id' in evolution_genome:
+            sm = StorageManager(main_folder_name=get_gene('evo_name', None), folder_name=get_gene_file(evolution_genome), print_msg=False, add_new_when_exists=False)
+            evolution_genome['score'] = score
+            sm.save_param_dict(evolution_genome)
+            print('evolution score set to #'+str(score)+'#')
+        else:
+            print('cannot save score', str(score), 'to file: "evo_name", "gen" or "id" not in genome')
     else:
         print('score='+str(score)+' (no genome found)')
         if non_evo_storage_manager is not None:

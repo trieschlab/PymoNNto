@@ -2,7 +2,6 @@ from PymoNNto.NetworkBehaviour.Input.Pattern_Basics import *
 import random
 import numpy as np
 from collections import Counter
-import random
 
 #{' PERIOD': '.', ' COMMA': '.', ' QUESTION': '.'} #, 'MNAME':'Name', 'FNAME':'Name'
 #CHILDES_activator = TextActivator_New(filename='CHILDES.txt', replace_dict={' PERIOD': '.', ' COMMA': '.', ' QUESTION': '.'})

@@ -1,6 +1,6 @@
 from time import time
 import numpy as np
-import random
+#import random
 #from NetworkBehaviour.Input.Activator import *
 from PymoNNto.NetworkCore.Base import *
 from PymoNNto.NetworkCore.Synapse_Group import *
@@ -61,8 +61,9 @@ class Network(NetworkObjectBase):
             for key in obj.behaviour:
                 b = obj.behaviour[key]
                 current_genome.update(b.set_gene_variables())
-        if info:
-            print('default genome:', current_genome)
+
+        if info and len(current_genome)>0:
+            print('genome:', current_genome)
 
         if storage_manager is not None:
             storage_manager.save_param(key='evolution_params', value=current_genome)
@@ -89,7 +90,7 @@ class Network(NetworkObjectBase):
         neuron_count = np.sum(np.array([ng.size for ng in self.NeuronGroups]))
         sysnape_count = np.sum(np.array([sg.src.size*sg.dst.size for sg in self.SynapseGroups]))
 
-        print('initialize tren... Neurons: ', neuron_count, '|', len(self.NeuronGroups), ' blocks, Synapses: ', sysnape_count, '|', len(self.SynapseGroups),' blocks')
+        print('initialize... Neurons: ', neuron_count, '|', len(self.NeuronGroups), ' blocks, Synapses: ', sysnape_count, '|', len(self.SynapseGroups),' blocks')
 
     def save_descriptions(self, storage_manager=None):
         if storage_manager is not None:

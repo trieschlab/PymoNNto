@@ -198,8 +198,6 @@ class DrawItem2(pg.GraphicsObject):
         br.setBottom(max(br.right()+10, br.bottom()+10))
         return QtCore.QRectF(br)
 
-
-
 def add_evolution_plot_items(ui, tab):
     tab.curves, tab.plot = ui.Add_plot_curve(x_label='generations', y_label='score', number_of_curves=3, return_plot=True, colors=[(0, 0, 0), (0, 0, 0), (0, 0, 0)])
     tab.item = pg.FillBetweenItem(curve1=tab.curves[1], curve2=tab.curves[2], brush=(255, 0, 0, 100))
@@ -266,6 +264,8 @@ def add_evolution_plot_items(ui, tab):
 
     ui.Next_H_Block(stretch=0.0)
     tab.clicked_evo = ui.Add_element(QLineEdit('...'), stretch=0)
+
+
 
 def update_evolution_plot(ui, tab, evo_name, gene_keys, data_folder=get_data_folder()):
     print(len(next(os.walk(data_folder + '/StorageManager/'+evo_name))[1]), 'datapoints found')

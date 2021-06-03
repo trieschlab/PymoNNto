@@ -3,7 +3,7 @@ import paramiko
 from scp import SCPClient
 
 def is_invalid_evo_name(name):
-    return '/' in name or '.' in name or ' ' in name or '   ' in name or '\\' in name or name in ['Documents', 'Pictures', 'Music', 'Public', 'Videos', 'Dokumente', 'Bilder', 'Musik', 'Downloads', 'Öffetnlich']
+    return '/' in name or '.' in name or ' ' in name or '   ' in name or '\\' in name or name in ['Documents', 'Pictures', 'Music', 'Public', 'Videos', 'Dokumente', 'Bilder', 'Musik', 'Downloads', 'Öffentlich']
 
 
 def get_ssh_connection(host, user, password):
@@ -139,17 +139,18 @@ def get_Data(name, user, host, password):
         print(get_response(ssh_stdout, ssh_stderr))
         os.remove(dst)
 
-        #scp.close()
+        scp.close()
         ssh.close()
     else:
         print('Error No root "Data" folder found')
 
-def ssh_execute_evo(server, name):
+def ssh_execute_evo(server, name, python_cmd='python3'):
     user, host, password = split_ssh_user_host_password_string(server)
     ssh = get_ssh_connection(host, user, password)
 
     command = 'cd ' + name + '; '
-    command += 'screen -dmS ' + name + ' sh; screen -S ' + name + ' -X stuff "python3 execute_evolution.py \r\n"'
+    #command = 'nano .bashrc'
+    command += 'screen -dmS ' + name + ' sh; screen -S ' + name + ' -X stuff "'+python_cmd+' execute_evolution.py \r\n"'
 
     ssh_stdin, ssh_stdout, ssh_stderr = ssh.exec_command(command)
     response = get_response(ssh_stdout, ssh_stderr)
@@ -175,13 +176,19 @@ def ssh_stop_evo(server, name, remove_evo=False):
     ssh.close()
 
 def ssh_get_running(server):
-    user, host, password = split_ssh_user_host_password_string(server)
-    ssh = get_ssh_connection(host, user, password)
+    response=''
+    try:
+        user, host, password = split_ssh_user_host_password_string(server)
+        ssh = get_ssh_connection(host, user, password)
 
-    command = 'screen -ls'
-    ssh_stdin, ssh_stdout, ssh_stderr = ssh.exec_command(command)
-    response = get_response(ssh_stdout, ssh_stderr)
-    print(response)
+        command = 'screen -ls'
+        ssh_stdin, ssh_stdout, ssh_stderr = ssh.exec_command(command, timeout=10)
+        response = get_response(ssh_stdout, ssh_stderr)
+        print(response)
+
+        ssh.close()
+    except:
+        print(server, 'no response')
 
     result = []
 
@@ -195,4 +202,4 @@ def ssh_get_running(server):
 
     return result
 
-    ssh.close()
+

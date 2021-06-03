@@ -1,7 +1,7 @@
 from PymoNNto.NetworkCore.Base import *
 import copy
 
-import random
+#import random
 #def str_eval_conn(eval_string, synapses, s_id, sx, sy, sz, d_id, dx, dy, dz):
 #    return eval(eval_string)
 
@@ -124,8 +124,8 @@ class SynapseGroup(NetworkObjectBase):
     #    print("warning: use get_synapse_mat('uniform',...) instead of get_random_synapse_mat")
     #    return self.get_random_nparray((self.get_synapse_mat_dim()), density, clone_along_first_axis, rnd_code=rnd_code)*self.enabled
 
-    def get_synapse_mat(self, mode='zeros()', scale=None, density=None, only_enabled=True, clone_along_first_axis=False, plot=False):# mode in ['zeros', 'zeros()', 'ones', 'ones()', 'uniform(...)', 'lognormal(...)', 'normal(...)']
-        result = self._get_mat(mode=mode, dim=(self.get_synapse_mat_dim()), scale=scale, density=density, plot=plot)
+    def get_synapse_mat(self, mode='zeros()', scale=None, density=None, only_enabled=True, clone_along_first_axis=False, plot=False, kwargs={}, args=[]):# mode in ['zeros', 'zeros()', 'ones', 'ones()', 'uniform(...)', 'lognormal(...)', 'normal(...)']
+        result = self._get_mat(mode=mode, dim=(self.get_synapse_mat_dim()), scale=scale, density=density, plot=plot, kwargs=kwargs, args=args)
 
         if clone_along_first_axis:
             result = np.array([result[0] for _ in range(self.get_synapse_mat_dim()[0])])

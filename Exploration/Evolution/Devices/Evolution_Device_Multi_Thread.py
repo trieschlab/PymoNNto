@@ -4,6 +4,7 @@ from multiprocessing import Process, Pipe
 #import time
 #import os
 import numpy as np
+import sys
 
 
 def local_thread_worker(slave_file, conn):
@@ -21,8 +22,10 @@ def local_thread_worker(slave_file, conn):
             try:
                 execute_local_file(slave_file, genome)
                 conn.send([genome, 'success'])
-            except:
-                conn.send([genome, 'thread error'])
+            except Exception as e:
+                error_type = str(sys.exc_info()[0])
+                msg = str(sys.exc_info()[1])
+                conn.send([genome, 'thread error '+error_type+' '+msg])
 
         conn.send([None, 'idle'])
 

@@ -106,8 +106,8 @@ class NeuronGroup(NetworkObjectBase):
     #def get_neuron_vec(self):
     #    return self.get_nparray((self.size))
 
-    def get_neuron_vec(self, mode='zeros()', scale=None, density=None, plot=False):# mode in ['zeros', 'zeros()', 'ones', 'ones()', 'uniform(...)', 'lognormal(...)', 'normal(...)', ...]
-        return self._get_mat(mode=mode, dim=(self.size), scale=scale, density=density, plot=plot)
+    def get_neuron_vec(self, mode='zeros()', scale=None, density=None, plot=False, kwargs={}, args=[]):# mode in ['zeros', 'zeros()', 'ones', 'ones()', 'uniform(...)', 'lognormal(...)', 'normal(...)', ...]
+        return self._get_mat(mode=mode, dim=(self.size), scale=scale, density=density, plot=plot, kwargs=kwargs, args=args)
 
     def get_neuron_vec_buffer(self, buffer_size):
         return self.get_buffer_mat((self.size), buffer_size)
@@ -386,4 +386,3 @@ class NeuronSubGroup:
 
     def group_without_subGroup(self):
         return self.BaseNeuronGroup
-

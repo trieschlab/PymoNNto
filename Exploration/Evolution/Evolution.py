@@ -8,9 +8,9 @@ import time
 
 class Evolution:
 
-    def __init__(self, name, slave_file, individual_count=10, mutation=0.4, death_rate=0.5, devices={'single_thread':1}, constraints=[], start_genomes=[], inactive_genome_info={}):
+    def __init__(self, name, slave_file, individual_count=10, mutation=0.4, death_rate=0.5, devices={'single_thread':1}, constraints=[], start_genomes=[], inactive_genome_info={}, breed_and_select_module=Default_Breed_And_Select, additional_evo_params={}):
 
-        self.Breed_And_Select = Default_Breed_And_Select(self, death_rate=death_rate, mutation=mutation, individual_count=individual_count, constraints=constraints)
+        self.Breed_And_Select = breed_and_select_module(self, death_rate=death_rate, mutation=mutation, individual_count=individual_count, constraints=constraints, additional_evo_params=additional_evo_params)
 
         self.name = name
 
@@ -28,10 +28,17 @@ class Evolution:
         if start_genomes==[]:
             print('Error no genomes found')
 
+        for key in ['gen', 'score', 'id']:
+            for genome in self.start_genomes:
+                if key in genome:
+                    genome.pop(key)
+                    print(key, 'removed form genomes')
+
+
         self.scored_individuals = []
         self.running_individuals = []
 
-        self.gene_keys=[]
+        self.gene_keys = []
         if len(self.start_genomes) > 0:
             self.gene_keys = list(self.start_genomes[0].keys())
             for genome in self.start_genomes:

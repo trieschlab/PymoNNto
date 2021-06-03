@@ -9,6 +9,10 @@ def lognormal_real_mean(mean=1.0, sigma=1.0, size=1):
     mu = -np.power(sigma, 2) + np.log(mean)
     return lognormal(mu, sigma, size=size)
 
+def uniform_gap(mean=1.0, gap_percent=10, size=1):
+    return uniform(low=mean-mean*gap_percent, high=mean+-mean*gap_percent, size=size)
+
+
 def is_number(s):
     """ Returns True is string is a number. """
     try:
@@ -95,7 +99,7 @@ class NetworkObjectBase:
     def get_nparray(self, dim):
         return np.zeros(dim).astype(def_dtype)
 
-    def _get_mat(self, mode, dim, scale=None, density=None, plot=False): # mode in ['zeros', 'zeros()', 'ones', 'ones()', 'uniform(...)', 'lognormal(...)', 'normal(...)']
+    def _get_mat(self, mode, dim, scale=None, density=None, plot=False, kwargs={}, args=[]): # mode in ['zeros', 'zeros()', 'ones', 'ones()', 'uniform(...)', 'lognormal(...)', 'normal(...)']
 
         if type(mode) == int or type(mode) == float:
             mode = 'ones()*'+str(mode)
@@ -109,9 +113,11 @@ class NetworkObjectBase:
             else:
                 a1 = 'size=dim'
             if '()' in mode:#no arguments => no comma
-                ev_str = mode.replace(')', a1+')')
+                ev_str = mode.replace(')', '*args,'+a1+',**kwargs)')
             else:
-                ev_str = mode.replace(')', ','+a1+')')
+                if args!=[]:
+                    print('Warning: args cannot be used when arguments are passed as strings')
+                ev_str = mode.replace(')', ','+a1+',**kwargs)')
 
             self._mat_eval_dict[mode] = compile(ev_str, '<string>', 'eval')
 
