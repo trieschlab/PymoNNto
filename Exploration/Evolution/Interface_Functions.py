@@ -36,7 +36,6 @@ def cast_to_default(str_value, default):
         return str_value
 
 def get_gene(key, default):
-
     if evolution_genome is None:
         load_genome()
 

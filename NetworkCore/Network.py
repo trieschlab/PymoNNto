@@ -19,16 +19,22 @@ class Network(NetworkObjectBase):
 
         self.iteration = 0
 
-        for k in self.behaviour:
+        for k in sorted(list(self.behaviour.keys())):
             if self.behaviour[k].set_variables_on_init:
                 self.behaviour[k].set_variables(self)
 
 
     def set_mechanisms(self, keys, enabeled):
+        if type(keys) == str:
+            keys = [keys]
         for key in keys:
+            if enabeled:
+                print('activating', key)
+            else:
+                print('deactivating', key)
             for obj in self.all_behaviour_objects():
                 for mechansim in obj[key]:
-                    mechansim.active = enabeled
+                    mechansim.behaviour_enabled = enabeled #changed (active)
 
 
     def deactivate_mechanisms(self, keys):
@@ -310,7 +316,7 @@ class Network(NetworkObjectBase):
             '''
 
 
-    def simulate_iterations(self, iterations, batch_size=-1, measure_block_time=False, disable_recording=False):
+    def simulate_iterations(self, iterations, batch_size=-1, measure_block_time=True, disable_recording=False):
 
         if type(iterations) is str:
             iterations=self['Clock', 0].time_to_iterations(iterations)
@@ -345,6 +351,9 @@ class Network(NetworkObjectBase):
 
         if disable_recording:
             self.recording_on()
+
+        if measure_block_time:
+            print('')
 
         return time_diff
 

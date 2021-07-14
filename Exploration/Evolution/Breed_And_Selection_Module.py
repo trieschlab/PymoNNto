@@ -51,8 +51,13 @@ class Default_Breed_And_Select:
 
             if not self.re_evaluate_genomes:
                 for s in survivours:
-                    set_score(s['score'], _genome=s)#create files
-                    self.parent.new_score_event(s)#move from non_scored_individuals to scored_individuals
+                    found = self.parent.find(self.parent.non_scored_individuals, s)
+                    self.parent.non_scored_individuals.remove(found)
+                    self.parent.running_individuals.append(found)
+
+                    processing_genome = self.parent.add_name_gen_id_inactive_to_genome(s)
+                    set_score(s['score'], _genome=processing_genome)#create files
+                    self.parent.new_score_event(processing_genome)#move from non_scored_individuals to scored_individuals
 
 
     def natural_selection(self, individuals):

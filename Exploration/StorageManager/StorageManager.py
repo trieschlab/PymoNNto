@@ -7,6 +7,7 @@ import os
 import pickle
 import imageio
 
+
 #import matplotlib.pylab as plt
 #storage_manager_folder = '../../Data/StorageManager/'
 
@@ -44,7 +45,6 @@ def zipDir(dirPath, zipPath, filter):
                 zipf.write(filePath , filePath[lenDirPath :] )
     zipf.close()
 
-
 class StorageManager:
 
     def dict_to_folder_name(self, dict):
@@ -55,7 +55,15 @@ class StorageManager:
             result += str(k).replace(' ', '')+'='+str(v).replace(' ', '')
         return result
 
-    def __init__(self, main_folder_name, folder_name=None, random_nr=False, print_msg=True, add_new_when_exists=True, data_folder=get_data_folder()):
+    def __init__(self, main_folder_name, folder_name=None, random_nr=False, print_msg=True, add_new_when_exists=True, data_folder=get_data_folder(), use_evolution_path=True):
+
+        if use_evolution_path:
+            import PymoNNto.Exploration.Evolution.Interface_Functions as evo_func
+            if evo_func.get_gene('evo_name', None) is not None and evo_func.get_gene('gen', None) is not None and evo_func.get_gene('id', None) is not None:
+                main_folder_name = evo_func.get_gene('evo_name', None)
+                folder_name = evo_func.get_gene_file(evo_func.evolution_genome)
+                add_new_when_exists = False
+                random_nr=False
 
         if type(main_folder_name) is dict:
             main_folder_name = self.dict_to_folder_name(main_folder_name)

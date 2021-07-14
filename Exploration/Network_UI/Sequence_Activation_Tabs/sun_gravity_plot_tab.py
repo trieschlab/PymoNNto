@@ -236,7 +236,7 @@ class sun_gravity_plot_tab(TabBase):
         return
 
     def initialize(self, Network_UI):
-        if Network_UI.network['grammar_act', 0] is not None or Network_UI.network['drum_act', 0] is not None or Network_UI.network['music_act', 0] is not None:
+        if Network_UI.network['text_generator', 0] is not None or Network_UI.network['grammar_act', 0] is not None or Network_UI.network['drum_act', 0] is not None or Network_UI.network['music_act', 0] is not None:
             self.sun_gravity_plot_tab = Network_UI.Next_Tab(self.title)
 
             #alphabet = Network_UI.network['grammar_act'][0].alphabet
@@ -346,18 +346,17 @@ class sun_gravity_plot_tab(TabBase):
 
 
     def update(self, Network_UI):
+        groups = [Network_UI.network[tag, 0] for tag in Network_UI.neuron_visible_groups]
+        alphabet = []
+
         if Network_UI.network['grammar_act', 0] is not None and self.sun_gravity_plot_tab.isVisible():
             #group = Network_UI.network['prediction_source', 0]
-
-            groups = [Network_UI.network[tag, 0] for tag in Network_UI.neuron_visible_groups]
 
             self.draw_item.update_pic(groups, Network_UI.network['grammar_act', 0].alphabet, self.sl0.sliderPosition()/100, self.sl1.sliderPosition()/100, self.sl2.sliderPosition()/100, self.sl3.sliderPosition()/100, self.sl4.sliderPosition()/100, self.sl5.sliderPosition()/100, Network_UI, Network_UI.network['grammar_act', 0].get_char_input_statistics_list(), self.weight_plot_cb.isChecked())
             self.plot.update()
 
-        elif Network_UI.network['drum_act', 0] is not None and self.sun_gravity_plot_tab.isVisible(): 
-            groups = [Network_UI.network[tag, 0] for tag in Network_UI.neuron_visible_groups]
+        elif Network_UI.network['drum_act', 0] is not None and self.sun_gravity_plot_tab.isVisible():
             source = Network_UI.network['drum_act', 0]
-            alphabet = []
             for index in source.alphabet:
                 alphabet.append(source.instruments[index])
             
@@ -368,11 +367,13 @@ class sun_gravity_plot_tab(TabBase):
             self.draw_item.update_pic(groups, alphabet, self.sl0.sliderPosition()/100, self.sl1.sliderPosition()/100, self.sl2.sliderPosition()/100, self.sl3.sliderPosition()/100, self.sl4.sliderPosition()/100, self.sl5.sliderPosition()/100, Network_UI, source.get_instrument_input_statistics_list(), self.weight_plot_cb.isChecked())
             self.plot.update()
 
-        elif Network_UI.network['music_act', 0] is not None and self.sun_gravity_plot_tab.isVisible(): 
-            groups = [Network_UI.network[tag, 0] for tag in Network_UI.neuron_visible_groups]
+        elif Network_UI.network['music_act', 0] is not None and self.sun_gravity_plot_tab.isVisible():
             source = Network_UI.network['music_act', 0]
-            alphabet = []
             for index in source.alphabet:
                 alphabet.append(source.midi_index_to_notestring(index))
             self.draw_item.update_pic(groups, alphabet, self.sl0.sliderPosition()/100, self.sl1.sliderPosition()/100, self.sl2.sliderPosition()/100, self.sl3.sliderPosition()/100, self.sl4.sliderPosition()/100, self.sl5.sliderPosition()/100, Network_UI, source.get_note_input_statistics_list(), self.weight_plot_cb.isChecked())
+            self.plot.update()
+
+        elif Network_UI.network['text_generator', 0] is not None and self.sun_gravity_plot_tab.isVisible():
+            self.draw_item.update_pic(groups, Network_UI.network['text_generator', 0].alphabet, self.sl0.sliderPosition()/100, self.sl1.sliderPosition()/100, self.sl2.sliderPosition()/100, self.sl3.sliderPosition()/100, self.sl4.sliderPosition()/100, self.sl5.sliderPosition()/100, Network_UI, Network_UI.network['text_generator', 0].count_chars_in_blocks(), self.weight_plot_cb.isChecked())
             self.plot.update()

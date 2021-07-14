@@ -5,6 +5,8 @@ class Network_UI(UI_Base):
 
     def __init__(self, network, modules=[], label='SORN UI', group_tags=[], transmitters=[], storage_manager=None, group_display_count=None, reduced_layout=False):
 
+        network.simulate_iteration()
+
         network.clear_recorder()
 
         #network.simulate_iteration()
@@ -239,7 +241,7 @@ def get_color(type_index, layer):
 
 ########################################################### Exception handling
 
-
+'''
 
 from io import StringIO
 import traceback
@@ -264,14 +266,15 @@ def excepthook(excType, excValue, tracebackobj):
         ("yourmail at server.com", "")
     versionInfo = "0.0.1"
     timeString = time.strftime("%Y-%m-%d, %H:%M:%S")
-
     tbinfofile = StringIO()
     traceback.print_tb(tracebackobj, None, tbinfofile)
-    tbinfofile.seek(0)
-    tbinfo = tbinfofile.read()
-    errmsg = '%s: \n%s' % (str(excType), str(excValue))
-    sections = [separator, separator, errmsg, separator, tbinfo]
-    msg = '\n'.join(sections)
+    traceback.print_stack()
+    #traceback.print_exc()
+    #tbinfofile.seek(0)
+    #tbinfo = tbinfofile.read()
+    #errmsg = '%s: \n%s' % (str(excType), str(excValue))
+    #sections = [separator, separator, errmsg, separator, tbinfo]
+    #msg = '\n'.join(sections)
     #try:
     #    f = open(logFile, "w")
     #    f.write(msg)
@@ -282,8 +285,12 @@ def excepthook(excType, excValue, tracebackobj):
     #errorbox = QMessageBox()
     #errorbox.setText(str(notice) + str(msg) + str(versionInfo))
     #errorbox.exec_()
+'''
 
-sys.excepthook = excepthook
+def except_hook(cls, exception, traceback):
+    sys.__excepthook__(cls, exception, traceback)
+
+sys.excepthook = except_hook
 
 
 

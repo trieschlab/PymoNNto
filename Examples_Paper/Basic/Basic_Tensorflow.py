@@ -5,15 +5,14 @@ class Basic_Behaviour_Tensorflow(Behaviour):
 
     def set_variables(self, neurons):
         neurons.voltage = tf.Variable(neurons.get_neuron_vec(), dtype='float32')
-        neurons.spike = tf.Variable(neurons.get_neuron_vec(), dtype='float32')
+        neurons.spike = tf.Variable(neurons.get_neuron_vec(), dtype='bool')
         self.threshold = tf.constant(0.5, dtype='float32')
         self.decay_factor = tf.constant(0.9, dtype='float32')
 
     def new_iteration(self, neurons):
-        firing = tf.greater(neurons.voltage, self.threshold)
-        neurons.spike.assign(tf.cast(firing, dtype='float32'))#spikes
+        neurons.spike.assign(tf.greater(neurons.voltage, self.threshold))#spikes
 
-        not_firing = tf.cast(tf.math.logical_not(firing), dtype='float32')#reset
+        not_firing = tf.cast(tf.math.logical_not(neurons.spike), dtype='float32')#reset
         neurons.voltage.assign(tf.multiply(neurons.voltage, not_firing))
 
         new_voltage = tf.multiply(neurons.voltage, self.decay_factor)#voltage decay
@@ -29,11 +28,9 @@ class Input_Behaviour_Tensorflow(Behaviour):
 
     def new_iteration(self, neurons):
         for synapse in neurons.afferent_synapses['GLUTAMATE']:
-            W_act_mul = tf.linalg.matvec(synapse.W, synapse.src.spike)
+            W_act_mul = tf.linalg.matvec(synapse.W, tf.cast(synapse.src.spike, dtype='float32'))
             delta_act = tf.divide(W_act_mul, synapse.src.size/10.0)
             neurons.voltage.assign(tf.add(neurons.voltage, delta_act))
-
-
 
 My_Network = Network()
 

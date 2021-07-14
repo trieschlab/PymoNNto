@@ -9,9 +9,11 @@ from PymoNNto.Exploration.Network_UI.Sequence_Activation_Tabs.character_activati
 def get_my_default_UI_modules():
     return [
         # chain_tab(),
+
         sun_gravity_plot_tab(),
         sidebar_image_module(),
-        sidebar_grammar_module(),
+        #sidebar_grammar_module(),
+        sidebar_grammar_module_new(),
         sidebar_music_module(),
         sidebar_drumbeat_module(),
         reconstruction_tab(),

@@ -509,7 +509,7 @@ class module_drawer(UI_Base):
 
         reset_vars()
 
-        delattr(sg, 'enabled')
+        #delattr(sg, 'enabled')
 
         def read_ng(obj, attr):
             obj.variable_reads.append('n.'+attr)

@@ -15,11 +15,14 @@ class multi_group_plot_tab(TabBase):
 
     def add_recorder_variables(self, neuron_group, Network_UI):
         for var in self.variables:
+            #print(neuron_group.__dict__)
+            #if hasattr(neuron_group, var):
             try:
-                print(var)
+            #    print(var)
                 Network_UI.add_recording_variable(neuron_group, 'n.'+var, timesteps=self.timesteps)
                 Network_UI.add_recording_variable(neuron_group, 'np.mean(n.'+var+')', timesteps=self.timesteps)
             except:
+            #else:
                 print('cannot add', var)
 
 
@@ -96,7 +99,7 @@ class multi_group_plot_tab(TabBase):
 
             for var in self.variables:
                 try:#if hasattr(group, var):
-                    neuron_data = group['n.' + var, 0, 'np'][-self.timesteps:]
+                    neuron_data = group['n.' + var, 0, 'np'][-self.timesteps:].astype(def_dtype)
                     iterations = group['n.iteration', 0, 'np'][-self.timesteps:]
                     if len(neuron_data.shape) > 1:
                         neuron_data = neuron_data[:, Network_UI.neuron_select_id]

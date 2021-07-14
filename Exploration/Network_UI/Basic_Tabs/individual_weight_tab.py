@@ -118,11 +118,11 @@ class individual_weight_tab(TabBase):
 
                 group = Network_UI.network[Network_UI.neuron_select_group, 0]
 
-                if (self.start_rec(group) and self.my_syn_rec.is_new_data_available()) or self.my_syn_rec.active == False:
+                if (self.start_rec(group) and self.my_syn_rec.is_new_data_available()) or self.my_syn_rec.behaviour_enabled == False:
 
-                    if self.my_syn_rec.active==False:
+                    if self.my_syn_rec.behaviour_enabled==False:
                         print('continue')
-                        self.my_syn_rec.active=True
+                        self.my_syn_rec.behaviour_enabled=True
 
                     x_data=self.my_syn_rec['n.iteration', 0, 'np']
 
@@ -146,9 +146,9 @@ class individual_weight_tab(TabBase):
                                 else:
                                     curve.clear()
         else:
-            if self.my_syn_rec is not None and self.my_syn_rec.active==True:
+            if self.my_syn_rec is not None and self.my_syn_rec.behaviour_enabled==True:
                 print('paused')
-                self.my_syn_rec.active=False
+                self.my_syn_rec.behaviour_enabled=False
 '''
 
 
@@ -319,8 +319,8 @@ class individual_weight_tab(TabBase):
                 self.start_rec(group)
 
                 for s in self.current_ng.afferent_synapses["All"]:
-                    if not s.UI_recorder.active:
-                        s.UI_recorder.active = True
+                    if not s.UI_recorder.behaviour_enabled:
+                        s.UI_recorder.behaviour_enabled = True
                         print('recorder started')
                     if s.cb.checkState() == 2:
                         if s.UI_recorder.is_new_data_available():
@@ -333,6 +333,6 @@ class individual_weight_tab(TabBase):
         else:
             if self.current_ng is not None:
                 for s in self.current_ng.afferent_synapses["All"]:
-                    if s.UI_recorder.active:
-                        s.UI_recorder.active=False
+                    if s.UI_recorder.behaviour_enabled:
+                        s.UI_recorder.behaviour_enabled=False
                         print('recorder paused')

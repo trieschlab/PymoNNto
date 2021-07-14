@@ -21,7 +21,9 @@ class NeuronGroup(NetworkObjectBase):
             net.NeuronGroups.append(self)
             self.network = net
 
+
         self.size = size
+
         self.afferent_synapses = {} #set by Network
         self.efferent_synapses = {}
 
@@ -38,7 +40,7 @@ class NeuronGroup(NetworkObjectBase):
         #    for k in behaviour:
         #        self.behaviour[k] = copy.copy(behaviour[k])
 
-        for k in self.behaviour:
+        for k in sorted(list(self.behaviour.keys())):
             if self.behaviour[k].set_variables_on_init:
                 self.behaviour[k].set_variables(self)
 

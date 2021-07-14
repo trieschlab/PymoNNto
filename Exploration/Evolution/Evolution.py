@@ -82,13 +82,15 @@ class Evolution:
                 result = False
         return result
 
-
-    def new_score_event(self, genome):#called by devices
+    def find(self, genome_list, genome):
         found = None
-
-        for g in self.running_individuals:
+        for g in genome_list:
             if self.part_of_genome(g, genome):
                 found = g
+        return found
+
+    def new_score_event(self, genome):#called by devices
+        found = self.find(self.running_individuals, genome)
 
         if found is not None:
             self.running_individuals.remove(found)
@@ -175,6 +177,10 @@ class Evolution:
             except:
                 print('failed to load gene from', sm.folder_name)
 
+        ids = smg.get_param_list('id', remove_None=True)
+        max_id = np.max(ids)
+        self.id_counter = max_id+1
+
         if len(genomes)!=0:
             self.scored_individuals = genomes
             self.running_individuals = []
@@ -202,6 +208,15 @@ class Evolution:
         for device in self.devices:
             device.stop()
 
+    def add_name_gen_id_inactive_to_genome(self, genome):
+        result = genome.copy()
+        result['evo_name'] = self.name
+        result['gen'] = self.Breed_And_Select.generation
+        result['id'] = self.id_counter
+        self.id_counter += 1
+        result.update(self.inactive_genome_info)
+        return result
+
     def get_next_genome(self):
         result = None
         if len(self.non_scored_individuals) > 0:
@@ -213,11 +228,12 @@ class Evolution:
         #    result = self.running_individuals[0]
 
         if result is not None:
-            result = result.copy()
-            result['evo_name'] = self.name
-            result['gen'] = self.Breed_And_Select.generation
-            result['id'] = self.id_counter
-            self.id_counter += 1
-            result.update(self.inactive_genome_info)
+            result = self.add_name_gen_id_inactive_to_genome(result)
+            #result = result.copy()
+            #result['evo_name'] = self.name
+            #result['gen'] = self.Breed_And_Select.generation
+            #result['id'] = self.id_counter
+            #self.id_counter += 1
+            #result.update(self.inactive_genome_info)
 
         return result

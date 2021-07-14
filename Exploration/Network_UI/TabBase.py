@@ -1,3 +1,4 @@
+from PymoNNto import *
 import sys
 import matplotlib.pyplot as plt
 from PyQt5 import QtCore, QtGui, QtWidgets, uic

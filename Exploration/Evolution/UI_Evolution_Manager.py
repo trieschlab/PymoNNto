@@ -324,13 +324,15 @@ All genomes generate a file with the results and the genes when set_score is cal
                         for key in ['gen', 'score', 'id']:
                             for genome in sg:
                                 if key in genome:
-                                    print(key, 'removed form genomes')
+                                    genome.pop(key)
+                                    print(key, 'removed from genomes')
+                        self.start_genomes_edit.setText(str(sg))
                         valid_genomes = True
                     except:
                         print('error parsing start genomes')
 
                     if not valid_genomes:
-                        print('error: "gen", "score" or "id" in start genomes')
+                        print('error parsing start genomes')
                     else:
 
                         self.copy_project(name, server_str)

@@ -26,7 +26,7 @@ class SynapseGroup(NetworkObjectBase):
 
         self.behaviour = behaviour
 
-        for k in self.behaviour:
+        for k in sorted(list(self.behaviour.keys())):
             if self.behaviour[k].set_variables_on_init:
                 self.behaviour[k].set_variables(self)
 

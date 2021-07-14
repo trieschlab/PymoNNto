@@ -65,7 +65,7 @@ class single_group_plot_tab(TabBase):
                     data_mean = group[mean_var, 0, 'np'][-self.timesteps:]
                     self.net_curves[var].setData(iterations, data_mean)
 
-                    data_neuron = group[single_var, 0, 'np'][-self.timesteps:, Network_UI.neuron_select_id]
+                    data_neuron = group[single_var, 0, 'np'][-self.timesteps:, Network_UI.neuron_select_id].astype(def_dtype)
                     self.neuron_curves[var].setData(iterations, data_neuron)
                 except:
                     print(var, "cannot be evaluated")

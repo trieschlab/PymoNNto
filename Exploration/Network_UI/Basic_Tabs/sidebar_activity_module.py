@@ -27,7 +27,7 @@ class sidebar_activity_sub_module(TabBase):
             h_abs = np.clip(int(y_temp), 0, h * d - 1)
             Network_UI.neuron_select_id = (h_abs) * w + Network_UI.neuron_select_x
 
-            print(Network_UI.neuron_select_x, Network_UI.neuron_select_y, Network_UI.neuron_select_z, Network_UI.neuron_select_id, ' ', event.pos().x(), event.pos().y())
+            #print(Network_UI.neuron_select_x, Network_UI.neuron_select_y, Network_UI.neuron_select_z, Network_UI.neuron_select_id, ' ', event.pos().x(), event.pos().y())
             Network_UI.static_update_func()
 
         group_select_box=QComboBox()

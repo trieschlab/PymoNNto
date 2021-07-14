@@ -14,13 +14,16 @@ class Recorder(Behaviour):
         self.gapwidth = self.get_init_attr('gapwidth', 0)
         self.counter = 0
         self.new_data_available=False
+
+        if type(variables) is str:
+            variables=[variables]
+
         self.variables = {}
         self.compiled = {}
         self.save_as_numpy = self.get_init_attr('save_as_numpy', False)
 
         self.add_variables(self.get_init_attr('variables', []))
         self.reset()
-        self.active = True
         self.max_length = self.get_init_attr('max_length', None)
 
     def set_variables(self, neurons):
@@ -74,7 +77,7 @@ class Recorder(Behaviour):
             self.variables[variable].append(data)
 
     def new_iteration(self, parent_obj):
-        if self.active and parent_obj.recording:
+        if parent_obj.recording:
 
             self.counter += 1
             if self.counter >= self.gapwidth:

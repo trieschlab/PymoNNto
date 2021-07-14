@@ -17,8 +17,8 @@ class Reconstruct_Analyze_Label_Network():
             ng.learning=False
             for be in ng.behaviour.values():
                 if isinstance(be, NeuronActivator) and not isinstance(be, NeuronManualActivator):
-                    activators[be] = be.active
-                    be.active = False
+                    activators[be] = be.behaviour_enabled
+                    be.behaviour_enabled = False
 
 
         man_act = None
@@ -81,7 +81,7 @@ class Reconstruct_Analyze_Label_Network():
             ng.learning = True
 
         for be in activators:
-            be.active = activators[be]
+            be.behaviour_enabled = activators[be]
 
         return np.array(activity_trace), np.array(pattern_ids)
 
