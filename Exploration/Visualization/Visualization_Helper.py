@@ -1,23 +1,21 @@
 import numpy as np
 from math import *
 
-ms_per_step=2
+#ms_per_step=2
 
-def step_ms(x):
-    return x*ms_per_step
+#def step_ms(x):
+#    return x*ms_per_step
 
-def SpikeTrain_ISI(x, step_to_ms=True):
+def SpikeTrain_ISI(x):
     result = []
     last = -1
     for i, x in enumerate(x):
-        if x == 1:
+        if x > 0:
             if last!=-1:
                 result.append(i-last)
             last=i
-    if step_to_ms:
-        return step_ms(np.array(result))
-    else:
-        return np.array(result)
+
+    return result
 
 def get_bins(number, xrightlim):
     #xrightlim = max_neuron_frequency()

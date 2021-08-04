@@ -36,76 +36,82 @@ class DrawItem2(pg.GraphicsObject):
                 painter.drawEllipse(QtCore.QPointF(x, y), 1, 1)
         return  attractor_rads
 
-    def compute_and_apply_attraction(self, group, movement_speed_fac, anti_gravity_exp, random_movement_fac, weight_exp, attractor_rad_fac, attractor_rads):
+    def compute_and_apply_attraction(self, group, attractor_rads):
 
-            #group.buffer_posx += (group.get_neuron_vec('uniform') - 0.5)*0.1
-            #group.buffer_posy += (group.get_neuron_vec('uniform') - 0.5)*0.1
+        movement_speed_fac = self.p1s.sliderPosition() / 100
+        anti_gravity_exp = self.p2s.sliderPosition() / 100
+        random_movement_fac = self.p3s.sliderPosition() / 100
+        weight_exp = self.p4s.sliderPosition() / 100
+        attractor_rad_fac = self.p5s.sliderPosition() / 100
 
-            group.add_x = (group.get_neuron_vec('uniform') - 0.5) * random_movement_fac# + (-group.buffer_posx)*p2
-            group.add_y = (group.get_neuron_vec('uniform') - 0.5) * random_movement_fac# + (-group.buffer_posy)*p2#np.sin(group.buffer_posy/lb*2*np.pi)*10*p2
+        #group.buffer_posx += (group.get_neuron_vec('uniform') - 0.5)*0.1
+        #group.buffer_posy += (group.get_neuron_vec('uniform') - 0.5)*0.1
 
-            for sg in group.afferent_synapses['GLU']:
-                theta_src, rho_src = cart2pol(sg.src.buffer_posx, sg.src.buffer_posy)
+        group.add_x = (group.get_neuron_vec('uniform') - 0.5) * random_movement_fac# + (-group.buffer_posx)*p2
+        group.add_y = (group.get_neuron_vec('uniform') - 0.5) * random_movement_fac# + (-group.buffer_posy)*p2#np.sin(group.buffer_posy/lb*2*np.pi)*10*p2
 
-                if hasattr(group, 'timescale'):
-                    step_factor = np.power(0.9, group.timescale)
-                else:
-                    step_factor = 0.9
+        for sg in group.afferent_synapses['GLU']:
+            theta_src, rho_src = cart2pol(sg.src.buffer_posx, sg.src.buffer_posy)
 
-                attractorx, attractory = pol2cart(theta_src, rho_src * step_factor)
+            if hasattr(group, 'timescale'):
+                step_factor = np.power(0.9, group.timescale)
+            else:
+                step_factor = 0.9
 
-                theta_dst, rho_dst = cart2pol(sg.dst.buffer_posx, sg.dst.buffer_posy)
-                rd = np.array(attractor_rads)[:, None]-rho_dst[None, :]
+            attractorx, attractory = pol2cart(theta_src, rho_src * step_factor)
 
-                #get closest attractor
-                if attractor_rad_fac > 0:
-                    closest = np.array([rd[indx, i] for i, indx in enumerate(np.argmin(np.abs(rd), axis=0))])
-                    #move_to_rad = np.choose(np.argmax(np.abs(rd), axis=1), rd)
-                    attractor_rad_x, attractor_rad_y = pol2cart(theta_dst, closest)
+            theta_dst, rho_dst = cart2pol(sg.dst.buffer_posx, sg.dst.buffer_posy)
+            rd = np.array(attractor_rads)[:, None]-rho_dst[None, :]
 
-                    f = np.abs(attractor_rad_x) + np.abs(attractor_rad_y)
-                    attractor_rad_x[f > 0] /= f[f > 0]/len(attractor_rad_x)
-                    attractor_rad_y[f > 0] /= f[f > 0]/len(attractor_rad_y)
+            #get closest attractor
+            if attractor_rad_fac > 0:
+                closest = np.array([rd[indx, i] for i, indx in enumerate(np.argmin(np.abs(rd), axis=0))])
+                #move_to_rad = np.choose(np.argmax(np.abs(rd), axis=1), rd)
+                attractor_rad_x, attractor_rad_y = pol2cart(theta_dst, closest)
 
-                xdiff_mat = attractorx[:, None]-sg.dst.buffer_posx[None, :]
-                ydiff_mat = attractory[:, None]-sg.dst.buffer_posy[None, :]
+                f = np.abs(attractor_rad_x) + np.abs(attractor_rad_y)
+                attractor_rad_x[f > 0] /= f[f > 0]/len(attractor_rad_x)
+                attractor_rad_y[f > 0] /= f[f > 0]/len(attractor_rad_y)
 
-                f = np.abs(xdiff_mat)+np.abs(ydiff_mat)
-                xdiff_mat[f > 0] /= f[f > 0]/len(xdiff_mat)
-                ydiff_mat[f > 0] /= f[f > 0]/len(ydiff_mat)
+            xdiff_mat = attractorx[:, None]-sg.dst.buffer_posx[None, :]
+            ydiff_mat = attractory[:, None]-sg.dst.buffer_posy[None, :]
 
-                xdiff_mat[(f < 3) * (f > 0)] *= 1/3*(f[(f < 3) * (f > 0)])
-                ydiff_mat[(f < 3) * (f > 0)] *= 1/3*(f[(f < 3) * (f > 0)])
+            f = np.abs(xdiff_mat)+np.abs(ydiff_mat)
+            xdiff_mat[f > 0] /= f[f > 0]/len(xdiff_mat)
+            ydiff_mat[f > 0] /= f[f > 0]/len(ydiff_mat)
 
-                #d=np.sqrt(xdiff_mat*xdiff_mat+ydiff_mat*ydiff_mat)
+            xdiff_mat[(f < 3) * (f > 0)] *= 1/3*(f[(f < 3) * (f > 0)])
+            ydiff_mat[(f < 3) * (f > 0)] *= 1/3*(f[(f < 3) * (f > 0)])
 
-                #xdiff_mat[d < 0.1] *= -10
-                #ydiff_mat[d < 0.1] *= -10
+            #d=np.sqrt(xdiff_mat*xdiff_mat+ydiff_mat*ydiff_mat)
 
-                #print(rho)
+            #xdiff_mat[d < 0.1] *= -10
+            #ydiff_mat[d < 0.1] *= -10
 
-                rho_src = np.power(rho_src, anti_gravity_exp)
-                rho_src = rho_src/np.sum(rho_src)*len(rho_src)
+            #print(rho)
 
-                xdiff_mat *= rho_src[:, None]
-                ydiff_mat *= rho_src[:, None]
+            rho_src = np.power(rho_src, anti_gravity_exp)
+            rho_src = rho_src/np.sum(rho_src)*len(rho_src)
 
-                #xdiff_mat=xdiff_mat*xdiff_mat*xdiff_mat
-                #ydiff_mat=ydiff_mat*ydiff_mat*ydiff_mat
+            xdiff_mat *= rho_src[:, None]
+            ydiff_mat *= rho_src[:, None]
 
-                weights = np.power(sg.W, weight_exp)
-                weights = weights/np.sum(weights)*len(weights)
+            #xdiff_mat=xdiff_mat*xdiff_mat*xdiff_mat
+            #ydiff_mat=ydiff_mat*ydiff_mat*ydiff_mat
 
-                ax = 0
-                sg.dst.add_x += np.sum(weights.T*xdiff_mat, axis=ax)/xdiff_mat.shape[ax]
-                sg.dst.add_y += np.sum(weights.T*ydiff_mat, axis=ax)/ydiff_mat.shape[ax]
+            weights = np.power(sg.W, weight_exp)
+            weights = weights/np.sum(weights)*len(weights)
 
-                if attractor_rad_fac>0:
-                    sg.dst.add_x += attractor_rad_x*attractor_rad_fac*0.001
-                    sg.dst.add_y += attractor_rad_y*attractor_rad_fac*0.001
+            ax = 0
+            sg.dst.add_x += np.sum(weights.T*xdiff_mat, axis=ax)/xdiff_mat.shape[ax]
+            sg.dst.add_y += np.sum(weights.T*ydiff_mat, axis=ax)/ydiff_mat.shape[ax]
 
-            group.buffer_posx = np.clip(group.buffer_posx + group.add_x * movement_speed_fac, -100, +100)
-            group.buffer_posy = np.clip(group.buffer_posy + group.add_y * movement_speed_fac, -100, +100)
+            if attractor_rad_fac>0:
+                sg.dst.add_x += attractor_rad_x*attractor_rad_fac*0.001
+                sg.dst.add_y += attractor_rad_y*attractor_rad_fac*0.001
+
+        group.buffer_posx = np.clip(group.buffer_posx + group.add_x * movement_speed_fac, -100, +100)
+        group.buffer_posy = np.clip(group.buffer_posy + group.add_y * movement_speed_fac, -100, +100)
 
 
 
@@ -171,8 +177,16 @@ class DrawItem2(pg.GraphicsObject):
                 c=char
             painter.drawText(x,y,c)
 
+    def attach_parameter_slider(self, p0s, p1s, p2s, p3s, p4s, p5s):
+        self.p0s = p0s
+        self.p1s = p1s
+        self.p2s = p2s
+        self.p3s = p3s
+        self.p4s = p4s
+        self.p5s = p5s
 
-    def update_pic(self, groups, alphabet, p0, p1, p2, p3, p4, p5, nui, statistics, show_weights):
+
+    def update_pic(self, groups, alphabet, nui, statistics, show_weights):
 
         self.picture = QtGui.QPicture()
         painter = QtGui.QPainter(self.picture)
@@ -185,12 +199,12 @@ class DrawItem2(pg.GraphicsObject):
         #    self.initialize_neuron_positons(group)
 
         for group in nui.network.NeuronGroups:
-            self.compute_and_apply_attraction(group, p1, p2, p3, p4, p5, attractor_rads)
+            self.compute_and_apply_attraction(group, attractor_rads)
 
         painter.scale(1, -1)
 
         for group in groups:
-            self.draw_neurons(painter, group, p0)
+            self.draw_neurons(painter, group, self.p0s.sliderPosition() / 100)
 
         #painter.setBrush(pg.mkBrush(color=(0,255,0,255)))
         #for x, y in zip(group.buffer_posx+attractor_rad_x, group.buffer_posy+attractor_rad_y):
@@ -208,6 +222,8 @@ class DrawItem2(pg.GraphicsObject):
         for group in nui.network.NeuronGroups:
             if hasattr(group, 'Input_Weights'):
                 self.fixate_points(group, alphabet, group.Input_Weights)
+            #self.fixate_points(group, alphabet, group['Text_Activator',0].mat)
+
 
         self.draw_chars(painter, alphabet, statistics)
 
@@ -343,37 +359,41 @@ class sun_gravity_plot_tab(TabBase):
             self.weight_plot_cb.setChecked(True)
             Network_UI.Add_element(self.weight_plot_cb, stretch=10)
 
+            self.draw_item.attach_parameter_slider(self.sl0, self.sl1, self.sl2, self.sl3, self.sl4, self.sl5)
+
 
 
     def update(self, Network_UI):
         groups = [Network_UI.network[tag, 0] for tag in Network_UI.neuron_visible_groups]
         alphabet = []
 
-        if Network_UI.network['grammar_act', 0] is not None and self.sun_gravity_plot_tab.isVisible():
-            #group = Network_UI.network['prediction_source', 0]
+        if self.sun_gravity_plot_tab.isVisible():
 
-            self.draw_item.update_pic(groups, Network_UI.network['grammar_act', 0].alphabet, self.sl0.sliderPosition()/100, self.sl1.sliderPosition()/100, self.sl2.sliderPosition()/100, self.sl3.sliderPosition()/100, self.sl4.sliderPosition()/100, self.sl5.sliderPosition()/100, Network_UI, Network_UI.network['grammar_act', 0].get_char_input_statistics_list(), self.weight_plot_cb.isChecked())
-            self.plot.update()
+            if Network_UI.network['grammar_act', 0] is not None:
+                #group = Network_UI.network['prediction_source', 0]
 
-        elif Network_UI.network['drum_act', 0] is not None and self.sun_gravity_plot_tab.isVisible():
-            source = Network_UI.network['drum_act', 0]
-            for index in source.alphabet:
-                alphabet.append(source.instruments[index])
-            
-            if source.include_inverse_alphabet: # include the symbols that stand for NOT the instrument
+                self.draw_item.update_pic(groups, Network_UI.network['grammar_act', 0].alphabet, Network_UI, Network_UI.network['grammar_act', 0].get_char_input_statistics_list(), self.weight_plot_cb.isChecked())
+                self.plot.update()
+
+            elif Network_UI.network['drum_act', 0] is not None:
+                source = Network_UI.network['drum_act', 0]
                 for index in source.alphabet:
-                    alphabet.append('! '+source.instruments[index])
-            
-            self.draw_item.update_pic(groups, alphabet, self.sl0.sliderPosition()/100, self.sl1.sliderPosition()/100, self.sl2.sliderPosition()/100, self.sl3.sliderPosition()/100, self.sl4.sliderPosition()/100, self.sl5.sliderPosition()/100, Network_UI, source.get_instrument_input_statistics_list(), self.weight_plot_cb.isChecked())
-            self.plot.update()
+                    alphabet.append(source.instruments[index])
 
-        elif Network_UI.network['music_act', 0] is not None and self.sun_gravity_plot_tab.isVisible():
-            source = Network_UI.network['music_act', 0]
-            for index in source.alphabet:
-                alphabet.append(source.midi_index_to_notestring(index))
-            self.draw_item.update_pic(groups, alphabet, self.sl0.sliderPosition()/100, self.sl1.sliderPosition()/100, self.sl2.sliderPosition()/100, self.sl3.sliderPosition()/100, self.sl4.sliderPosition()/100, self.sl5.sliderPosition()/100, Network_UI, source.get_note_input_statistics_list(), self.weight_plot_cb.isChecked())
-            self.plot.update()
+                if source.include_inverse_alphabet: # include the symbols that stand for NOT the instrument
+                    for index in source.alphabet:
+                        alphabet.append('! '+source.instruments[index])
 
-        elif Network_UI.network['text_generator', 0] is not None and self.sun_gravity_plot_tab.isVisible():
-            self.draw_item.update_pic(groups, Network_UI.network['text_generator', 0].alphabet, self.sl0.sliderPosition()/100, self.sl1.sliderPosition()/100, self.sl2.sliderPosition()/100, self.sl3.sliderPosition()/100, self.sl4.sliderPosition()/100, self.sl5.sliderPosition()/100, Network_UI, Network_UI.network['text_generator', 0].count_chars_in_blocks(), self.weight_plot_cb.isChecked())
-            self.plot.update()
+                self.draw_item.update_pic(groups, alphabet, Network_UI, source.get_instrument_input_statistics_list(), self.weight_plot_cb.isChecked())
+                self.plot.update()
+
+            elif Network_UI.network['music_act', 0] is not None:
+                source = Network_UI.network['music_act', 0]
+                for index in source.alphabet:
+                    alphabet.append(source.midi_index_to_notestring(index))
+                self.draw_item.update_pic(groups, alphabet, Network_UI, source.get_note_input_statistics_list(), self.weight_plot_cb.isChecked())
+                self.plot.update()
+
+            elif Network_UI.network['text_generator', 0] is not None:
+                self.draw_item.update_pic(groups, Network_UI.network['text_generator', 0].alphabet, Network_UI, Network_UI.network['text_generator', 0].count_chars_in_blocks(), self.weight_plot_cb.isChecked())
+                self.plot.update()

@@ -12,7 +12,8 @@ from PymoNNto.Exploration.Network_UI.Basic_Tabs.partition_tab import *
 from PymoNNto.Exploration.Network_UI.Basic_Tabs.spiketrain_tab import *
 from PymoNNto.Exploration.Network_UI.Basic_Tabs.individual_weight_tab import *
 from PymoNNto.Exploration.Network_UI.Basic_Tabs.PCA_tab import *
-
+from PymoNNto.Exploration.Network_UI.Basic_Tabs.isi_tab import *
+from PymoNNto.Exploration.Network_UI.Basic_Tabs.code_execution_tab import *
 
 def get_default_UI_modules(neuron_parameters=['output'], synapse_parameters=['W']):
     return [
@@ -23,11 +24,20 @@ def get_default_UI_modules(neuron_parameters=['output'], synapse_parameters=['W'
     partition_tab(),
     PCA_tab(parameter=neuron_parameters[0]),
     #individual_weight_tab(),
+    isi_tab(param=neuron_parameters[0]),
     hist_tab(weight_attr=synapse_parameters[0]),
     single_group_plot_tab({neuron_parameters[0]:(0, 0, 0)}),#, 'excitation':(0, 0, 255), 'inhibition':(255, 0, 0), 'input_act':(255, 0, 255), 'TH':(0, 255, 0)}),
     stability_tab(parameter=neuron_parameters[0]),
     fourier_tab(parameter=neuron_parameters[0]),
     info_tab(),
     sidebar_fast_forward_module(),
-    sidebar_save_load_module()
+    sidebar_save_load_module(),
+    code_execution_tab()
 ]
+
+def get_default_UI_modules_dict(neuron_parameters=['output'], synapse_parameters=['W']):
+    modules = get_default_UI_modules(neuron_parameters, synapse_parameters)
+    result={}
+    for module in modules:
+        result[module.__class__.__name__] = module
+    return result

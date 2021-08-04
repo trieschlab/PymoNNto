@@ -33,15 +33,6 @@ class sidebar_activity_sub_module(TabBase):
         group_select_box=QComboBox()
         Network_UI.Add_Sidebar_Element(group_select_box)
 
-        Network_UI.group_sliders.append(QSlider(1))  # QtCore.Horizontal
-        Network_UI.group_sliders[-1].setMinimum(0)
-        Network_UI.group_sliders[-1].setMaximum(100)
-        Network_UI.group_sliders[-1].setSliderPosition(100)
-        Network_UI.group_sliders[-1].mouseReleaseEvent = Network_UI.static_update_func
-        Network_UI.group_sliders[-1].setToolTip('scale neuron-group plots up and down (only visualization)')
-
-        Network_UI.sidebar_hblock.addWidget(Network_UI.group_sliders[-1])
-
         self.image_item = Network_UI.Add_Image_Item(False, True, tooltip_message='white: active neurons\r\ndarker color: primary input neurons\r\ngreen: selected neuron')
 
         self.image_item.neuron_group_tag = Network_UI.group_tags[index]
@@ -94,7 +85,7 @@ class sidebar_activity_sub_module(TabBase):
                         for i in range(3):
                             image[:, i] += color[i]*data
                 except:
-                    print(param, "can not be evaluated")
+                    pass#print(param, "can not be evaluated")
 
             image=np.reshape(image, (group.height*group.depth, group.width, 3))#group.depth
             self.image_item.setImage(np.rot90(image, 3), levels=(0, 255))

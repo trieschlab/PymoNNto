@@ -9,10 +9,12 @@ class Network_UI(UI_Base):
 
         network.clear_recorder()
 
+        self.render_every_x_frames=1
+
         #network.simulate_iteration()
-        self.recording = False
-        if self.recording:
-            label += ' rec.'
+        #self.recording = False
+        #if self.recording:
+        #    label += ' rec.'
 
         for ng in network.NeuronGroups:
             if not hasattr(ng, 'color'):
@@ -62,7 +64,7 @@ class Network_UI(UI_Base):
         self.neuron_visible_groups = []
         #self.ts_group = 0
         #self.x_steps = 500
-        self.group_sliders = []
+        #self.group_sliders = []
         self.neuron_select_color = (0, 255, 0, 255)
 
         self.modules = modules
@@ -90,12 +92,19 @@ class Network_UI(UI_Base):
 
     def add_recording_variable(self, group, var, timesteps):
 
-        old_ts=0
-        if var in group._rec_dict:
-            old_ts=group._rec_dict[var]
+        try:
+            n = group  # for eval
+            eval(var) #produce error when not evaluable
 
-        group._rec_dict[var] = max(timesteps,old_ts)
-        #recorder.add_varable('n.output')
+            old_ts=0
+            if var in group._rec_dict:
+                old_ts=group._rec_dict[var]
+
+            group._rec_dict[var] = max(timesteps,old_ts)
+            #recorder.add_varable('n.output')
+            return True
+        except:
+            return False
 
     def init_recoders(self):
         for group_tag in self.group_tags:
@@ -123,12 +132,6 @@ class Network_UI(UI_Base):
     def static_update_func(self, event=None):
         if self.pause:
             self.update_without_state_change=True
-
-
-    def record_image(self, img, key):
-        if self.storage_manager is not None and self.recording:
-            image = upscale(img*255, 10)
-            self.storage_manager.save_frame(image, key)
 
     def get_selected_neuron_subgroup(self):
         syn_sgs = self.get_selected_synapses()
@@ -179,7 +182,7 @@ class Network_UI(UI_Base):
         if not self.pause or self.step or self.update_without_state_change:
             self.step = False
             if not self.update_without_state_change:
-                for i in range(1):
+                for i in range(self.render_every_x_frames):
                     self.network.simulate_iteration()
 
             self.it = self.network.iteration

@@ -23,13 +23,6 @@ class criticality_tab(TabBase):
     def initialize(self, Network_UI):
         self.criticality_tab = Network_UI.Next_Tab(self.title)
 
-        _, self.isi_plt = Network_UI.Add_plot_curve('neuron inter spike interval hist', True, False, legend=False, x_label='ISI', y_label='Frequency')
-        _, self.net_avg_hist_plt = Network_UI.Add_plot_curve('net avg activities (1000 steps)', True, False, legend=False, x_label='average activity', y_label='Frequency')
-        if self.mask_param is not None:
-            _, self.input_avg_hist_plt = Network_UI.Add_plot_curve('input avg activities (1000 steps)', True, False, legend=False, x_label='average activity', y_label='Frequency')
-
-        Network_UI.Next_H_Block()
-
         self.avalance_size_curve, self.avalance_size_plot = Network_UI.Add_plot_curve('net avalance size plot', True, False, legend=False, x_label='Size', y_label='Probability')
         self.avalance_duration_curve, self.avalance_duration_plot = Network_UI.Add_plot_curve('net avalance duration plot', True, False, legend=False, x_label='Duration', y_label='Probability')
 
@@ -226,33 +219,6 @@ class criticality_tab(TabBase):
         self.avalance_size_curve.setData(S_x, S_y)
 
 
-
-
-    def update_ISI(self, Network_UI, group):
-        #rec = Network_UI.rec(group, self.timesteps)
-        self.neuron_act_data = group['n.output', 0, 'np'][-self.timesteps:, Network_UI.neuron_select_id]
-        self.isi_plt.clear()
-        y, x = np.histogram(SpikeTrain_ISI(self.neuron_act_data), bins=15)
-        curve = pg.PlotCurveItem(x, y, stepMode=True, fillLevel=0, brush=Network_UI.neuron_select_color)
-        self.isi_plt.addItem(curve)
-
-    def update_Mean_Activity(self, Network_UI, group, input_mask, not_input_mask, net_color_input):
-        #rec = Network_UI.rec(group, self.timesteps)
-
-        self.net_avg_hist_plt.clear()
-        avg_acts = np.mean(group['n.output', 0, 'np'][-self.timesteps:, not_input_mask], axis=0)  # 1000
-        y, x = np.histogram(avg_acts, bins=25)
-        curve = pg.PlotCurveItem(x, y, stepMode=True, fillLevel=0, brush=group.color)
-        self.net_avg_hist_plt.addItem(curve)
-
-        if self.mask_param is not None:
-            self.input_avg_hist_plt.clear()
-            if input_mask is not False:
-                input_avg_acts = np.mean(group['n.output', 0, 'np'][:, input_mask], axis=0)  # 1000
-                y, x = np.histogram(input_avg_acts, bins=25)
-                curve = pg.PlotCurveItem(x, y, stepMode=True, fillLevel=0, brush=net_color_input)  # todo:make faster!
-                self.input_avg_hist_plt.addItem(curve)  # todo:make faster!
-
     def update(self, Network_UI):
         if self.criticality_tab.isVisible():
 
@@ -270,9 +236,7 @@ class criticality_tab(TabBase):
 
             net_color_input = np.clip([group.color[0] + mca[0], group.color[1] + mca[1], group.color[2] + mca[2], 255], 0, 255)
 
-            if hasattr(group, 'output'):
-                self.update_ISI(Network_UI, group)
-                self.update_Mean_Activity(Network_UI, group, input_mask, not_input_mask, net_color_input)
+            if hasattr(group, self.param):
                 self.update_avalanche_distributions(Network_UI, group)
                 self.update_branching(Network_UI, group)
                 self.button_update(Network_UI, group)

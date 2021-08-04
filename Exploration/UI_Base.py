@@ -165,7 +165,6 @@ class UI_Base(QApplication):
         def to_tab(event):
             self.tabs.addTab(main_tab_container, title)
 
-        #main_tab_container.mousePressEvent = to_window
         main_tab_container.closeEvent = to_tab
         main_tab_container.setWindowTitle(title)
 
@@ -191,18 +190,54 @@ class UI_Base(QApplication):
 
         self.main_h_layout = QHBoxLayout(self.main_window)
 
+        self.main_split = QSplitter()#self.main_window
+        self.main_h_layout.addWidget(self.main_split)
+
         self.sidebar_column_layout = QHBoxLayout()
-        self.main_h_layout.addLayout(self.sidebar_column_layout, stretch=2)
+        self.sidebar_widget=QWidget()
+        self.sidebar_widget.setLayout(self.sidebar_column_layout)
+        self.main_split.addWidget(self.sidebar_widget)
+        #self.main_h_layout.addLayout(self.sidebar_column_layout, stretch=2)
 
         if create_sidebar:
             self.Add_New_Sidebar_Column()
 
-        cont=QVBoxLayout()
 
-        self.tabs = QTabWidget()
-        cont.addWidget(self.tabs)
-        self.main_h_layout.addLayout(cont, stretch=8)
+        #cont = QVBoxLayout()
 
+        vsplit = QSplitter()
+        vsplit.setOrientation(Qt.Vertical)
+
+        hsplit1=QSplitter()
+        self.tabs = MyTabWidget(new=True)
+        self.tabs2 = MyTabWidget(new=True)
+        hsplit1.addWidget(self.tabs)
+        hsplit1.addWidget(self.tabs2)
+        hsplit1.setSizes([1,0])
+
+        hsplit2=QSplitter()
+        self.tabs3 = MyTabWidget(new=True)
+        self.tabs4 = MyTabWidget(new=True)
+        hsplit2.addWidget(self.tabs3)
+        hsplit2.addWidget(self.tabs4)
+        hsplit2.setSizes([1, 0])
+
+        vsplit.addWidget(hsplit1)
+        vsplit.addWidget(hsplit2)
+        vsplit.setSizes([1, 0])
+
+        #cont.addWidget(vsplit)
+
+        self.main_split.addWidget(vsplit)
+        self.main_split.setSizes([1, 18])
+        #self.main_h_layout.addLayout(cont, stretch=8)
+
+
+        #cont = QVBoxLayout()
+
+        #self.tabs2.addTab(QWidget(),'test')
+
+        #self.main_h_layout.addLayout(cont, stretch=8)
 
         #self.main_tab_container = QWidget()
         #self.visualization_layout = QVBoxLayout(self.main_tab_container)
@@ -298,6 +333,86 @@ class UI_Base(QApplication):
 
         return QImage(np.require(data, np.uint8, 'C'), data.shape[1], data.shape[0], bytesPerLine, format)
 
+
+
+
+from PyQt5.QtWidgets import QTabWidget
+from PyQt5.QtCore import Qt, QPoint, QMimeData
+from PyQt5.QtGui import QPixmap, QRegion, QDrag, QCursor
+
+class MyTabWidget(QTabWidget):
+
+   def __init__(self, parent=None, new=None):
+      super().__init__(parent)
+      self.setAcceptDrops(True)
+      self.tabBar().setMouseTracking(True)
+      self.setMovable(True)
+      if new:
+         MyTabWidget.setup(self)
+
+   def __setstate__(self, data):
+      self.__init__(new=False)
+      self.setParent(data['parent'])
+      for widget, tabname in data['tabs']:
+         self.addTab(widget, tabname)
+      MyTabWidget.setup(self)
+
+   def __getstate__(self):
+      data = {
+         'parent' : self.parent(),
+         'tabs' : [],
+      }
+      tab_list = data['tabs']
+      for k in range(self.count()):
+         tab_name = self.tabText(k)
+         widget = self.widget(k)
+         tab_list.append((widget, tab_name))
+      return data
+
+   def setup(self):
+       pass
+
+   def mouseMoveEvent(self, e):
+       if e.buttons() != Qt.RightButton:
+           return
+
+       globalPos = self.mapToGlobal(e.pos())
+       tabBar = self.tabBar()
+       posInTab = tabBar.mapFromGlobal(globalPos)
+       index = tabBar.tabAt(e.pos())
+       tabBar.dragged_content = self.widget(index)
+       tabBar.dragged_tabname = self.tabText(index)
+       tabRect = tabBar.tabRect(index)
+
+       pixmap = QPixmap(tabRect.size())
+       tabBar.render(pixmap, QPoint(), QRegion(tabRect))
+       mimeData = QMimeData()
+
+       drag = QDrag(tabBar)
+       drag.setMimeData(mimeData)
+       drag.setPixmap(pixmap)
+
+       cursor = QCursor(Qt.OpenHandCursor)
+
+       drag.setHotSpot(e.pos() - posInTab)
+       drag.setDragCursor(cursor.pixmap(), Qt.MoveAction)
+       drag.exec_(Qt.MoveAction)
+
+   def dragEnterEvent(self, e):
+       e.accept()
+       # self.parent().dragged_index = self.indexOf(self.widget(self.dragged_index))
+
+   def dragLeaveEvent(self, e):
+       e.accept()
+
+   def dropEvent(self, e):
+       if e.source().parentWidget() == self:
+           return
+
+       e.setDropAction(Qt.MoveAction)
+       e.accept()
+       tabBar = e.source()
+       self.addTab(tabBar.dragged_content, tabBar.dragged_tabname)
 
 #tqt = TREN_QT_UI_Base(None)
 #tqt.show()
