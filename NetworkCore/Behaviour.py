@@ -41,6 +41,13 @@ class Behaviour(NetworkObjectBase):
                 self.init_kwargs[variable_key] = s[:start] + '{:.15f}'.format(current_genome[gene_key]).rstrip('0').rstrip('.') + s[end + 1:]
         return current_genome
 
+    def __str__(self):
+        result = self.__class__.__name__+'('
+        for k in self.init_kwargs:
+            result += str(k) + '=' + str(self.init_kwargs[k])+','
+        result += ')'
+        return result
+
     def evaluate_diversity_string(self, ds, neurons_or_synapses):
 
         if 'same(' in ds and ds[-1] == ')':

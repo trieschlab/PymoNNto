@@ -2,78 +2,88 @@ from PymoNNto.Exploration.Network_UI.TabBase import *
 
 class multi_group_plot_tab(TabBase):
 
-    def __init__(self, variables, line_dict={}, title='Multi Group', timesteps=500):
+    def __init__(self, variables, title='Multi Group', timesteps=500):
         super().__init__(title)
-        self.variables = variables
-        self.line_dict = line_dict
-
-        #add lines via variable|line
-        #for i,var in enumerate(self.variables):
-        #    split=var.split('|')
-        #    if len(split)>1:
-        #        self.variables[i]=split[0]#extract variable
-        #        self.line_dict[split[0]]=split[1:]
-
         self.timesteps = timesteps
 
-        #if tensorflow:
-        #    self.add_str='.numpy()'
-        #else:
-        #    self.add_str=''
+        self.original_variables=variables
+        self.variables = [] #{var1:0, var2:0, var3:1, variable:group}
+        self.curve_numbers = []
+        self.plot_variables = []
+        for i, var in enumerate(self.original_variables):#grouped togerther with var1|var2
+            splitted=var.split('|')
+            for v in splitted:
+                self.variables.append(v)
+            self.curve_numbers.append(len(splitted))
+            self.plot_variables.append(splitted)
+
 
     def add_recorder_variables(self, neuron_group, Network_UI):
         for var in self.variables:
-            #print(neuron_group.__dict__)
-            #if hasattr(neuron_group, var):
-            #try:
-            #    print(var)
+            Network_UI.add_recording_variable(neuron_group, 'np.mean(n.' + var + ')', timesteps=self.timesteps)
             Network_UI.add_recording_variable(neuron_group, 'n.'+var, timesteps=self.timesteps)
-            Network_UI.add_recording_variable(neuron_group, 'np.mean(n.'+var+')', timesteps=self.timesteps)
-            #except:
-            #else:
-            #    print('cannot add', var)
 
 
 
     def initialize(self, Network_UI):
         self.main_tab = Network_UI.Next_Tab(self.title)
 
-        self.net_var_curves={}
-        for i, var in enumerate(self.variables):
-            stretch=1
-            if i==0:
-                stretch=2
+        group_count = len(Network_UI.neuron_visible_groups)
 
-            if var in self.line_dict:
-                ld_val=self.line_dict[var]
-                if type(ld_val) is list:
-                    lines=ld_val
-                else:
-                    lines=[ld_val]
-            else:
-                lines=[]
+        self.net_plot_dicts = []
 
-            self.net_var_curves[var] = Network_UI.Add_plot_curve(stretch=stretch, number_of_curves=len(Network_UI.neuron_visible_groups), return_list=True, x_label='t (iterations)', y_label='Network average ' + var, lines=lines)
+        for plot_id, plot_variable_list in enumerate(self.plot_variables):
+
+            curves_per_plot = len(plot_variable_list)
+
+            stretch = 1
+            if plot_id == 0:
+                stretch = 2
+
+            curves = Network_UI.Add_plot_curve(stretch=stretch,
+                                               number_of_curves=group_count*curves_per_plot,
+                                               return_list=True,
+                                               x_label='t (iterations)',
+                                               y_label='Network average ' + str(plot_variable_list)) #, lines=lines
+
+            ci=0
+            plot_curve_dict = {}
+            for var in plot_variable_list:
+                variable_curves = []
+                for group_index in range(group_count):
+                    variable_curves.append(curves[ci])
+                    ci += 1
+                plot_curve_dict[var] = variable_curves
+            self.net_plot_dicts.append(plot_curve_dict)
 
 
         Network_UI.Next_H_Block()
 
-        self.neuron_var_curves = {}
-        for i, var in enumerate(self.variables):
+        self.neuron_plot_dicts = []
+
+        for plot_id, plot_variable_list in enumerate(self.plot_variables):
+
+            curves_per_plot = len(plot_variable_list)
+
             stretch = 1
-            if i == 0:
+            if plot_id == 0:
                 stretch = 2
 
-            if var in self.line_dict:
-                ld_val = self.line_dict[var]
-                if type(ld_val) is list:
-                    lines = ld_val
-                else:
-                    lines = [ld_val]
-            else:
-                lines = []
+            curves = Network_UI.Add_plot_curve(stretch=stretch,
+                                               number_of_curves=1 + curves_per_plot,
+                                               colors=[Network_UI.neuron_select_color],
+                                               legend=False,
+                                               x_label='t (iterations)',
+                                               y_label='Neuron ' + str(plot_variable_list))
 
-            self.neuron_var_curves[var] = Network_UI.Add_plot_curve(stretch=stretch, colors=[Network_UI.neuron_select_color], legend=False, x_label='t (iterations)', y_label='Neuron ' + var, lines=lines)
+            ci=0
+            plot_curve_dict = {}
+            for var in plot_variable_list:
+                plot_curve_dict[var] = curves[ci]
+                ci += 1
+            self.neuron_plot_dicts.append(plot_curve_dict)
+
+
 
         if Network_UI.group_display_count > 1:
             Network_UI.Next_H_Block()
@@ -93,39 +103,35 @@ class multi_group_plot_tab(TabBase):
     def update(self, Network_UI):
         if self.main_tab.isVisible():
 
+            lg=len(Network_UI.neuron_visible_groups)
+            for curve_dict in self.net_plot_dicts:
+                for variable in curve_dict:
+                    for group_id, curve in enumerate(curve_dict[variable]):
+                        group_tag=Network_UI.neuron_visible_groups[group_id]
+                        group = Network_UI.network[group_tag, 0]
 
-            for i, group_tag in enumerate(Network_UI.neuron_visible_groups):
-                if len(Network_UI.network[group_tag]) > 0:
-                    group=Network_UI.network[group_tag, 0]
-                    if hasattr(self, 'group_sliders'):
-                        squeeze= self.group_sliders[i].sliderPosition() / 100
-                    else:
-                        squeeze = 1
+                        if hasattr(self, 'group_sliders'):
+                            squeeze = self.group_sliders[group_id].sliderPosition() / 100
+                        else:
+                            squeeze = 1
 
-                    for var in self.variables:
-
-                        #try:
-                        #    self.net_var_plots[var].
-                        #except:
-                        #    pass
-
-                        try:#if hasattr(group, var):
-                            net_data = group['np.mean(n.'+var+')', 0, 'np'][-self.timesteps:]
+                        try:
+                            net_data = group['np.mean(n.' + variable + ')', 0, 'np'][-self.timesteps:]
                             iterations = group['n.iteration', 0, 'np'][-self.timesteps:]
-                            self.net_var_curves[var][i].setData(iterations, net_data * squeeze, pen=group.color)
-                        except:#else:
-                            self.net_var_curves[var][i].clear()
-
+                            curve.setData(iterations, net_data * squeeze, pen=group.color)
+                        except:  # else:
+                            curve.clear()
 
             group = Network_UI.network[Network_UI.neuron_select_group, 0]
+            for curve_dict in self.neuron_plot_dicts:
+                for variable in curve_dict:
+                    curve = curve_dict[variable]
 
-            for var in self.variables:
-                try:#if hasattr(group, var):
-                    neuron_data = group['n.' + var, 0, 'np'][-self.timesteps:].astype(def_dtype)
-                    iterations = group['n.iteration', 0, 'np'][-self.timesteps:]
-                    if len(neuron_data.shape) > 1:
-                        neuron_data = neuron_data[:, Network_UI.neuron_select_id]
-                    self.neuron_var_curves[var].setData(iterations, neuron_data)
-                except:  #else:
-                    self.neuron_var_curves[var].clear()
-
+                    try:
+                        neuron_data = group['n.' + variable, 0, 'np'][-self.timesteps:].astype(def_dtype)#for bool
+                        iterations = group['n.iteration', 0, 'np'][-self.timesteps:]
+                        if len(neuron_data.shape) > 1:
+                            neuron_data = neuron_data[:, Network_UI.neuron_select_id]
+                        curve.setData(iterations, neuron_data)
+                    except:
+                        curve.clear()

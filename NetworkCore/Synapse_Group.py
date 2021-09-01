@@ -94,6 +94,11 @@ class SynapseGroup(NetworkObjectBase):
             self.enabled = connectivity(self, s_id, sx, sy, sz, d_id, dx, dy, dz)
     '''
 
+    def __str__(self):
+        result = 'SynapseGroup'+str(self.tags)+'(D'+str(self.dst.size)+'xS'+str(self.src.size)+'){'
+        for k in sorted(list(self.behaviour.keys())):
+            result += str(k) + ':' + str(self.behaviour[k])+','
+        return result+'}'
 
     def set_var(self, key, value):
         setattr(self,key,value)
@@ -207,6 +212,8 @@ class SynapseGroup(NetworkObjectBase):
 
     def get_sub_synapse_group(self, src_mask, dst_mask):
         result = SynapseGroup(self.src.subGroup(src_mask), self.dst.subGroup(dst_mask), net=None, behaviour={})
+
+        #result.original_synapse_group = self
 
         # partition enabled update
         if type(self.enabled) is np.ndarray:

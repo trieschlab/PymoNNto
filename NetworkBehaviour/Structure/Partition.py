@@ -37,6 +37,7 @@ class Partition(Behaviour):
 
         # add sub Groups
         for sg in syn_sub_groups:
+            sg.tags.append('partitioned')
             synapses.network.SynapseGroups.append(sg)
 
         # remove original SG

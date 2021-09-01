@@ -74,6 +74,30 @@ class Network(NetworkObjectBase):
         if storage_manager is not None:
             storage_manager.save_param(key='evolution_params', value=current_genome)
 
+    def __str__(self):
+        neuron_count = np.sum(np.array([ng.size for ng in self.NeuronGroups]))
+        synapse_count = np.sum(np.array([sg.src.size*sg.dst.size for sg in self.SynapseGroups]))
+
+        basic_info = '(Neurons: '+str(neuron_count)+'|'+str(len(self.NeuronGroups))+' groups, Synapses: '+str(synapse_count)+'|'+str(len(self.SynapseGroups))+' groups)'
+
+        result = 'Network'+str(self.tags)+basic_info+'{'
+        for k in sorted(list(self.behaviour.keys())):
+            result += str(k)+':'+str(self.behaviour[k])
+        result += '}'+'\r\n'
+
+        for ng in self.NeuronGroups:
+            result += str(ng)+'\r\n'
+
+        used_tags = []
+        for sg in self.SynapseGroups:
+            tags = str(sg.tags)
+            if tags not in used_tags:
+                result += str(sg)+'\r\n'
+            used_tags.append(tags)
+
+        return result[:-2]
+
+
     def find_objects(self, key):
         result = []
 
@@ -92,12 +116,6 @@ class Network(NetworkObjectBase):
 
         return result
 
-    def print_net_info(self):
-        neuron_count = np.sum(np.array([ng.size for ng in self.NeuronGroups]))
-        sysnape_count = np.sum(np.array([sg.src.size*sg.dst.size for sg in self.SynapseGroups]))
-
-        print('initialize... Neurons: ', neuron_count, '|', len(self.NeuronGroups), ' blocks, Synapses: ', sysnape_count, '|', len(self.SynapseGroups),' blocks')
-
     def save_descriptions(self, storage_manager=None):
         if storage_manager is not None:
             return #todo: implement
@@ -109,7 +127,7 @@ class Network(NetworkObjectBase):
         self.set_gene_variables(info=info, storage_manager=storage_manager)
 
         if info:
-            self.print_net_info()
+            print(str(self))
 
         #self.old_param_list = self.get_all_params()
 
@@ -117,7 +135,7 @@ class Network(NetworkObjectBase):
 
         self.behaviour_timesteps = []
 
-        self.add_behaviour_keys_dict(self.behaviour)# todo: test
+        self.add_behaviour_keys_dict(self.behaviour)
 
         for ng in self.NeuronGroups:
             self.add_behaviour_keys_dict(ng.behaviour)

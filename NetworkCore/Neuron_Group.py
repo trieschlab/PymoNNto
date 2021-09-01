@@ -133,6 +133,12 @@ class NeuronGroup(NetworkObjectBase):
             source_num += s
         return self.size, source_num
 
+    def __str__(self):
+        result = 'NeuronGroup'+str(self.tags)+'('+str(self.size)+'){'
+        for k in sorted(list(self.behaviour.keys())):
+            result += str(k) + ':' + str(self.behaviour[k])
+        return result+'}'
+
     def subGroup(self, mask=None):
         return NeuronSubGroup(self, mask)
 

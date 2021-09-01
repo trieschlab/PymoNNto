@@ -12,13 +12,6 @@ class weight_tab(TabBase):
     def initialize(self, Network_UI):
         self.weight_tab = Network_UI.Next_Tab(self.title)
 
-        Network_UI.Add_element(QLabel('Min Max'), stretch=0)
-        self.select_min_max_box = QComboBox()
-        self.select_min_max_box.addItems(['Transmitter', 'Global', 'Variable', 'Single block'])
-        self.select_min_max_box.setCurrentIndex(0)
-        Network_UI.Add_element(self.select_min_max_box, stretch=4)
-        Network_UI.Next_H_Block(stretch=0)
-
         #get max synapse group size
         max_sgs=2
         for group_tag in Network_UI.group_tags:
@@ -36,6 +29,13 @@ class weight_tab(TabBase):
                 image_item = Network_UI.Add_Image_Item(True, False, title='Neuron ' + transmitter + ' ?', tooltip_message='afferent synapse weights of selected neuron')#+self.weight_attr
                 self.transmitter_weight_images[transmitter].append(image_item)
             Network_UI.Next_H_Block()
+
+        Network_UI.Add_element(QLabel('Min Max'), stretch=0)
+        self.select_min_max_box = QComboBox()
+        self.select_min_max_box.addItems(['Transmitter', 'Global', 'Variable', 'Single block'])
+        self.select_min_max_box.setCurrentIndex(0)
+        Network_UI.Add_element(self.select_min_max_box, stretch=1)
+        #Network_UI.Next_H_Block(stretch=0)
 
     def update(self, Network_UI):
         if self.weight_tab.isVisible() and len(Network_UI.network[Network_UI.neuron_select_group]) > 0:
@@ -105,6 +105,9 @@ class weight_tab(TabBase):
                             max_w = key_max[transmitter][weight_attr][key]
 
                         self.transmitter_weight_images[transmitter][i][1].setTitle(key+' '+weight_attr) #1=plot
+
+                        #print('set transmitter', transmitter, np.min(syn_dict[transmitter][weight_attr][key]), np.max(syn_dict[transmitter][weight_attr][key]))
+
                         self.transmitter_weight_images[transmitter][i][0].setImage(np.rot90(syn_dict[transmitter][weight_attr][key], 3), levels=(0, max_w)) #0=image item
                         i += 1
                     #if weight_attr=='W_temp' and transmitter=='GLU':

@@ -13,16 +13,16 @@ class Brian2_embedding(Behaviour):
 
         eqs = self.get_init_attr('eqs', '')
 
-        self.G = brian2.NeuronGroup(100, eqs, method='euler')      #this is a Biran2 NeuronGroup!
+        self.G = brian2.NeuronGroup(1, eqs, method='euler')      #this is a Biran2 NeuronGroup!
         self.net = brian2.Network(self.G)                          #this is a Biran2 Network!
 
-        self.G.v = (np.random.rand(100) + 1) * mV
+        self.G.v = 1 * mV
         self.G.tau = 100 * ms
 
 
     def new_iteration(self, neurons):
         self.net.run(1*ms)
-        neurons.v = self.G.v / volt
+        neurons.v = self.G.v / mV
 
 
 
@@ -35,7 +35,7 @@ dv/dt=(0*mV-v)/tau : volt
 tau : second
 '''
 
-My_Neurons = pymonnto.NeuronGroup(net=My_Network, tag='my_neurons', size=pymonnto.get_squared_dim(100), behaviour={
+My_Neurons = pymonnto.NeuronGroup(net=My_Network, tag='my_neurons', size=pymonnto.get_squared_dim(1), behaviour={
     1: Brian2_embedding(eqs=eqs)
 })
 

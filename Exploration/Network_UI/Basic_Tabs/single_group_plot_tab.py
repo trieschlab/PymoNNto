@@ -3,17 +3,17 @@ import random
 
 class single_group_plot_tab(TabBase):
 
-    def __init__(self, variables={'output', 'excitation', 'inhibition', 'input_act', 'TH'}, title='default group', timesteps=500):
+    def __init__(self, variables=['output', 'excitation', 'inhibition'], colors=[(0, 0, 0), (0, 0, 255), (255, 0, 0), (255, 0, 255), (0, 255, 0)], title='overlay plot', timesteps=500):
         super().__init__(title)
         self.variables = {}
+        self.colors = colors
         for i, v in enumerate(variables):
             self.variables[v] = self.get_color(i)
         self.timesteps=timesteps
 
     def get_color(self, i):
-        colors = [(0, 0, 0), (0, 0, 255), (255, 0, 0), (255, 0, 255), (0, 255, 0)]
-        if i <= len(colors):
-            return colors[i]
+        if i < len(self.colors):
+            return self.colors[i]
         else:
             return (random.randint(0,255),random.randint(0,255),random.randint(0,255))
 

@@ -211,7 +211,7 @@ class Network_UI(UI_Base):
 
 
 
-def get_color(type_index, layer):
+def get_color(type_index, layer=1):
     dim_value = max(layer * 0.9, 1.0)
 
     if type_index == 0:

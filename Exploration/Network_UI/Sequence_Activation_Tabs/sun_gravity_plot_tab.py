@@ -252,6 +252,7 @@ class sun_gravity_plot_tab(TabBase):
         return
 
     def initialize(self, Network_UI):
+        self.sun_gravity_plot_tab=None
         if Network_UI.network['text_generator', 0] is not None or Network_UI.network['grammar_act', 0] is not None or Network_UI.network['drum_act', 0] is not None or Network_UI.network['music_act', 0] is not None:
             self.sun_gravity_plot_tab = Network_UI.Next_Tab(self.title)
 
@@ -367,7 +368,7 @@ class sun_gravity_plot_tab(TabBase):
         groups = [Network_UI.network[tag, 0] for tag in Network_UI.neuron_visible_groups]
         alphabet = []
 
-        if self.sun_gravity_plot_tab.isVisible():
+        if self.sun_gravity_plot_tab is not None and self.sun_gravity_plot_tab.isVisible():
 
             if Network_UI.network['grammar_act', 0] is not None:
                 #group = Network_UI.network['prediction_source', 0]

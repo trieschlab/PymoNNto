@@ -9,6 +9,9 @@ def lognormal_real_mean(mean=1.0, sigma=1.0, size=1):
     mu = -np.power(sigma, 2) + np.log(mean)
     return lognormal(mu, sigma, size=size)
 
+def lognormal_rm(mean=1.0, sigma=1.0, size=1):
+    return lognormal_real_mean(mean,sigma,size)
+
 def uniform_gap(mean=1.0, gap_percent=10, size=1):
     return uniform(low=mean-mean*gap_percent, high=mean+-mean*gap_percent, size=size)
 

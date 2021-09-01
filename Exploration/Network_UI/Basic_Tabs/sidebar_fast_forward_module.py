@@ -154,5 +154,5 @@ class sidebar_fast_forward_module(TabBase):
 
         self.iteration_display_label.setText('Iteration: '+str(Network_UI.network.iteration))
 
-        if self.record_frames_cb.isChecked():
+        if Network_UI.storage_manager is not None and self.record_frames_cb.isChecked():
             self.record_frame(Network_UI)

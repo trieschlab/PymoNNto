@@ -26,7 +26,7 @@ def get_default_UI_modules(neuron_parameters=['output'], synapse_parameters=['W'
     #individual_weight_tab(),
     isi_tab(param=neuron_parameters[0]),
     hist_tab(weight_attr=synapse_parameters[0]),
-    single_group_plot_tab({neuron_parameters[0]:(0, 0, 0)}),#, 'excitation':(0, 0, 255), 'inhibition':(255, 0, 0), 'input_act':(255, 0, 255), 'TH':(0, 255, 0)}),
+    single_group_plot_tab(neuron_parameters),#, 'excitation':(0, 0, 255), 'inhibition':(255, 0, 0), 'input_act':(255, 0, 255), 'TH':(0, 255, 0)}),
     stability_tab(parameter=neuron_parameters[0]),
     fourier_tab(parameter=neuron_parameters[0]),
     info_tab(),
