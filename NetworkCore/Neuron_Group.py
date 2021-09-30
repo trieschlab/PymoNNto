@@ -5,6 +5,7 @@ class NeuronGroup(NetworkObjectBase):
 
     def __init__(self, size, behaviour, net, tag=None):
         super().__init__(tag=tag)
+        self.add_tag('ng')
 
         self.BaseNeuronGroup = self#used for subgroup reconstruction
 

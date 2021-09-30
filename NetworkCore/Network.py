@@ -334,7 +334,7 @@ class Network(NetworkObjectBase):
             '''
 
 
-    def simulate_iterations(self, iterations, batch_size=-1, measure_block_time=True, disable_recording=False):
+    def simulate_iterations(self, iterations, batch_size=-1, measure_block_time=True, disable_recording=False, batch_progress_update_func=None):
 
         if type(iterations) is str:
             iterations=self['Clock', 0].time_to_iterations(iterations)
@@ -363,6 +363,9 @@ class Network(NetworkObjectBase):
                 time_diff = (time.time() - start_time) * 1000
 
                 print('\r{}xBatch: {}/{} ({}%) {:.3f}ms'.format(block_iterations,t+1, outside_it, int(100/outside_it*(t+1)),time_diff), end='')#, end='')
+
+            if batch_progress_update_func is not None:
+                batch_progress_update_func((t+1.0)/int(outside_it)*100.0)
 
         for i in range(iterations%batch_size):
             self.simulate_iteration()

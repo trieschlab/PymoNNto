@@ -55,6 +55,7 @@ class UI_Base(QApplication):
         self.network = network
 
         self.main_window = QWidget()
+        self.main_window.keyPressEvent = self.keyPressEvent
 
         self.init_QT_Window(label, create_sidebar)
         quit = QAction("Quit", self.main_window)
@@ -136,7 +137,7 @@ class UI_Base(QApplication):
             plt.addLegend()
 
         for line in lines:
-            plt.addLine(y=line)
+            plt.addLine(y=line,pen=(50,50,50,255))
 
         curves=[]
         for i in range(number_of_curves):
@@ -205,30 +206,30 @@ class UI_Base(QApplication):
 
         #cont = QVBoxLayout()
 
-        vsplit = QSplitter()
-        vsplit.setOrientation(Qt.Vertical)
+        self.vsplit = QSplitter()
+        self.vsplit.setOrientation(Qt.Vertical)
 
-        hsplit1=QSplitter()
+        self.hsplit1=QSplitter()
         self.tabs = MyTabWidget(new=True)
         self.tabs2 = MyTabWidget(new=True)
-        hsplit1.addWidget(self.tabs)
-        hsplit1.addWidget(self.tabs2)
-        hsplit1.setSizes([1,0])
+        self.hsplit1.addWidget(self.tabs)
+        self.hsplit1.addWidget(self.tabs2)
+        self.hsplit1.setSizes([1,0])
 
-        hsplit2=QSplitter()
+        self.hsplit2=QSplitter()
         self.tabs3 = MyTabWidget(new=True)
         self.tabs4 = MyTabWidget(new=True)
-        hsplit2.addWidget(self.tabs3)
-        hsplit2.addWidget(self.tabs4)
-        hsplit2.setSizes([1, 0])
+        self.hsplit2.addWidget(self.tabs3)
+        self.hsplit2.addWidget(self.tabs4)
+        self.hsplit2.setSizes([1, 0])
 
-        vsplit.addWidget(hsplit1)
-        vsplit.addWidget(hsplit2)
-        vsplit.setSizes([1, 0])
+        self.vsplit.addWidget(self.hsplit1)
+        self.vsplit.addWidget(self.hsplit2)
+        self.vsplit.setSizes([1, 0])
 
         #cont.addWidget(vsplit)
 
-        self.main_split.addWidget(vsplit)
+        self.main_split.addWidget(self.vsplit)
         self.main_split.setSizes([1, 18])
         #self.main_h_layout.addLayout(cont, stretch=8)
 
@@ -311,6 +312,81 @@ class UI_Base(QApplication):
             return elements
 
 
+    def keyPressEvent(self, event):
+        if event.key() in [Qt.Key_N, Qt.Key_C, Qt.Key_T, Qt.Key_M]:
+            self.text_input_dialog('Please enter Note:', 'set note', self.set_note, default_text='-')
+
+        if event.key() == Qt.Key_W:
+            indx = self.tabs.currentIndex()
+            if indx >= 0:
+                widget=self.tabs.currentWidget()
+                self.tabs.removeTab(indx)
+                widget.setParent(None)
+                widget.setWindowTitle('Warning: experimental feature (closing/reattaching the window can lead to crashes)')
+                widget.show()
+
+        if event.key() == Qt.Key_Space:
+            self.pause = not self.pause
+
+        if event.key() == Qt.Key_1:
+            self.vsplit.setSizes([100000, 0])
+            self.hsplit1.setSizes([100000, 0])
+            self.hsplit2.setSizes([100000, 0])
+
+        if event.key() == Qt.Key_2:
+            self.vsplit.setSizes([100000, 100000])
+            self.hsplit1.setSizes([100000, 0])
+            self.hsplit2.setSizes([100000, 0])
+
+        if event.key() == Qt.Key_3:
+            self.vsplit.setSizes([100000, 100000])
+            self.hsplit1.setSizes([100000, 100000])
+            self.hsplit2.setSizes([100000, 0])
+
+        if event.key() == Qt.Key_4:
+            self.vsplit.setSizes([100000, 100000])
+            self.hsplit1.setSizes([100000, 100000])
+            self.hsplit2.setSizes([100000, 100000])
+
+        if event.key() == Qt.Key_5:
+            self.vsplit.setSizes([100000, 100000])
+            self.hsplit1.setSizes([100000, 0])
+            self.hsplit2.setSizes([100000, 100000])
+
+        if event.key() == Qt.Key_6:
+            self.vsplit.setSizes([100000, 100000])
+            self.hsplit1.setSizes([100000, 100000])
+            self.hsplit2.setSizes([100000, 0])
+
+        if event.key() == Qt.Key_7:
+            self.vsplit.setSizes([100000, 0])
+            self.hsplit1.setSizes([100000, 100000])
+            self.hsplit2.setSizes([100000, 0])
+
+    def set_note(self, note_str):
+        self.main_window.setWindowTitle(self.main_window.windowTitle() + ' | ' + note_str)
+        if note_str=='-':
+            self.main_window.setWindowTitle(self.main_window.windowTitle().split('|')[0])
+
+    def text_input_dialog(self, txt, btn_text, func, default_text=''):
+        dlg = QDialog()
+        dlg.setWindowTitle(txt)
+        layout = QVBoxLayout()
+
+        input_le = QLineEdit(default_text)
+        layout.addWidget(input_le)
+
+        def btn_clicked():
+            func(input_le.text())
+            dlg.close()
+
+        btn = QPushButton(btn_text)
+        btn.clicked.connect(btn_clicked)
+
+        layout.addWidget(btn)
+        dlg.setLayout(layout)
+        dlg.resize(300, 50)
+        dlg.exec()
 
 
     def draw_qimage(self, qimg, x, y, w, h, pixmap=None):

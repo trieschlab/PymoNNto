@@ -12,3 +12,7 @@ from PymoNNto.NetworkBehaviour.Recorder.Recorder import *
 from PymoNNto.Exploration.StorageManager.StorageManager import *
 
 
+def behaviour_test_environment(behaviour, size=1):
+    net = Network(tag='Network')
+    ng = NeuronGroup(tag='Neuron', net=net, behaviour={1:behaviour}, size=size)
+    return net, ng, behaviour

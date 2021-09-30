@@ -47,8 +47,7 @@ class character_activation_tab(TabBase):
 
     def update(self, Network_UI):
         if Network_UI.network['grammar_act', 0] is not None and self.reconstruction_tab.isVisible():
-            group=Network_UI.network[Network_UI.neuron_select_group, 0]
-
+            group = Network_UI.network[Network_UI.neuron_select_group, 0]
 
             if hasattr(group, 'Input_Weights') and hasattr(group, 'output'):
                 activation = group.Input_Weights.transpose().dot(group.output)
@@ -62,9 +61,8 @@ class character_activation_tab(TabBase):
 
                 for i, char_scatter in enumerate(self.char_scatter_plots):
                     char_scatter.activity_data.append(activation[i])
-                    if len(char_scatter.activity_data)>50:
-                        char_scatter.activity_data=char_scatter.activity_data[1:]
-
+                    if len(char_scatter.activity_data) > 50:
+                        char_scatter.activity_data = char_scatter.activity_data[1:]
 
                     char_scatter.setData(iterations, char_scatter.activity_data, size=50)#list(range(len(char_scatter.activity_data)))
 

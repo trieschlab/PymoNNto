@@ -124,5 +124,5 @@ class Behaviour(NetworkObjectBase):
         md = drawer.module_drawer()
         md.add_module(self)
         md.show()
-
-
+    
+    

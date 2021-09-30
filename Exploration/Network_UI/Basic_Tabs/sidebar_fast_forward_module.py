@@ -1,7 +1,11 @@
 from PymoNNto.Exploration.Network_UI.TabBase import *
-
+from functools import partial
 
 class sidebar_fast_forward_module(TabBase):
+
+    def __init__(self, step_list=[100, 1000, 5000, 15000, 30000, 50000, 70000, 100000], title='PCA'):
+        super().__init__(title)
+        self.step_list = step_list
 
     def add_recorder_variables(self, neuron_group, Network_UI):
         return
@@ -9,6 +13,19 @@ class sidebar_fast_forward_module(TabBase):
     def recorder_on_off(self, Network_UI, enable):
         for rec in Network_UI.network['UI_rec']:
             rec.behaviour_enabled = enable or self.rec_cb.isChecked()
+
+    def update_progress(self, progress):
+        #self.progressbar.setHidden(False)
+        QApplication.instance().processEvents()
+        self.progressbar.setValue(progress)
+
+    def fast_forward(self, steps, Network_UI):
+        self.update_progress(0)
+        Network_UI.timer.stop()
+        self.recorder_on_off(Network_UI, False)
+        Network_UI.network.simulate_iterations(steps, 100, measure_block_time=True, batch_progress_update_func=self.update_progress)
+        self.recorder_on_off(Network_UI, True)
+        Network_UI.timer.start()
 
     def initialize(self, Network_UI):
         self.iteration_display_label=Network_UI.Add_element(QLabel(),sidebar=True)
@@ -82,10 +99,28 @@ class sidebar_fast_forward_module(TabBase):
         # self.Add_Sidebar_Element(self.os_btn)
         h_layout.addWidget(self.os_btn)
 
+
+        for i, steps in enumerate(self.step_list):
+
+            if (i+1)%3==0:
+                h_layout = Network_UI.Add_Sidebar_Element(return_h_layout=True)
+
+            def ff_btn_clicked(steps):
+                self.fast_forward(steps, Network_UI)
+
+            txt = str(steps)
+
+            if steps%1000==0:
+                txt=str(int(steps/1000))+'k'
+
+            ff_btn = QPushButton(txt, Network_UI.main_window)
+            ff_btn.clicked.connect(partial(ff_btn_clicked, steps))
+
+            h_layout.addWidget(ff_btn)
+
+        '''
         def fast_forward(event):
-            self.recorder_on_off(Network_UI, False)
-            Network_UI.network.simulate_iterations(100, 100, measure_block_time=True)
-            self.recorder_on_off(Network_UI, True)
+            self.fast_forward(100, Network_UI)
 
         self.ff_btn = QPushButton('100', Network_UI.main_window)
         self.ff_btn.clicked.connect(fast_forward)
@@ -93,9 +128,7 @@ class sidebar_fast_forward_module(TabBase):
         h_layout.addWidget(self.ff_btn)
 
         def fast_forward(event):
-            self.recorder_on_off(Network_UI, False)
-            Network_UI.network.simulate_iterations(1000, 100, measure_block_time=True)
-            self.recorder_on_off(Network_UI, True)
+            self.fast_forward(1000, Network_UI)
 
         self.ff_btn = QPushButton('1k', Network_UI.main_window)
         self.ff_btn.clicked.connect(fast_forward)
@@ -105,9 +138,7 @@ class sidebar_fast_forward_module(TabBase):
         h_layout = Network_UI.Add_Sidebar_Element(return_h_layout=True)
 
         def fast_forward(event):
-            self.recorder_on_off(Network_UI, False)
-            Network_UI.network.simulate_iterations(5000, 100, measure_block_time=True)
-            self.recorder_on_off(Network_UI, True)
+            self.fast_forward(5000, Network_UI)
 
         self.ff_btn = QPushButton('5k', Network_UI.main_window)
         self.ff_btn.clicked.connect(fast_forward)
@@ -115,9 +146,7 @@ class sidebar_fast_forward_module(TabBase):
         h_layout.addWidget(self.ff_btn)
 
         def fast_forward(event):
-            self.recorder_on_off(Network_UI, False)
-            Network_UI.network.simulate_iterations(15000, 100, measure_block_time=True)
-            self.recorder_on_off(Network_UI, True)
+            self.fast_forward(15000, Network_UI)
 
         self.ff_btn = QPushButton('15k', Network_UI.main_window)
         self.ff_btn.clicked.connect(fast_forward)
@@ -125,23 +154,26 @@ class sidebar_fast_forward_module(TabBase):
         h_layout.addWidget(self.ff_btn)
 
         def fast_forward(event):
-            self.recorder_on_off(Network_UI, False)
-            Network_UI.network.simulate_iterations(50000, 100, measure_block_time=True)
-            self.recorder_on_off(Network_UI, True)
+            self.fast_forward(50000, Network_UI)
 
         self.ff_btn = QPushButton('50k', Network_UI.main_window)
         self.ff_btn.clicked.connect(fast_forward)
         # self.Add_Sidebar_Element(self.ff_btn)
         h_layout.addWidget(self.ff_btn)
+        '''
 
         self.rec_cb = QCheckBox()
         self.rec_cb.setText('fast forward record')
         self.rec_cb.setChecked(False)
         Network_UI.Add_Sidebar_Element(self.rec_cb)
 
+        self.progressbar, = Network_UI.Add_Sidebar_Element(QProgressBar())
+        #self.progressbar.setHidden(True)
+
         line=Network_UI.Add_element(QFrame(),sidebar=True)
         line.setFrameShape(QFrame.HLine)
         line.setFrameShadow(QFrame.Sunken)
+
 
     def record_frame(self, Network_UI):
         if Network_UI.storage_manager is not None:

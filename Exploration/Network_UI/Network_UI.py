@@ -45,8 +45,6 @@ class Network_UI(UI_Base):
 
         super().__init__(network, label=label)
 
-        self.main_window.keyPressEvent = self.keyPressEvent
-
         self.group_display_count = group_display_count
 
         #self.exc_group_name = exc_group_name
@@ -86,9 +84,9 @@ class Network_UI(UI_Base):
 
         self.init_recoders()
 
-        timer = QtCore.QTimer(self)
-        timer.timeout.connect(self.on_timer)
-        timer.start(40)
+        self.timer = QtCore.QTimer(self)
+        self.timer.timeout.connect(self.on_timer)
+        self.timer.start(40)
 
     def add_recording_variable(self, group, var, timesteps):
 
@@ -194,22 +192,6 @@ class Network_UI(UI_Base):
             #    rec.cut_length(self.default_recorder_length)
 
             self.update_without_state_change = False
-
-
-    def keyPressEvent(self, event):
-        if event.key() == QtCore.Qt.Key_W:
-            indx = self.tabs.currentIndex()
-            if indx >= 0:
-                widget=self.tabs.currentWidget()
-                self.tabs.removeTab(indx)
-                widget.setParent(None)
-                widget.show()
-
-
-
-
-
-
 
 def get_color(type_index, layer=1):
     dim_value = max(layer * 0.9, 1.0)

@@ -1,6 +1,9 @@
 from PymoNNto.NetworkCore.Behaviour import *
 import copy
 
+def get_Recorder(variable):
+    return Recorder(variables=[variable])
+
 
 class Recorder(Behaviour):
     visualization_module_outputs = []

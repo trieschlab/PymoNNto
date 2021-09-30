@@ -9,6 +9,7 @@ class SynapseGroup(NetworkObjectBase):
 
     def __init__(self, src, dst, net, tag=None, behaviour={}):
         super().__init__(tag=tag)
+        self.add_tag('syn')
 
         if len(src.tags)>0 and len(dst.tags)>0:
             self.add_tag(src.tags[0]+' => '+dst.tags[0])
