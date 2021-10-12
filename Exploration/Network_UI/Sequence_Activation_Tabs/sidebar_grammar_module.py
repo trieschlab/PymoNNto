@@ -9,39 +9,42 @@ class sidebar_grammar_module_new(TabBase):
         self.text_length = text_length
 
     def initialize(self, Network_UI):
-        def learning_on_off(event):
-            Network_UI.network.set_mechanisms(['STDP'], self.stdp_cb.isChecked())
+        if Network_UI.network['STDP', 0] is not None:
+            def learning_on_off(event):
+                Network_UI.network.set_mechanisms(['STDP'], self.stdp_cb.isChecked())
 
-        self.stdp_cb = QCheckBox()
-        self.stdp_cb.setText('STDP')
-        self.stdp_cb.setChecked(True)
-        self.stdp_cb.stateChanged.connect(learning_on_off)
-        Network_UI.Add_Sidebar_Element(self.stdp_cb)
+            self.stdp_cb = QCheckBox()
+            self.stdp_cb.setText('STDP')
+            self.stdp_cb.setChecked(Network_UI.network['STDP',0].behaviour_enabled)
+            self.stdp_cb.stateChanged.connect(learning_on_off)
+            Network_UI.Add_Sidebar_Element(self.stdp_cb)
 
-        def activator_on_off(event):
-            Network_UI.network['Text_Activator', 0].behaviour_enabled = self.act_cb.isChecked()
+        if Network_UI.network['Text_Activator', 0] is not None:
+            def activator_on_off(event):
+                Network_UI.network['Text_Activator', 0].behaviour_enabled = self.act_cb.isChecked()
 
-        self.act_cb = QCheckBox()
-        self.act_cb.setText('Text input:')
-        self.act_cb.setChecked(True)
-        self.act_cb.stateChanged.connect(activator_on_off)
-        Network_UI.Add_Sidebar_Element(self.act_cb)
+            self.act_cb = QCheckBox()
+            self.act_cb.setText('Text input:')
+            self.act_cb.setChecked(Network_UI.network['Text_Activator',0].behaviour_enabled)
+            self.act_cb.stateChanged.connect(activator_on_off)
+            Network_UI.Add_Sidebar_Element(self.act_cb)
 
-        self.inp_text_label = QLabel(Network_UI.main_window)
-        Network_UI.Add_Sidebar_Element(self.inp_text_label, stretch=0.2)
-        self.inp_text_label.setText('')
-        self.inp_text_label.setFont(QFont("Courier"))
-        self.inp_text_label.setToolTip('current network input')
+            self.inp_text_label = QLabel(Network_UI.main_window)
+            Network_UI.Add_Sidebar_Element(self.inp_text_label, stretch=0.2)
+            self.inp_text_label.setText('')
+            self.inp_text_label.setFont(QFont("Courier"))
+            self.inp_text_label.setToolTip('current network input')
 
-        rl = QLabel(Network_UI.main_window)
-        Network_UI.Add_Sidebar_Element(rl, stretch=0.2)
-        rl.setText('Reconstruction:')
+        if Network_UI.network['Text_Reconstructor', 0] is not None:
+            rl = QLabel(Network_UI.main_window)
+            Network_UI.Add_Sidebar_Element(rl, stretch=0.2)
+            rl.setText('Reconstruction:')
 
-        self.recon_text_label = QLabel(Network_UI.main_window)
-        Network_UI.Add_Sidebar_Element(self.recon_text_label, stretch=0.2)
-        self.recon_text_label.setText('')
-        self.recon_text_label.setFont(QFont("Courier"))
-        self.recon_text_label.setToolTip('simple reconstruction text')
+            self.recon_text_label = QLabel(Network_UI.main_window)
+            Network_UI.Add_Sidebar_Element(self.recon_text_label, stretch=0.2)
+            self.recon_text_label.setText('')
+            self.recon_text_label.setFont(QFont("Courier"))
+            self.recon_text_label.setToolTip('simple reconstruction text')
 
     def update(self, Network_UI):
 

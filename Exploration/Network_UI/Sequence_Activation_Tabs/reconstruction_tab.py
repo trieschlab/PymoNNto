@@ -1,17 +1,17 @@
 from PymoNNto.Exploration.Network_UI.TabBase import *
 
-from PymoNNto.Exploration.Visualization.Reconstruct_Analyze_Label.Reconstruct_Analyze_Label import *
 
 class reconstruction_tab(TabBase):
 
-    def __init__(self, title='recon'):
+    def __init__(self, title='Reconstruction', recon_groups_tag='recon'):
         super().__init__(title)
+        self.recon_groups_tag = recon_groups_tag
 
     def add_recorder_variables(self, neuron_group, Network_UI):
         return
 
     def initialize(self, Network_UI):
-        if Network_UI.network['grammar_act', 0] is not None:
+        if Network_UI.network['Text_Activator', 0] and Network_UI.network['Text_Generator', 0] is not None:
             self.reconstruction_tab = Network_UI.Next_Tab(self.title)
 
             self.grid = QGridLayout()
@@ -19,10 +19,11 @@ class reconstruction_tab(TabBase):
             Network_UI.current_H_block.addLayout(self.grid)
             Network_UI.current_H_block.setAlignment(Qt.AlignTop)
 
-            source = Network_UI.network['grammar_act', 0]
+            generator = Network_UI.network['Text_Generator', 0]
+            source = Network_UI.network['Text_Activator', 0]
             self.labels = []
 
-            for y, char in enumerate(source.alphabet):
+            for y, char in enumerate(generator.alphabet):
                 self.labels.append([])
                 for timestep in range(11):
                     label = QLabel('<font color='+('#%02x%02x%02x'% (timestep*25,timestep*25,timestep*25)).upper()+'>'+char.replace(' ','_')+'</font>')
@@ -45,7 +46,7 @@ class reconstruction_tab(TabBase):
 
             self.net_labels = []
 
-            for y, char in enumerate(source.alphabet):
+            for y, char in enumerate(generator.alphabet):
                 self.net_labels.append([])
                 for timestep in range(11):
                     net_label = QLabel('<font color='+('#%02x%02x%02x'% (timestep*25,timestep*25,timestep*25)).upper()+'>'+char.replace(' ','_')+'</font>')
@@ -65,15 +66,17 @@ class reconstruction_tab(TabBase):
 
 
     def update(self, Network_UI):
-        if Network_UI.network['grammar_act', 0] is not None and self.reconstruction_tab.isVisible():
+        if Network_UI.network['Text_Activator', 0] is not None and self.reconstruction_tab.isVisible():
             group=Network_UI.network[Network_UI.neuron_select_group, 0]
 
+            '''
             RALN = Reconstruct_Analyze_Label_Network(Network_UI.network)
             RALN.zero_recon()
             group.recon[Network_UI.neuron_select_id] = 1
             RALN.propagation('W', 10, 'backward', 'forget', 'all', temporal_recon_groups=Network_UI.network['prediction_source'], exponent=4, normalize=True, filter_weakest_percent=40.0)  # forget
 
-            source = Network_UI.network['grammar_act', 0]
+            generator = Network_UI.network['Text_Generator', 0]
+            source = Network_UI.network['Text_Activator', 0]
 
             for ng in Network_UI.network['prediction_source']:
                 baseline = ng.Input_Weights.transpose().dot(ng.temporal_recon[-1])
@@ -95,7 +98,7 @@ class reconstruction_tab(TabBase):
                     if s > 0:
                         char_vec = char_vec/s
                         res.insert(0, char_vec-baseline)
-                        text = source.index_to_char(np.argmax(char_vec)) + text
+                        text = generator.index_to_char(np.argmax(char_vec)) + text
                     else:
                         res.insert(0, np.zeros(ng.Input_Weights.shape[1]))
                         text = '#' + text
@@ -108,11 +111,14 @@ class reconstruction_tab(TabBase):
                     else:
                         break
                 text = ''.join(text)
+            '''
+            res = compute_temporal_reconstruction(Network_UI.network, group, Network_UI.neuron_select_id, recon_group_tag=self.recon_groups_tag)
+
+            if res is not None:
 
                 res = np.array(res)
                 res = res-np.min(res)
                 self.img.setImage(np.fliplr(res.copy()))
-                #res = np.array(res*res)
 
                 for y in range(res.shape[0]):
                     for x in range(res.shape[1]):
@@ -122,19 +128,26 @@ class reconstruction_tab(TabBase):
                         val = 255-np.clip(int((res[y, x]-(np.mean(res[y, :])/2.0))/m*255.0), 0, None)
                         self.labels[x][y].setText('<font color='+('#%02x%02x%02x' % (val, val, val)).upper()+'>'+self.labels[x][y].char.replace(' ','_')+'</font>')
 
-                self.recon_text_label.setText(text)
+                text = generate_text_from_recon_mat(res, Network_UI.network['Text_Generator', 0])
+
+                if text is not None:
+                    self.recon_text_label.setText(text)
 
         ################################################################################################################
         ################################################################################################################
         ################################################################################################################
 
+            '''
             RALN = Reconstruct_Analyze_Label_Network(Network_UI.network)
             RALN.zero_recon()
             for ng in Network_UI.network.NeuronGroups:
                 ng.recon = ng.output.copy()
             RALN.propagation('W', 10, 'backward', 'forget', 'all', temporal_recon_groups=Network_UI.network['prediction_source'], exponent=4, normalize=True, filter_weakest_percent=40.0)  # forget
 
-            source = Network_UI.network['grammar_act', 0]
+
+
+            generator = Network_UI.network['Text_Generator', 0]
+            source = Network_UI.network['Text_Activator', 0]
 
             for ng in Network_UI.network['prediction_source']:
                 baseline = ng.Input_Weights.transpose().dot(ng.temporal_recon[-1])
@@ -151,7 +164,7 @@ class reconstruction_tab(TabBase):
                     if s > 0:
                         char_vec = char_vec / s
                         res.insert(0, char_vec - baseline)
-                        text = source.index_to_char(np.argmax(char_vec)) + text
+                        text = generator.index_to_char(np.argmax(char_vec)) + text
                     else:
                         res.insert(0, np.zeros(ng.Input_Weights.shape[1]))
                         text = '#' + text
@@ -164,7 +177,12 @@ class reconstruction_tab(TabBase):
                     else:
                         break
                 text = ''.join(text)
+            '''
 
+
+            res = compute_temporal_reconstruction(Network_UI.network, recon_group_tag=self.recon_groups_tag)
+
+            if res is not None:
                 res = np.array(res)
                 res = res - np.min(res)
                 self.net_img.setImage(np.fliplr(res.copy()))
@@ -179,4 +197,7 @@ class reconstruction_tab(TabBase):
                         val = 255 - np.clip(int((res[y, x] - (np.mean(res[y, :]) / 2.0)) / m * 255.0), 0, None)
                         self.net_labels[x][y].setText('<font color=' + ('#%02x%02x%02x' % (val, val, val)).upper() + '>' + self.net_labels[x][y].char.replace(' ','_') + '</font>')
 
-                self.net_recon_text_label.setText(text)
+                text = generate_text_from_recon_mat(res, Network_UI.network['Text_Generator', 0])
+
+                if text is not None:
+                    self.net_recon_text_label.setText(text)

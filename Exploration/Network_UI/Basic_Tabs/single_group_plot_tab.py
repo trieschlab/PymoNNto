@@ -3,7 +3,7 @@ import random
 
 class single_group_plot_tab(TabBase):
 
-    def __init__(self, variables=['output', 'excitation', 'inhibition'], colors=[(0, 0, 0), (0, 0, 255), (255, 0, 0), (155, 0, 155), (0, 155, 0), (155, 155, 0), (0, 155, 155)], net_lines=[], neuron_lines=[], title='overlay plot', timesteps=500):
+    def __init__(self, variables=['output', 'excitation', 'inhibition'], colors=[(0, 0, 0), (0, 0, 255), (255, 0, 0), (155, 0, 155), (0, 155, 0), (155, 155, 0), (0, 155, 155)], net_lines=[], neuron_lines=[], title='Single Group', timesteps=500):
         super().__init__(title)
         self.variables = {}
         self.colors = colors

@@ -14,6 +14,8 @@ from PymoNNto.Exploration.Network_UI.Basic_Tabs.individual_weight_tab import *
 from PymoNNto.Exploration.Network_UI.Basic_Tabs.PCA_tab import *
 from PymoNNto.Exploration.Network_UI.Basic_Tabs.isi_tab import *
 from PymoNNto.Exploration.Network_UI.Basic_Tabs.code_execution_tab import *
+from PymoNNto.Exploration.Network_UI.Basic_Tabs.module_visualizer_tab import *
+
 
 def get_default_UI_modules(neuron_parameters=['output'], synapse_parameters=['W']):
     return [
@@ -32,12 +34,28 @@ def get_default_UI_modules(neuron_parameters=['output'], synapse_parameters=['W'
     info_tab(),
     sidebar_fast_forward_module(),
     sidebar_save_load_module(),
-    code_execution_tab()
+    code_execution_tab(),
+    module_visualizer_tab()
 ]
 
-def get_default_UI_modules_dict(neuron_parameters=['output'], synapse_parameters=['W']):
-    modules = get_default_UI_modules(neuron_parameters, synapse_parameters)
-    result={}
-    for module in modules:
-        result[module.__class__.__name__] = module
+def get_modules_dict(*args): #get_modules_dict([m1,m2,m3],m4,[m5],{1:m6,2:m7},...)
+    result = {}
+
+
+
+    for arg in args:
+        if type(arg) is list:
+            for a in arg:
+                result[a.__class__] = a
+
+        elif type(arg) is dict:
+            for k in arg:
+                result[arg[k].__class__] = arg[k]
+
+        else:
+            result[arg.__class__] = arg
+
+
+    #for module in modules:
+    #    result[module.__class__.__name__] = module
     return result

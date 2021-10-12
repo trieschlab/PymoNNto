@@ -99,8 +99,8 @@ class hist_tab(TabBase):
 
             glu_syns = group.afferent_synapses[transmitter]
             if len(glu_syns) > 0:
-                GLU_syn_list = Network_UI.get_combined_syn_mats(glu_syns, None, self.weight_attr)
-                GLU_syn_list_en = Network_UI.get_combined_syn_mats(glu_syns, None, "enabled")
+                GLU_syn_list = get_combined_syn_mats(glu_syns, None, self.weight_attr)
+                GLU_syn_list_en = get_combined_syn_mats(glu_syns, None, "enabled")
                 if len(GLU_syn_list) > 0:
                     GLU_syn = GLU_syn_list[list(GLU_syn_list.keys())[0]]
                     en_mask = GLU_syn_list_en[list(GLU_syn_list_en.keys())[0]].astype(bool)*(GLU_syn > msl)

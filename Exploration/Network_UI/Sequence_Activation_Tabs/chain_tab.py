@@ -81,7 +81,11 @@ class chain_tab(TabBase):
             colors = [(act * 255, 0, 0, 50) for act in group.output]
 
             if Network_UI.network[Network_UI.neuron_select_group, 0] is Network_UI.network['prediction_source', 0]:
-                GLU_syn = Network_UI.get_combined_syn_mats(group['GLU'])
+
+                #get_partitioned_synapse_matrix(neurons, synapse_tag, synapse_var)
+                #get_single_neuron_combined_partition_matrix(neurons, synapse_tag, synapse_var, neuron_id, return_first=True)
+
+                GLU_syn = get_combined_syn_mats(group['GLU'])
                 GLU_syn = GLU_syn[list(GLU_syn.keys())[0]]
                 big_syn_indices = np.where(GLU_syn[Network_UI.neuron_select_id] > (np.max(GLU_syn[Network_UI.neuron_select_id]) * (1 / 2)))[0]
                 adj = np.array([[s, Network_UI.neuron_select_id] for s in big_syn_indices])  # np.array(self.edges)##[self.neuron_select_id, 1]
@@ -96,7 +100,7 @@ class chain_tab(TabBase):
 
             #GABA_syn = Network_UI.network[Network_UI.neuron_select_group, 0]['GABA']
             #if len(GABA_syn) > 0:
-            #    GABA_syn = Network_UI.get_combined_syn_mats(GABA_syn)
+            #    GABA_syn = get_combined_syn_mats(GABA_syn)
             #    GABA_syn = GABA_syn[list(GABA_syn.keys())[0]]
             #    selected_GABA_syn = GABA_syn[Network_UI.neuron_select_id]
             #else:

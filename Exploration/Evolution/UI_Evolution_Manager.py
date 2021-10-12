@@ -104,6 +104,29 @@ class UI_Evolution_Manager(UI_Base):
             if os.path.isdir(get_epc_folder()+'/'+dir):
                 self.add_tab(dir)
 
+    def keyPressEvent(self, event):
+        if event.key() in [Qt.Key_I]:
+            tab = self.tabs.currentWidget()
+            print(tab.clicked_id)
+            smg = StorageManagerGroup(tab.name, data_folder=get_data_folder() + '/Evolution_Project_Clones/' + tab.name + '/Data')
+            smg.sort_by('gen')
+            sm = smg.StorageManagerList[tab.clicked_id]
+            file = sm.absolute_path + sm.config_file_name
+            print(file)
+            with open(file) as f:
+                lines = f.readlines()
+
+                layout = QVBoxLayout()
+                pte = QPlainTextEdit()
+                pte.setPlainText('\r\n'.join(lines))
+                pte.setReadOnly(True)
+                layout.addWidget(pte)
+                dlg = QDialog()
+                dlg.setWindowTitle("Info")
+                dlg.setLayout(layout)
+                dlg.resize(600, 400)
+                dlg.exec()
+
     def set_text(self, ssm, edit, text):
         data = ssm.load_param(text, default='', return_string=True)
         if data is not None and data != '':

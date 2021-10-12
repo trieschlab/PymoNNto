@@ -1,7 +1,6 @@
 from PymoNNto.NetworkCore.Behaviour import *
 from PymoNNto.NetworkCore.Synapse_Group import *
 
-
 class Partition(Behaviour):
     visualization_module_inputs = ['s.src.x', 's.src.y', 's.src.z', 's.dst.x', 's.dst.y', 's.dst.z']
     visualization_module_outputs = ['s.network.SynapseGroups']

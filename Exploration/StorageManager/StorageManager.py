@@ -145,7 +145,6 @@ class StorageManager:
     def has_obj(self, key):
         return os.path.isfile(self.absolute_path + key + '.obj')
 
-
     def save_param_dict(self, d, section='Parameters'):
         for key in d:
             self.save_param(key, d[key], section)

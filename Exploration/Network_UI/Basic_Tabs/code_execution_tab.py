@@ -10,7 +10,7 @@ class code_execution_tab(TabBase):
 synapse_tag='GLU'
 synapse_var='W'
 
-combined = Network_UI.get_combined_syn_mats(n.afferent_synapses[synapse_tag], None,synapse_var)
+combined = get_combined_syn_mats(n.afferent_synapses[synapse_tag], None,synapse_var)
 
 for mat in combined.values():
 
@@ -42,7 +42,7 @@ print(num)
         #item.setCheckState(check)
         #self.timed_execution_model.appendRow(item)
 
-        self.code_execution_tab = Network_UI.Next_Tab('code exec')
+        self.code_execution_tab = Network_UI.Next_Tab('Code Exec.')
         self.comboBox = Network_UI.Add_element(QComboBox())
 
         self.txt_py_dict={}
@@ -52,7 +52,11 @@ print(num)
         self.txt_py_dict["count synapses"] = self.sample_code2
 
         try:
-            data_folder = get_data_folder(create_when_not_found=False)
+            data_folder = get_data_folder(create_when_not_found=False)+'/scripts'
+
+            if not os.path.exists(data_folder):
+                os.mkdir(data_folder)
+
             for d in os.listdir(data_folder):
                 if '.py' in d:
                     with open(data_folder+'/'+d) as f:
@@ -79,6 +83,9 @@ print(num)
         Network_UI.Next_H_Block()
 
         self.code_field=Network_UI.Add_element(QTextEdit())
+
+        self.code_field.setAcceptRichText(False)
+
         self.code_field.textChanged.connect(on_code_changed)
 
         Network_UI.Next_H_Block(stretch=0.1)
@@ -102,7 +109,7 @@ print(num)
         self.save_btn_click = Network_UI.Add_element(QPushButton('Save Script'))
 
         def save(input_txt):
-            data_folder = get_data_folder(create_when_not_found=False)
+            data_folder = get_data_folder(create_when_not_found=False)+'/scripts'
             name=data_folder + '/'+input_txt+'.py'
             with open(name, "w") as f:
                 f.write(self.code_field.toPlainText())

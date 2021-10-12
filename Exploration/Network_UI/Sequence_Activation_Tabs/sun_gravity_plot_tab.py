@@ -116,12 +116,17 @@ class DrawItem2(pg.GraphicsObject):
 
 
 
-    def draw_neurons(self, painter, group, neuron_size=1):
+    def draw_neurons(self, painter, group, neuron_size=1, color_mul=None):
         painter.setPen(pg.mkPen(color=group.color))
         painter.setBrush(pg.mkBrush(color=group.color))
         mask=group.output>0
         inv_mask=np.invert(mask)
-        for x, y in zip(group.buffer_posx[inv_mask], group.buffer_posy[inv_mask]):
+        for i, p in enumerate(zip(group.buffer_posx[inv_mask], group.buffer_posy[inv_mask])):
+            x,y=p
+            if color_mul is not None:
+                c = np.array(group.color)*color_mul[i]
+                painter.setPen(pg.mkPen(color=c))
+                painter.setBrush(pg.mkBrush(color=c))
             painter.drawEllipse(QtCore.QPointF(x, y), neuron_size, neuron_size)
 
         painter.setPen(pg.mkPen(color=(0,255,0,150)))
@@ -185,6 +190,21 @@ class DrawItem2(pg.GraphicsObject):
         self.p4s = p4s
         self.p5s = p5s
 
+    def compute_similarity(self, group, neuron_index):
+        group._syn_differences_ = group.get_neuron_vec()
+        for sg in group.afferent_synapses['GLU']:
+            if neuron_index in sg.dst.id:
+                sg.dst._syn_differences_ += np.sum(sg.W * sg.W[:,np.where(sg.dst.id==neuron_index)[0]], axis=1)
+
+        m=np.max(group._syn_differences_)
+        if m>0:
+            group._syn_differences_=1.0-(group._syn_differences_/m)
+
+        #print(group._syn_differences_)
+
+        return group.get_neuron_vec('uniform')#group._syn_differences_
+
+
 
     def update_pic(self, groups, alphabet, nui, statistics, show_weights):
 
@@ -204,7 +224,10 @@ class DrawItem2(pg.GraphicsObject):
         painter.scale(1, -1)
 
         for group in groups:
-            self.draw_neurons(painter, group, self.p0s.sliderPosition() / 100)
+            similarity = None
+            #if group.tags[0] == nui.neuron_select_group:
+            #    similarity = self.compute_similarity(group, nui.neuron_select_id)
+            self.draw_neurons(painter, group, self.p0s.sliderPosition() / 100, similarity)
 
         #painter.setBrush(pg.mkBrush(color=(0,255,0,255)))
         #for x, y in zip(group.buffer_posx+attractor_rad_x, group.buffer_posy+attractor_rad_y):
@@ -279,6 +302,7 @@ class sun_gravity_plot_tab(TabBase):
                     if len(indices) > 0:
                         Network_UI.neuron_select_group = group.tags[0]
                         Network_UI.neuron_select_id = indices[0]
+                Network_UI.static_update_func()
 
             msg = 'Each particle is a neuron of the selected Group.\r\n' \
                   'The primary input neurons are fixed to the outer ring.\r\n' \
@@ -288,6 +312,9 @@ class sun_gravity_plot_tab(TabBase):
                   'but the particlses position moved one step furter to the center, so one ring indicates one iteration step.'
 
             self.plot = Network_UI.Add_plot(x_label='buffer steps', tooltip_message=msg)#axisItems={'left': stringaxis}
+            self.plot.hideAxis('bottom')
+            self.plot.hideAxis('left')
+
             self.draw_item = DrawItem2()
             self.plot.addItem(self.draw_item)
             self.draw_item.mouseClickEvent = c

@@ -3,7 +3,7 @@ from PymoNNto.Exploration.Visualization.Visualization_Helper import *
 
 class isi_tab(TabBase):
 
-    def __init__(self, title='ISI', param='output', mask_param='Input_Mask', timesteps=1000, mask_color_add=(-100, -100, -100)):
+    def __init__(self, title='Activity/ISI', param='output', mask_param='Input_Mask', timesteps=1000, mask_color_add=(-100, -100, -100)):
         super().__init__(title)
         self.param = param
         self.timesteps=timesteps

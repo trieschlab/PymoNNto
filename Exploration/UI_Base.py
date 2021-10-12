@@ -246,6 +246,16 @@ class UI_Base(QApplication):
 
         #self.Next_Tab('Main')
 
+        self.tabs.currentChanged.connect(self._onTabChange)
+        self.tabs2.currentChanged.connect(self._onTabChange)
+        self.tabs3.currentChanged.connect(self._onTabChange)
+        self.tabs4.currentChanged.connect(self._onTabChange)
+
+    def _onTabChange(self, i):
+        self.on_tab_change(i)
+
+    def on_tab_change(self, i):
+        return #overwrite
 
     def create_detail_label_pixmap(self):
         self.detail_qlabel = QLabel()

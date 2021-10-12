@@ -25,6 +25,9 @@ class Module_draw_item(pg.GraphicsObject):
         self.picture = QtGui.QPicture()
 
         self.draw_forward_only = onlyff
+        self.draw_in_out_blocks = True
+        self.draw_connection_lines = True
+        self.draw_attributes = True
 
         self.conn_points = []
 
@@ -308,7 +311,8 @@ class Module_draw_item(pg.GraphicsObject):
         painter = QtGui.QPainter(self.picture)
         painter.scale(1, -1)
 
-        self.conn_points = self.draw_connections(painter, other_modules)
+        if self.draw_connection_lines:
+            self.conn_points = self.draw_connections(painter, other_modules)
 
         color = self.blue
         #if self.selected:
@@ -344,7 +348,12 @@ class Module_draw_item(pg.GraphicsObject):
         # qf.setStretch(2)
         #painter.setFont(qf)
 
-        painter.drawText(int(self.x+0.5*self.size-fm.width(text)/2), self.y-int(self.size - self.border * self.size * 1.5-fm.height()/2), text)
+        if self.draw_attributes:
+            y = self.y-int(self.size - self.border * self.size * 1.5-fm.height()/2)
+        else:
+            y = self.y-int(self.size/2-fm.height()/2)
+
+        painter.drawText(int(self.x+0.5*self.size-fm.width(text)/2), y, text)
 
         qf = QFont("Arial")
         #qf.setLetterSpacing(QFont.PercentageSpacing, 95)
@@ -355,9 +364,10 @@ class Module_draw_item(pg.GraphicsObject):
         text = self.module_type
         painter.drawText(int(self.x+0.5 * self.size - fm.width(text) / 2), int(self.y-self.border * self.size*1.2 + fm.height() / 2), text)
 
-        self.add_in_out_blocks(painter, self.inputs, self.outputs)
+        if self.draw_in_out_blocks:
+            self.add_in_out_blocks(painter, self.inputs, self.outputs)
 
-        if len(self.attributes) > 0:
+        if len(self.attributes) > 0 and self.draw_attributes:
             self.draw_content(painter, ['', '']+self.attributes+['', 'Attributes:'])#Initialization a
 
 
@@ -385,6 +395,126 @@ class Module_draw_item(pg.GraphicsObject):
 
         #print(br.left(), br.top(), br.right(), br.bottom())
         return QtCore.QRectF(br)
+
+def analyze_module_and_get_info(module):
+    from PymoNNto.NetworkCore.Neuron_Group import NeuronGroup
+    from PymoNNto.NetworkCore.Synapse_Group import SynapseGroup
+
+    module_copy = copy.deepcopy(module)
+
+    ng = NeuronGroup_read_write_event(1, {}, None)
+    sg = SynapseGroup_read_write_event(ng, ng, None)
+
+    main_arg = ng
+    module_type = 'PymoNNto Neuron-Group Module'
+    synapse_beh_arg_names = ['s', 'S', 'syn', 'Syn', 'SYN', 'syns', 'Syns', 'SYNS', 'synapse', 'Synapse', 'SYNAPSE',
+                             'synapses', 'Synapses', 'SYNAPSES']
+    func1_arg_names = inspect.getfullargspec(module_copy.set_variables).args
+    func2_arg_names = inspect.getfullargspec(module_copy.new_iteration).args
+    for s in synapse_beh_arg_names:
+        if s in func1_arg_names or s in func2_arg_names:
+            main_arg = sg
+            module_type = 'PymoNNto Synapse-Group Module'
+
+    if module_copy.set_variables_on_init:
+        module_type += ' (init set var)'
+
+    # ng = NeuronGroup(1, {}, None)
+    # sg = SynapseGroup(ng, ng, None)
+
+    ng.afferent_synapses['All'] = [sg]
+    ng.efferent_synapses['All'] = [sg]
+
+    # print(module_copy, ng.__dict__)
+
+    def reset_vars():
+        ng.variable_reads = []
+        ng.variable_writes = []
+        sg.variable_reads = []
+        sg.variable_writes = []
+
+    reset_vars()
+
+    # delattr(sg, 'enabled')
+
+    def read_ng(obj, attr):
+        obj.variable_reads.append('n.' + attr)
+
+    def write_ng(obj, attr):
+        obj.variable_writes.append('n.' + attr)
+
+    def read_sg(obj, attr):
+        obj.variable_reads.append('s.' + attr)
+
+    def write_sg(obj, attr):
+        obj.variable_writes.append('s.' + attr)
+
+    # set_read_event_function(ng, read_ng)
+    # set_write_event_function(ng, write_ng)
+
+    # set_read_event_function(sg, read_sg)
+    # set_write_event_function(sg, write_sg)
+
+    ng.set_read_event_function(read_ng)
+    ng.set_write_event_function(write_ng)
+
+    sg.set_read_event_function(read_sg)
+    sg.set_write_event_function(write_sg)
+
+    created_vars_set = analyze_function(module_copy, 'set_variables', ng, sg, main_arg)
+    write_vars_set = ng.variable_writes + sg.variable_writes  # [var for var in ng.variable_writes + sg.variable_writes if var not in created_vars_set]
+    read_vars_set = ng.variable_reads + sg.variable_reads  # [var for var in ng.variable_reads + sg.variable_reads if var not in created_vars_set]
+
+    # print(module_copy, created_vars_set)
+
+    reset_vars()
+
+    created_vars_it = analyze_function(module_copy, 'new_iteration', ng, sg, main_arg)
+    write_vars_it = ng.variable_writes + sg.variable_writes  # [var for var in ng.variable_writes + sg.variable_writes if var not in created_vars_it]
+    read_vars_it = ng.variable_reads + sg.variable_reads  # [var for var in ng.variable_reads + sg.variable_reads if var not in created_vars_it]
+
+    inputs = list(set(read_vars_it + write_vars_it + created_vars_it))  # read_vars_set
+    outputs_temp = list(set(
+        write_vars_set + write_vars_it + created_vars_set + created_vars_it))  # created_vars_it #[var+'#init' for var in created_vars_set]
+
+    outputs = []
+    for o in outputs_temp:
+        if o in created_vars_set:
+            outputs.append(o + '#init')
+            # print(module_copy, o)
+        else:
+            outputs.append(o)
+        # outputs = [var+'#init' for var in outputs if var in created_vars_set]
+
+    # inputs = list(set(ng.variable_reads + sg.variable_reads + created_vars_it))
+    # outputs = list(set(ng.variable_writes + sg.variable_writes+created_vars_set + created_vars_it))
+
+    module_name = module_copy.__class__.__name__
+
+    attributes = module_copy.used_attr_keys.copy()  # ['transmitter', 'test', 'blub', 'param', 'dfsfa']
+    if 'tag' in attributes:
+        attributes.remove('tag')
+    if 'behaviour_enabled' in attributes:
+        attributes.remove('behaviour_enabled')
+
+    attributes = list(set(attributes))
+
+    if hasattr(module_copy, 'visualization_module_inputs') and module_copy.visualization_module_inputs is not None:
+        inputs = module_copy.visualization_module_inputs
+
+    if hasattr(module_copy, 'visualization_module_outputs') and module_copy.visualization_module_outputs is not None:
+        outputs = module_copy.visualization_module_outputs
+
+    if hasattr(module_copy, 'visualization_module_attributes') and module_copy.visualization_module_attributes is not None:
+        attributes = module_copy.visualization_module_attributes
+
+    # filter
+    filter = ['n.iteration', 's.iteration']
+    inputs = [var for var in inputs if not var in filter]
+    outputs = [var for var in outputs if not var in filter]
+    attributes = [var for var in attributes if not var in filter]
+
+    return module_name, inputs, outputs, attributes, module_type
 
 
 class module_drawer(UI_Base):
@@ -471,129 +601,7 @@ class module_drawer(UI_Base):
 
 
     def add_module(self, module):
-        from PymoNNto.NetworkCore.Neuron_Group import NeuronGroup
-        from PymoNNto.NetworkCore.Synapse_Group import SynapseGroup
-
-        module_copy = copy.deepcopy(module)
-
-        ng = NeuronGroup_read_write_event(1, {}, None)
-        sg = SynapseGroup_read_write_event(ng, ng, None)
-
-        main_arg = ng
-        module_type = 'PymoNNto Neuron-Group Module'
-        synapse_beh_arg_names = ['s', 'S', 'syn', 'Syn', 'SYN', 'syns', 'Syns', 'SYNS', 'synapse', 'Synapse', 'SYNAPSE', 'synapses', 'Synapses', 'SYNAPSES']
-        func1_arg_names = inspect.getfullargspec(module_copy.set_variables).args
-        func2_arg_names = inspect.getfullargspec(module_copy.new_iteration).args
-        for s in synapse_beh_arg_names:
-            if s in func1_arg_names or s in func2_arg_names:
-                main_arg = sg
-                module_type = 'PymoNNto Synapse-Group Module'
-
-        if module_copy.set_variables_on_init:
-            module_type += ' (init set var)'
-
-
-        #ng = NeuronGroup(1, {}, None)
-        #sg = SynapseGroup(ng, ng, None)
-
-        ng.afferent_synapses['All']=[sg]
-        ng.efferent_synapses['All']=[sg]
-
-        #print(module_copy, ng.__dict__)
-
-        def reset_vars():
-            ng.variable_reads = []
-            ng.variable_writes = []
-            sg.variable_reads = []
-            sg.variable_writes = []
-
-        reset_vars()
-
-        #delattr(sg, 'enabled')
-
-        def read_ng(obj, attr):
-            obj.variable_reads.append('n.'+attr)
-
-        def write_ng(obj, attr):
-            obj.variable_writes.append('n.'+attr)
-
-        def read_sg(obj, attr):
-            obj.variable_reads.append('s.'+attr)
-
-        def write_sg(obj, attr):
-            obj.variable_writes.append('s.'+attr)
-
-        #set_read_event_function(ng, read_ng)
-        #set_write_event_function(ng, write_ng)
-
-        #set_read_event_function(sg, read_sg)
-        #set_write_event_function(sg, write_sg)
-
-        ng.set_read_event_function(read_ng)
-        ng.set_write_event_function(write_ng)
-
-        sg.set_read_event_function(read_sg)
-        sg.set_write_event_function(write_sg)
-
-
-        created_vars_set = analyze_function(module_copy, 'set_variables', ng, sg, main_arg)
-        write_vars_set = ng.variable_writes + sg.variable_writes#[var for var in ng.variable_writes + sg.variable_writes if var not in created_vars_set]
-        read_vars_set = ng.variable_reads + sg.variable_reads#[var for var in ng.variable_reads + sg.variable_reads if var not in created_vars_set]
-
-        #print(module_copy, created_vars_set)
-
-        reset_vars()
-
-        created_vars_it = analyze_function(module_copy, 'new_iteration', ng, sg, main_arg)
-        write_vars_it = ng.variable_writes + sg.variable_writes#[var for var in ng.variable_writes + sg.variable_writes if var not in created_vars_it]
-        read_vars_it = ng.variable_reads + sg.variable_reads#[var for var in ng.variable_reads + sg.variable_reads if var not in created_vars_it]
-
-        inputs = list(set(read_vars_it + write_vars_it + created_vars_it)) #read_vars_set
-        outputs_temp = list(set(write_vars_set + write_vars_it + created_vars_set + created_vars_it))#created_vars_it #[var+'#init' for var in created_vars_set]
-
-        outputs = []
-        for o in outputs_temp:
-            if o in created_vars_set:
-                outputs.append(o+'#init')
-                #print(module_copy, o)
-            else:
-                outputs.append(o)
-            #outputs = [var+'#init' for var in outputs if var in created_vars_set]
-
-        #inputs = list(set(ng.variable_reads + sg.variable_reads + created_vars_it))
-        #outputs = list(set(ng.variable_writes + sg.variable_writes+created_vars_set + created_vars_it))
-
-
-        module_name = module_copy.__class__.__name__
-
-        attributes = module_copy.used_attr_keys.copy()  # ['transmitter', 'test', 'blub', 'param', 'dfsfa']
-        if 'tag' in attributes:
-            attributes.remove('tag')
-        if 'behaviour_enabled' in attributes:
-            attributes.remove('behaviour_enabled')
-          # self.parent.__class__.__name__ + ' Module'
-
-        #inputs = list(set(read_vars_set + read_vars_it))
-        #outputs = list(set(write_vars_set + write_vars_it))
-
-        attributes = list(set(attributes))
-
-        if hasattr(module_copy, 'visualization_module_inputs') and module_copy.visualization_module_inputs is not None:
-            inputs = module_copy.visualization_module_inputs
-
-        if hasattr(module_copy, 'visualization_module_outputs') and module_copy.visualization_module_outputs is not None:
-            outputs = module_copy.visualization_module_outputs
-
-        if hasattr(module_copy, 'visualization_module_attributes') and module_copy.visualization_module_attributes is not None:
-            attributes = module_copy.visualization_module_attributes
-
-
-        #filter
-        filter = ['n.iteration', 's.iteration']
-        inputs = [var for var in inputs if not var in filter]
-        outputs = [var for var in outputs if not var in filter]
-        attributes = [var for var in attributes if not var in filter]
-
+        module_name, inputs, outputs, attributes, module_type = analyze_module_and_get_info(module)
         self.add_module_tab(module_name, inputs, outputs, attributes, module_type)
 
 
@@ -692,6 +700,8 @@ class SynapseGroup_read_write_event(SynapseGroup):
         super().__setattr__(attr_name, val)
 
 def analyze_function(object, function_name, ng, sg, arg):
+    np.seterr(all='raise')
+
     ng_dict_backup = copy.copy(ng.__dict__)
     sg_dict_backup = copy.copy(sg.__dict__)
 
@@ -699,12 +709,23 @@ def analyze_function(object, function_name, ng, sg, arg):
     used_variable_keys_ng = []
     used_variable_keys_sg = []
 
+    error_txt = 'failed to analyse module automatically. You can set the modules attributes, input and output manually by adding the variables visualization_module_attributes, visualization_module_inputs and visualization_module_outputs (string lists) to the module manually'
+
+    break_counter=0
     while not finished:
         try:
             getattr(object, function_name)(arg)
 
             finished = True
+        except Warning:
+            pass
         except Exception as e:
+            break_counter+=1
+            if break_counter>30:
+                #traceback.print_tb(e.__traceback__)
+                print(error_txt)
+                finished = True
+
             error_type = sys.exc_info()[0]
             msg = str(sys.exc_info()[1])
             #print(error_type, msg)
@@ -729,12 +750,11 @@ def analyze_function(object, function_name, ng, sg, arg):
                 ng.efferent_synapses[tag] = [sg]
 
             elif 'invalid value encountered' in msg:
-                print('yes')
-
+                pass
             else:
                 #print(error_type, msg)
-                traceback.print_tb(e.__traceback__)
-                print('failed to analyse module automatically')
+                #traceback.print_tb(e.__traceback__)
+                print(error_txt)
                 finished = True
 
     created_variables_ng = ['n.'+var for var in ng.__dict__ if var not in ng_dict_backup]

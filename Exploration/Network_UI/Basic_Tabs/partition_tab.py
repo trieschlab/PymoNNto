@@ -94,7 +94,7 @@ class DrawItem(pg.GraphicsObject):
 
 class partition_tab(TabBase):
 
-    def __init__(self, title='partition'):
+    def __init__(self, title='Partition'):
         super().__init__(title)
 
     def add_recorder_variables(self, neuron_group, Network_UI):

@@ -3,7 +3,7 @@ import scipy.fftpack
 
 class fourier_tab(TabBase):
 
-    def __init__(self, parameter, title='fourier', timesteps=1000):
+    def __init__(self, parameter, title='Fourier', timesteps=1000):
         super().__init__(title)
         self.parameter = parameter
         self.timesteps=timesteps

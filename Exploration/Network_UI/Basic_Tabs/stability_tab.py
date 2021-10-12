@@ -3,7 +3,7 @@ from PymoNNto.Exploration.Visualization.Analysis_Plots import *
 
 class stability_tab(TabBase):
 
-    def __init__(self, parameter, title='stability', timesteps=500):
+    def __init__(self, parameter, title='Autocorrelation', timesteps=500):
         super().__init__(title)
         self.parameter=parameter
         self.timesteps=timesteps

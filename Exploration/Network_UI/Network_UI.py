@@ -9,7 +9,7 @@ class Network_UI(UI_Base):
 
         network.clear_recorder()
 
-        self.render_every_x_frames=1
+        self.render_every_x_frames = 1
 
         #network.simulate_iteration()
         #self.recording = False
@@ -66,6 +66,9 @@ class Network_UI(UI_Base):
         self.neuron_select_color = (0, 255, 0, 255)
 
         self.modules = modules
+
+        if type(self.modules) is dict:
+            self.modules = self.modules.values()
 
         for module in self.modules:
             print('Initialize:', module)
@@ -148,33 +151,6 @@ class Network_UI(UI_Base):
                     result.append(synapse_groups[i].dst)
         return result
 
-    def get_combined_syn_mats(self, synapses, neuron_id=None, attr='W'):
-        results = {}
-        shapes = {}
-        for s in synapses:
-            base_src = s.src.group_without_subGroup()
-            base_dst = s.dst.group_without_subGroup()
-            key = ','.join(s.tags)
-            if not key in results:
-                results[key] = np.zeros((base_dst.size, base_src.size))
-                shapes[key] = (base_src.height, base_src.width)
-            try:
-                syn_mat=eval('s.'+attr)
-                if base_src == s.src and base_dst == s.dst:
-                    results[key] += syn_mat#.copy()
-                else:
-                    mat_mask = s.dst.mask[:, None] * s.src.mask[None, :]
-                    results[key][mat_mask] += np.array(syn_mat).flatten() #np.array required if syn_mat is bool (enabled)
-            except:
-                print(attr, "cannot be evaluated")
-
-        if neuron_id is not None:
-            for key in results:
-                results[key] = results[key][neuron_id].reshape(shapes[key])
-
-        return results
-
-
     def on_timer(self):
 
         if not self.pause or self.step or self.update_without_state_change:
@@ -192,6 +168,9 @@ class Network_UI(UI_Base):
             #    rec.cut_length(self.default_recorder_length)
 
             self.update_without_state_change = False
+
+    def on_tab_change(self, i):
+        self.static_update_func()
 
 def get_color(type_index, layer=1):
     dim_value = max(layer * 0.9, 1.0)
