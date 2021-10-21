@@ -47,9 +47,6 @@ class NeuronGroup(NetworkObjectBase):
 
         self.id = np.arange(self.size)
 
-
-        #self.tags = []
-
     #do only use before initialization!!!
     #after initialization use Netork.add_behaviours_to_neuron_group(...)
     def add_behaviour(self, index, b, init=False):
@@ -73,6 +70,9 @@ class NeuronGroup(NetworkObjectBase):
         #    for syn in self.afferent_synapses[syn_key]:
         #        if syn not in result:
         #            result += syn[key]
+
+        for am in self.analysis_modules:
+            result += am[key]
 
         return result
 

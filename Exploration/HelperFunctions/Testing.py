@@ -6,7 +6,7 @@ def behaviour_test_environment(behaviour, size=1, initialize=True, iteration=0):
     if type(behaviour) != dict:
         behaviour={1:behaviour}
 
-    ng = NeuronGroup(tag='Neuron', net=behaviour, behaviour=beh, size=size)
+    ng = NeuronGroup(tag='Neuron', net=net, behaviour=behaviour, size=size)
 
     if initialize:
         net.initialize()

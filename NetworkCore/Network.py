@@ -32,7 +32,7 @@ class Network(NetworkObjectBase):
                 print('activating', key)
             else:
                 print('deactivating', key)
-            for obj in self.all_behaviour_objects():
+            for obj in self.all_objects():
                 for mechansim in obj[key]:
                     mechansim.behaviour_enabled = enabeled #changed (active)
 
@@ -44,18 +44,18 @@ class Network(NetworkObjectBase):
         self.set_mechanisms(keys, True)
 
     def recording_off(self):
-        for obj in self.all_behaviour_objects():
+        for obj in self.all_objects():
             obj.recording = False
 
     def recording_on(self):
-        for obj in self.all_behaviour_objects():
+        for obj in self.all_objects():
             obj.recording = True
 
-    def all_behaviour_objects(self):
+    def all_objects(self):
         return [self]+self.NeuronGroups+self.SynapseGroups
 
     def clear_recorder(self, keys=None):
-        for obj in self.all_behaviour_objects():
+        for obj in self.all_objects():
             for key in obj.behaviour:
                 if (keys is None or key in keys) and hasattr(obj.behaviour[key], 'clear_recorder'):
                     obj.behaviour[key].clear_recorder()
@@ -63,7 +63,7 @@ class Network(NetworkObjectBase):
     def set_gene_variables(self, info=True, storage_manager=None):
         current_genome = {}
 
-        for obj in self.all_behaviour_objects():
+        for obj in self.all_objects():
             for key in obj.behaviour:
                 b = obj.behaviour[key]
                 current_genome.update(b.set_gene_variables())
@@ -114,6 +114,9 @@ class Network(NetworkObjectBase):
         for sg in self.SynapseGroups:
             result += sg[key]
 
+        for am in self.analysis_modules:
+            result += am[key]
+
         return result
 
     def save_descriptions(self, storage_manager=None):
@@ -127,7 +130,9 @@ class Network(NetworkObjectBase):
         self.set_gene_variables(info=info, storage_manager=storage_manager)
 
         if info:
-            print(str(self))
+            desc=str(self)
+            print(desc)
+            storage_manager.save_param('info', desc)
 
         #self.old_param_list = self.get_all_params()
 
@@ -228,7 +233,7 @@ class Network(NetworkObjectBase):
 
     def clear_tag_cache(self):
 
-        for obj in self.all_behaviour_objects():
+        for obj in self.all_objects():
             obj.clear_cache()
 
             for k in obj.behaviour:
@@ -238,7 +243,7 @@ class Network(NetworkObjectBase):
     def set_variables(self):
         for timestep in self.behaviour_timesteps:
 
-            for obj in self.all_behaviour_objects():
+            for obj in self.all_objects():
 
                 if timestep in obj.behaviour:
                     if not obj.behaviour[timestep].set_variables_on_init:
@@ -290,7 +295,7 @@ class Network(NetworkObjectBase):
         self.iteration += 1
         for timestep in self.behaviour_timesteps:
 
-            for net_obj in self.all_behaviour_objects():
+            for net_obj in self.all_objects():
                 net_obj.iteration=self.iteration
                 if timestep in net_obj.behaviour and net_obj.behaviour[timestep].behaviour_enabled:
                     if measure_behaviour_execution_time:

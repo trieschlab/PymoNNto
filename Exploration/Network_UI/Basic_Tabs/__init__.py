@@ -16,10 +16,14 @@ from PymoNNto.Exploration.Network_UI.Basic_Tabs.isi_tab import *
 from PymoNNto.Exploration.Network_UI.Basic_Tabs.code_execution_tab import *
 from PymoNNto.Exploration.Network_UI.Basic_Tabs.module_visualizer_tab import *
 
+from PymoNNto.Exploration.Network_UI.Basic_Tabs.sidebar_neuron_grid import *
+from PymoNNto.Exploration.Network_UI.Basic_Tabs.Analysis_Module_tab import *
+
 
 def get_default_UI_modules(neuron_parameters=['output'], synapse_parameters=['W']):
     return [
-    UI_sidebar_activity_module(1, add_color_dict={neuron_parameters[0]:(255, 255, 255)}),
+    Analysis_Module_tab(),
+    UI_sidebar_neuron_grid_module(1, neuron_parameters[0]),
     multi_group_plot_tab(neuron_parameters),#['output', 'TH', 'weight_norm_factor', 'nox', 'refractory_counter']
     spiketrain_tab(parameter=neuron_parameters[0]),
     weight_tab(weight_attrs=synapse_parameters),#, 'W_temp', 'W_stable'
@@ -35,7 +39,7 @@ def get_default_UI_modules(neuron_parameters=['output'], synapse_parameters=['W'
     sidebar_fast_forward_module(),
     sidebar_save_load_module(),
     code_execution_tab(),
-    module_visualizer_tab()
+    #module_visualizer_tab()
 ]
 
 def get_modules_dict(*args): #get_modules_dict([m1,m2,m3],m4,[m5],{1:m6,2:m7},...)

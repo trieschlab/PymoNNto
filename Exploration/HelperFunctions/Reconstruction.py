@@ -50,8 +50,8 @@ def compute_temporal_reconstruction(network, single_neuron_group=None, single_ne
 def generate_text_from_recon_mat(recon_mat, generator):
     text = ''
     for char_vec in recon_mat:
-        s = np.sum(char_vec)
-        if s > 0:
+        s = np.max(char_vec)-np.min(char_vec)#np.sum(char_vec)
+        if s>0:
             text = text + generator.index_to_char(np.argmax(char_vec))
         else:
             text = text + '#'

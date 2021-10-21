@@ -29,3 +29,6 @@ class TabBase:
 
     def update(self, Network_UI):
         return
+
+    def on_selected_neuron_changed(self, Network_UI):
+        return

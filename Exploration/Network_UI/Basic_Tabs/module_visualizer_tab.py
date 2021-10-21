@@ -9,11 +9,11 @@ class module_visualizer_tab(TabBase):
     def initialize(self, Network_UI):
 
         self.di_modules=[]
-        group_tags=[group.tags[0] for group in get_unique_non_partitioned_Groups(Network_UI.network.all_behaviour_objects())]
+        group_tags=[group.tags[0] for group in get_unique_non_partitioned_Groups(Network_UI.network.all_objects())]
 
         for t,timestep in enumerate(Network_UI.network.behaviour_timesteps):
             #for net_obj in Network_UI.network['exc_neurons']:#Network_UI.network.NeuronGroups:
-            for i, net_obj in enumerate(get_unique_non_partitioned_Groups(Network_UI.network.all_behaviour_objects())):
+            for i, net_obj in enumerate(get_unique_non_partitioned_Groups(Network_UI.network.all_objects())):
 
                 if timestep in net_obj.behaviour:# and net_obj.behaviour[timestep].behaviour_enabled
                     beh=net_obj.behaviour[timestep]

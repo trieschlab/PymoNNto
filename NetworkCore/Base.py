@@ -33,8 +33,32 @@ class NetworkObjectBase:
         if tag is not None:
             self.add_tag(tag)
 
+        self.analysis_modules = []
+
+    def add_analysis_module(self, module):
+        module._attach_and_initialize_(self)
+
+    def get_all_analysis_module_results(self, tag, return_modules=False): #...get_analysis_module_results('Classification')
+        result = {}
+        modules = {}
+        for module in self[tag]:
+            module_results = module.get_results()
+            for k in module_results:
+                result[k] = module_results[k]
+                modules[k] = module
+        if return_modules:
+            return result, modules
+        else:
+            return result
+
+
     def find_objects(self, key):#override for deeper search
-        return []
+        result = []
+
+        for am in self.analysis_modules:
+            result += am[key]
+
+        return result
 
     def clear_cache(self):
         self.tag_shortcuts = {}
@@ -103,6 +127,9 @@ class NetworkObjectBase:
         return np.zeros(dim).astype(def_dtype)
 
     def _get_mat(self, mode, dim, scale=None, density=None, plot=False, kwargs={}, args=[]): # mode in ['zeros', 'zeros()', 'ones', 'ones()', 'uniform(...)', 'lognormal(...)', 'normal(...)']
+
+        if mode == 'random' or mode == 'rand' or mode == 'rnd':
+            mode = 'uniform'
 
         if type(mode) == int or type(mode) == float:
             mode = 'ones()*'+str(mode)

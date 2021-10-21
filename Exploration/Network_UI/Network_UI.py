@@ -1,5 +1,6 @@
 from PymoNNto.Exploration.UI_Base import *
 from PymoNNto.NetworkBehaviour.Recorder.Recorder import *
+from PymoNNto.Exploration.Network_UI.Neuron_Classification_Colorizer import *
 
 class Network_UI(UI_Base):
 
@@ -19,6 +20,7 @@ class Network_UI(UI_Base):
         for ng in network.NeuronGroups:
             if not hasattr(ng, 'color'):
                 ng.color = (0, 0, 255, 255)
+            ng.add_analysis_module(Neuron_Classification_Colorizer())
 
         if group_tags==[]:
             for ng in network.NeuronGroups:
@@ -60,6 +62,8 @@ class Network_UI(UI_Base):
         self.neuron_select_id = 0
         self.neuron_select_group = group_tags[0]#exc_group_name
         self.neuron_visible_groups = []
+
+
         #self.ts_group = 0
         #self.x_steps = 500
         #self.group_sliders = []
@@ -90,6 +94,19 @@ class Network_UI(UI_Base):
         self.timer = QtCore.QTimer(self)
         self.timer.timeout.connect(self.on_timer)
         self.timer.start(40)
+
+    def select_neuron(self, group_tag, id):
+        self.neuron_select_group = group_tag
+        self.neuron_select_id = id
+        for module in self.modules:
+            module.on_selected_neuron_changed(self)
+        self.static_update_func()
+
+    def get_selected_neuron_group(self):
+        return self.network[self.neuron_select_group, 0]
+
+    def get_selected_neuron_index(self):
+        return self.neuron_select_id
 
     def add_recording_variable(self, group, var, timesteps):
 
@@ -186,6 +203,87 @@ def get_color(type_index, layer=1):
     if type_index == 4:
         return (255.0 / dim_value, 0.0 , 150.0/ dim_value, 255.0)
 
+
+class Analytics_Results_Select_ComboBox(QComboBox):
+    popupAboutToBeShown = QtCore.pyqtSignal()
+
+    def __init__(self, main_object, tag='classifier', first_entry=None, select_last=True):
+        super().__init__()
+        self.first_entry = first_entry
+        self.tag = tag
+
+        self.current_results = {}
+        self.current_modules = {}
+
+        self.main_object = None
+        self.change_main_object(main_object)
+
+        if select_last and self.count() > 0:
+            self.setCurrentIndex(self.count()-1)
+
+    def change_main_object(self, main_object):
+        if self.main_object is not None:
+            self.remove_update_notifier()
+        self.main_object = main_object
+        self.update()
+        self.set_update_notifier()
+
+    def set_update_notifier(self):
+        if isinstance(self.main_object, AnalysisModule):
+            self.main_object.set_update_notifier(self.update)
+        else:
+            for obj in self.main_object[self.tag]:
+                if isinstance(obj, AnalysisModule):
+                    obj.set_update_notifier(self.update)
+
+    def remove_update_notifier(self):
+        if isinstance(self.main_object, AnalysisModule):
+            self.main_object.remove_update_notifier(self.update)
+        else:
+            for obj in self.main_object[self.tag]:
+                if isinstance(obj, AnalysisModule):
+                    obj.remove_update_notifier(self.update)
+
+    def get_selected_key(self):
+        return self.currentText()
+
+    def get_selected_module(self):
+        key = self.get_selected_key()
+        if key in self.current_modules:
+            return self.current_modules[key]
+
+    def get_selected_result(self):
+        key = self.get_selected_key()
+        if key in self.current_results:
+            return self.current_results[key]
+
+    def update(self):
+        current = self.currentText()
+
+        self.clear()
+
+        if self.first_entry is not None:
+            self.addItem(self.first_entry)
+
+        if isinstance(self.main_object, AnalysisModule):
+            self.current_results = self.main_object.get_results()
+            for k in self.current_results:
+                self.addItem(k)
+            self.current_modules = {k: self.main_object for k in self.current_results}
+        else:
+            self.current_results, self.current_modules = self.main_object.get_all_analysis_module_results(self.tag, True)
+            for k in self.current_results:
+                self.addItem(k)
+
+        for i in range(self.count()):
+            if self.itemText(i) == current:
+                self.setCurrentIndex(i)
+
+
+    #def showPopup(self):
+    #    self.update()
+    #    #self.popupAboutToBeShown.emit()
+    #    super().showPopup()
 
 '''
 def get_color(type_index, layer):

@@ -29,3 +29,43 @@ def normalize_synapse_attr(src_attr, target_attr, target_value, neurons, synapse
     for s in neurons.afferent_synapses[synapse_type]:
         setattr(s, target_attr, getattr(s, target_attr) / (s.dst.temp_weight_sum[:, None] + (s.dst.temp_weight_sum[:, None] == 0)))
 
+
+
+
+def normalize_synapse_attr_efferent(src_attr, target_attr, target_value, neurons, synapse_type):
+    neurons.temp_weight_sum = neurons.get_neuron_vec()
+
+    for s in neurons.efferent_synapses[synapse_type]:
+        s.src.temp_weight_sum += np.sum(np.abs(getattr(s, target_attr)), axis=0)
+
+    neurons.temp_weight_sum /= target_value
+
+    for s in neurons.efferent_synapses[synapse_type]:
+        setattr(s, src_attr, getattr(s, src_attr) / (s.src.temp_weight_sum + (s.src.temp_weight_sum == 0)))
+
+'''
+from PymoNNto import *
+
+net = Network(tag='Network')
+
+ng = NeuronGroup(tag='Neuron', net=net, behaviour={}, size=10)
+sg = SynapseGroup(tag='GLU', src=ng, dst=ng, net=net, behaviour={})
+
+net.initialize()
+
+sg.W = sg.get_synapse_mat('random')
+
+print(np.sum(sg.W,0))
+print(np.sum(sg.W,1))
+
+normalize_synapse_attr_efferent('W','W', 1, ng, 'GLU')
+normalize_synapse_attr('W','W', 1, ng, 'GLU')
+
+print(np.sum(sg.W,0))
+print(np.sum(sg.W,1))
+
+import matplotlib.pyplot as plt
+
+plt.matshow(sg.W)
+plt.show()
+'''

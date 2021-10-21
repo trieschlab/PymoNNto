@@ -31,7 +31,6 @@ class SynapseGroup(NetworkObjectBase):
             if self.behaviour[k].set_variables_on_init:
                 self.behaviour[k].set_variables(self)
 
-
     def find_objects(self, key):
         result = []
 
@@ -41,6 +40,9 @@ class SynapseGroup(NetworkObjectBase):
         for bk in self.behaviour:
             behaviour = self.behaviour[bk]
             result += behaviour[key]
+
+        for am in self.analysis_modules:
+            result += am[key]
 
         return result
 

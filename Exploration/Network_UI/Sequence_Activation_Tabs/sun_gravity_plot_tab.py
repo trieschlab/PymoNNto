@@ -1,3 +1,4 @@
+from PymoNNto.Exploration.Network_UI.Network_UI import *
 from PymoNNto.Exploration.Network_UI.TabBase import *
 
 def pol2cart(theta, rho):
@@ -15,6 +16,12 @@ class DrawItem2(pg.GraphicsObject):
     def __init__(self, parent=None):
         super().__init__(parent)
         self.picture = QtGui.QPicture()
+
+        self._stored_similarity_colors=None
+        self._last_selected_neuron=-1
+        self._stored_class_colors=None
+        self._last_sensitivity=-1
+
 
     #base_char_masks_dict
 
@@ -113,26 +120,72 @@ class DrawItem2(pg.GraphicsObject):
         group.buffer_posx = np.clip(group.buffer_posx + group.add_x * movement_speed_fac, -100, +100)
         group.buffer_posy = np.clip(group.buffer_posy + group.add_y * movement_speed_fac, -100, +100)
 
+    def similarity_to_color(self, group, similarity):
+        result = []
+        for s in similarity:
+            color=(group.color[0],group.color[1],group.color[2],(1-s)*255)
+            result.append(color)
+        return result
+
+    def class_to_color(self, classes):
+        result = []
+        class_colors = {}
+        for c in classes:
+            if c not in class_colors:
+                class_colors[c]=(np.random.rand()*255,np.random.rand()*255,np.random.rand()*255,255)
+            result.append(class_colors[c])
+        return result
 
 
+    def get_neuron_color(self, group):
 
-    def draw_neurons(self, painter, group, neuron_size=1, color_mul=None):
-        painter.setPen(pg.mkPen(color=group.color))
-        painter.setBrush(pg.mkBrush(color=group.color))
-        mask=group.output>0
-        inv_mask=np.invert(mask)
-        for i, p in enumerate(zip(group.buffer_posx[inv_mask], group.buffer_posy[inv_mask])):
-            x,y=p
-            if color_mul is not None:
-                c = np.array(group.color)*color_mul[i]
-                painter.setPen(pg.mkPen(color=c))
-                painter.setBrush(pg.mkBrush(color=c))
-            painter.drawEllipse(QtCore.QPointF(x, y), neuron_size, neuron_size)
+        if hasattr(group, 'classification'):
+            colors = np.array(group['Neuron_Classification_Colorizer', 0].get_color_list(group.classification, format='[r,g,b]'))
 
-        painter.setPen(pg.mkPen(color=(0,255,0,150)))
+        #classification = self.cb.get_selected_result()
+        #colors = np.array(group['Neuron_Classification_Colorizer', 0].get_color_list(classification, format='[r,g,b]'))
+
+        return colors
+
+
+    def draw_neurons(self, painter, group, neuron_size=1, selected_neuron=None):
+
+        color = self.get_neuron_color(group)
+
+        painter.setPen(0)
+
+        inactive = group.output <= 0
+        active = np.invert(inactive)
+
+        for c in unique(color, axis=0):
+            mask = np.all(color == c[None,:], axis=1) * inactive #(color == c) np.all(a == b, axis=1)
+            painter.setBrush(pg.mkBrush(color=c))
+            for x, y in zip(group.buffer_posx[mask], group.buffer_posy[mask]):
+                painter.drawEllipse(QtCore.QPointF(x, y), neuron_size, neuron_size)
+
         painter.setBrush(pg.mkBrush(color=(0,255,0,150)))
-        for x, y in zip(group.buffer_posx[mask], group.buffer_posy[mask]):
+        for x, y in zip(group.buffer_posx[active], group.buffer_posy[active]):
             painter.drawEllipse(QtCore.QPointF(x, y), neuron_size, neuron_size)
+
+        #if type(color) is tuple:
+        #painter.setBrush(pg.mkBrush(color=group.color))
+        #mask=group.output>0
+        #inv_mask=np.invert(mask)
+        #for i, p in enumerate(zip(group.buffer_posx, group.buffer_posy)):#[inv_mask]
+        #    x, y=p
+        #    if type(color) is list or type(color) is np.ndarray:
+        #        if group.output[i] <= 0:
+                    #painter.setPen(0)#pg.mkPen(color=color[i])
+        #            painter.setBrush(pg.mkBrush(color=color[i]))
+        #        else:
+        #            #painter.setPen(0)#pg.mkPen(color=(0,255,0,150))
+        #            painter.setBrush(pg.mkBrush(color=(0,255,0,150)))
+        #    painter.drawEllipse(QtCore.QPointF(x, y), neuron_size, neuron_size)
+
+        #painter.setPen(pg.mkPen(color=(0,255,0,150)))
+        #painter.setBrush(pg.mkBrush(color=(0,255,0,150)))
+        #for x, y in zip(group.buffer_posx[mask], group.buffer_posy[mask]):
+        #    painter.drawEllipse(QtCore.QPointF(x, y), neuron_size, neuron_size)
 
     def draw_weights(self, painter, group, selected_neuron_id):
         painter.setPen(pg.mkPen(color=(255, 0, 0, 255)))
@@ -182,13 +235,14 @@ class DrawItem2(pg.GraphicsObject):
                 c=char
             painter.drawText(x,y,c)
 
-    def attach_parameter_slider(self, p0s, p1s, p2s, p3s, p4s, p5s):
+    def attach_parameter_slider(self, p0s, p1s, p2s, p3s, p4s, p5s, label_cb):
         self.p0s = p0s
         self.p1s = p1s
         self.p2s = p2s
         self.p3s = p3s
         self.p4s = p4s
         self.p5s = p5s
+        self.label_cb = label_cb
 
     def compute_similarity(self, group, neuron_index):
         group._syn_differences_ = group.get_neuron_vec()
@@ -203,6 +257,31 @@ class DrawItem2(pg.GraphicsObject):
         #print(group._syn_differences_)
 
         return group.get_neuron_vec('uniform')#group._syn_differences_
+
+    def draw_labels(self, painter):
+
+        group = self.label_cb.main_object
+
+        if hasattr(group, 'classification'):
+            tag = self.label_cb.get_selected_key()
+            module = self.label_cb.get_selected_module()
+            generator = group.network['Text_Generator', 0]
+            colors = self.get_neuron_color(group)
+
+            if tag in self.label_cb.current_modules and module is not None and generator is not None:
+                class_tag_dict = module.get_class_labels(tag, group.classification, generator)
+
+                for c in class_tag_dict:
+                    mask = group.classification == c
+                    x = np.mean(group.buffer_posx[mask])
+                    y = np.mean(group.buffer_posy[mask])
+
+                    painter.setPen(pg.mkPen(color=colors[mask][0]))
+
+                    qf = QFont('Arial')
+                    qf.setPointSizeF(1)
+                    painter.setFont(qf)
+                    painter.drawText(x, y, class_tag_dict[c])
 
 
 
@@ -224,10 +303,11 @@ class DrawItem2(pg.GraphicsObject):
         painter.scale(1, -1)
 
         for group in groups:
-            similarity = None
-            #if group.tags[0] == nui.neuron_select_group:
-            #    similarity = self.compute_similarity(group, nui.neuron_select_id)
-            self.draw_neurons(painter, group, self.p0s.sliderPosition() / 100, similarity)
+            if group.tags[0] == nui.neuron_select_group:
+                sel = nui.neuron_select_id
+            else:
+                sel = None
+            self.draw_neurons(painter, group, self.p0s.sliderPosition() / 100, sel)
 
         #painter.setBrush(pg.mkBrush(color=(0,255,0,255)))
         #for x, y in zip(group.buffer_posx+attractor_rad_x, group.buffer_posy+attractor_rad_y):
@@ -249,6 +329,9 @@ class DrawItem2(pg.GraphicsObject):
 
 
         self.draw_chars(painter, alphabet, statistics)
+
+        for group in nui.network.NeuronGroups:
+            self.draw_labels(painter)
 
         painter.end()
         self.prepareGeometryChange()
@@ -273,6 +356,9 @@ class sun_gravity_plot_tab(TabBase):
 
     def add_recorder_variables(self, neuron_group, Network_UI):
         return
+
+    #def on_selected_neuron_changed(self, Network_UI):
+    #    self.comboBox.change_main_object(Network_UI.get_selected_neuron_group())
 
     def initialize(self, Network_UI):
         self.sun_gravity_plot_tab=None
@@ -300,9 +386,10 @@ class sun_gravity_plot_tab(TabBase):
                     indices = np.where(d<1)[0]
 
                     if len(indices) > 0:
-                        Network_UI.neuron_select_group = group.tags[0]
-                        Network_UI.neuron_select_id = indices[0]
-                Network_UI.static_update_func()
+                        Network_UI.select_neuron(group.tags[0], indices[0])
+                        #Network_UI.neuron_select_group = group.tags[0]
+                        #Network_UI.neuron_select_id = indices[0]
+                #Network_UI.static_update_func()
 
             msg = 'Each particle is a neuron of the selected Group.\r\n' \
                   'The primary input neurons are fixed to the outer ring.\r\n' \
@@ -387,7 +474,9 @@ class sun_gravity_plot_tab(TabBase):
             self.weight_plot_cb.setChecked(True)
             Network_UI.Add_element(self.weight_plot_cb, stretch=10)
 
-            self.draw_item.attach_parameter_slider(self.sl0, self.sl1, self.sl2, self.sl3, self.sl4, self.sl5)
+            self.comboBox = Network_UI.Add_element(Analytics_Results_Select_ComboBox(Network_UI.network.NeuronGroups[1], tag='labeler', first_entry='none'))
+
+            self.draw_item.attach_parameter_slider(self.sl0, self.sl1, self.sl2, self.sl3, self.sl4, self.sl5, self.comboBox)
 
 
 

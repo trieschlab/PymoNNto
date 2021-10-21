@@ -125,61 +125,37 @@ print(num)
 
             self.code_field.setStyleSheet("QTextEdit { background-color: rgb(255, 255, 255); }")
 
-            self.add_timed_script(name)
+            #self.add_timed_script(name)
 
         def save_btn_click(event):
             Network_UI.text_input_dialog("Please name your script", 'save', save, self.comboBox.itemText(self.comboBox.currentIndex()).replace('.py',''))
 
         self.save_btn_click.clicked.connect(save_btn_click)
 
+        self.compiled = None
+        self.compiled_script_txt = ''
+        self.timestep_execute_cb = Network_UI.Add_element(QCheckBox('Execute every timestep'))
 
-        def timed_execution_add(number):#number is a string!
-            if number.isnumeric():
-                original_file = self.comboBox.itemText(self.comboBox.currentIndex())
-                end = original_file.find(']')
-                if end != -1:
-                    original_file = original_file[end+1:]
+    def update(self, Network_UI):
 
-                original_file = original_file.replace('[', '')
-                original_file = original_file.replace(']', '')
+        if self.timestep_execute_cb.isChecked():
 
-                new_file = '['+number+']'+original_file
+            net = Network_UI.network
+            network = net
+            n = Network_UI.network[Network_UI.neuron_select_group, 0]
+            ng = n
+            neurons = n
+            neuron_group = n
 
-                save(new_file)
-            else:
-                print('no valid iteration number!')
+            code = self.code_field.toPlainText()
 
-        self.timed_execution_btn_click = Network_UI.Add_element(QPushButton('Add to timed execution'))
+            if self.compiled is None or self.compiled_script_txt != code:
+                self.compiled = compile(code, '<string>', 'exec')
+                self.compiled_script_txt = code
 
-        def timed_execution_btn_click(event):
-            Network_UI.text_input_dialog("Enter execution iteration number", 'add', timed_execution_add, "10000")
-
-        self.timed_execution_btn_click.clicked.connect(timed_execution_btn_click)
-
+            exec(self.compiled)
 
 
-
-    def add_timed_script(self, file_name):
-        return
-        '''
-        #
-        if '[' in file_name and ']' in file_name:
-            print(file_name)
-            name = file_name.split('/')[-1].replace('.py', '')
-
-            execution_time = int(name.split(']')[0].replace('[', ''))
-            base_name = name.split(']')[1]
-
-            #self.timed_execution_list_view
-
-            item = QtGui.QStandardItem(str(execution_time)+' | '+base_name)
-            item.setCheckable(True)
-            check = QtCore.Qt.Checked# if checked else QtCore.Qt.Unchecked
-            item.setCheckState(check)
-            self.timed_execution_model.appendRow(item)
-
-            #self.Network_UI.Add_Sidebar_Element([QLabel(str(execution_time)), QCheckBox(base_name), QPushButton('-')], percentages=[10, 85, 5])
-        '''
 
 
 

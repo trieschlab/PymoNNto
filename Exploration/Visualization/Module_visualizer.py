@@ -709,7 +709,7 @@ def analyze_function(object, function_name, ng, sg, arg):
     used_variable_keys_ng = []
     used_variable_keys_sg = []
 
-    error_txt = 'failed to analyse module automatically. You can set the modules attributes, input and output manually by adding the variables visualization_module_attributes, visualization_module_inputs and visualization_module_outputs (string lists) to the module manually'
+    error_txt = 'failed to analyse module automatically.'+ str(object) +' (You can set the modules attributes, input and output manually by adding the variables visualization_module_attributes, visualization_module_inputs and visualization_module_outputs (string lists) to the module manually)'
 
     break_counter=0
     while not finished:
