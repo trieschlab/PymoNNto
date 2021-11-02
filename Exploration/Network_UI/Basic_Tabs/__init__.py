@@ -1,4 +1,4 @@
-from PymoNNto.Exploration.Network_UI.Basic_Tabs.sidebar_activity_module import *
+
 from PymoNNto.Exploration.Network_UI.Basic_Tabs.sidebar_fast_forward_module import *
 from PymoNNto.Exploration.Network_UI.Basic_Tabs.sidebar_save_load_module import *
 from PymoNNto.Exploration.Network_UI.Basic_Tabs.multi_group_plot_tab import *

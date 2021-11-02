@@ -67,12 +67,12 @@ class reconstruction_tab(TabBase):
 
     def update(self, Network_UI):
         if Network_UI.network['Text_Activator', 0] is not None and self.reconstruction_tab.isVisible():
-            group=Network_UI.network[Network_UI.neuron_select_group, 0]
+            group=Network_UI.selected_neuron_group()
 
             '''
             RALN = Reconstruct_Analyze_Label_Network(Network_UI.network)
             RALN.zero_recon()
-            group.recon[Network_UI.neuron_select_id] = 1
+            group.recon[Network_UI.selected_neuron_id()] = 1
             RALN.propagation('W', 10, 'backward', 'forget', 'all', temporal_recon_groups=Network_UI.network['prediction_source'], exponent=4, normalize=True, filter_weakest_percent=40.0)  # forget
 
             generator = Network_UI.network['Text_Generator', 0]
@@ -84,7 +84,7 @@ class reconstruction_tab(TabBase):
 
                 if ng == group:#clicked group?
                     temp = ng.get_neuron_vec()
-                    temp[Network_UI.neuron_select_id] = 1.0
+                    temp[Network_UI.selected_neuron_id()] = 1.0
                     ng.temporal_recon.insert(0, temp)
                 else:
                     ng.temporal_recon.append(ng.get_neuron_vec())
@@ -112,7 +112,7 @@ class reconstruction_tab(TabBase):
                         break
                 text = ''.join(text)
             '''
-            res = compute_temporal_reconstruction(Network_UI.network, group, Network_UI.neuron_select_id, recon_group_tag=self.recon_groups_tag)
+            res = compute_temporal_reconstruction(Network_UI.network, group, Network_UI.selected_neuron_id(), recon_group_tag=self.recon_groups_tag)
 
             if res is not None:
 

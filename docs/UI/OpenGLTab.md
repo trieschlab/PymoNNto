@@ -29,7 +29,7 @@ class OpenGLTab(TabBase):
         #pg.setConfigOption('background', 'w')
         #pg.setConfigOption('foreground', 'k')
 
-        #n = Network_UI.network[Network_UI.neuron_select_group, 0]
+        #n = Network_UI.selected_neuron_group()
 
         for n in Network_UI.network.NeuronGroups:
             n.bars = []
@@ -58,11 +58,11 @@ class OpenGLTab(TabBase):
     def update(self, Network_UI):
         if self.my_Tab.isVisible():
             for n in Network_UI.network.NeuronGroups:
-                #n = Network_UI.network[Network_UI.neuron_select_group, 0]
+                #n = Network_UI.selected_neuron_group()
                 attr = eval('n.'+self.variable)
                 for i in range(n.size):
                     c = np.array(n.color).astype(np.float64)/255.0
-                    if n.tags[0] == Network_UI.neuron_select_group and i==Network_UI.neuron_select_id:
+                    if n == Network_UI.selected_neuron_group() and i==Network_UI.selected_neuron_id():
                         c = [0.0, 1.0, 0.0, .5]
                     c += attr[i]
                     c = np.clip(c, 0, 1)

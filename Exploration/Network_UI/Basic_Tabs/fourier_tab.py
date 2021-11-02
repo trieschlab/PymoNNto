@@ -93,66 +93,46 @@ class fourier_tab(TabBase):
 
     def update(self, Network_UI):
         if self.fourier_tab.isVisible():
-            if len(Network_UI.network[Network_UI.neuron_select_group]) >= 0:
-                group=Network_UI.network[Network_UI.neuron_select_group, 0]
+            group = Network_UI.selected_neuron_group()
 
-                try:
-                #if hasattr(group, self.parameter):
+            try:
+            #if hasattr(group, self.parameter):
 
-                    cut = int(self.cut_slider.sliderPosition())
-                    ms_per_cycle = int(self.ms_per_cycle_slider.sliderPosition())
-                    self.mspc_label.setText('ms/cycle: {}'.format(ms_per_cycle))
+                cut = int(self.cut_slider.sliderPosition())
+                ms_per_cycle = int(self.ms_per_cycle_slider.sliderPosition())
+                self.mspc_label.setText('ms/cycle: {}'.format(ms_per_cycle))
 
-                    # for name, min_f, max_f, color in [('alpha',8,13,'green'),('alpha',8,13,'green')]
+                # for name, min_f, max_f, color in [('alpha',8,13,'green'),('alpha',8,13,'green')]
 
-                    # c2 = plt.plot([2, 1, 4, 3], pen='g', fillLevel=0, fillBrush=(255, 255, 255, 30), name='green plot')
-                    # c3 = plt.addLine(y=4, pen='y')
+                # c2 = plt.plot([2, 1, 4, 3], pen='g', fillLevel=0, fillBrush=(255, 255, 255, 30), name='green plot')
+                # c3 = plt.addLine(y=4, pen='y')
 
-                    #rec = group['rec_'+str(self.timesteps), 0]
-                    #rec = Network_UI.rec(group, self.timesteps)
-                    exc_act = group['np.mean(n.'+self.parameter+')', 0, 'np'][-self.timesteps:]
-                    N = len(exc_act)
-                    T = ms_per_cycle / 1000
-                    yf = scipy.fftpack.fft(exc_act)
-                    xf = np.linspace(int(1.0 - N / 1000), int(1.0 / (2.0 * T)), int(N / 2))[cut:]
-                    real = (2.0 / N * np.abs(yf[:N // 2]))[cut:]
-                    self.exc_fft_curve.setData(xf, self.smooth(real))
+                #rec = group['rec_'+str(self.timesteps), 0]
+                #rec = Network_UI.rec(group, self.timesteps)
+                exc_act = group['np.mean(n.'+self.parameter+')', 0, 'np'][-self.timesteps:]
+                N = len(exc_act)
+                T = ms_per_cycle / 1000
+                yf = scipy.fftpack.fft(exc_act)
+                xf = np.linspace(int(1.0 - N / 1000), int(1.0 / (2.0 * T)), int(N / 2))[cut:]
+                real = (2.0 / N * np.abs(yf[:N // 2]))[cut:]
+                self.exc_fft_curve.setData(xf, self.smooth(real))
 
-                    # if len(exc_act)==1000:
-                    #    self.fouriers.append(real)
+                # if len(exc_act)==1000:
+                #    self.fouriers.append(real)
 
-                    # if Network_UI.network.iteration==2000:
-                    #    plt.imshow(np.array(self.fouriers).transpose())
-                    #    plt.show()
+                # if Network_UI.network.iteration==2000:
+                #    plt.imshow(np.array(self.fouriers).transpose())
+                #    plt.show()
 
-                    max_y = np.max(real) + 0.001
-                    max_x = np.max(xf)
+                max_y = np.max(real) + 0.001
+                max_x = np.max(xf)
 
-                    self.exc_delta.setData([0.1, 3.9], [0, 0], fillLevel=max_y, brush=(50, 250, 50, 50), pen=None)
-                    self.exc_theta.setData([min(max_x, 4), min(max_x, 7.9)], [0, 0], fillLevel=max_y, brush=(100, 200, 50, 50), pen=None)
-                    self.exc_alpha.setData([min(max_x, 8), min(max_x, 13.9)], [0, 0], fillLevel=max_y, brush=(150, 150, 50, 50), pen=None)
-                    self.exc_beta.setData([min(max_x, 14), min(max_x, 29.9)], [0, 0], fillLevel=max_y, brush=(200, 100, 50, 50), pen=None)
-                    self.exc_gamma.setData([min(max_x, 30), min(max_x, 100)], [0, 0], fillLevel=max_y, brush=(250, 50, 50, 50), pen=None)
-                except:
-                    print(self.parameter, 'cannot be evaluated')
+                self.exc_delta.setData([0.1, 3.9], [0, 0], fillLevel=max_y, brush=(50, 250, 50, 50), pen=None)
+                self.exc_theta.setData([min(max_x, 4), min(max_x, 7.9)], [0, 0], fillLevel=max_y, brush=(100, 200, 50, 50), pen=None)
+                self.exc_alpha.setData([min(max_x, 8), min(max_x, 13.9)], [0, 0], fillLevel=max_y, brush=(150, 150, 50, 50), pen=None)
+                self.exc_beta.setData([min(max_x, 14), min(max_x, 29.9)], [0, 0], fillLevel=max_y, brush=(200, 100, 50, 50), pen=None)
+                self.exc_gamma.setData([min(max_x, 30), min(max_x, 100)], [0, 0], fillLevel=max_y, brush=(250, 50, 50, 50), pen=None)
+            except:
+                print(self.parameter, 'cannot be evaluated')
 
-                '''
-                if len(Network_UI.network[Network_UI.inh_group_name]) > 0:
-                    inh_act = Network_UI.network[Network_UI.inh_group_name, 0]['np.mean(n.output)', 0, 'np'][-1000:]
-                    N = len(inh_act)
-                    T = ms_per_cycle / 1000
-                    yf = scipy.fftpack.fft(inh_act)
-                    xf = np.linspace(1.0-N/1000, 1.0 / (2.0 * T), N / 2)
-                    real = (2.0 / N * np.abs(yf[:N // 2]))[cut:]
-                    self.inh_fft_curve.setData(xf[cut:], self.smooth(real))
-
-                    max_y = np.max(real)+0.001
-                    max_x = np.max(xf)
-
-                    self.inh_delta.setData([0.1, 3.9], [0, 0], fillLevel=max_y, brush=(50, 250, 50, 50), pen=None)
-                    self.inh_theta.setData([min(max_x, 4), min(max_x, 7.9)], [0, 0], fillLevel=max_y, brush=(100, 200, 50, 50), pen=None)
-                    self.inh_alpha.setData([min(max_x, 8), min(max_x, 13.9)], [0, 0], fillLevel=max_y, brush=(150, 150, 50, 50), pen=None)
-                    self.inh_beta.setData([min(max_x, 14), min(max_x, 29.9)], [0, 0], fillLevel=max_y, brush=(200, 100, 50, 50), pen=None)
-                    self.inh_gamma.setData([min(max_x, 30), min(max_x, 100)], [0, 0], fillLevel=max_y, brush=(250, 50, 50, 50), pen=None)
-                '''
 

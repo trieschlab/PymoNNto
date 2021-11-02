@@ -122,7 +122,7 @@ class multi_group_plot_tab(TabBase):
                         except:  # else:
                             curve.clear()
 
-            group = Network_UI.network[Network_UI.neuron_select_group, 0]
+            group = Network_UI.selected_neuron_group()
             for curve_dict in self.neuron_plot_dicts:
                 for variable in curve_dict:
                     curve = curve_dict[variable]
@@ -131,7 +131,7 @@ class multi_group_plot_tab(TabBase):
                         neuron_data = group['n.' + variable, 0, 'np'][-self.timesteps:].astype(def_dtype)#for bool
                         iterations = group['n.iteration', 0, 'np'][-self.timesteps:]
                         if len(neuron_data.shape) > 1:
-                            neuron_data = neuron_data[:, Network_UI.neuron_select_id]
+                            neuron_data = np.mean(neuron_data[:, Network_UI.selected_neuron_mask()], axis=1)
                         curve.setData(iterations, neuron_data)
                     except:
                         curve.clear()

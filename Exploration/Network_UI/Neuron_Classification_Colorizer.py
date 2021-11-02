@@ -31,7 +31,7 @@ class Neuron_Classification_Colorizer(AnalysisModule):
 
         while len(self.unique_colors[format]) < number:
             if rnd_r: r = np.random.rand()*255.0
-            if rnd_g: g = np.random.rand()*255.0
+            if rnd_g: g = np.random.rand()*100.0 #lower because green is the UI base color
             if rnd_b: b = np.random.rand()*255.0
             if rnd_a: a = np.random.rand()*255.0
 

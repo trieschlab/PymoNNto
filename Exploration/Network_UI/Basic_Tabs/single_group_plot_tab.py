@@ -70,9 +70,9 @@ class single_group_plot_tab(TabBase):
 
     def update(self, Network_UI):
         if self.inh_exc_tab.isVisible():
-            group = Network_UI.network[Network_UI.neuron_select_group, 0]
+            group = Network_UI.selected_neuron_group()
 
-            self.group_title_label.setText('NeuronGroup ('+Network_UI.neuron_select_group+')')
+            self.group_title_label.setText('NeuronGroup ('+Network_UI.selected_neuron_group().tags[0]+')')
 
             for var in self.variables:
                 iterations = group['n.iteration', 0, 'np'][-self.timesteps:]
@@ -91,7 +91,7 @@ class single_group_plot_tab(TabBase):
                 try:
                     if self.line_checkboxes[var].isChecked():
                         single_var = 'n.' + var
-                        data_neuron = group[single_var, 0, 'np'][-self.timesteps:, Network_UI.neuron_select_id].astype(def_dtype)
+                        data_neuron = group[single_var, 0, 'np'][-self.timesteps:, Network_UI.selected_neuron_id()].astype(def_dtype)
                         self.neuron_curves[var].setData(iterations, data_neuron)
                     else:
                         self.neuron_curves[var].clear()

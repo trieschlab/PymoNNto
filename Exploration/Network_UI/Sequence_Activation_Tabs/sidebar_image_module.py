@@ -48,7 +48,7 @@ class sidebar_image_module(TabBase):
             #    self.image_history.append(np.ones((1, self.image_history[0].shape[1], 3)))
             #    self.image_history_image.setImage(np.concatenate(self.image_history, axis=0), levels=(0, 1))
 
-            group = Network_UI.network[Network_UI.neuron_select_group, 0]
+            group = Network_UI.selected_neuron_group()
             if hasattr(group, 'Input_Mask'):
                 pattern = self.max_div(group.output[group.Input_Mask])
                 #print(pattern)
@@ -61,7 +61,7 @@ class sidebar_image_module(TabBase):
                 RALN = Reconstruct_Analyze_Label_Network(Network_UI.network)
                 RALN.zero_recon()
                 group.recon = group.output.copy()
-                RALN.propagation('W', 6, 'backward', 'forget', 'all', temporal_recon_groups=Network_UI.network[Network_UI.neuron_select_group], exponent=None, normalize=False, filter_weakest_percent=None)
+                RALN.propagation('W', 6, 'backward', 'forget', 'all', temporal_recon_groups=[Network_UI.selected_neuron_group()], exponent=None, normalize=False, filter_weakest_percent=None)
 
                 baseline = self.max_div(group.temporal_recon[-1][group.Input_Mask])
                 images = []

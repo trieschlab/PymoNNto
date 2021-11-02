@@ -95,7 +95,7 @@ print(num)
         def exec_btn_click(event):
             net = Network_UI.network
             network = net
-            n = Network_UI.network[Network_UI.neuron_select_group, 0]
+            n = Network_UI.selected_neuron_group()
             ng = n
             neurons = n
             neuron_group = n
@@ -142,7 +142,7 @@ print(num)
 
             net = Network_UI.network
             network = net
-            n = Network_UI.network[Network_UI.neuron_select_group, 0]
+            n = Network_UI.selected_neuron_group()
             ng = n
             neurons = n
             neuron_group = n
@@ -154,8 +154,4 @@ print(num)
                 self.compiled_script_txt = code
 
             exec(self.compiled)
-
-
-
-
 

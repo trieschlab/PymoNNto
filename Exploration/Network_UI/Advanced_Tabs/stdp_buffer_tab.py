@@ -132,66 +132,52 @@ class stdp_buffer_tab(TabBase):
 
     def update(self, Network_UI):
         if self.stdp_tab.isVisible():
-            if len(Network_UI.network[Network_UI.neuron_select_group]) > 0:
-                group = Network_UI.network[Network_UI.neuron_select_group, 0]
-                synapse_groups = group.afferent_synapses['All']
-                #print(synapse_groups)
 
-                if self.current_selector_group != group:
-                    self.current_selector_group = group
-                    self.select_syn_box.clear()
-                    self.current_selector_index_dict.clear()
-                    self.current_selector_index_dict[-1]=-1
-                    ct=0
-                    for i,s in enumerate(synapse_groups):
-                        if (type(s.dst.mask) == np.ndarray and s.dst.mask[Network_UI.neuron_select_id]) or (type(s.dst.mask) is bool and s.dst.mask==True):
-                            self.current_selector_index_dict[ct]=i
-                            self.select_syn_box.addItem(' '.join(s.tags))
-                            ct += 1
+            group = Network_UI.selected_neuron_group()
+            synapse_groups = group.afferent_synapses['All']
+            #print(synapse_groups)
 
-                    #self.select_syn_box.addItems(Network_UI.transmitters)
+            if self.current_selector_group != group:
+                self.current_selector_group = group
+                self.select_syn_box.clear()
+                self.current_selector_index_dict.clear()
+                self.current_selector_index_dict[-1]=-1
+                ct=0
+                for i,s in enumerate(synapse_groups):
+                    if (type(s.dst.mask) == np.ndarray and s.dst.mask[Network_UI.selected_neuron_id()]) or (type(s.dst.mask) is bool and s.dst.mask==True):
+                        self.current_selector_index_dict[ct]=i
+                        self.select_syn_box.addItem(' '.join(s.tags))
+                        ct += 1
 
-                current_select_index = self.current_selector_index_dict[self.select_syn_box.currentIndex()]
+                #self.select_syn_box.addItems(Network_UI.transmitters)
 
-                if current_select_index >= 0:
-                    syn = synapse_groups[current_select_index]
+            current_select_index = self.current_selector_index_dict[self.select_syn_box.currentIndex()]
 
-                    post_act = group.get_buffer(syn.dst, 'output', group.timescale)#s.dst.get_masked_dict('output_buffer_dict', neurons.timescale)
-                    pre_act = group.get_buffer(syn.src, 'output', group.timescale)#s.src.get_masked_dict('output_buffer_dict', neurons.timescale)
+            if current_select_index >= 0:
+                syn = synapse_groups[current_select_index]
 
-                    self.post_length = len(post_act)
-                    self.pre_length = len(pre_act)
+                post_act = group.get_buffer(syn.dst, 'output', group.timescale)#s.dst.get_masked_dict('output_buffer_dict', neurons.timescale)
+                pre_act = group.get_buffer(syn.src, 'output', group.timescale)#s.src.get_masked_dict('output_buffer_dict', neurons.timescale)
 
-                    sensitivity = self.sensitivity_slider.sliderPosition()/100.0*0.0001
+                self.post_length = len(post_act)
+                self.pre_length = len(pre_act)
 
-                    self.pre_img.setImage(np.rot90(pre_act, 3), levels=(0, 1))
-                    self.post_img.setImage(np.rot90(post_act.transpose(), 3), levels=(0, 1))
+                sensitivity = self.sensitivity_slider.sliderPosition()/100.0*0.0001
 
-                    if hasattr(syn, 'dw'):
-                        self.min_label.setText('min dW: ' + str(np.min(syn.dw)))
-                        self.max_label.setText('max dW: ' + str(np.max(syn.dw)))
-                        self.syn_img.setImage(np.rot90(syn.dw, 3), levels=(-sensitivity, +sensitivity))
-                    else:
-                        self.syn_img.clear()
+                self.pre_img.setImage(np.rot90(pre_act, 3), levels=(0, 1))
+                self.post_img.setImage(np.rot90(post_act.transpose(), 3), levels=(0, 1))
 
-            else:
-                self.syn_img.clear()
-                self.pre_img.clear()
-                self.post_img.clear()
+                if hasattr(syn, 'dw'):
+                    self.min_label.setText('min dW: ' + str(np.min(syn.dw)))
+                    self.max_label.setText('max dW: ' + str(np.max(syn.dw)))
+                    self.syn_img.setImage(np.rot90(syn.dw, 3), levels=(-sensitivity, +sensitivity))
+                else:
+                    self.syn_img.clear()
 
-            '''
-                    gap = 5
-    
-                    dwh = syn.dw.shape[0]
-                    dww = syn.dw.shape[1]
-    
-                    syn.dw = np.concatenate([syn.dw, np.ones((syn.dw.shape[0], gap + len(post_act))) * -1], axis=1)
-                    syn.dw = np.concatenate([syn.dw, np.ones((gap + len(pre_act), syn.dw.shape[1])) * -1], axis=0)
-    
-                    syn.dw[0:len(post_act[0]), dww + gap:dww + gap + len(post_act)] = post_act.transpose()
-    
-                    syn.dw[dwh + gap:dwh + gap + len(pre_act), 0:len(pre_act[0])] = pre_act
-            '''
+        else:
+            self.syn_img.clear()
+            self.pre_img.clear()
+            self.post_img.clear()
 
 
 

@@ -27,6 +27,7 @@ class Analysis_Module_tab(TabBase):
             Network_UI.Add_element(QLabel(''), stretch=spacing_blocks)
 
         def execute_clicked(event):
+            Network_UI.pause = True
             module.add_progress_update_function(self.update_progress)
             arguments = {}
             for key in argument_edits:

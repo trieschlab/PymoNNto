@@ -71,14 +71,14 @@ class hist_tab(TabBase):
         # self.Next_H_Block()
 
         # def ttp1_click(event):
-        #    plot_t_vs_tp1(np.mean(np.array(self.network[self.neuron_select_group,0]['n.output', 0][-1000:]), axis=1))
+        #    plot_t_vs_tp1(np.mean(np.array(self.selected_neuron_group()['n.output', 0][-1000:]), axis=1))
         # self.ttp1_btn = QPushButton('net t vs t+1 plot (1k)', self.main_window)
         # self.ttp1_btn.clicked.connect(ttp1_click)
         # self.Add_element(self.ttp1_btn)
 
         # def ives_click(event):
-        #    inh=np.array(self.network[self.neuron_select_group, 0]['n.inhibition', 0][-1000:])
-        #    exc=np.array(self.network[self.neuron_select_group, 0]['n.excitation', 0][-1000:])
+        #    inh=np.array(self.selected_neuron_group()['n.inhibition', 0][-1000:])
+        #    exc=np.array(self.selected_neuron_group()['n.excitation', 0][-1000:])
         #    inhibition_excitation_scatter(inh,exc)
         # self.ives_btn = QPushButton('net inhibition vs excitation scatter (1k)', self.main_window)
         # self.ives_btn.clicked.connect(ives_click)
@@ -131,7 +131,7 @@ class hist_tab(TabBase):
                     self.net_weight_hist_plots[transmitter].addItem(curve)
 
                     self.weight_hist_plots[transmitter].clear()
-                    y, x = np.histogram(GLU_syn[Network_UI.neuron_select_id][en_mask[Network_UI.neuron_select_id]], bins=bins)#[selected_neuron_GLU_syn > msl]
+                    y, x = np.histogram(GLU_syn[Network_UI.selected_neuron_id()][en_mask[Network_UI.selected_neuron_id()]], bins=bins)#[selected_neuron_GLU_syn > msl]
                     curve = pg.PlotCurveItem(x, y, stepMode=True, fillLevel=0, brush=Network_UI.neuron_select_color)
                     self.weight_hist_plots[transmitter].addItem(curve)
 
@@ -139,7 +139,7 @@ class hist_tab(TabBase):
     def update(self, Network_UI):
         if self.additionaltab.isVisible():
 
-            group = Network_UI.network[Network_UI.neuron_select_group, 0]
+            group = Network_UI.selected_neuron_group()
             n=group#for eval comand
 
             if self.mask_param is not None and hasattr(group, self.mask_param):

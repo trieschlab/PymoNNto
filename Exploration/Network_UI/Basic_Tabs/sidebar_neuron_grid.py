@@ -17,26 +17,38 @@ class sidebar_neuron_grid_submodule(TabBase):
         tag = self.image_item.neuron_group_tag
         self.color_select_box.change_main_object(Network_UI.network[tag, 0])
 
+    def get_clicked_neuron_id(self, Network_UI, event):
+        group_tag = event.currentItem.neuron_group_tag
+        w = Network_UI.network[group_tag, 0].width
+        h = Network_UI.network[group_tag, 0].height
+        d = Network_UI.network[group_tag, 0].depth
+        y_temp = int(
+            (h * d - 1) - np.trunc(event.pos().y()))  # np.clip(int((h - 1) - np.trunc(event.pos().y())), 0, h - 1)
+
+        neuron_select_x = np.clip(int(np.trunc(event.pos().x())), 0, w - 1)
+        neuron_select_y = np.clip(int(y_temp - np.trunc(y_temp / h)), 0, h - 1)
+        neuron_select_z = np.clip(int(np.trunc(y_temp / h)), 0, d - 1)
+
+        h_abs = np.clip(int(y_temp), 0, h * d - 1)
+        return (h_abs) * w + neuron_select_x
+
     def initialize(self, Network_UI, index):
 
+
+        #just store for mcde event bug ('QGraphicsSceneMouseEvent' object has no attribute 'currentItem')
+        self.last_id = 0
+        self.last_group = None
+
         def mce(event):
-            group_tag = event.currentItem.neuron_group_tag
-            w = Network_UI.network[group_tag, 0].width
-            h = Network_UI.network[group_tag, 0].height
-            d = Network_UI.network[group_tag, 0].depth
-            y_temp = int((h*d - 1) - np.trunc(event.pos().y())) #np.clip(int((h - 1) - np.trunc(event.pos().y())), 0, h - 1)
+            self.last_id = self.get_clicked_neuron_id(Network_UI, event)
+            self.last_group = Network_UI.network[event.currentItem.neuron_group_tag, 0]
+            Network_UI.select_neuron(self.last_group, self.last_id, add_to_select_group=Network_UI.control_key_down)
 
-            Network_UI.neuron_select_x = np.clip(int(np.trunc(event.pos().x())), 0, w - 1)
-            Network_UI.neuron_select_y = np.clip(int(y_temp-np.trunc(y_temp/h)), 0, h - 1)
-            Network_UI.neuron_select_z = np.clip(int(np.trunc(y_temp/h)), 0, d - 1)
+        def mdce(event):
+            if self.last_group.classification is not None:
+                selected_class = self.last_group.classification[self.last_id]
+                Network_UI.select_neuron_class(self.last_group, selected_class, add_to_select_group=Network_UI.control_key_down)
 
-            h_abs = np.clip(int(y_temp), 0, h * d - 1)
-            id = (h_abs) * w + Network_UI.neuron_select_x
-
-            Network_UI.select_neuron(group_tag, id)
-
-            #print(Network_UI.neuron_select_x, Network_UI.neuron_select_y, Network_UI.neuron_select_z, Network_UI.neuron_select_id, ' ', event.pos().x(), event.pos().y())
-            #Network_UI.static_update_func()
 
         group_select_box = QComboBox()
         self.color_select_box = Analytics_Results_Select_ComboBox(Network_UI.network[Network_UI.group_tags[index], 0] ,'classifier', first_entry='group color')
@@ -66,13 +78,15 @@ class sidebar_neuron_grid_submodule(TabBase):
         Network_UI.neuron_visible_groups.append(Network_UI.group_tags[index])
         self.image_item.mouseClickEvent = mce
 
+        self.image_item.mouseDoubleClickEvent = mdce
+
+
+
         def group_changed(select_index):
             tag = Network_UI.group_tags[select_index]
-            Network_UI.select_neuron(tag, 0)
-            #Network_UI.neuron_select_group = tag
+            Network_UI.select_neuron(Network_UI.network[tag, 0], 0)
             self.image_item.neuron_group_tag = tag
             Network_UI.neuron_visible_groups[index] = tag
-            #Network_UI.neuron_select_id = 0
 
         group_select_box.addItems(Network_UI.group_tags)
         group_select_box.setCurrentIndex(index)
@@ -99,7 +113,10 @@ class sidebar_neuron_grid_submodule(TabBase):
             group.classification = self.color_select_box.get_selected_result()
             image = np.array(group['Neuron_Classification_Colorizer', 0].get_color_list(group.classification, format='[r,g,b]'))
 
-
+            #selected
+            if Network_UI.selected_neuron_group().tags[0] == group_tag:
+                for i in range(3):
+                    image[Network_UI.selected_neuron_mask(), i] = Network_UI.neuron_select_color[i]
 
             #parameter
             for param, color in self.add_color_dict.items():
@@ -115,38 +132,7 @@ class sidebar_neuron_grid_submodule(TabBase):
                 except:
                     pass
 
-            #selected
-            if Network_UI.neuron_select_group == group_tag:
-                for i in range(3):
-                    image[Network_UI.neuron_select_id, i] = Network_UI.neuron_select_color[i]
 
-            '''
-            alpha = group.color[3] / 255.0
-            base_color = (group.color[0] * alpha, group.color[1] * alpha, group.color[2] * alpha)
-
-            image=np.zeros((group.size,3))
-
-            for i in range(3):
-                image[:, i] += base_color[i]
-
-            if Network_UI.neuron_select_group == group_tag:
-                for i in range(3):
-                    image[Network_UI.neuron_select_id, i] = Network_UI.neuron_select_color[i]
-
-            for param, color in self.add_color_dict.items():
-                try:
-                #if True:#hasattr(group, param):
-                    data=eval(self.compiled[param])
-
-                    if (type(data) == np.ndarray and data.dtype == np.dtype('bool')) or (type(data) == bool):
-                        for i in range(3):
-                            image[data, i] += color[i]
-                    else:
-                        for i in range(3):
-                            image[:, i] += color[i]*data
-                except:
-                    pass#print(param, "can not be evaluated")
-            '''
 
             image=np.reshape(image, (group.height*group.depth, group.width, 3))#group.depth
             self.image_item.setImage(np.rot90(image, 3), levels=(0, 255))

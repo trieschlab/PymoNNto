@@ -127,14 +127,14 @@ class DrawItem2(pg.GraphicsObject):
             result.append(color)
         return result
 
-    def class_to_color(self, classes):
-        result = []
-        class_colors = {}
-        for c in classes:
-            if c not in class_colors:
-                class_colors[c]=(np.random.rand()*255,np.random.rand()*255,np.random.rand()*255,255)
-            result.append(class_colors[c])
-        return result
+    #def class_to_color(self, classes):
+    #    result = []
+    #    class_colors = {}
+    #    for c in classes:
+    #        if c not in class_colors:
+    #            class_colors[c]=(np.random.rand()*255,np.random.rand()*255,np.random.rand()*255,255)
+    #        result.append(class_colors[c])
+    #    return result
 
 
     def get_neuron_color(self, group):
@@ -244,19 +244,19 @@ class DrawItem2(pg.GraphicsObject):
         self.p5s = p5s
         self.label_cb = label_cb
 
-    def compute_similarity(self, group, neuron_index):
-        group._syn_differences_ = group.get_neuron_vec()
-        for sg in group.afferent_synapses['GLU']:
-            if neuron_index in sg.dst.id:
-                sg.dst._syn_differences_ += np.sum(sg.W * sg.W[:,np.where(sg.dst.id==neuron_index)[0]], axis=1)
+    #def compute_similarity(self, group, neuron_index):
+    #    group._syn_differences_ = group.get_neuron_vec()
+    #    for sg in group.afferent_synapses['GLU']:
+    #        if neuron_index in sg.dst.id:
+    #            sg.dst._syn_differences_ += np.sum(sg.W * sg.W[:,np.where(sg.dst.id==neuron_index)[0]], axis=1)
 
-        m=np.max(group._syn_differences_)
-        if m>0:
-            group._syn_differences_=1.0-(group._syn_differences_/m)
+    #    m=np.max(group._syn_differences_)
+    #    if m>0:
+    #        group._syn_differences_=1.0-(group._syn_differences_/m)
 
         #print(group._syn_differences_)
 
-        return group.get_neuron_vec('uniform')#group._syn_differences_
+    #    return group.get_neuron_vec('uniform')#group._syn_differences_
 
     def draw_labels(self, painter):
 
@@ -278,8 +278,8 @@ class DrawItem2(pg.GraphicsObject):
 
                     painter.setPen(pg.mkPen(color=colors[mask][0]))
 
-                    qf = QFont('Arial')
-                    qf.setPointSizeF(1)
+                    qf = QFont('Consolas')
+                    qf.setPointSizeF(1.0)
                     painter.setFont(qf)
                     painter.drawText(x, y, class_tag_dict[c])
 
@@ -303,8 +303,8 @@ class DrawItem2(pg.GraphicsObject):
         painter.scale(1, -1)
 
         for group in groups:
-            if group.tags[0] == nui.neuron_select_group:
-                sel = nui.neuron_select_id
+            if group == nui.selected_neuron_group():
+                sel = nui.selected_neuron_id()
             else:
                 sel = None
             self.draw_neurons(painter, group, self.p0s.sliderPosition() / 100, sel)
@@ -314,9 +314,7 @@ class DrawItem2(pg.GraphicsObject):
         #    painter.drawEllipse(QtCore.QPointF(x, y), 1, 1)
 
         if show_weights:
-            for group in groups:
-                if group.tags[0] == nui.neuron_select_group:
-                    self.draw_weights(painter, group, nui.neuron_select_id)
+            self.draw_weights(painter, nui.selected_neuron_group(), nui.selected_neuron_id())
 
 
         painter.setPen(pg.mkPen(color=(0, 0, 0, 255), width=10))
@@ -386,10 +384,8 @@ class sun_gravity_plot_tab(TabBase):
                     indices = np.where(d<1)[0]
 
                     if len(indices) > 0:
-                        Network_UI.select_neuron(group.tags[0], indices[0])
-                        #Network_UI.neuron_select_group = group.tags[0]
-                        #Network_UI.neuron_select_id = indices[0]
-                #Network_UI.static_update_func()
+                        Network_UI.select_neuron(group, indices[0])
+
 
             msg = 'Each particle is a neuron of the selected Group.\r\n' \
                   'The primary input neurons are fixed to the outer ring.\r\n' \

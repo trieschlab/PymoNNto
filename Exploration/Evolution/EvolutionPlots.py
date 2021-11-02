@@ -168,8 +168,8 @@ class DrawItem2(pg.GraphicsObject):
 
         if show_weights:
             for group in groups:
-                if group.tags[0] == nui.neuron_select_group:
-                    self.draw_weights(painter, group, nui.neuron_select_id)
+                if group == nui.selected_neuron_group():
+                    self.draw_weights(painter, group, nui.selected_neuron_id())
 
 
         painter.setPen(pg.mkPen(color=(0, 0, 0, 255), width=10))
@@ -296,15 +296,5 @@ def update_evolution_plot(ui, tab, evo_name, gene_keys, data_folder=get_data_fol
 
     tab.radar_plot.update()
 
-#def c(event):
-#    for group in event.currentItem.groups:
-#        dx = group.buffer_posx - event.pos().x()
-#        dy = group.buffer_posy - event.pos().y() * -1
-#        d = np.sqrt(dx * dx + dy * dy)
 
-#        indices = np.where(d < 1)[0]
-
-        #if len(indices) > 0:
-        #    Network_UI.neuron_select_group = group.tags[0]
-        #    Network_UI.neuron_select_id = indices[0]
 

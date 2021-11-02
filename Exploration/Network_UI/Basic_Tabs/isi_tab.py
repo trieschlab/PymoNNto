@@ -104,7 +104,7 @@ class isi_tab(TabBase):
         act_data = group['n.' + self.param, 0, 'np'][-self.timesteps:,:]
 
         self.neuron_isi_plt.clear()
-        y, x = np.histogram(SpikeTrain_ISI(act_data[-self.timesteps:, Network_UI.neuron_select_id]), bins=neuron_bins)
+        y, x = np.histogram(SpikeTrain_ISI(act_data[-self.timesteps:, Network_UI.selected_neuron_id()]), bins=neuron_bins)
         curve = pg.PlotCurveItem(x, y, stepMode=True, fillLevel=0, brush=Network_UI.neuron_select_color)
         self.neuron_isi_plt.addItem(curve)
 
@@ -142,7 +142,7 @@ class isi_tab(TabBase):
         avg_acts = np.mean(group['n.' + self.param, 0, 'np'][-self.timesteps:, :], axis=0)
 
         color_str=('#%02x%02x%02x'% Network_UI.neuron_select_color[0:3]).upper()
-        self.neuron_avg_act_label.setText('Selected neuron average spike rate:<br><font color='+color_str+'>'+str(avg_acts[Network_UI.neuron_select_id])+'</font>')
+        self.neuron_avg_act_label.setText('Selected neuron average spike rate:<br><font color='+color_str+'>'+str(avg_acts[Network_UI.selected_neuron_id()])+'</font>')
 
         self.net_avg_hist_plt.clear()
         y, x = np.histogram(avg_acts[not_input_mask], bins=net_bins)
@@ -160,7 +160,7 @@ class isi_tab(TabBase):
     def update(self, Network_UI):
         if self.isi_tab.isVisible():
 
-            group = Network_UI.network[Network_UI.neuron_select_group, 0]
+            group = Network_UI.selected_neuron_group()
             n = group#for eval comand
 
             if self.mask_param is not None and hasattr(group, self.mask_param):

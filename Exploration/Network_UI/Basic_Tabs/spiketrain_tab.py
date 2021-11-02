@@ -34,8 +34,8 @@ class spiketrain_tab(TabBase):
                     data = group['n.'+self.parameter, 0, 'np'][-self.timesteps:].astype(np.float64)
                     mi=0#np.min(data)
                     ma=np.max(data)
-                    if group_tag == Network_UI.neuron_select_group:
-                        id=Network_UI.neuron_select_id
+                    if group_tag == Network_UI.selected_neuron_group().tags[0]:
+                        id=Network_UI.selected_neuron_id()
                         data[:, id-1:id+2] += 0.2*ma
                         data[:, id] += 0.3*ma
                     self.spiketrain_images[i].setImage(data, levels=(mi, ma))#np.rot90(, 3)

@@ -56,6 +56,8 @@ class UI_Base(QApplication):
 
         self.main_window = QWidget()
         self.main_window.keyPressEvent = self.keyPressEvent
+        self.main_window.keyReleaseEvent = self.keyReleaseEvent
+        self.control_key_down=False
 
         self.init_QT_Window(label, create_sidebar)
         quit = QAction("Quit", self.main_window)
@@ -321,8 +323,14 @@ class UI_Base(QApplication):
         else:
             return elements
 
+    def keyReleaseEvent(self, event):
+        if event.key() == Qt.Key_Control:
+            self.control_key_down=False
 
     def keyPressEvent(self, event):
+        if event.key() == Qt.Key_Control:
+            self.control_key_down=True
+
         if event.key() in [Qt.Key_N, Qt.Key_C, Qt.Key_T, Qt.Key_M]:
             self.text_input_dialog('Please enter Note:', 'set note', self.set_note, default_text='-')
 

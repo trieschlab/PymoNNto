@@ -64,9 +64,9 @@ class AnalysisModule(NetworkObjectBase):
         else:
             return default
 
-    def _update_notification_(self):
+    def _update_notification_(self, key=None):
         for function in self.update_notifier_functions:
-            function()
+            function(key)
 
     def remove_update_notifier(self, function):
         if function in self.update_notifier_functions:
@@ -103,7 +103,7 @@ class AnalysisModule(NetworkObjectBase):
         if self.save_results and result is not None:
             self.current_result = result
             self.result_storage[key] = result
-        self._update_notification_()
+        self._update_notification_(key)
         return result
 
     def last_call_result(self):

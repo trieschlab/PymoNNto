@@ -67,7 +67,7 @@ class criticality_tab(TabBase):
         self.WP_test_execute = False
         def on_click(event):
             self.WP_test_execute = True
-            #self.update_branching(Network_UI, Network_UI.network[Network_UI.neuron_select_group, 0])
+            #self.update_branching(Network_UI.selected_neuron_group())
             #self.log = not self.log
             #self.avalance_size_plot.setLogMode(self.log, self.log)
             #self.avalance_duration_plot.setLogMode(self.log, self.log)
@@ -222,7 +222,7 @@ class criticality_tab(TabBase):
     def update(self, Network_UI):
         if self.criticality_tab.isVisible():
 
-            group = Network_UI.network[Network_UI.neuron_select_group, 0]
+            group = Network_UI.selected_neuron_group()
             n = group#for eval comand
 
             if self.mask_param is not None and hasattr(group, self.mask_param):

@@ -31,7 +31,6 @@ class scatter_tab(TabBase):
             for i, group_tag in enumerate(Network_UI.neuron_visible_groups):
                 if len(Network_UI.network[group_tag]) > 0:
                     group = Network_UI.network[group_tag, 0]
-                    #group=Network_UI.network[Network_UI.neuron_select_group, 0]
 
                     if hasattr(group, self.x_var) and hasattr(group, self.y_var):
                         #rec = Network_UI.rec(group, self.timesteps)
