@@ -195,13 +195,6 @@ class Network(NetworkObjectBase):
     def add_behaviours_to_object(self, behaviours, net_obj):
         self.clear_tag_cache()
         original = behaviours
-        #if type(behaviours) == list:
-        #    start_key = self.behaviour_timesteps[-1]
-        #    d = {}
-        #    for b in behaviours:
-        #        start_key += 1
-        #        d[start_key] = b
-        #    behaviours = d
 
         for key in behaviours:
             net_obj.behaviour[key] = behaviours[key]

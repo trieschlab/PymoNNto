@@ -3,7 +3,7 @@ import copy
 
 class NeuronGroup(NetworkObjectBase):
 
-    def __init__(self, size, behaviour, net, tag=None):
+    def __init__(self, size, behaviour, net, tag=None, color=None):
         super().__init__(tag=tag)
         self.add_tag('ng')
 
@@ -46,6 +46,9 @@ class NeuronGroup(NetworkObjectBase):
                 self.behaviour[k].set_variables(self)
 
         self.id = np.arange(self.size)
+
+        if color is not None:
+            self.color = color
 
     #do only use before initialization!!!
     #after initialization use Netork.add_behaviours_to_neuron_group(...)

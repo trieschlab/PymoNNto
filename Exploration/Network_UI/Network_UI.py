@@ -1,6 +1,7 @@
 from PymoNNto.Exploration.UI_Base import *
 from PymoNNto.NetworkBehaviour.Recorder.Recorder import *
 from PymoNNto.Exploration.Network_UI.Neuron_Classification_Colorizer import *
+from PymoNNto.NetworkBehaviour.Structure.Structure import *
 
 class Network_UI(UI_Base):
 
@@ -18,6 +19,9 @@ class Network_UI(UI_Base):
         #    label += ' rec.'
 
         for ng in network.NeuronGroups:
+            if ng['NeuronDimension', 0] is None:
+                network.add_behaviours_to_object({0: get_squared_dim(ng.size)}, ng)
+
             if not hasattr(ng, 'color'):
                 ng.color = (0, 0, 255, 255)
             ng.add_analysis_module(Neuron_Classification_Colorizer())
@@ -107,6 +111,9 @@ class Network_UI(UI_Base):
         return self.select_neurons(group, id, add_to_select_group)
 
     def select_neurons(self, group, mask, add_to_select_group=False):
+
+        add_to_select_group = add_to_select_group or self.control_key_down
+
         group_changed = group != self._neuron_select_group
         self._neuron_select_group = group
         if group_changed or not add_to_select_group:
@@ -117,8 +124,12 @@ class Network_UI(UI_Base):
 
         for module in self.modules:
             module.on_selected_neuron_changed(self)
+
         self.static_update_func()
 
+
+    def selected_class_ids(self):
+        return np.unique(self._neuron_select_group.classification[self._neuron_select_mask])
 
     def selected_neuron_tag(self):
         return self._neuron_select_group.tags[0]

@@ -9,7 +9,7 @@ class Behaviour(NetworkObjectBase):
         self.used_attr_keys = []
         self.behaviour_enabled = self.get_init_attr('behaviour_enabled', True, None)
         super().__init__(tag=self.get_init_attr('tag', None, None))
-        self.add_tag(self.__class__.__name__)
+
 
     def set_variables(self, neurons):
         return

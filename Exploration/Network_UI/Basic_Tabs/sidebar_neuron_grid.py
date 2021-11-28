@@ -33,8 +33,6 @@ class sidebar_neuron_grid_submodule(TabBase):
         return (h_abs) * w + neuron_select_x
 
     def initialize(self, Network_UI, index):
-
-
         #just store for mcde event bug ('QGraphicsSceneMouseEvent' object has no attribute 'currentItem')
         self.last_id = 0
         self.last_group = None
@@ -42,13 +40,12 @@ class sidebar_neuron_grid_submodule(TabBase):
         def mce(event):
             self.last_id = self.get_clicked_neuron_id(Network_UI, event)
             self.last_group = Network_UI.network[event.currentItem.neuron_group_tag, 0]
-            Network_UI.select_neuron(self.last_group, self.last_id, add_to_select_group=Network_UI.control_key_down)
+            Network_UI.select_neuron(self.last_group, self.last_id)
 
         def mdce(event):
             if self.last_group.classification is not None:
                 selected_class = self.last_group.classification[self.last_id]
-                Network_UI.select_neuron_class(self.last_group, selected_class, add_to_select_group=Network_UI.control_key_down)
-
+                Network_UI.select_neuron_class(self.last_group, selected_class)
 
         group_select_box = QComboBox()
         self.color_select_box = Analytics_Results_Select_ComboBox(Network_UI.network[Network_UI.group_tags[index], 0] ,'classifier', first_entry='group color')
@@ -111,6 +108,8 @@ class sidebar_neuron_grid_submodule(TabBase):
             #else:
             #    classification = None
             group.classification = self.color_select_box.get_selected_result()
+            if group.classification is None:
+                group.classification = group.get_neuron_vec()
             image = np.array(group['Neuron_Classification_Colorizer', 0].get_color_list(group.classification, format='[r,g,b]'))
 
             #selected

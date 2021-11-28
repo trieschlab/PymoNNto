@@ -34,6 +34,7 @@ class NetworkObjectBase:
             self.add_tag(tag)
 
         self.analysis_modules = []
+        self.add_tag(self.__class__.__name__)
 
     def add_analysis_module(self, module):
         module._attach_and_initialize_(self)
