@@ -216,22 +216,49 @@ def add_evolution_plot_items(ui, tab):
             p = points[-1]
             tab.clicked_generation = p._data[0]
             tab.clicked_score = p._data[1]
-            tab.scatter2.setData(x=[tab.clicked_generation],y=[tab.clicked_score])
+            tab.scatter2.setData(x=[tab.clicked_generation], y=[tab.clicked_score])
 
             if tab.data is not None and tab.gene_keys is not None:
-                tab.clicked_id = np.where((tab.data[-2] == tab.clicked_generation) & (tab.data[-1] == tab.clicked_score))
-                if len(tab.clicked_id) > 0:
-                    tab.clicked_id = tab.clicked_id[0]
-                    if len(tab.clicked_id) > 0:
-                        tab.clicked_id = tab.clicked_id[0]
-                        tab.clicked_evo.setText('Clicked genome: ' + str(dict(zip(tab.gene_keys + ['gen', 'score'], tab.data[:, tab.clicked_id]))))
+                data_id = np.where((tab.data[-2] == tab.clicked_generation) & (tab.data[-1] == tab.clicked_score))
 
-                        tab.draw_item.update_pic(tab.gene_keys, tab.data, tab.clicked_id, tab.slider.value())
+                if len(data_id) > 0:
+                    tab.clicked_id = data_id[0]
+
+                    data = [d[0] for d in tab.data[:, tab.clicked_id]]
+
+                    tab.clicked_evo.setText('Clicked genome: ' + str(dict(zip(tab.gene_keys + ['id'] + ['gen', 'score'], data))))
+
+                    tab.draw_item.update_pic(tab.gene_keys, tab.data, tab.clicked_id, tab.slider.value())
 
     tab.scatter.sigClicked.connect(clicked)
 
     tab.scatter2 = pg.ScatterPlotItem(size=10, brush=pg.mkBrush(0, 0, 255, 255))
     tab.plot.addItem(tab.scatter2)
+
+
+    def selected_double_clicked(plot, points):
+        evo_id = tab.data[-3, tab.clicked_id][0]
+        #print(evo_id)
+
+        sm = tab.smg['id=='+str(int(evo_id))][0]
+
+        txt = open(sm.absolute_path + sm.config_file_name, 'r').read()
+
+        layout = QVBoxLayout()
+        pte = QPlainTextEdit()
+        pte.setPlainText(txt)
+        pte.setReadOnly(True)
+        layout.addWidget(pte)
+
+        dlg = QDialog()
+        dlg.setWindowTitle(sm.absolute_path + sm.config_file_name)
+        dlg.setLayout(layout)
+        dlg.resize(1200, 800)
+        dlg.exec()
+
+
+
+    tab.scatter2.sigClicked.connect(selected_double_clicked)
 
     #g = pg.GraphItem()
     #tab.plot.addItem(g)
@@ -270,17 +297,17 @@ def add_evolution_plot_items(ui, tab):
 def update_evolution_plot(ui, tab, evo_name, gene_keys, data_folder=get_data_folder()):
     print(len(next(os.walk(data_folder + '/StorageManager/'+evo_name))[1]), 'datapoints found')
 
-    smg = StorageManagerGroup(evo_name, data_folder=data_folder)
+    tab.smg = StorageManagerGroup(evo_name, data_folder=data_folder)
 
-    smg.sort_by('gen')
+    tab.smg.sort_by('gen')
 
     tab.gene_keys = gene_keys
 
-    result_lists = smg.get_multi_param_list(gene_keys+['gen', 'score'], remove_None=True)
+    result_lists = tab.smg.get_multi_param_list(gene_keys+['id']+['gen', 'score'], remove_None=True)
 
-    xa, ya = smg.remove_duplicates_get_eval(result_lists[-2], result_lists[-1], evalstr='np.average(a)')
-    xs, ymi = smg.remove_duplicates_get_eval(result_lists[-2], result_lists[-1], evalstr='np.min(a)')
-    xs, yma = smg.remove_duplicates_get_eval(result_lists[-2], result_lists[-1], evalstr='np.max(a)')
+    xa, ya = tab.smg.remove_duplicates_get_eval(result_lists[-2], result_lists[-1], evalstr='np.average(a)')
+    xs, ymi = tab.smg.remove_duplicates_get_eval(result_lists[-2], result_lists[-1], evalstr='np.min(a)')
+    xs, yma = tab.smg.remove_duplicates_get_eval(result_lists[-2], result_lists[-1], evalstr='np.max(a)')
 
     tab.curves[0].setData(xa, ya)
     tab.curves[1].setData(xa, ymi)
@@ -290,7 +317,7 @@ def update_evolution_plot(ui, tab, evo_name, gene_keys, data_folder=get_data_fol
 
     tab.data = np.array(result_lists)
 
-    tab.best_evo.setText('Best genome: ' + str(dict(zip(gene_keys+['gen', 'score'], tab.data[:, -1]))))
+    tab.best_evo.setText('Best genome: ' + str(dict(zip(gene_keys+['id'][+'gen', 'score'], tab.data[:, -1]))))
 
     tab.draw_item.update_pic(gene_keys, tab.data, tab.clicked_id, tab.slider.value())
 

@@ -51,6 +51,8 @@ class Network_UI(UI_Base):
 
         super().__init__(network, label=label)
 
+        self.event_list = []
+
         self.group_display_count = group_display_count
 
         #self.exc_group_name = exc_group_name
@@ -225,6 +227,9 @@ class Network_UI(UI_Base):
     def on_tab_change(self, i):
         self.static_update_func()
 
+    def add_event(self, tag, duration=0):
+        self.event_list.append(event(self.network.iteration, tag, self.network.iteration+duration))
+
 def get_color(type_index, layer=1):
     dim_value = max(layer * 0.9, 1.0)
 
@@ -238,6 +243,17 @@ def get_color(type_index, layer=1):
         return (255.0 / dim_value, 80.0 / dim_value, 0.0, 255.0)
     if type_index == 4:
         return (255.0 / dim_value, 0.0 , 150.0/ dim_value, 255.0)
+
+
+class event:
+
+    def __init__(self, start_t, tag, end_t=None):
+        self.start_t = start_t
+        self.end_t = end_t
+        self.tag = tag
+
+
+
 
 
 class Analytics_Results_Select_ComboBox(QComboBox):

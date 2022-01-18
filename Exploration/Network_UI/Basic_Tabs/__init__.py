@@ -19,6 +19,8 @@ from PymoNNto.Exploration.Network_UI.Basic_Tabs.module_visualizer_tab import *
 from PymoNNto.Exploration.Network_UI.Basic_Tabs.sidebar_neuron_grid import *
 from PymoNNto.Exploration.Network_UI.Basic_Tabs.Analysis_Module_tab import *
 
+from PymoNNto.Exploration.Network_UI.Basic_Tabs.event_tab import *
+
 
 def get_default_UI_modules(neuron_parameters=['output'], synapse_parameters=['W']):
     return [
@@ -39,6 +41,7 @@ def get_default_UI_modules(neuron_parameters=['output'], synapse_parameters=['W'
     sidebar_fast_forward_module(),
     sidebar_save_load_module(),
     code_execution_tab(),
+    event_tab(),
     #module_visualizer_tab()
 ]
 

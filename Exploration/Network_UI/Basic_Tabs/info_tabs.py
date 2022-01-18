@@ -61,6 +61,7 @@ class info_tab(TabBase):
         def click(event):
             for behaviour in behaviours:
                 behaviour.behaviour_enabled = element.isChecked()
+                Network_UI.add_event(behaviour.tags[0]+' ('+str(element.isChecked())+')')
 
         def cut_length(s):
             result = ''

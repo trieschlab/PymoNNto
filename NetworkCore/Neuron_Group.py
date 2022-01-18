@@ -4,6 +4,10 @@ import copy
 class NeuronGroup(NetworkObjectBase):
 
     def __init__(self, size, behaviour, net, tag=None, color=None):
+
+        if tag is None and net is not None:
+            tag = 'NeuronGroup_'+str(len(net.NeuronGroups)+1)
+
         super().__init__(tag=tag)
         self.add_tag('ng')
 

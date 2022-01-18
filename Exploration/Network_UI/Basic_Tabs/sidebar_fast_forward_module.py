@@ -20,6 +20,9 @@ class sidebar_fast_forward_module(TabBase):
         self.progressbar.setValue(progress)
 
     def fast_forward(self, steps, Network_UI):
+
+        Network_UI.add_event('fast forward', steps)
+
         self.update_progress(0)
         Network_UI.timer.stop()
         self.recorder_on_off(Network_UI, False)

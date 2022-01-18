@@ -9,6 +9,8 @@ class Analysis_Module_tab(TabBase):
 
     def add_execute_btn(self, Network_UI, module):
 
+        Network_UI.add_event('analytics mod. exec.')
+
         btn = Network_UI.Add_element(QPushButton('execute'), stretch=2)
 
         caption = Network_UI.Add_element(QLabel(str(module._get_base_name_())), stretch=4)
@@ -64,7 +66,7 @@ class Analysis_Module_tab(TabBase):
     def initialize(self, Network_UI):
         self.a_module_tab = Network_UI.Next_Tab(self.title)
 
-        print(Network_UI.network.NeuronGroups[0].analysis_modules)
+        #print(Network_UI.network.NeuronGroups[0].analysis_modules)
 
         for obj in [Network_UI.network]+Network_UI.network.NeuronGroups:#Network_UI.network.all_objects()
             caption = Network_UI.Add_element(QLabel(obj.tags[0]))

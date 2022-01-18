@@ -51,20 +51,19 @@ print(num)
         self.txt_py_dict["show synapse matrices"] = self.sample_code1
         self.txt_py_dict["count synapses"] = self.sample_code2
 
-        try:
-            data_folder = get_data_folder(create_when_not_found=False)+'/scripts'
+        data_folder = get_data_folder(create_when_not_found=False)+'/scripts'
 
-            if not os.path.exists(data_folder):
-                os.mkdir(data_folder)
+        if not os.path.exists(data_folder):
+            os.mkdir(data_folder)
 
-            for d in os.listdir(data_folder):
+        for d in os.listdir(data_folder):
+            try:
                 if '.py' in d:
                     with open(data_folder+'/'+d) as f:
                         self.txt_py_dict[d.replace('.py','')] = f.read()
+            except:
+                print("error in script", d)
 
-                    self.add_timed_script(d)
-        except:
-            pass
 
         for txt in self.txt_py_dict:
             self.comboBox.addItem(txt)
@@ -103,6 +102,8 @@ print(num)
             exec(self.code_field.toPlainText())
 
             print('code block executed successfuly!')
+
+            Network_UI.add_event('code execution')
 
         self.exec_btn.clicked.connect(exec_btn_click)
 

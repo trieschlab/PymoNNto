@@ -12,6 +12,7 @@ class sidebar_grammar_module_new(TabBase):
         if Network_UI.network['STDP', 0] is not None:
             def learning_on_off(event):
                 Network_UI.network.set_mechanisms(['STDP'], self.stdp_cb.isChecked())
+                Network_UI.add_event('STDP ('+str(self.stdp_cb.isChecked())+')')
 
             self.stdp_cb = QCheckBox()
             self.stdp_cb.setText('STDP')
@@ -22,6 +23,7 @@ class sidebar_grammar_module_new(TabBase):
         if Network_UI.network['Text_Activator', 0] is not None:
             def activator_on_off(event):
                 Network_UI.network['Text_Activator', 0].behaviour_enabled = self.act_cb.isChecked()
+                Network_UI.add_event('Text_Activator (' + str(self.act_cb.isChecked()) + ')')
 
             self.act_cb = QCheckBox()
             self.act_cb.setText('Text input:')

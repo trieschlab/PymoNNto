@@ -111,6 +111,8 @@ class Behaviour(NetworkObjectBase):
 
         if not do_not_diversify and type(result) is str and neurons is not None:
             result = self.evaluate_diversity_string(result, neurons)
+        elif type(result) is str and default is not None:
+            result = type(default)(result)#cast
 
         return result
 

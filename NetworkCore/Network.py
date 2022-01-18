@@ -168,7 +168,7 @@ class Network(NetworkObjectBase):
                 new_tag=ng.tags[0]+chr(97+counts)
                 unique_tags.append(ng.tags[0])
                 if warnings:
-                    print('Warning: NeuronGroup Tag "'+ng.tags[0]+'" already in use. The first Tag of an Object should be unique and will be renamed to "'+new_tag+'". Multiple Tags can be sperated with a "," (NeuronGroup(..., tag="tag1,tag2,..."))')
+                    print('Warning: NeuronGroup Tag "'+ng.tags[0]+'" already in use. The first Tag of an Object should be unique and will be renamed to "'+new_tag+'". Multiple Tags can be separated with a "," (NeuronGroup(..., tag="tag1,tag2,..."))')
                 ng.tags[0] = new_tag
 
             else:
