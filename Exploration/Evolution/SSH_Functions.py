@@ -42,20 +42,20 @@ def split_ssh_user_host_password_string(user_host_pw_str):
     return user, host, password
 
 def zip_project(Main_Folder, zip_file_path):
-    zipDir(Main_Folder, zip_file_path, ['.git', '.zip', '.idea', '\\Evolution_Project_Clones\\', '\\StorageManager\\', '\\NetworkStates\\', '\\Evo\\', '\\__pycache__\\', '\\midis\\'])
+    zipDir(Main_Folder, zip_file_path, ['.git', '.zip', '.idea', '\\Evolution_Project_Clones\\', '\\Plot_Project_Clones\\', '\\Execution_Project_Clones\\', '\\StorageManager\\', '\\NetworkStates\\', '\\Evo\\', '\\__pycache__\\', '\\midis\\'])
 
-def get_epc_folder(create=True):
+def get_epc_folder(main_folder='Evolution_Project_Clones', create=True):
     Data_Folder = get_data_folder()
     if Data_Folder != './Data':
-        epc_folder = Data_Folder + '/Evolution_Project_Clones'
+        epc_folder = Data_Folder + '/'+main_folder
         create_folder_if_not_exist(epc_folder)
         return epc_folder
     return None
 
-def clone_project(name):
-    epc_folder = get_epc_folder()
+def clone_project(name, folder):
+    epc_folder = get_epc_folder(folder)
     if epc_folder is not None:
-        Main_Folder = epc_folder.replace('Data/Evolution_Project_Clones', '')
+        Main_Folder = epc_folder.replace('Data/'+folder, '')
 
         src = epc_folder + '/' + name + '.zip'
         zip_project(Main_Folder, src)
@@ -150,7 +150,7 @@ def ssh_execute_evo(server, name, python_cmd='python3'):
 
     command = 'cd ' + name + '; '
     #command = 'nano .bashrc'
-    command += 'screen -dmS ' + name + ' sh; screen -S ' + name + ' -X stuff "'+python_cmd+' execute_evolution.py \r\n"'
+    command += 'screen -dmS ' + name + ' sh; screen -S ' + name + ' -X stuff "'+python_cmd+' execute.py \r\n"'
 
     ssh_stdin, ssh_stdout, ssh_stderr = ssh.exec_command(command)
     response = get_response(ssh_stdout, ssh_stderr)
