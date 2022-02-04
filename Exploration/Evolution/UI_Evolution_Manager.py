@@ -88,22 +88,22 @@ class UI_Evolution_Manager(Execution_Manager_UI_Base):
 
     def create_execution_file(self, name, folder, file):
         exec_file = """
-        from PymoNNto.Exploration.Evolution.Evolution import *
-        if __name__ == '__main__':
-            evo = Evolution(name='#name#',
-                        slave_file='#slave_file#',
-                        individual_count=#individual_count#,
-                        mutation=#mutation#,
-                        death_rate=#death_rate#,
-                        constraints=#constraints#,
-                        inactive_genome_info=#inactive_genome_info#,
-                        start_genomes=#start_genomes#,
-                        devices={'multi_thread': #thread_number#},
-                        additional_evo_params=#evo_options#
-                        )
+from PymoNNto.Exploration.Evolution.Evolution import *
+if __name__ == '__main__':
+    evo = Evolution(name='#name#',
+                slave_file='#slave_file#',
+                individual_count=#individual_count#,
+                mutation=#mutation#,
+                death_rate=#death_rate#,
+                constraints=#constraints#,
+                inactive_genome_info=#inactive_genome_info#,
+                start_genomes=#start_genomes#,
+                devices={'multi_thread': #thread_number#},
+                additional_evo_params=#evo_options#
+                )
 
-            if not evo.start(ui=False):
-                evo.continue_evolution(ui=False)
+    if not evo.start(ui=False):
+        evo.continue_evolution(ui=False)
         """
 
         print('generate execute.py...')
