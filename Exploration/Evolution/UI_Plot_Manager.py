@@ -1,5 +1,5 @@
 from PymoNNto.Exploration.Evolution.common_UI import *
-
+from PymoNNto.Exploration.Evolution.PlotQTObjects import *
 
 class UI_Plot_Manager(Execution_Manager_UI_Base):
 
@@ -114,14 +114,29 @@ for run in range(#run_count#):
     def add_additional_tab_elements(self, tab, name):
         self.Next_H_Block(stretch=10)
 
-        tab.plot = self.Add_plot(title='results')
+        #tab.plot = self.Add_plot(title='results')
+
+        tab.interactive_scatter = self.Add_element(InteractiveScatter())
 
         #add_evolution_plot_items(self, tab)
         #tab.folder = get_epc_folder(self.folder) + '/' + name + '/'
 
     def refresh_view(self, tab):
         #tab.plot scatter...
-        tab.smg = StorageManagerGroup(tab.name, data_folder=self.folder)
+
+        smg = StorageManagerGroup(tab.name, data_folder=get_data_folder() + '/' + self.folder + '/' + tab.name + '/Data')
+        tab.interactive_scatter.add_StorageManagerGroup(smg)
+        tab.interactive_scatter.refresh_data()
+
+        print(smg.get_param_list('score'))
+
+########################################################### Exception handling
+
+
+def except_hook(cls, exception, traceback):
+    sys.__excepthook__(cls, exception, traceback)
+
+sys.excepthook = except_hook
 
 if __name__ == '__main__':
     UI_Plot_Manager().show()

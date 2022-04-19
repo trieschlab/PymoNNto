@@ -1,5 +1,6 @@
 from PymoNNto.Exploration.Network_UI.TabBase import *
 from PymoNNto.Exploration.StorageManager.StorageManager import *
+from PymoNNto.Exploration.Evolution.PlotQTObjects import *
 
 def pol2cart(theta, rho):
     x = rho * np.cos(theta)
@@ -74,7 +75,7 @@ class DrawItem2(pg.GraphicsObject):
             qf.setPointSizeF(5.0)
             #qf.setStretch(2)
             painter.setFont(qf)
-            painter.drawText(x,y,char)#+' ('+str(min_a[i])+'-'+str(max_a[i])+')'
+            painter.drawText(int(x),int(y),char)#+' ('+str(min_a[i])+'-'+str(max_a[i])+')'
 
     def draw_genome(self, painter, alphabet, len_alphabet, min_a, max_a, vals):
         positions = []
@@ -199,73 +200,82 @@ class DrawItem2(pg.GraphicsObject):
         return QtCore.QRectF(br)
 
 def add_evolution_plot_items(ui, tab):
-    tab.curves, tab.plot = ui.Add_plot_curve(x_label='generations', y_label='score', number_of_curves=3, return_plot=True, colors=[(0, 0, 0), (0, 0, 0), (0, 0, 0)])
-    tab.item = pg.FillBetweenItem(curve1=tab.curves[1], curve2=tab.curves[2], brush=(255, 0, 0, 100))
-    tab.plot.addItem(tab.item)
-    tab.scatter = pg.ScatterPlotItem(size=10, brush=pg.mkBrush(255, 255, 255, 120))
-    tab.plot.addItem(tab.scatter)
+    tab.interactive_scatter = ui.Add_element(InteractiveScatter('gen', 'score', 'score'))
 
-    tab.clicked_generation=-1
-    tab.clicked_score=-1
+    def on_item_clicked(sm):
+        data=sm.load_param_list(tab.gene_keys + ['id'] + ['gen', 'score'], return_dict=True)
+        tab.clicked_evo.setText('Clicked genome: ' + str(data))#str(dict(zip(tab.gene_keys + ['id'] + ['gen', 'score'], data)))
+        tab.draw_item.update_pic(tab.gene_keys, tab.data, data['id'], tab.slider.value())
+
+    tab.interactive_scatter.scatter_clicked_event = on_item_clicked
+
+    #tab.curves, tab.plot = ui.Add_plot_curve(x_label='generations', y_label='score', number_of_curves=3, return_plot=True, colors=[(0, 0, 0), (0, 0, 0), (0, 0, 0)])
+    #tab.item = pg.FillBetweenItem(curve1=tab.curves[1], curve2=tab.curves[2], brush=(255, 0, 0, 100))
+    #tab.plot.addItem(tab.item)
+    #tab.scatter = pg.ScatterPlotItem(size=10, brush=pg.mkBrush(255, 255, 255, 120))
+    #tab.plot.addItem(tab.scatter)
+
+    #tab.clicked_generation=-1
+    #tab.clicked_score=-1
     tab.clicked_id=-1
 
-    def clicked(plot, points):
-        print('clicked')
-        #for p in points:
-        if len(points) > 0:
-            p = points[-1]
-            tab.clicked_generation = p._data[0]
-            tab.clicked_score = p._data[1]
-            tab.scatter2.setData(x=[tab.clicked_generation], y=[tab.clicked_score])
+    #def clicked(plot, points):
+    #    print('clicked')
+    #    #for p in points:
+    #    if len(points) > 0:
+    #        p = points[-1]
+    #        tab.clicked_generation = p._data[0]
+    #        tab.clicked_score = p._data[1]
+    #        tab.scatter2.setData(x=[tab.clicked_generation], y=[tab.clicked_score])
+    #
+    #        if tab.data is not None and tab.gene_keys is not None:
+    #            data_id = np.where((tab.data[-2] == tab.clicked_generation) & (tab.data[-1] == tab.clicked_score))
+    #
+    #            if len(data_id) > 0:
+    #                tab.clicked_id = data_id[0]
+    #
+    #                data = [d[0] for d in tab.data[:, tab.clicked_id]]
+    #
+    #                tab.clicked_evo.setText('Clicked genome: ' + str(dict(zip(tab.gene_keys + ['id'] + ['gen', 'score'], data))))
+    #
+    #                tab.draw_item.update_pic(tab.gene_keys, tab.data, tab.clicked_id, tab.slider.value())
 
-            if tab.data is not None and tab.gene_keys is not None:
-                data_id = np.where((tab.data[-2] == tab.clicked_generation) & (tab.data[-1] == tab.clicked_score))
+    #tab.scatter.sigClicked.connect(clicked)
 
-                if len(data_id) > 0:
-                    tab.clicked_id = data_id[0]
-
-                    data = [d[0] for d in tab.data[:, tab.clicked_id]]
-
-                    tab.clicked_evo.setText('Clicked genome: ' + str(dict(zip(tab.gene_keys + ['id'] + ['gen', 'score'], data))))
-
-                    tab.draw_item.update_pic(tab.gene_keys, tab.data, tab.clicked_id, tab.slider.value())
-
-    tab.scatter.sigClicked.connect(clicked)
-
-    tab.scatter2 = pg.ScatterPlotItem(size=10, brush=pg.mkBrush(0, 0, 255, 255))
-    tab.plot.addItem(tab.scatter2)
-
-
-    def selected_double_clicked(plot, points):
-        evo_id = tab.data[-3, tab.clicked_id][0]
-        #print(evo_id)
-
-        sm = tab.smg['id=='+str(int(evo_id))][0]
-
-        txt = open(sm.absolute_path + sm.config_file_name, 'r').read()
-
-        layout = QVBoxLayout()
-        pte = QPlainTextEdit()
-        pte.setPlainText(txt)
-        pte.setReadOnly(True)
-        layout.addWidget(pte)
-
-        dlg = QDialog()
-        dlg.setWindowTitle(sm.absolute_path + sm.config_file_name)
-        dlg.setLayout(layout)
-        dlg.resize(1200, 800)
-        dlg.exec()
+    #tab.scatter2 = pg.ScatterPlotItem(size=10, brush=pg.mkBrush(0, 0, 255, 255))
+    #tab.plot.addItem(tab.scatter2)
 
 
+    #def selected_double_clicked(plot, points):
+    #    evo_id = tab.data[-3, tab.clicked_id][0]
+    #    #print(evo_id)
 
-    tab.scatter2.sigClicked.connect(selected_double_clicked)
+    #    sm = tab.smg['id=='+str(int(evo_id))][0]
+
+    #    txt = open(sm.absolute_path + sm.config_file_name, 'r').read()
+
+    #    layout = QVBoxLayout()
+    #    pte = QPlainTextEdit()
+    #    pte.setPlainText(txt)
+    #    pte.setReadOnly(True)
+    #    layout.addWidget(pte)
+
+    #    dlg = QDialog()
+    #    dlg.setWindowTitle(sm.absolute_path + sm.config_file_name)
+    #    dlg.setLayout(layout)
+    #    dlg.resize(1200, 800)
+    #    dlg.exec()
+
+
+
+    #tab.scatter2.sigClicked.connect(selected_double_clicked)
 
     #g = pg.GraphItem()
     #tab.plot.addItem(g)
     # Update the graph
     #g.setData(pos=np.array([[100, 100]]), pen=['r'], brush=['r'], size=10, symbol=['o'], pxMode=False)
 
-    tab.radar_plot = ui.Add_plot(x_label='radar plot', tooltip_message='radar plot of the last 100 genomes. (green=high score/red=low score/blue=selected)')  # axisItems={'left': stringaxis}
+    tab.radar_plot = ui.Add_plot(x_label='radar plot', tooltip_message='radar plot of the last genomes. (green=high score/red=low score/blue=selected)')  # axisItems={'left': stringaxis}
     tab.draw_item = DrawItem2()
     tab.radar_plot.addItem(tab.draw_item)
 
@@ -286,10 +296,10 @@ def add_evolution_plot_items(ui, tab):
 
 
 
-    ui.Next_H_Block(stretch=0.0)
+    ui.Next_H_Block(stretch=0)
     tab.best_evo = ui.Add_element(QLineEdit('...'), stretch=0)
 
-    ui.Next_H_Block(stretch=0.0)
+    ui.Next_H_Block(stretch=0)
     tab.clicked_evo = ui.Add_element(QLineEdit('...'), stretch=0)
 
 
@@ -299,25 +309,28 @@ def update_evolution_plot(ui, tab, evo_name, gene_keys, data_folder=get_data_fol
 
     tab.smg = StorageManagerGroup(evo_name, data_folder=data_folder)
 
-    tab.smg.sort_by('gen')
+    tab.interactive_scatter.add_StorageManagerGroup(tab.smg)
+    tab.interactive_scatter.refresh_data()
+
+    tab.smg.sort_by('score')#gen
 
     tab.gene_keys = gene_keys
 
-    result_lists = tab.smg.get_multi_param_list(gene_keys+['id']+['gen', 'score'], remove_None=True)
+    result_lists = tab.smg.get_multi_param_list(gene_keys+['id']+['gen', 'score'], remove_None=True).astype(np.float64)
 
-    xa, ya = tab.smg.remove_duplicates_get_eval(result_lists[-2], result_lists[-1], evalstr='np.average(a)')
-    xs, ymi = tab.smg.remove_duplicates_get_eval(result_lists[-2], result_lists[-1], evalstr='np.min(a)')
-    xs, yma = tab.smg.remove_duplicates_get_eval(result_lists[-2], result_lists[-1], evalstr='np.max(a)')
+    #xa, ya = tab.smg.remove_duplicates_get_eval(result_lists[-2], result_lists[-1], evalstr='np.average(a)')#
+    #xs, ymi = tab.smg.remove_duplicates_get_eval(result_lists[-2], result_lists[-1], evalstr='np.min(a)')#
+    #xs, yma = tab.smg.remove_duplicates_get_eval(result_lists[-2], result_lists[-1], evalstr='np.max(a)')#
 
-    tab.curves[0].setData(xa, ya)
-    tab.curves[1].setData(xa, ymi)
-    tab.curves[2].setData(xa, yma)
+    #tab.curves[0].setData(xa, ya)#
+    #tab.curves[1].setData(xa, ymi)#
+    #tab.curves[2].setData(xa, yma)#
 
-    tab.scatter.setData(x=result_lists[-2], y=result_lists[-1])
+    #tab.scatter.setData(x=result_lists[-2], y=result_lists[-1])#
 
     tab.data = np.array(result_lists)
 
-    tab.best_evo.setText('Best genome: ' + str(dict(zip(gene_keys+['id'][+'gen', 'score'], tab.data[:, -1]))))
+    tab.best_evo.setText('Best genome: ' + str(dict(zip(gene_keys+['id']+['gen', 'score'], tab.data[:, -1]))))
 
     tab.draw_item.update_pic(gene_keys, tab.data, tab.clicked_id, tab.slider.value())
 

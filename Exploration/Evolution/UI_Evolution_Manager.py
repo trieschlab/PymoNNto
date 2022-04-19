@@ -164,7 +164,16 @@ if __name__ == '__main__':
         tab.folder = get_epc_folder(self.folder) + '/' + name + '/'
 
     def refresh_view(self, tab):
-        update_evolution_plot(self, tab, tab.name, tab.gene_keys,data_folder=get_data_folder() + '/' + self.folder + '/' + tab.name + '/Data')
+        if tab.gene_keys is not None:
+            update_evolution_plot(self, tab, tab.name, tab.gene_keys,data_folder=get_data_folder() + '/' + self.folder + '/' + tab.name + '/Data')
+
+########################################################### Exception handling
+
+
+def except_hook(cls, exception, traceback):
+    sys.__excepthook__(cls, exception, traceback)
+
+sys.excepthook = except_hook
 
 if __name__ == '__main__':
     UI_Evolution_Manager().show()

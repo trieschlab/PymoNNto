@@ -238,7 +238,7 @@ class DrawItem2(pg.GraphicsObject):
                 c='_'
             else:
                 c=char
-            painter.drawText(x,y,c)
+            painter.drawText(int(x),int(y),c)
 
     def attach_parameter_slider(self, p0s, p1s, p2s, p3s, p4s, p5s, label_cb):
         self.p0s = p0s

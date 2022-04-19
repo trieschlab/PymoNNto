@@ -111,8 +111,7 @@ class Execution_Manager_UI_Base(UI_Base):
 
 
         ssm = SimpleStorageManager(get_epc_folder() + '/')
-        servers = eval(ssm.load_param('servers',
-                                      default="[]"))  # ['local', 'ssh vieth@poppy.fias.uni-frankfurt.de', 'ssh marius@hey3kmuagjunsk2b.myfritz.net', '+']
+        servers = eval(ssm.load_param('servers', default="[]"))  # ['local', 'ssh vieth@poppy.fias.uni-frankfurt.de', 'ssh marius@hey3kmuagjunsk2b.myfritz.net', '+']
         self.listwidget2 = QListWidget()
         self.listwidget2.addItems(['+', 'local'] + servers)
         self.listwidget2.currentItemChanged.connect(self.on_server_select)
@@ -186,7 +185,7 @@ class Execution_Manager_UI_Base(UI_Base):
 
         folder = get_epc_folder(self.folder) + '/' + name + '/'
 
-        tab = self.Next_Tab(name, stretch=0.0)
+        tab = self.Next_Tab(name, stretch=0)
         tab.name = name
 
         tab.ssm = SimpleStorageManager(folder)
@@ -211,10 +210,9 @@ class Execution_Manager_UI_Base(UI_Base):
                     if tab.server is not None and 'ssh ' in tab.server:
                         user, host, password = split_ssh_user_host_password_string(tab.server)
                         print('get Data')
-                        get_Data(name, user, host, password)
-                    if tab.gene_keys is not None:
-                        print('update plot')
-                        self.refresh_view(tab)
+                        get_Data(name, user, host, password, self.folder)
+
+                    self.refresh_view(tab)
                 except:
                     print('no plot data found in', name)
 

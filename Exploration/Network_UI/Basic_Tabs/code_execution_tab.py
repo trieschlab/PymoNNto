@@ -87,7 +87,7 @@ print(num)
 
         self.code_field.textChanged.connect(on_code_changed)
 
-        Network_UI.Next_H_Block(stretch=0.1)
+        Network_UI.Next_H_Block(stretch=1)
 
         self.exec_btn=Network_UI.Add_element(QPushButton('Execute'))
 

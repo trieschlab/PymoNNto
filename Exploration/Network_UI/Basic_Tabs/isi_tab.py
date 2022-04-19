@@ -90,7 +90,7 @@ class isi_tab(TabBase):
             self.input_avg_bin_slider.setToolTip('slide to change bin count')
             Network_UI.Add_element(self.input_avg_bin_slider)  # , stretch=0.1
 
-        Network_UI.Next_H_Block(stretch=0.1)
+        Network_UI.Next_H_Block(stretch=1)
 
         Network_UI.Add_element(QLabel('interval length: '+str(self.timesteps)+' steps'))
 

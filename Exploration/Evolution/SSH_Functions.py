@@ -105,13 +105,13 @@ def transfer_project(name, user, host, password=None):
     else:
         print('Error No root "Data" folder found')
 
-def get_Data(name, user, host, password):
+def get_Data(name, user, host, password, main_folder='Evolution_Project_Clones'):
     # search main project folder
     Data_Folder = get_data_folder()
     if Data_Folder != './Data':
 
         src = name + '/Data.zip'
-        dst_path = get_epc_folder()+'/'+name+'/' #test.zip
+        dst_path = get_epc_folder(main_folder)+'/'+name+'/' #test.zip
         dst = dst_path + 'Data.zip'
 
         print(src,dst_path,dst)

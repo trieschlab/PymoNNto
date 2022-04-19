@@ -155,7 +155,7 @@ class UI_Base(QApplication):
         else:
             return curves
 
-    def Next_Tab(self, title='', stretch=1 , create_h_block=True):
+    def Next_Tab(self, title='', stretch=100 , create_h_block=True):
 
         main_tab_container = QWidget()
 
@@ -180,7 +180,7 @@ class UI_Base(QApplication):
         return main_tab_container
 
 
-    def Next_H_Block(self,stretch=1):
+    def Next_H_Block(self,stretch=100):
         self.current_H_block = QHBoxLayout()
         self.visualization_layout.addLayout(self.current_H_block, stretch=stretch)
 
@@ -232,7 +232,7 @@ class UI_Base(QApplication):
         #cont.addWidget(vsplit)
 
         self.main_split.addWidget(self.vsplit)
-        self.main_split.setSizes([1, 18])
+        self.main_split.setSizes([300, 800])
         #self.main_h_layout.addLayout(cont, stretch=8)
 
 
@@ -305,7 +305,7 @@ class UI_Base(QApplication):
     def Add_Sidebar_Spacing(self):
         self.Add_Sidebar_Element(QLabel())
 
-    def Add_Sidebar_Element(self, elements=[], percentages=None, stretch=1, return_h_layout=False):
+    def Add_Sidebar_Element(self, elements=[], percentages=None, stretch=100, return_h_layout=False):
         if type(elements) is not list: elements=[elements]
         if percentages is None: percentages=[1 for _ in elements]
 

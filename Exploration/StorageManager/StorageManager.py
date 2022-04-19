@@ -45,15 +45,19 @@ def zipDir(dirPath, zipPath, filter):
                 zipf.write(filePath , filePath[lenDirPath :] )
     zipf.close()
 
+#searches for "Data" folder in project by default
+#default folder: .../Data/StorageManager/main_folder_name/folder_name/
+#example:
+#StorageManager('Test')
+#Run1: .../Data/StorageManager/Test/Test1/
+#Run2: .../Data/StorageManager/Test/Test2/
+#Run3: .../Data/StorageManager/Test/Test3/
+#...
+#parameters are saved in "config.ini"
 class StorageManager:
 
-    def dict_to_folder_name(self, dict):
-        result = ''
-        for k, v in dict.items():
-            if result != '':
-                result += '_'
-            result += str(k).replace(' ', '')+'='+str(v).replace(' ', '')
-        return result
+    def get_path(self):
+        return self.absolute_path
 
     def __init__(self, main_folder_name, folder_name=None, random_nr=False, print_msg=True, add_new_when_exists=True, data_folder=get_data_folder(), use_evolution_path=True):
 
@@ -120,10 +124,22 @@ class StorageManager:
                 print(self.absolute_path)
             self.save_param('time', time.time())
 
+    def dict_to_folder_name(self, dict):
+        result = ''
+        for k, v in dict.items():
+            if result != '':
+                result += '_'
+            result += str(k).replace(' ', '')+'='+str(v).replace(' ', '')
+        return result
+
     def init_config(self):
         if self.config is None:
             self.config = ConfigParser()
             self.config.read(self.absolute_path + self.config_file_name)
+
+    def get_all_params(self, section='Parameters'):
+        self.init_config()
+        return dict(self.config.items(section)).keys()
 
     def save_recorder(self, tag, recorder, keys=[]):
         if type(keys) is str:
@@ -214,6 +230,15 @@ class StorageManager:
                 return s
         return s
 
+    def load_param_list(self, keys, section='Parameters', return_dict=False, default=None, return_string=False):
+        result = []
+        for key in keys:
+            result.append(self.load_param(key, section, default, return_string))
+
+        if return_dict:
+            return dict(zip(keys, result))
+        else:
+            return result
 
     def load_np(self, key):
         return np.load(self.absolute_path + key + '.npy')
@@ -249,21 +274,22 @@ class StorageManagerGroup:
             main_folder_name = Tag
 
         self.absolute_path = storage_manager_folder + main_folder_name + '/'
+        self.Tag = Tag
+        self.data_folder = data_folder
 
-        self.StorageManagerList = []
+        self.vp={}
+
         self.StorageManager_file_appendixes = []
+        self.refresh()
 
-        ct = 0
-        for folder in os.listdir(self.absolute_path):
-            if os.path.isdir(self.absolute_path+folder) and Tag in folder:
-                self.StorageManagerList.append(StorageManager(Tag, folder, add_new_when_exists=False, data_folder=data_folder))
 
-                #app = folder.split('_')[1:]
-                #if len(app) > 1:
-                #    self.StorageManagerList[-1].save_param('appendix', app[1])
+    def refresh(self):
+        self.StorageManagerList = []
+        if os.path.exists(self.absolute_path):
+            for folder in os.listdir(self.absolute_path):
+                if os.path.isdir(self.absolute_path+folder) and self.Tag in folder:
+                    self.StorageManagerList.append(StorageManager(self.Tag, folder, add_new_when_exists=False, data_folder=self.data_folder))
 
-                #self.StorageManagerList[-1].save_param('folder_number', ct)
-                #ct += 1
 
     def sort_by(self, param, section='Parameters'):
         self.StorageManagerList = sorted(self.StorageManagerList, key=lambda sm: sm.load_param(param, section, default=-np.inf))
@@ -275,7 +301,10 @@ class StorageManagerGroup:
             return l
 
     def get_param_list(self, param, section='Parameters', remove_None=False):
-        return self.remove_None([sm.load_param(param, section) for sm in self.StorageManagerList], remove_None)
+        if param == '#SM#':
+            return self.StorageManagerList
+        else:
+            return self.remove_None([sm.load_param(param, section) for sm in self.StorageManagerList], remove_None)
 
     def get_np_list(self, np_name, remove_None=False):
         return self.remove_None([sm.load_np(np_name) for sm in self.StorageManagerList], remove_None)
@@ -283,16 +312,25 @@ class StorageManagerGroup:
     def get_obj_list(self, obj_name, remove_None=False):
         return self.remove_None([sm.load_obj(obj_name) for sm in self.StorageManagerList], remove_None)
 
+    def add_virtual_multi_parameter(self, param, value): #add readout parameter that is not stored in config files for easier access
+        if (type(value) is list or type(value) is np.ndarray) and len(value)==len(self.StorageManagerList):
+            self.vp[param] = np.array(value)
+        else:
+            self.vp[param] = np.array([value for _ in self.StorageManagerList])
+
     def get_multi_param_list(self, params, section='Parameters', remove_None=True):
-        remove=True
+        remove = True
         results = []
         for param in params:
-            results.append(np.array(self.get_param_list(param, section)))
+            if param in self.vp:
+                results.append(self.vp[param])#virtual parameter
+            else:
+                results.append(np.array(self.get_param_list(param, section)))#stored parameter
             remove*=(results[-1]!=None)*(results[-1]!=np.nan)
         results = np.array(results)
         if remove_None:
             results=results[:,remove]#np.where(results is not None)#.any(axis=1)
-        return results.astype(np.float64)
+        return results#.astype(np.float64)
 
     def remove_duplicates_get_eval(self, x, y, evalstr='np.average(a)'):
         unique = np.unique(x)
@@ -315,6 +353,16 @@ class StorageManagerGroup:
                     result.append(sm)
 
         return result
+
+    def get_all_params(self, section='Parameters', include_virtual_parameters=True):
+        result_dict = {}
+        for sm in self.StorageManagerList:
+            for param in sm.get_all_params(section):
+                result_dict[param] = True
+        if include_virtual_parameters:
+            for v in self.vp:
+                result_dict[v]=True
+        return result_dict.keys()
 
 
 

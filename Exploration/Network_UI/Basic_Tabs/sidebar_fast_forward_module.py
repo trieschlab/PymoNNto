@@ -17,7 +17,7 @@ class sidebar_fast_forward_module(TabBase):
     def update_progress(self, progress):
         #self.progressbar.setHidden(False)
         QApplication.instance().processEvents()
-        self.progressbar.setValue(progress)
+        self.progressbar.setValue(int(progress))
 
     def fast_forward(self, steps, Network_UI):
 

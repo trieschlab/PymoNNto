@@ -36,7 +36,7 @@ class DrawItem(pg.GraphicsObject):
 
     def update_pic(self, sub_sgs, group):
 
-        blocks={}
+        blocks = {}
 
         for sg in sub_sgs:
             if not sg.src.BaseNeuronGroup in blocks:

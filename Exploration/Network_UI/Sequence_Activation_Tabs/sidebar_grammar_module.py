@@ -32,18 +32,18 @@ class sidebar_grammar_module_new(TabBase):
             Network_UI.Add_Sidebar_Element(self.act_cb)
 
             self.inp_text_label = QLabel(Network_UI.main_window)
-            Network_UI.Add_Sidebar_Element(self.inp_text_label, stretch=0.2)
+            Network_UI.Add_Sidebar_Element(self.inp_text_label, stretch=2)
             self.inp_text_label.setText('')
             self.inp_text_label.setFont(QFont("Courier"))
             self.inp_text_label.setToolTip('current network input')
 
         if Network_UI.network['Text_Reconstructor', 0] is not None:
             rl = QLabel(Network_UI.main_window)
-            Network_UI.Add_Sidebar_Element(rl, stretch=0.2)
+            Network_UI.Add_Sidebar_Element(rl, stretch=2)
             rl.setText('Reconstruction:')
 
             self.recon_text_label = QLabel(Network_UI.main_window)
-            Network_UI.Add_Sidebar_Element(self.recon_text_label, stretch=0.2)
+            Network_UI.Add_Sidebar_Element(self.recon_text_label, stretch=2)
             self.recon_text_label.setText('')
             self.recon_text_label.setFont(QFont("Courier"))
             self.recon_text_label.setToolTip('simple reconstruction text')
