@@ -1,4 +1,11 @@
-from __init__ import *
+from NetworkCore.Network import *
+from NetworkCore.Behaviour import *
+from NetworkCore.Neuron_Group import *
+from NetworkCore.Synapse_Group import *
+from NetworkCore.Analysis_Module import *
+
+from Exploration.HelperFunctions import *
+from Exploration.StorageManager.StorageManager import *
 
 class counter(Behaviour):
     def set_variables(self, neurons):

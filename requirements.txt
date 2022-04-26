@@ -10,3 +10,4 @@ scipy
 scikit-learn
 imageio
 pillow
+paramiko
