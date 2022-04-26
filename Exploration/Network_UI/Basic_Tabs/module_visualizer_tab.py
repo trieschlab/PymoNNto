@@ -83,7 +83,7 @@ class module_visualizer_tab(TabBase):
         return
 
     def add_flow_chart(self, Network_UI, di_modules, group_tags, keys):
-        self.flow_tab = Network_UI.Next_Tab('Flow_Chart', stretch=0.0)
+        self.flow_tab = Network_UI.Next_Tab('Flow_Chart', stretch=0)
         self.flow_tab.plot = Network_UI.Add_plot()
         self.flow_tab.plot.hideAxis('bottom')
         self.flow_tab.plot.hideAxis('left')

@@ -20,7 +20,9 @@ class UI_Evolution_Manager(Execution_Manager_UI_Base):
         vertical_layout.addWidget(QLabel('individual count'))
         vertical_layout.addWidget(QLabel('mutation'))
         vertical_layout.addWidget(QLabel('death rate'))
-        vertical_layout.addWidget(QLabel('start geneomes'))
+        sg=QLabel('start geneomes')
+        vertical_layout.addWidget(sg)
+        sg.setFixedHeight(200)
         vertical_layout.addWidget(QLabel('inactive info'))
         vertical_layout.addWidget(QLabel('constriants'))
         vertical_layout.addWidget(QLabel('evo options'))
@@ -31,7 +33,9 @@ class UI_Evolution_Manager(Execution_Manager_UI_Base):
         self.individual_count_edit = QLineEdit('10')
         self.mutation_edit = QLineEdit('0.05')
         self.death_rate_edit = QLineEdit('0.5')
-        self.start_genomes_edit = QLineEdit("[{'a':1,'b':2,'c':2,'d':2,'e':3}]")
+        self.start_genomes_edit = QTextEdit("[{'a':1,'b':2,'c':2,'d':2,'e':3}]")
+        self.start_genomes_edit.setFixedHeight(200)
+        #QLineEdit("[{'a':1,'b':2,'c':2,'d':2,'e':3}]")
         self.inactive_genome_info_edit = QLineEdit('{}')
         self.constraints_edit = QLineEdit("['a<b','b<=c']")
         self.evo_options_edit = QLineEdit('{}')
@@ -44,7 +48,7 @@ class UI_Evolution_Manager(Execution_Manager_UI_Base):
         vertical_layout.addWidget(self.individual_count_edit)
         vertical_layout.addWidget(self.mutation_edit)
         vertical_layout.addWidget(self.death_rate_edit)
-        vertical_layout.addWidget(self.start_genomes_edit)
+        vertical_layout.addWidget(self.start_genomes_edit,stretch=5)
         vertical_layout.addWidget(self.inactive_genome_info_edit)
         vertical_layout.addWidget(self.constraints_edit)
         vertical_layout.addWidget(self.evo_options_edit)
@@ -114,7 +118,7 @@ if __name__ == '__main__':
         exec_file = exec_file.replace('#individual_count#', self.individual_count_edit.text())
         exec_file = exec_file.replace('#mutation#', self.mutation_edit.text())
         exec_file = exec_file.replace('#death_rate#', self.death_rate_edit.text())
-        exec_file = exec_file.replace('#start_genomes#', self.start_genomes_edit.text())
+        exec_file = exec_file.replace('#start_genomes#', self.start_genomes_edit.toPlainText().replace('\r', '').replace('\n', ''))
         exec_file = exec_file.replace('#constraints#', self.constraints_edit.text())
         exec_file = exec_file.replace('#evo_options#', self.evo_options_edit.text())
 
@@ -131,18 +135,18 @@ if __name__ == '__main__':
         ssm.save_param('individual_count', self.individual_count_edit.text())
         ssm.save_param('mutation', self.mutation_edit.text())
         ssm.save_param('death_rate', self.death_rate_edit.text())
-        ssm.save_param('start_genomes', self.start_genomes_edit.text())
+        ssm.save_param('start_genomes', self.start_genomes_edit.toPlainText().replace('\r', '').replace('\n', ''))
         ssm.save_param('constraints', self.constraints_edit.text())
         ssm.save_param('python_cmd', self.python_cmd_edit.text())
         ssm.save_param('evo_options', self.evo_options_edit.text())
 
-        gene_keys = list(eval(self.start_genomes_edit.text())[0].keys())
+        gene_keys = list(eval(self.start_genomes_edit.toPlainText().replace('\r', '').replace('\n', ''))[0].keys())
         ssm.save_param('gene_keys', gene_keys)
 
     def valid_configuration(self):
         valid_genomes = False
         try:
-            sg = eval(self.start_genomes_edit.text())
+            sg = eval(self.start_genomes_edit.toPlainText().replace('\r', '').replace('\n', ''))
             for key in ['gen', 'score', 'id']:
                 for genome in sg:
                     if key in genome:

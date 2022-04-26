@@ -72,7 +72,9 @@ class Network(NetworkObjectBase):
             print('genome:', current_genome)
 
         if storage_manager is not None:
+            print(current_genome)
             storage_manager.save_param(key='evolution_params', value=current_genome)
+            storage_manager.save_param_dict(current_genome)
 
     def __str__(self):
         neuron_count = np.sum(np.array([ng.size for ng in self.NeuronGroups]))

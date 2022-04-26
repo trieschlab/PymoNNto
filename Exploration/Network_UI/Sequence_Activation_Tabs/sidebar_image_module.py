@@ -22,10 +22,10 @@ class sidebar_image_module(TabBase):
             #self.image_history_image = Network_UI.Add_Image_Item(False, True, title='', stretch=0.3)
             self.image_history = []
 
-            self.prediction_history_image = Network_UI.Add_Image_Item(False, True, title='', stretch=0.3)
+            self.prediction_history_image = Network_UI.Add_Image_Item(False, True, title='', stretch=1)
             self.prediction_history = []
 
-            self.backprop_image = Network_UI.Add_Image_Item(False, True, title='', stretch=0.3)
+            self.backprop_image = Network_UI.Add_Image_Item(False, True, title='', stretch=1)
 
     def max_div(self, pattern):
         ms = np.max(pattern)

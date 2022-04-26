@@ -13,8 +13,7 @@ if __name__ == '__main__':
                     start_genomes=[genome],
                     devices={'single_thread': 0,
                              'multi_thread': 4,
-                             'ssh vieth@poppy.fias.uni-frankfurt.de': 0,
-                             'ssh marius@hey3kmuagjunsk2b.myfritz.net': 0,
+                             #'ssh user@host.de': 0,
                              }
                     )
 

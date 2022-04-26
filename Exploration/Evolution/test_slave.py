@@ -1,6 +1,3 @@
-
-
-
 from PymoNNto.Exploration.Evolution.Interface_Functions import *
 
 score = get_gene('a', 0) + get_gene('b', 0) + get_gene('c', 0) + get_gene('d', 0)

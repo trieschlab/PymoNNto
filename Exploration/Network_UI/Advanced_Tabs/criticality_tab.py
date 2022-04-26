@@ -76,7 +76,7 @@ class criticality_tab(TabBase):
         btn.mousePressEvent = on_click
         Network_UI.Add_element(btn)
 
-        Network_UI.Next_H_Block(stretch=0.1)
+        Network_UI.Next_H_Block(stretch=1)
 
         self.min_slider = QSlider(1)  # QtCore.Horizontal
         self.min_slider.setMinimum(1)
@@ -86,7 +86,7 @@ class criticality_tab(TabBase):
         self.min_slider.setToolTip('slide to cut away smallest slopes')
         Network_UI.Add_element(self.min_slider)  # , stretch=0.1
 
-        Network_UI.Next_H_Block(stretch=0.1)
+        Network_UI.Next_H_Block(stretch=1)
 
         self.split_slider = QSlider(1)  # QtCore.Horizontal
         self.split_slider.setMinimum(1)

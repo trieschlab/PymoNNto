@@ -11,7 +11,7 @@ class UI_Single_Evolution_Monitor(UI_Base):
 
         self.evolution = evolution
 
-        self.main_tab = self.Next_Tab('Evolution performance', stretch=0.0)
+        self.main_tab = self.Next_Tab('Evolution performance', stretch=0)
 
         self.reduced_layout = False
 
@@ -19,7 +19,7 @@ class UI_Single_Evolution_Monitor(UI_Base):
 
         add_evolution_plot_items(self, self.main_tab)
 
-        self.Next_H_Block(stretch=0.0)
+        self.Next_H_Block(stretch=0)
         self.pause_cont_btn = self.Add_element(QPushButton('Pause'), stretch=0)
         self.pause_cont_btn.clicked.connect(self.on_pause_cont_click)
 

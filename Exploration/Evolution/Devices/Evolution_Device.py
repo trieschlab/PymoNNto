@@ -1,4 +1,5 @@
 from PymoNNto import *
+from PymoNNto.Exploration.Evolution.Interface_Functions import *
 import os
 import sys
 
@@ -8,16 +9,16 @@ import sys
 #        id += '#' + key + '$' + str(value)
 #    return id + '#'
 
-def execute_local_file(slave_file, genome):
-    for arg in sys.argv:  # remove old
-        if 'genome=' in arg:
-            sys.argv.remove(arg)
-    sys.argv.append('genome=' + get_gene_id(genome))  # add new
+#def execute_local_file(slave_file, genome):
+#    for arg in sys.argv:  # remove old
+#        if 'genome=' in arg:
+#            sys.argv.remove(arg)
+#    sys.argv.append('genome=' + get_gene_id(genome))  # add new
 
-    py_file = open(slave_file, "r")
-    execution_string = py_file.read()
-    exec(execution_string)
-    py_file.close()
+#    py_file = open(slave_file, "r")
+#    execution_string = py_file.read()
+#    exec(execution_string)
+#    py_file.close()
 
 class Evolution_Device():#one device per thread
 

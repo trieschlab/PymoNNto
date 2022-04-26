@@ -26,7 +26,7 @@ def evolution_thread_worker(name, folder, python_cmd, conn):
 
         system_str = sys.platform
         if 'darwin' in system_str:#mac os
-            os.system(python_cmd+' execute.py')#todo: test dfdsgdf
+            os.system(python_cmd+' execute.py')
         elif 'win' in system_str:#windows
             os.system('start /wait cmd /c '+python_cmd+' execute.py')
         else:
@@ -111,15 +111,15 @@ class Execution_Manager_UI_Base(UI_Base):
 
 
         ssm = SimpleStorageManager(get_epc_folder() + '/')
-        servers = eval(ssm.load_param('servers', default="[]"))  # ['local', 'ssh vieth@poppy.fias.uni-frankfurt.de', 'ssh marius@hey3kmuagjunsk2b.myfritz.net', '+']
+        servers = eval(ssm.load_param('servers', default="[]"))
         self.listwidget2 = QListWidget()
         self.listwidget2.addItems(['+', 'local'] + servers)
         self.listwidget2.currentItemChanged.connect(self.on_server_select)
-        self.Add_element(self.listwidget2, stretch=10.0, sidebar=True)
+        self.Add_element(self.listwidget2, stretch=10, sidebar=True)
 
         self.add_ui_elements()
 
-        self.add_btn = self.Add_element(QPushButton('Add'), sidebar=True, stretch=1.0)
+        self.add_btn = self.Add_element(QPushButton('Add'), sidebar=True, stretch=1)
         self.add_btn.clicked.connect(self.on_add_click)
 
         for dir in os.listdir(get_epc_folder(self.folder)):

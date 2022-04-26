@@ -7,9 +7,21 @@ class UI_Plot_Manager(Execution_Manager_UI_Base):
         return 'Plot_Project_Clones'
 
     def get_title(self):
-        return 'Plot Monitor'
+        return 'Plot Manager'
 
     def add_ui_elements(self):
+
+        self.qte=QTextEdit()
+        self.qte.setPlainText("""for _ in range(#runs#):
+	file_exec({})
+
+
+###help###
+#file_exec({'gene1': 1, ...})
+""")
+        self.Add_element(self.qte, sidebar=True)
+
+
         horizontal_layout = QHBoxLayout()
         self.sidebar_current_vertical_layout.addLayout(horizontal_layout)
 
@@ -66,35 +78,32 @@ class UI_Plot_Manager(Execution_Manager_UI_Base):
         '''
 
     def create_execution_file(self, name, folder, file):
-        exec_file = """
-import sys
 
-py_file = open('#slave_file#', "r")
-execution_string = py_file.read()
-py_file.close()
-        
-def get_gene_id(gene):
-    id = ''
-    for key, value in gene.items():
-        id += '#'+key+'@'+str(value)
-    return id+'#'
+        #from PymoNNto.Exploration.Evolution.Interface_Functions import *
 
-def execute_local_file(genome):
-    for arg in sys.argv:
-        if 'genome=' in arg:
-            sys.argv.remove(arg)
-    sys.argv.append('genome=' + get_gene_id(genome))
-    exec(execution_string)
+        exec_file = """from PymoNNto.Exploration.Evolution.Interface_Functions import *
+execution_counter_=0
+def file_exec(genes):
+    global execution_counter_
+    genes['evo_name']='#name#'
+    genes['id'] = execution_counter_
+    execute_local_file('#file#', genes)
+    execution_counter_+=1
     
-for run in range(#run_count#):
-    execute_local_file({'evo_name': '#name#', 'gen': run, 'id': run})   
-        """
+"""+self.qte.toPlainText()
+#        """
+#from PymoNNto.Exploration.Evolution.Interface_Functions import *
+#import sys
+#
+#for run in range(#run_count#):
+#    execute_local_file('#slave_file#', {'evo_name': '#name#', 'gen': run, 'id': run})
+#        """
 
         print('generate execute.py...')
         exec_file = exec_file.replace('#name#', name)
-        exec_file = exec_file.replace('#slave_file#', self.slave_file_edit.text())
+        exec_file = exec_file.replace('#file#', self.slave_file_edit.text())
         #exec_file = exec_file.replace('#thread_number#', self.thread_number_edit.text())
-        exec_file = exec_file.replace('#run_count#', self.run_count_edit.text())
+        exec_file = exec_file.replace('#runs#', self.run_count_edit.text())
 
         md_file = open(file, "w")
         md_file.write(exec_file)
@@ -116,7 +125,7 @@ for run in range(#run_count#):
 
         #tab.plot = self.Add_plot(title='results')
 
-        tab.interactive_scatter = self.Add_element(InteractiveScatter())
+        tab.interactive_scatter = self.Add_element(InteractiveScatter(default_x='id', default_y='score'))
 
         #add_evolution_plot_items(self, tab)
         #tab.folder = get_epc_folder(self.folder) + '/' + name + '/'

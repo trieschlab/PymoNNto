@@ -9,9 +9,14 @@ def ssh_thread_worker(slave_file, name, user, host, password, python_cmd, root_f
         if conn.poll():
             genome = conn.recv()
             try:
+
+                genome_str=''
+                for gene in genome:
+                    genome_str+=' '+ str(gene) + '=' + str(genome[gene])
+
                 ssh = get_ssh_connection(host, user, password)
                 cmd = 'cd ' + name + '/' +root_folder+ '; '
-                cmd += python_cmd+' ' + slave_file + ' genome=' + get_gene_id(genome)
+                cmd += python_cmd+' ' + slave_file + genome_str#' genome=' + get_gene_id(genome)
                 ssh_stdin, ssh_stdout, ssh_stderr = ssh.exec_command(cmd)
                 results = get_response(ssh_stdout, ssh_stderr)
                 ssh.close()
