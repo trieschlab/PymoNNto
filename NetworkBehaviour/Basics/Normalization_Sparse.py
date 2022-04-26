@@ -1,7 +1,5 @@
 import numpy as np
 
-scipy.sparse
-
 def normalize_synapse_attr_sparse(src_attr, target_attr, target_value, neurons, synapse_type):
 
     neurons.temp_weight_sum = neurons.get_neuron_vec()
