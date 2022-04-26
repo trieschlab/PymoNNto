@@ -1,4 +1,4 @@
-from PymoNNto import *
+from __init__ import *
 
 class counter(Behaviour):
     def set_variables(self, neurons):
