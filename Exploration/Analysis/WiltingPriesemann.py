@@ -79,7 +79,7 @@ def input_handler(items):
             situation = 0
         else:
             raise Exception('Invalid input: input type not recognized')
-    elif isinstance(items, basestring):
+    elif isinstance(items, str):
         items = [items]
         situation = 1
     else:
