@@ -1,11 +1,11 @@
-from NetworkCore.Network import *
-from NetworkCore.Behaviour import *
-from NetworkCore.Neuron_Group import *
-from NetworkCore.Synapse_Group import *
-from NetworkCore.Analysis_Module import *
+from PymoNNto.NetworkCore.Network import *
+from PymoNNto.NetworkCore.Behaviour import *
+from PymoNNto.NetworkCore.Neuron_Group import *
+from PymoNNto.NetworkCore.Synapse_Group import *
+from PymoNNto.NetworkCore.Analysis_Module import *
 
-from Exploration.HelperFunctions import *
-from Exploration.StorageManager.StorageManager import *
+from PymoNNto.Exploration.HelperFunctions import *
+from PymoNNto.Exploration.StorageManager.StorageManager import *
 
 class counter(Behaviour):
     def set_variables(self, neurons):
