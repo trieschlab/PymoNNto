@@ -33,7 +33,7 @@ class UI_Plot_Manager(Execution_Manager_UI_Base):
         vertical_layout.addWidget(QLabel('python cmd'))
         vertical_layout.addWidget(QLabel('runs'))
 
-        self.slave_file_edit = QLineEdit('Exploration/Evolution/test_slave.py')
+        self.slave_file_edit = QLineEdit('Exploration/Evolution/slave_example.py')
         #self.thread_number_edit = QLineEdit('4')
         self.python_cmd_edit = QLineEdit("python3")
         self.run_count_edit = QLineEdit('10')

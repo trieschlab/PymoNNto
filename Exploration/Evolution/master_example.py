@@ -4,7 +4,7 @@ if __name__ == '__main__':
     genome = {'a': 1, 'b': 2, 'c': 2, 'd': 2, 'e':3}
 
     evo = Evolution(name='my_test_evo',
-                    slave_file='test_slave.py', #Exploration/Evolution/
+                    slave_file='slave_example.py', #Exploration/Evolution/
                     individual_count=10,
                     mutation=0.04,
                     death_rate=0.5,

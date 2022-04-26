@@ -27,7 +27,7 @@ class UI_Evolution_Manager(Execution_Manager_UI_Base):
         vertical_layout.addWidget(QLabel('constriants'))
         vertical_layout.addWidget(QLabel('evo options'))
 
-        self.slave_file_edit = QLineEdit('Exploration/Evolution/test_slave.py')
+        self.slave_file_edit = QLineEdit('Exploration/Evolution/slave_example.py')
         self.thread_number_edit = QLineEdit('4')
         self.python_cmd_edit = QLineEdit("python3")
         self.individual_count_edit = QLineEdit('10')
