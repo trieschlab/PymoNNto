@@ -66,7 +66,7 @@ class StorageManager:
             if evo_func.get_gene('evo_name', None) is not None: # and evo_func.get_gene('gen', None) is not None and evo_func.get_gene('id', None) is not None
                 main_folder_name = evo_func.get_gene('evo_name', None)
                 folder_name = evo_func.get_gene_file(evo_func.evolution_genome)
-                add_new_when_exists = True#??? Test
+                #add_new_when_exists = True#??? Test
                 random_nr=False
 
         if type(main_folder_name) is dict:
@@ -169,7 +169,7 @@ class StorageManager:
         self.init_config()
         if not self.config.has_section(section):
             self.config.add_section(section)
-        self.config.set(section, key, str(value))
+        self.config.set(section, key, str(value).replace('%','percent'))
         with open(self.absolute_path+self.config_file_name, 'w') as configfile:
             self.config.write(configfile)
 
@@ -331,6 +331,9 @@ class StorageManagerGroup:
         if remove_None:
             results=results[:,remove]#np.where(results is not None)#.any(axis=1)
         return results#.astype(np.float64)
+
+    def get_multi_param_dict(self, params, section='Parameters', remove_None=True):
+        return dict(zip(params,self.get_multi_param_list(params,section,remove_None)))
 
     def remove_duplicates_get_eval(self, x, y, evalstr='np.average(a)'):
         unique = np.unique(x)

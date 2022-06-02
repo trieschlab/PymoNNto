@@ -14,7 +14,7 @@ class sidebar_fast_forward_module(TabBase):
         for rec in Network_UI.network['UI_rec']:
             rec.behaviour_enabled = enable or self.rec_cb.isChecked()
 
-    def update_progress(self, progress):
+    def update_progress(self, progress, network=None):
         #self.progressbar.setHidden(False)
         QApplication.instance().processEvents()
         self.progressbar.setValue(int(progress))

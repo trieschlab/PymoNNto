@@ -39,8 +39,8 @@ class fourier_tab(TabBase):
         text.setPos(22, 0)
         exc_plt.addItem(text)
 
-        text = pg.TextItem(text='Gamma', anchor=(0, 0))
-        text.setPos(30, 0)
+        text = pg.TextItem(text='Gamma', anchor=(0.5, 0))#(0, 0)
+        text.setPos(40, 0)#(30, 0)
         exc_plt.addItem(text)
 
         Network_UI.Next_H_Block()
@@ -127,11 +127,11 @@ class fourier_tab(TabBase):
                 max_y = np.max(real) + 0.001
                 max_x = np.max(xf)
 
-                self.exc_delta.setData([0.1, 3.9], [0, 0], fillLevel=max_y, brush=(50, 250, 50, 50), pen=None)
-                self.exc_theta.setData([min(max_x, 4), min(max_x, 7.9)], [0, 0], fillLevel=max_y, brush=(100, 200, 50, 50), pen=None)
-                self.exc_alpha.setData([min(max_x, 8), min(max_x, 13.9)], [0, 0], fillLevel=max_y, brush=(150, 150, 50, 50), pen=None)
-                self.exc_beta.setData([min(max_x, 14), min(max_x, 29.9)], [0, 0], fillLevel=max_y, brush=(200, 100, 50, 50), pen=None)
-                self.exc_gamma.setData([min(max_x, 30), min(max_x, 100)], [0, 0], fillLevel=max_y, brush=(250, 50, 50, 50), pen=None)
+                self.exc_delta.setData([0.1, 3.9], [0, 0], fillLevel=max_y, brush=(50, 250, 50, 50), pen=(50, 250, 50, 50))
+                self.exc_theta.setData([min(max_x, 4), min(max_x, 7.9)], [0, 0], fillLevel=max_y, brush=(100, 200, 50, 50), pen=(50, 250, 50, 50))
+                self.exc_alpha.setData([min(max_x, 8), min(max_x, 13.9)], [0, 0], fillLevel=max_y, brush=(150, 150, 50, 50), pen=(50, 250, 50, 50))
+                self.exc_beta.setData([min(max_x, 14), min(max_x, 29.9)], [0, 0], fillLevel=max_y, brush=(200, 100, 50, 50), pen=(50, 250, 50, 50))
+                self.exc_gamma.setData([min(max_x, 30), min(max_x, 100)], [0, 0], fillLevel=max_y, brush=(250, 50, 50, 50), pen=(50, 250, 50, 50))
             except:
                 print(self.parameter, 'cannot be evaluated')
 

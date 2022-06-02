@@ -113,8 +113,12 @@ class Recorder(Behaviour):
 
     def clear_recorder(self):
         print('clear')
+
         for v in self.variables:
-            self.add_varable(v)
+            self.variables[v].clear()
+
+        #for v in self.variables:
+        #    self.add_varable(v)
 
 class EventRecorder(Recorder):
 

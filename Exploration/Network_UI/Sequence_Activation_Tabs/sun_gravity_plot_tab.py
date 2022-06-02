@@ -283,7 +283,7 @@ class DrawItem2(pg.GraphicsObject):
                             qf = QFont('Consolas')
                             qf.setPointSizeF(1.0)
                             painter.setFont(qf)
-                            painter.drawText(group.buffer_posx[i], group.buffer_posy[i], res[i])
+                            painter.drawText(int(group.buffer_posx[i]), int(group.buffer_posy[i]), res[i])
 
 
                     #class_tag_dict = module.get_class_labels(tag, group.classification, generator)
@@ -382,7 +382,7 @@ class sun_gravity_plot_tab(TabBase):
 
     def initialize(self, Network_UI):
         self.sun_gravity_plot_tab=None
-        if Network_UI.network['text_generator', 0] is not None or Network_UI.network['grammar_act', 0] is not None or Network_UI.network['drum_act', 0] is not None or Network_UI.network['music_act', 0] is not None:
+        if Network_UI.network['Text_Generator', 0]:# is not None or Network_UI.network['grammar_act', 0] is not None or Network_UI.network['drum_act', 0] is not None or Network_UI.network['music_act', 0] is not None:
             self.sun_gravity_plot_tab = Network_UI.Next_Tab(self.title)
 
             #alphabet = Network_UI.network['grammar_act'][0].alphabet
@@ -438,17 +438,17 @@ class sun_gravity_plot_tab(TabBase):
             self.draw_item.mouseClickEvent = mce
             self.draw_item.mouseDoubleClickEvent = mdce
 
-            if Network_UI.network['grammar_act', 0] is not None: 
-                source = Network_UI.network['grammar_act'][0]
-                self.base_char_masks_dict = dict([(char, source.get_activation(i, Network_UI.network['prediction_source', 0])) for i, char in enumerate(source.alphabet)])
+            #if Network_UI.network['grammar_act', 0] is not None:
+            #    source = Network_UI.network['grammar_act'][0]
+            #    self.base_char_masks_dict = dict([(char, source.get_activation(i, Network_UI.network['prediction_source', 0])) for i, char in enumerate(source.alphabet)])
 
-            elif Network_UI.network['drum_act', 0] is not None: 
-                source = Network_UI.network['drum_act'][0]
-                self.base_char_masks_dict = dict([(source.instruments[char], source.get_activation(i, Network_UI.network['prediction_source', 0])) for i, char in enumerate(source.alphabet)])
+            #elif Network_UI.network['drum_act', 0] is not None:
+            #    source = Network_UI.network['drum_act'][0]
+            #    self.base_char_masks_dict = dict([(source.instruments[char], source.get_activation(i, Network_UI.network['prediction_source', 0])) for i, char in enumerate(source.alphabet)])
             
-            elif Network_UI.network['music_act', 0] is not None: 
-                source = Network_UI.network['music_act'][0]
-                self.base_char_masks_dict = dict([(source.midi_index_to_notestring(char), source.get_activation(i, Network_UI.network['prediction_source', 0])) for i, char in enumerate(source.alphabet)])
+            #elif Network_UI.network['music_act', 0] is not None:
+            #    source = Network_UI.network['music_act'][0]
+            #    self.base_char_masks_dict = dict([(source.midi_index_to_notestring(char), source.get_activation(i, Network_UI.network['prediction_source', 0])) for i, char in enumerate(source.alphabet)])
             
 
             Network_UI.Next_H_Block()
@@ -522,6 +522,11 @@ class sun_gravity_plot_tab(TabBase):
 
         if self.sun_gravity_plot_tab is not None and self.sun_gravity_plot_tab.isVisible():
 
+            if Network_UI.network['Text_Generator', 0] is not None:
+                self.draw_item.update_pic(groups, Network_UI.network['Text_Generator', 0].alphabet, Network_UI, Network_UI.network['Text_Generator', 0].count_chars_in_blocks(), self.weight_plot_cb.isChecked())
+                self.plot.update()
+
+            '''
             if Network_UI.network['grammar_act', 0] is not None:
                 #group = Network_UI.network['prediction_source', 0]
 
@@ -547,6 +552,7 @@ class sun_gravity_plot_tab(TabBase):
                 self.draw_item.update_pic(groups, alphabet, Network_UI, source.get_note_input_statistics_list(), self.weight_plot_cb.isChecked())
                 self.plot.update()
 
-            elif Network_UI.network['text_generator', 0] is not None:
-                self.draw_item.update_pic(groups, Network_UI.network['text_generator', 0].alphabet, Network_UI, Network_UI.network['text_generator', 0].count_chars_in_blocks(), self.weight_plot_cb.isChecked())
-                self.plot.update()
+            elif
+            '''
+
+

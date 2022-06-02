@@ -29,7 +29,9 @@ class reconstruction_tab(TabBase):
                     label = QLabel('<font color='+('#%02x%02x%02x'% (timestep*25,timestep*25,timestep*25)).upper()+'>'+char.replace(' ','_')+'</font>')
                     label.char=char
                     self.labels[-1].append(label)
-                    #label.setFont(QFont())
+                    font=label.font()
+                    font.setPointSizeF(12-len(generator.alphabet)/10)
+                    label.setFont(font)
                     self.grid.addWidget(label, y, timestep)
 
             self.img = Network_UI.Add_Image_Item(False, False, title=' neuron rec')
@@ -52,7 +54,9 @@ class reconstruction_tab(TabBase):
                     net_label = QLabel('<font color='+('#%02x%02x%02x'% (timestep*25,timestep*25,timestep*25)).upper()+'>'+char.replace(' ','_')+'</font>')
                     net_label.char = char
                     self.net_labels[-1].append(net_label)
-                    #label.setFont(QFont())
+                    font = net_label.font()
+                    font.setPointSizeF(12-len(generator.alphabet)/10)
+                    net_label.setFont(font)
                     self.net_grid.addWidget(net_label, y, timestep)
 
             self.net_img = Network_UI.Add_Image_Item(False, False, title='net rec')

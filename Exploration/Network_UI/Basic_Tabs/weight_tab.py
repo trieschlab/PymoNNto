@@ -50,7 +50,8 @@ class weight_tab(TabBase):
                 syn_dict[transmitter] = {}
                 for weight_attr in self.weight_attrs:
 
-                    syn_dict[transmitter][weight_attr] = {transmitter: get_single_neuron_combined_partition_matrix(group, transmitter, weight_attr, Network_UI.selected_neuron_id())}
+                    if transmitter in group.afferent_synapses and len(group.afferent_synapses[transmitter])>0:
+                        syn_dict[transmitter][weight_attr] = {transmitter: get_single_neuron_combined_partition_matrix(group, transmitter, weight_attr, Network_UI.selected_neuron_id())}#group.afferent_synapses[transmitter][0].W[Network_UI.selected_neuron_id()
 
                     #syns = get_combined_syn_mats(group.afferent_synapses[transmitter], Network_UI.selected_neuron_id(), weight_attr)
 

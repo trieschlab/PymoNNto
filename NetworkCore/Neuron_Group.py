@@ -25,6 +25,7 @@ class NeuronGroup(NetworkObjectBase):
         if net is not None:
             net.NeuronGroups.append(self)
             self.network = net
+            setattr(net, self.tags[0], self)
 
 
         self.size = size

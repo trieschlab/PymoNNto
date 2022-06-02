@@ -50,22 +50,6 @@ class sidebar_neuron_grid_submodule(TabBase):
         group_select_box = QComboBox()
         self.color_select_box = Analytics_Results_Select_ComboBox(Network_UI.network[Network_UI.group_tags[index], 0] ,'classifier', first_entry='group color')
 
-        '''
-        def update_list():
-            self.color_select_box.clear()
-            self.color_select_box.addItem('color')
-
-            group = Network_UI.network[Network_UI.group_tags[index], 0]
-            for k in group.get_all_analysis_module_results('classifier'):
-                self.color_select_box.addItem(k)
-
-        self.color_select_box.popupAboutToBeShown.connect(update_list)
-        '''
-
-        #update_list()
-        #if self.color_select_box.count()>1:
-        #    self.color_select_box.setCurrentIndex(1)#select default if exist
-
 
         Network_UI.Add_Sidebar_Element([group_select_box, self.color_select_box])
 
@@ -78,14 +62,20 @@ class sidebar_neuron_grid_submodule(TabBase):
         self.image_item.mouseDoubleClickEvent = mdce
 
 
-
         def group_changed(select_index):
+            #if select_index<len(Network_UI.group_tags):#none
             tag = Network_UI.group_tags[select_index]
             Network_UI.select_neuron(Network_UI.network[tag, 0], 0)
+            self.color_select_box.change_main_object(Network_UI.network[tag, 0])
             self.image_item.neuron_group_tag = tag
             Network_UI.neuron_visible_groups[index] = tag
+            #else:
+            #    self.image_item.neuron_group_tag = 'None'
+            #    Network_UI.neuron_visible_groups[index] = 'None'
+
 
         group_select_box.addItems(Network_UI.group_tags)
+        #group_select_box.addItem('None')
         group_select_box.setCurrentIndex(index)
         group_select_box.currentIndexChanged.connect(group_changed)
 
@@ -100,13 +90,6 @@ class sidebar_neuron_grid_submodule(TabBase):
             group = Network_UI.network[group_tag, 0]
             n = group #for eval operations
 
-            #base color and classification
-            #key=self.color_select_box.currentText()
-            #classifications = group.get_all_analysis_module_results('classifier')
-            #if key in classifications:
-            #    classification = classifications[key]
-            #else:
-            #    classification = None
             group.classification = self.color_select_box.get_selected_result()
             if group.classification is None:
                 group.classification = group.get_neuron_vec()

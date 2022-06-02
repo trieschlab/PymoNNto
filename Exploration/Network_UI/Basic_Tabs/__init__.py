@@ -21,8 +21,10 @@ from PymoNNto.Exploration.Network_UI.Basic_Tabs.Analysis_Module_tab import *
 
 from PymoNNto.Exploration.Network_UI.Basic_Tabs.event_tab import *
 
+from PymoNNto.Exploration.Network_UI.Basic_Tabs.sidebar_module_quick_access import *
 
-def get_default_UI_modules(neuron_parameters=['output'], synapse_parameters=['W']):
+
+def get_default_UI_modules(neuron_parameters=['output'], synapse_parameters=['W'], quick_access_tags=[]):
     return [
     UI_sidebar_neuron_grid_module(1, neuron_parameters[0]),
     multi_group_plot_tab(neuron_parameters),#['output', 'TH', 'weight_norm_factor', 'nox', 'refractory_counter']
@@ -43,12 +45,11 @@ def get_default_UI_modules(neuron_parameters=['output'], synapse_parameters=['W'
     code_execution_tab(),
     event_tab(),
     #module_visualizer_tab()
+    sidebar_module_quick_access(quick_access_tags)
 ]
 
 def get_modules_dict(*args): #get_modules_dict([m1,m2,m3],m4,[m5],{1:m6,2:m7},...)
     result = {}
-
-
 
     for arg in args:
         if type(arg) is list:

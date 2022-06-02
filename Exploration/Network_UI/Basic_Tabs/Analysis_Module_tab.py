@@ -61,7 +61,7 @@ class Analysis_Module_tab(TabBase):
 
     def update_progress(self, percentage):
         QApplication.instance().processEvents()
-        self.progressbar.setValue(percentage)
+        self.progressbar.setValue(int(percentage))
 
     def initialize(self, Network_UI):
         self.a_module_tab = Network_UI.Next_Tab(self.title)

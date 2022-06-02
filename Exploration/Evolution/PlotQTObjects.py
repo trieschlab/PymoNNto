@@ -196,6 +196,7 @@ class InteractiveScatter(pg.GraphicsLayoutWidget):#canvas object
         if found is not None:
             self.storage_manager_groups.remove(found)
             self.plot.removeItem(found.scatter)
+            self.plot.removeItem(found.error_bar)
             self.update_indices()
             self.scatter2.clear()
 
@@ -209,11 +210,14 @@ class InteractiveScatter(pg.GraphicsLayoutWidget):#canvas object
         found = self.find_same_path_smg(smg)
 
         if found is None:
+            smg.error_bar = pg.ErrorBarItem()
             smg.scatter = pg.ScatterPlotItem(size=10, name=smg.Tag)#, brush=pg.mkBrush(np.random.randint(0,255), np.random.randint(0,255), 255, 120)
             smg.scatter.sigClicked.connect(self.scatter_clicked)
             #self.plot.legend.addItem(smg.scatter, smg.Tag)
             self.plot.addItem(smg.scatter)
+            self.plot.addItem(smg.error_bar)
         else:
+            smg.error_bar = found.error_bar
             smg.scatter = found.scatter
             smg.color = found.color
             self.storage_manager_groups.remove(found)
@@ -239,6 +243,16 @@ class InteractiveScatter(pg.GraphicsLayoutWidget):#canvas object
         return
         #for i, smg in enumerate(self.storage_manager_groups):
         #    smg.add_virtual_multi_parameter('index', i)
+
+    def add_mean_and_variance(self):
+        if self.default_x=='index':
+            result_lists = smg.get_multi_param_list([self.default_x, self.default_y], remove_None=True).astype(np.float64)
+
+            mx, my = smg.remove_duplicates_get_eval(result_lists[-2], result_lists[-1], evalstr='np.average(a)')
+            vx, vy = smg.remove_duplicates_get_eval(result_lists[-2], result_lists[-1], evalstr='np.var(a)')
+
+
+
 
     def add_trendline(self, smg):
         if self.default_x=='gen':
@@ -298,6 +312,15 @@ class InteractiveScatter(pg.GraphicsLayoutWidget):#canvas object
                 c=[pg.mkBrush(255-255/d*(c-min), 255/d*(c-min), 0, 120) for c in data[3]]
 
             smg.scatter.setData(x=data[1], y=data[2], brush=c)  #
+
+            #error = pg.ErrorBarItem(x=x, y=y, top=top, bottom=bottom, beam=0.5)
+            if self.default_x == 'index':
+                meany= np.mean(data[2])
+                stdy = np.std(data[2])
+                smg.error_bar.setData(x=np.mean(data[1]), y=meany, top=stdy, bottom=stdy, beam=0.3)
+                smg.error_bar.setVisible(True)
+            else:
+                smg.error_bar.setVisible(False)
 
             for i, d in enumerate(smg.scatter.data):  # set ids to each point (d[3] very ugly coding...) (each point is a set, not an object)
                 d[3] = data[0][i]

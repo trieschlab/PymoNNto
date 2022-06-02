@@ -35,7 +35,7 @@ class UI_Plot_Manager(Execution_Manager_UI_Base):
 
         self.slave_file_edit = QLineEdit('Exploration/Evolution/slave_example.py')
         #self.thread_number_edit = QLineEdit('4')
-        self.python_cmd_edit = QLineEdit("python3")
+        self.python_cmd_edit = QLineEdit("python")
         self.run_count_edit = QLineEdit('10')
 
         vertical_layout = QVBoxLayout()
@@ -82,7 +82,13 @@ class UI_Plot_Manager(Execution_Manager_UI_Base):
         #from PymoNNto.Exploration.Evolution.Interface_Functions import *
 
         exec_file = """from PymoNNto.Exploration.Evolution.Interface_Functions import *
-execution_counter_=0
+
+ids = StorageManagerGroup('evo_name').get_param_list('id', remove_None=True)
+if len(ids) == 0:
+    execution_counter_ = 0
+else:
+    execution_counter_ = np.max(ids) + 1
+
 def file_exec(genes):
     global execution_counter_
     genes['evo_name']='#name#'

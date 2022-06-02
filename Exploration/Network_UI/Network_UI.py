@@ -105,7 +105,6 @@ class Network_UI(UI_Base):
         self.timer.timeout.connect(self.on_timer)
         self.timer.start(40)
 
-
     def select_neuron_class(self, group, class_id, add_to_select_group=False):
         return self.select_neurons(group, group.classification == class_id, add_to_select_group)
 

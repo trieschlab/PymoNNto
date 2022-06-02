@@ -1,7 +1,7 @@
 import numpy as np
-
 from numpy.random import *
 from numpy import *
+#import inspect
 
 def_dtype = np.float64
 
@@ -35,6 +35,11 @@ class NetworkObjectBase:
 
         self.analysis_modules = []
         self.add_tag(self.__class__.__name__)
+        #self._caller_module = inspect.getmodule(inspect.stack()[2][0])
+        #print(self._caller_module)
+
+    def has_module(self, tag):
+        return self[tag, 0] is not None
 
     def add_analysis_module(self, module):
         module._attach_and_initialize_(self)
@@ -72,15 +77,11 @@ class NetworkObjectBase:
         for obj in self[tag]:
             getattr(obj, attr)(args)
 
+    def get(self, key, first=True, numpy=True):
+        return self[key]#todo
+
     def __getitem__(self, key):
-
         np_array_conversion = isinstance(key, tuple) and 'np' in key
-
-        if key in self.tag_shortcuts and type(self.tag_shortcuts[key]) is not np.ndarray:
-            if np_array_conversion:
-                return np.array(self.tag_shortcuts[key])
-            else:
-                return self.tag_shortcuts[key]
 
         if isinstance(key, tuple):
             k = key[0]
@@ -89,11 +90,30 @@ class NetworkObjectBase:
             k = key
             index = None
 
+        #cache
+        if key in self.tag_shortcuts and type(self.tag_shortcuts[key]) is not np.ndarray:
+            if np_array_conversion:
+                result = np.array(self.tag_shortcuts[key])
+            else:
+                result = self.tag_shortcuts[key]
+
+            if index is not None:
+                if len(result) > 0:
+                    return result[index]
+                else:
+                    return None
+            else:
+                return result
+
+        #normal search
         result = []
         if k in self.tags or (k is type and isinstance(self, k)):
             result = [self]
 
         result += self.find_objects(k)
+
+        if k not in self.tag_shortcuts:
+            self.tag_shortcuts[k] = result
 
         if index is not None:
             if len(result)>0:
@@ -101,10 +121,7 @@ class NetworkObjectBase:
             else:
                 result=None
 
-        if not key in self.tag_shortcuts:
-            self.tag_shortcuts[key] = result
-
-        if np_array_conversion:# only used for [key,index,'np'] not for [key, 'np']
+        if np_array_conversion:
             return np.array(result)
         else:
             return result

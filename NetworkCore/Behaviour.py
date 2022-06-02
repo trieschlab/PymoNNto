@@ -19,6 +19,12 @@ class Behaviour(NetworkObjectBase):
 
     def set_gene_variables(self):
         current_genome = {}
+
+        #for k,v in self._caller_module.__dict__.items():
+        #    if k not in locals():
+        #        print(k)
+        #        locals()[k]=v
+
         for variable_key in self.init_kwargs:
             while type(self.init_kwargs[variable_key]) is str and '[' in self.init_kwargs[variable_key] and ']' in self.init_kwargs[variable_key]:
                 s = self.init_kwargs[variable_key]
@@ -30,7 +36,7 @@ class Behaviour(NetworkObjectBase):
 
                 if '#' in content:
                     parts = content.split('#')
-                    default_value = float(parts[0])
+                    default_value = eval(parts[0])#float(parts[0])
                     gene_key = parts[1]
                 else:
                     gene_key = content
@@ -61,12 +67,6 @@ class Behaviour(NetworkObjectBase):
             plot = True
 
         result = ds
-
-        if is_number(ds):
-            result = float(ds)
-
-        if '%' in ds and is_number(ds.replace('%', '')):
-            result = float(ds.replace('%', ''))/100.0
 
         if '(' in ds and ')' in ds:#is function
             if type(neurons_or_synapses).__name__ == "NeuronGroup":
@@ -112,6 +112,8 @@ class Behaviour(NetworkObjectBase):
         if not do_not_diversify and type(result) is str and neurons is not None:
             result = self.evaluate_diversity_string(result, neurons)
         elif type(result) is str and default is not None:
+            if '%' in result and is_number(result.replace('%', '')):
+                result = str(float(result.replace('%', '')) / 100.0)
             result = type(default)(result)#cast
 
         return result

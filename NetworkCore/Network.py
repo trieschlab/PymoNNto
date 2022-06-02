@@ -121,13 +121,13 @@ class Network(NetworkObjectBase):
 
         return result
 
-    def save_descriptions(self, storage_manager=None):
-        if storage_manager is not None:
-            return #todo: implement
-            #storage_manager.save_param(key, value, section='Parameters')
+    #def save_descriptions(self, storage_manager=None):
+    #    if storage_manager is not None:
+    #        return
+    #        #storage_manager.save_param(key, value, section='Parameters')
 
 
-    def initialize(self, info=False, warnings=True, storage_manager=None):
+    def initialize(self, info=True, warnings=True, storage_manager=None):
 
         self.set_gene_variables(info=info, storage_manager=storage_manager)
 
@@ -155,7 +155,7 @@ class Network(NetworkObjectBase):
 
         self.check_unique_tags(warnings)
 
-        self.save_descriptions(storage_manager)
+        #self.save_descriptions(storage_manager)
 
     def check_unique_tags(self,warnings=True):
         unique_tags=[]
@@ -365,7 +365,7 @@ class Network(NetworkObjectBase):
                 print('\r{}xBatch: {}/{} ({}%) {:.3f}ms'.format(block_iterations,t+1, outside_it, int(100/outside_it*(t+1)),time_diff), end='')#, end='')
 
             if batch_progress_update_func is not None:
-                batch_progress_update_func((t+1.0)/int(outside_it)*100.0)
+                batch_progress_update_func((t+1.0)/int(outside_it)*100.0, self)
 
         for i in range(iterations%batch_size):
             self.simulate_iteration()

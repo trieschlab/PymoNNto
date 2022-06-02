@@ -9,6 +9,12 @@ class SynapseGroup(NetworkObjectBase):
 
     def __init__(self, src, dst, net, tag=None, behaviour={}):
 
+        if type(src) is str:
+            src = net[src, 0]
+
+        if type(dst) is str:
+            dst = net[dst, 0]
+
         if tag is None and net is not None:
             tag = 'SynapseGroup_'+str(len(net.SynapseGroups)+1)
 
@@ -21,6 +27,7 @@ class SynapseGroup(NetworkObjectBase):
         if net is not None:
             net.SynapseGroups.append(self)
             self.network = net
+            setattr(net, self.tags[0], self)
 
         self.recording = True
 

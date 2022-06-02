@@ -16,7 +16,7 @@ def local_thread_worker(slave_file, conn):
     #    print('not able to set BELOW_NORMAL_PRIORITY_CLASS')
     print('local thread started')
     while True:
-        time.sleep(np.random.rand()/10)
+        time.sleep(np.random.rand()/10)#avoid creating same storage manager files at same time
         if conn.poll():
             genome = conn.recv()
             try:

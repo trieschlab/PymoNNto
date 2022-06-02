@@ -3,10 +3,12 @@ from PymoNNto.NetworkBehaviour.Recorder.Recorder import *
 
 #from Testing.Common.Grammar_Helper import *
 
-class sidebar_grammar_module_new(TabBase):
+class sidebar_module_quick_access(TabBase):
 
-    def __init__(self, text_length=30):
-        self.text_length = text_length
+    def __init__(self, module_label='my_module', module_tag='module_tag'):
+        self.module_label = module_label
+        self.module_tag = module_tag
+
 
     def initialize(self, Network_UI):
         if Network_UI.network['STDP', 0] is not None:
@@ -31,6 +33,16 @@ class sidebar_grammar_module_new(TabBase):
             self.act_cb.stateChanged.connect(activator_on_off)
             Network_UI.Add_Sidebar_Element(self.act_cb)
 
+
+
+class sidebar_grammar_module_new(TabBase):
+
+    def __init__(self, text_length=30):
+        self.text_length = text_length
+
+    def initialize(self, Network_UI):
+
+        if Network_UI.network['Text_Activator', 0] is not None:
             self.inp_text_label = QLabel(Network_UI.main_window)
             Network_UI.Add_Sidebar_Element(self.inp_text_label, stretch=2)
             self.inp_text_label.setText('')
