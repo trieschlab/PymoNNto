@@ -134,7 +134,8 @@ class Network(NetworkObjectBase):
         if info:
             desc=str(self)
             print(desc)
-            storage_manager.save_param('info', desc)
+            if storage_manager is not None:
+                storage_manager.save_param('info', desc)
 
         #self.old_param_list = self.get_all_params()
 
