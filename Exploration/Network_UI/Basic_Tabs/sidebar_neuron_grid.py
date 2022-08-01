@@ -53,7 +53,7 @@ class sidebar_neuron_grid_submodule(TabBase):
 
         Network_UI.Add_Sidebar_Element([group_select_box, self.color_select_box])
 
-        self.image_item = Network_UI.Add_Image_Item(False, True, tooltip_message='white: active neurons\r\ndarker color: primary input neurons\r\ngreen: selected neuron')
+        self.image_item = Network_UI.Add_Image_Item(False, True, tooltip_message='white: active neurons\r\ncolor: neuron classification or base color\r\ngreen: selected neuron')
 
         self.image_item.neuron_group_tag = Network_UI.group_tags[index]
         Network_UI.neuron_visible_groups.append(Network_UI.group_tags[index])

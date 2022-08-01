@@ -24,10 +24,11 @@ class AnalysisModule(NetworkObjectBase):
 
         self.update_notifier_functions = []
 
+        self.progress_update_function = None
+
         if parent is not None:
             self._attach_and_initialize_(parent)
 
-        self.progress_update_function=None
 
     def add_progress_update_function(self, function):
         self.progress_update_function = function
@@ -95,7 +96,7 @@ class AnalysisModule(NetworkObjectBase):
     def generate_current_key(self, args_key, add_args=True):
         key = self._get_base_name_()
         if len(args_key) > 0 and add_args:
-            key += '(' + str(args_key) + ')'
+            key += ' ' + str(args_key)
         return key
 
     def save_result(self, key, result):

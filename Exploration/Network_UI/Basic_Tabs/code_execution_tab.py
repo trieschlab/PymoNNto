@@ -1,7 +1,8 @@
 from PymoNNto.Exploration.Network_UI.TabBase import *
 from PymoNNto.Exploration.Visualization.Visualization_Helper import *
 import os
-
+from io import StringIO
+from contextlib import redirect_stdout
 
 class code_execution_tab(TabBase):
 
@@ -99,13 +100,44 @@ print(num)
             neurons = n
             neuron_group = n
 
-            exec(self.code_field.toPlainText())
+            if self.show_output_window.isChecked():
+                f = StringIO()
+                #try:
+                with redirect_stdout(f):
+                    exec(self.code_field.toPlainText())
+                #except Exception:
+                #        pass
+                s = f.getvalue()
+
+                layout = QVBoxLayout()
+                pte = QPlainTextEdit()
+                pte.setPlainText(s)
+                pte.setReadOnly(True)
+                layout.addWidget(pte)
+
+                dlg = QDialog()
+                dlg.setWindowTitle('code stdout (prints)')
+                # dlg.setWindowTitle(sm.absolute_path + sm.config_file_name)
+                dlg.setLayout(layout)
+                dlg.resize(600, 400)
+                dlg.exec()
+            else:
+                exec(self.code_field.toPlainText())
+
 
             print('code block executed successfuly!')
 
             Network_UI.add_event('code execution')
 
         self.exec_btn.clicked.connect(exec_btn_click)
+
+
+        self.show_output_window = Network_UI.Add_element(QCheckBox('Show stdout in window'))
+
+        self.compiled = None
+        self.compiled_script_txt = ''
+        self.timestep_execute_cb = Network_UI.Add_element(QCheckBox('Execute every timestep'))
+
 
         self.save_btn_click = Network_UI.Add_element(QPushButton('Save Script'))
 
@@ -133,13 +165,12 @@ print(num)
 
         self.save_btn_click.clicked.connect(save_btn_click)
 
-        self.compiled = None
-        self.compiled_script_txt = ''
-        self.timestep_execute_cb = Network_UI.Add_element(QCheckBox('Execute every timestep'))
+
 
     def update(self, Network_UI):
 
         if self.timestep_execute_cb.isChecked():
+            self.show_output_window.setChecked(False)
 
             net = Network_UI.network
             network = net

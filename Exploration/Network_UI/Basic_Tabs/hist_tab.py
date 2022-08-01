@@ -6,11 +6,11 @@ class hist_tab(TabBase):
         super().__init__(title)
         self.weight_attr = weight_attr
         self.timesteps = timesteps
-        self.mask_param = mask_param
-        if self.mask_param is not None:
-            self.compiled_param = compile('n.'+self.mask_param, '<string>', 'eval')
-            self.inverted_compiled_param = compile('np.invert(n.' + self.mask_param+')', '<string>', 'eval')
-            self.mask_color_add = mask_color_add
+        #self.mask_param = mask_param
+        #if self.mask_param is not None:
+        #    self.compiled_param = compile('n.'+self.mask_param, '<string>', 'eval')
+        #    self.inverted_compiled_param = compile('np.invert(n.' + self.mask_param+')', '<string>', 'eval')
+        #    self.mask_color_add = mask_color_add
 
 
     def add_recorder_variables(self, neuron_group, Network_UI):
@@ -23,16 +23,16 @@ class hist_tab(TabBase):
 
         self.weight_hist_plots = {}
         self.net_weight_hist_plots = {}
-        if self.mask_param is not None:
-            self.net_inp_weight_hist_plots = {}
+        #if self.mask_param is not None:
+        #    self.net_inp_weight_hist_plots = {}
 
         for i,transmitter in enumerate(Network_UI.transmitters):
             if i>0:
                 Network_UI.Next_H_Block()
-            _, self.weight_hist_plots[transmitter] = Network_UI.Add_plot_curve(transmitter + ' weight hist', True, False, legend=False, x_label=transmitter + ' synapse size', y_label='Frequency')
+            _, self.weight_hist_plots[transmitter] = Network_UI.Add_plot_curve(transmitter + ' selected weight hist', True, False, legend=False, x_label=transmitter + ' synapse size', y_label='Frequency')
             _, self.net_weight_hist_plots[transmitter] = Network_UI.Add_plot_curve(transmitter + ' network weight hist', True, False, legend=False, x_label=transmitter + ' synapse size', y_label='Frequency')
-            if self.mask_param is not None:
-                _, self.net_inp_weight_hist_plots[transmitter] = Network_UI.Add_plot_curve(transmitter + ' network input weight hist', True, False, legend=False, x_label=transmitter + ' synapse size', y_label='Frequency')
+            #if self.mask_param is not None:
+            #    _, self.net_inp_weight_hist_plots[transmitter] = Network_UI.Add_plot_curve(transmitter + ' network input weight hist', True, False, legend=False, x_label=transmitter + ' synapse size', y_label='Frequency')
 
         #Network_UI.Next_H_Block()
         #_, self.gaba_weight_hist_plt = Network_UI.Add_plot_curve('GABA weight hist', True, False, legend=False)
@@ -86,19 +86,22 @@ class hist_tab(TabBase):
 
 
 
-    def update_Synapse_Historgrams(self, Network_UI, group, input_mask, not_input_mask, net_color_input):
+    def update_Synapse_Historgrams(self, Network_UI, group, net_color_input):
         msl = self.min_hist_slider.sliderPosition() * 0.001
 
         bins = self.bin_slider.sliderPosition()
 
         for transmitter in Network_UI.transmitters:
-            if self.mask_param is not None:
-                self.net_inp_weight_hist_plots[transmitter].clear()
+            #if self.mask_param is not None:
+            #    self.net_inp_weight_hist_plots[transmitter].clear()
             self.net_weight_hist_plots[transmitter].clear()
             self.weight_hist_plots[transmitter].clear()
 
             glu_syns = group.afferent_synapses[transmitter]
             if len(glu_syns) > 0:
+                #self.net_weight_hist_plots[transmitter].show()
+                #self.weight_hist_plots[transmitter].show()
+
                 GLU_syn_list = get_combined_syn_mats(glu_syns, None, self.weight_attr)
                 GLU_syn_list_en = get_combined_syn_mats(glu_syns, None, "enabled")
                 if len(GLU_syn_list) > 0:
@@ -119,21 +122,24 @@ class hist_tab(TabBase):
                     # curve = pg.PlotCurveItem(x, y, stepMode=True, fillLevel=0, brush=(0, 0, 255, 255))
                     # self.hist_plt.addItem(curve)
 
-                    if input_mask is not False and self.mask_param is not None:
-                        self.net_inp_weight_hist_plots[transmitter].clear()
-                        y, x = np.histogram(GLU_syn[input_mask][en_mask[input_mask]], bins=bins)#[GLU_syn[input_mask] > msl]
-                        curve = pg.PlotCurveItem(x, y, stepMode=True, fillLevel=0, brush=net_color_input)
-                        self.net_inp_weight_hist_plots[transmitter].addItem(curve)
+                    #if input_mask is not False and self.mask_param is not None:
+                    #    self.net_inp_weight_hist_plots[transmitter].clear()
+                    #    y, x = np.histogram(GLU_syn[input_mask][en_mask[input_mask]], bins=bins)#[GLU_syn[input_mask] > msl]
+                    #    curve = pg.PlotCurveItem(x, y, stepMode=True, fillLevel=0, brush=net_color_input)
+                    #    self.net_inp_weight_hist_plots[transmitter].addItem(curve)
 
                     self.net_weight_hist_plots[transmitter].clear()
-                    y, x = np.histogram(GLU_syn[not_input_mask][en_mask[not_input_mask]], bins=bins)#[GLU_syn[not_input_mask] > msl]
+                    y, x = np.histogram(GLU_syn[en_mask], bins=bins)#[GLU_syn[not_input_mask] > msl]
                     curve = pg.PlotCurveItem(x, y, stepMode=True, fillLevel=0, brush=group.color)
                     self.net_weight_hist_plots[transmitter].addItem(curve)
 
                     self.weight_hist_plots[transmitter].clear()
-                    y, x = np.histogram(GLU_syn[Network_UI.selected_neuron_id()][en_mask[Network_UI.selected_neuron_id()]], bins=bins)#[selected_neuron_GLU_syn > msl]
+                    y, x = np.histogram(GLU_syn[Network_UI.selected_neuron_mask()][en_mask[Network_UI.selected_neuron_mask()]], bins=bins)#[selected_neuron_GLU_syn > msl]
                     curve = pg.PlotCurveItem(x, y, stepMode=True, fillLevel=0, brush=Network_UI.neuron_select_color)
                     self.weight_hist_plots[transmitter].addItem(curve)
+            #else:
+            #    self.net_weight_hist_plots[transmitter].hide()
+            #    self.weight_hist_plots[transmitter].hide()
 
 
     def update(self, Network_UI):
@@ -142,15 +148,14 @@ class hist_tab(TabBase):
             group = Network_UI.selected_neuron_group()
             n=group#for eval comand
 
-            if self.mask_param is not None and hasattr(group, self.mask_param):
-                input_mask = eval(self.compiled_param)
-                not_input_mask = eval(self.inverted_compiled_param)
-                mca = self.mask_color_add
-            else:
-                input_mask = False
-                not_input_mask = True
-                mca = (0,0,0)
+            #if self.mask_param is not None and hasattr(group, self.mask_param):
+            #    input_mask = eval(self.compiled_param)
+            #    not_input_mask = eval(self.inverted_compiled_param)
+            #    mca = self.mask_color_add
+            #else:
+
+            mca = (0,0,0)
 
             net_color_input = np.clip([group.color[0] + mca[0], group.color[1] + mca[1], group.color[2] + mca[2], 255], 0, 255)
 
-            self.update_Synapse_Historgrams(Network_UI, group, input_mask, not_input_mask, net_color_input)
+            self.update_Synapse_Historgrams(Network_UI, group, net_color_input)

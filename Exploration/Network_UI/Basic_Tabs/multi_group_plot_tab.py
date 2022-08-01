@@ -10,16 +10,31 @@ class multi_group_plot_tab(TabBase):
         self.variables = [] #{var1:0, var2:0, var3:1, variable:group}
         self.curve_numbers = []
         self.plot_variables = []
+        self.ptv = {}
         for i, var in enumerate(self.original_variables):#grouped togerther with var1|var2
             splitted=var.split('|')
+
+            for i in range(len(splitted)):
+                if is_number(splitted[i]):
+                    new_var_name = '_plot_tab_var_' + str(i)
+                    self.ptv[new_var_name] = float(splitted[i])
+                    splitted[i] = new_var_name
+
             for v in splitted:
                 self.variables.append(v)
+
             self.curve_numbers.append(len(splitted))
             self.plot_variables.append(splitted)
 
 
+
+
+
     def add_recorder_variables(self, neuron_group, Network_UI):
         for var in self.variables:
+            if '_plot_tab_var_' in var:
+                setattr(neuron_group, var, self.ptv[var])
+
             Network_UI.add_recording_variable(neuron_group, 'np.mean(n.' + var + ')', timesteps=self.timesteps)
             Network_UI.add_recording_variable(neuron_group, 'n.'+var, timesteps=self.timesteps)
 
@@ -40,11 +55,19 @@ class multi_group_plot_tab(TabBase):
             if plot_id == 0:
                 stretch = 2
 
+            labels = []
+            for var in plot_variable_list:
+                if '_plot_tab_var_' in var:
+                    labels.append(str(self.ptv[var]))
+                else:
+                    labels.append(var)
+
+
             curves = Network_UI.Add_plot_curve(stretch=stretch,
                                                number_of_curves=group_count*curves_per_plot,
                                                return_list=True,
                                                x_label='t (iterations)',
-                                               y_label='Network average ' + str(plot_variable_list)) #, lines=lines
+                                               y_label='Network average ' + str(labels)) #, lines=lines #plot_variable_list
 
             ci=0
             plot_curve_dict = {}

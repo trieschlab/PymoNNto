@@ -1,5 +1,5 @@
 from PymoNNto.Exploration.Network_UI.TabBase import *
-from PymoNNto.Exploration.Analysis.PCA import *
+from PymoNNto.Exploration.Network_UI.Basic_Tabs.Helper.PCA import *
 
 class PCA_tab(TabBase):
 
@@ -37,20 +37,18 @@ class PCA_tab(TabBase):
             #if hasattr(group, self.parameter):
 
                 act = group['n.'+self.parameter, 0, 'np'][-self.timesteps:]
-                try :
-                    pca = get_PCA(act, 100)
-                    svs = pca.singular_values_
-                    evr = pca.explained_variance_ratio_
-                    if len(svs) >= self.singular_value_count:
-                        self.singular_value_iterations.append(Network_UI.network.iteration)
-                        for i in range(self.singular_value_count):
-                            self.singular_value_histories[i].append(svs[i])
-                            self.sv_curves[i].setData(self.singular_value_iterations, self.singular_value_histories[i])
 
-                        self.pca_curve.setData(svs)
-                        self.evr_curve.setData(np.cumsum(np.round(evr, decimals=3)*100))
-                except:
-                    print('not enough timesteps for PCA. waiting...')
+                pca = get_PCA(act, 100)
+                svs = pca.singular_values_
+                evr = pca.explained_variance_ratio_
+                if len(svs) >= self.singular_value_count:
+                    self.singular_value_iterations.append(Network_UI.network.iteration)
+                    for i in range(self.singular_value_count):
+                        self.singular_value_histories[i].append(svs[i])
+                        self.sv_curves[i].setData(self.singular_value_iterations, self.singular_value_histories[i])
+
+                    self.pca_curve.setData(svs)
+                    self.evr_curve.setData(np.cumsum(np.round(evr, decimals=3)*100))
 
             except:
                 print(self.parameter, "cannot be evaluated")

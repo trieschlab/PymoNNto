@@ -104,7 +104,7 @@ class criticality_tab(TabBase):
             self.WP_test_execute = False
 
             #if self.WPT_init:
-            import PymoNNto.Exploration.Analysis.WP_testing as WPT
+            import Exploration.Network_UI.Advanced_Tabs.Helper.WP_testing as WPT
             import mrestimator as mre
             #self.WPT_init = True
 
@@ -130,7 +130,7 @@ class criticality_tab(TabBase):
     def update_branching(self, Network_UI, group):
 
         #if not self.WP_init:
-        import PymoNNto.Exploration.Analysis.WiltingPriesemann as WP
+        import Exploration.Network_UI.Advanced_Tabs.Helper.WiltingPriesemann as WP
         #self.WP_init = True
 
         group_A_t = group[self.sum_tag, 0, 'np'].copy()[-1000:]

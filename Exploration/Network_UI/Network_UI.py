@@ -5,7 +5,7 @@ from PymoNNto.NetworkBehaviour.Structure.Structure import *
 
 class Network_UI(UI_Base):
 
-    def __init__(self, network, modules=[], label='SORN UI', group_tags=[], transmitters=[], storage_manager=None, group_display_count=None, reduced_layout=False):
+    def __init__(self, network, modules=[], label='Network UI', group_tags=[], transmitters=[], storage_manager=None, group_display_count=None, reduced_layout=False):
 
         network.simulate_iteration()
 
@@ -53,6 +53,9 @@ class Network_UI(UI_Base):
 
         self.event_list = []
 
+        if group_display_count is None:
+            group_display_count = len(network.NeuronGroups)
+
         self.group_display_count = group_display_count
 
         #self.exc_group_name = exc_group_name
@@ -85,7 +88,7 @@ class Network_UI(UI_Base):
             self.modules = self.modules.values()
 
         for module in self.modules:
-            print('Initialize:', module)
+            print('Initialize:', type(module).__name__)
             module.initialize(self)
 
         for group_tag in group_tags:
@@ -143,6 +146,9 @@ class Network_UI(UI_Base):
 
     def selected_neuron_id(self):
         return self._neuron_select_mask.argmax()#first "True" value in array
+
+    def selected_neuron_ids(self):
+        return np.where(self._neuron_select_mask)[0]
 
 
 

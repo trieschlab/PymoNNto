@@ -35,6 +35,7 @@ class Neuron_Classification_Colorizer(AnalysisModule):
             if rnd_b: b = np.random.rand()*255.0
             if rnd_a: a = np.random.rand()*255.0
 
+            #first use darker versions of neurons base color
             if hasattr(self.parent, 'color'):
                 if len(self.unique_colors[format]) == 0:
                     r = self.parent.color[0]

@@ -42,7 +42,7 @@ def get_squared_dim(number_of_neurons, depth=1, round_up=True):
     return NeuronDimension(width=w, height=h, depth=depth)
 
 
-class NeuronDimension(Behaviour):
+class NeuronDimension(Behaviour):#width height depth
 
     set_variables_on_init = True
 
@@ -53,6 +53,14 @@ class NeuronDimension(Behaviour):
         self.neurons.x = np.array([i%width for i in range(self.neurons.size)]).astype(def_dtype)
         self.neurons.y = np.array([np.floor(i/width)%height for i in range(self.neurons.size)]).astype(def_dtype)
         self.neurons.z = np.array([np.floor(i/(width*height)) for i in range(self.neurons.size)]).astype(def_dtype)
+
+    def get_area_mask(self, xmin=0, xmax=-1, ymin=0, ymax=-1, zmin=0, zmax=-1):
+        if xmax < 1: xmax = self.width - xmax
+        if ymax < 1: ymax = self.height - ymax
+        if zmax < 1: zmax = self.depth - zmax
+        result = np.zeros((self.depth, self.height, self.width))
+        result[zmin:zmax,ymin:ymax,xmin:xmax] = 1
+        return result.flatten().astype(bool)
 
     def apply_pattern_transformation_function(self, transform_mat, hup, wup, depth):
 
@@ -136,6 +144,7 @@ class NeuronDimension(Behaviour):
                 self.width = np.maximum(self.width, dim[2])
 
         self.neurons=neurons
+        neurons.shape = self
         neurons.width = self.width
         neurons.height = self.height
         neurons.depth = self.depth
