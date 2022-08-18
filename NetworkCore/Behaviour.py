@@ -3,6 +3,7 @@ from PymoNNto.Exploration.Evolution.Interface_Functions import *
 
 class Behaviour(NetworkObjectBase):
     set_variables_on_init = False
+    attached_UI_Tabs = []
 
     def __init__(self, **kwargs):
         self.init_kwargs = kwargs
@@ -131,5 +132,19 @@ class Behaviour(NetworkObjectBase):
         md = drawer.module_drawer()
         md.add_module(self)
         md.show()
+
+    #helper function for UI
+
+    def get_UI_Tabs(self):
+        return []
+
+    def get_UI_Preview_Plots(self):
+        #Examples:
+        #[[np.sin(x) for x in range(100)]] # only y
+        #[[list(range(100)),[np.sin(x) for x in range(100)]]] x and y
+        #[[np.sin(x) for x in range(100)],[np.sin(x) for x in range(100)]] # two plots only y
+        #[np.random.rand(291, 291, 3)] image
+        #[np.random.rand(291, 291, 3), [np.sin(x) for x in range(100)]] image and plot
+        return None
     
     

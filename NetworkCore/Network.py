@@ -4,6 +4,7 @@ import numpy as np
 #from NetworkBehaviour.Input.Activator import *
 from PymoNNto.NetworkCore.Base import *
 from PymoNNto.NetworkCore.Synapse_Group import *
+from PymoNNto.Exploration.Evolution.Interface_Functions import *
 import copy
 import time
 
@@ -54,6 +55,13 @@ class Network(NetworkObjectBase):
     def all_objects(self):
         return [self]+self.NeuronGroups+self.SynapseGroups
 
+    def all_behaviours(self):
+        result = []
+        for obj in self.all_objects():
+            for beh in obj.behaviour.values():
+                result.append(beh)
+        return result
+
     def clear_recorder(self, keys=None):
         for obj in self.all_objects():
             for key in obj.behaviour:
@@ -61,20 +69,20 @@ class Network(NetworkObjectBase):
                     obj.behaviour[key].clear_recorder()
 
     def set_gene_variables(self, info=True, storage_manager=None):
-        current_genome = {}
+        #current_genome = {}
 
         for obj in self.all_objects():
             for key in obj.behaviour:
                 b = obj.behaviour[key]
-                current_genome.update(b.set_gene_variables())
+                b.set_gene_variables()
+                #current_genome.update(b.set_gene_variables())
 
-        if info and len(current_genome)>0:
-            print('genome:', current_genome)
+        if info and len(get_default_genome())>0:
+            print('default genome:', get_default_genome())#get_default_genome())
 
         if storage_manager is not None:
-            print(current_genome)
-            storage_manager.save_param(key='evolution_params', value=current_genome)
-            storage_manager.save_param_dict(current_genome)
+            storage_manager.save_param(key='evolution_params', value=get_genome())#get_default_genome()
+            storage_manager.save_param_dict(get_genome())#get_default_genome()
 
     def __str__(self):
         neuron_count = np.sum(np.array([ng.size for ng in self.NeuronGroups]))

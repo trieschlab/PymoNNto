@@ -87,6 +87,10 @@ class Network_UI(UI_Base):
         if type(self.modules) is dict:
             self.modules = self.modules.values()
 
+        for beh in network.all_behaviours():
+            for module in beh.get_UI_Tabs():
+                self.modules.append(module)
+
         for module in self.modules:
             print('Initialize:', type(module).__name__)
             module.initialize(self)

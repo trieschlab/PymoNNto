@@ -38,7 +38,7 @@ class info_tab(TabBase):
 
         caption = QLabel(str(groups[0].tags[0]) + ':')
         caption.setFont(QFont('SansSerif', 16))
-        h += 40
+        h += 240
         Network_UI.Add_element(caption)
         Network_UI.Next_H_Block()
 
@@ -48,7 +48,7 @@ class info_tab(TabBase):
             behaviours = [g.behaviour[key] for g in groups]
 
             self.add_line(Network_UI, str(key) + ' ' + main_tag, behaviours, groups)
-            h += 60
+            h += 60#60
 
         infotab.setMaximumHeight(h)
 
@@ -92,6 +92,51 @@ class info_tab(TabBase):
             h_container.addWidget(edit, stretch=1)
             h_container.addWidget(QLabel(''), stretch=5)
             container.addLayout(h_container)
+
+
+
+
+
+
+        plot_data_list = behaviours[0].get_UI_Preview_Plots()
+        if plot_data_list is not None:
+            h_container = QHBoxLayout()
+
+            for temp in plot_data_list:
+                try:
+                    plot_data = np.array(temp)
+
+                    canvas = pg.GraphicsLayoutWidget()
+                    canvas.ci.layout.setContentsMargins(0, 0, 0, 0)
+                    canvas.ci.layout.setSpacing(0)
+                    canvas.setMaximumWidth(200)
+                    canvas.setAlignment(Qt.AlignLeft)
+                    canvas.setBackground((255, 255, 255))
+                    plt = canvas.addPlot(row=0, col=0)
+
+                    if plot_data.ndim==1:#y
+                        curve = pg.PlotCurveItem(y=plot_data,pen=(50,50,50,255))
+                        plt.addItem(curve)
+                    elif plot_data.ndim==2:#x y
+                        curve = pg.PlotCurveItem(x=plot_data[0],y=plot_data[1],pen=(50,50,50,255))
+                        plt.addItem(curve)
+                    elif plot_data.ndim>=2 and plot_data.shape[0]>2:#image
+                        plt.hideAxis('left')
+                        plt.hideAxis('bottom')
+                        image_item = pg.ImageItem(plot_data)
+                        plt.addItem(image_item)
+                except Exception as e:
+                    print(e)
+
+                h_container.addWidget(canvas, stretch=7)
+
+            h_container.setAlignment(Qt.AlignLeft)
+            container.addLayout(h_container)
+            #curve.setData(x=list(range(len(plot_data))),y=plot_data)
+
+
+
+
 
         for arg in behaviours[0].init_kwargs:
             addArg(arg)

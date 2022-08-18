@@ -63,7 +63,8 @@ class StorageManager:
 
         if use_evolution_path:
             import PymoNNto.Exploration.Evolution.Interface_Functions as evo_func
-            if evo_func.get_gene('evo_name', None) is not None: # and evo_func.get_gene('gen', None) is not None and evo_func.get_gene('id', None) is not None
+            #if evo_func.get_gene('evo_name', None) is not None: # and evo_func.get_gene('gen', None) is not None and evo_func.get_gene('id', None) is not None
+            if 'evo_name' in evo_func.get_default_genome() and evo_func.get_default_genome()['evo_name'] is not None:
                 main_folder_name = evo_func.get_gene('evo_name', None)
                 folder_name = evo_func.get_gene_file(evo_func.evolution_genome)
                 #add_new_when_exists = True#??? Test

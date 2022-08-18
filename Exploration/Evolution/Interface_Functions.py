@@ -74,8 +74,8 @@ def get_gene(key, default):
     else:
         return default
 
-def return_default_genome():
-    return #todo:implement
+def get_default_genome():
+    return default_genome
 
 def gene(key, default):
     return get_gene(key, default)
