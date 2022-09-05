@@ -55,11 +55,11 @@ class Evolution_Device():#one device per thread
         if genome['gen'] == self.parent.Breed_And_Select.generation:  # part of current execution? still relevant?
             self.parent.new_score_event(genome)
         else:
-            self.parent.error_event(genome, 'processed gene result from previous generation')
+            self.parent.error_event(genome, 'processed gene result from previous generation', False)
 
     def error_event(self, genome, message):
         if genome['gen'] == self.parent.Breed_And_Select.generation: #part of current execution? still relevant?
-            self.parent.error_event(genome, message)
+            self.parent.error_event(genome, message, True)
         else:
             self.parent.error_event(genome, message+' (from previous generation)')
 

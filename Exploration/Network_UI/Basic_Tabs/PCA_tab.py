@@ -13,20 +13,19 @@ class PCA_tab(TabBase):
             Network_UI.add_recording_variable(neuron_group, 'n.'+self.parameter, timesteps=self.timesteps)
 
     def initialize(self, Network_UI):
-        self.pca_tab = Network_UI.Next_Tab(self.title)
+        self.pca_tab = Network_UI.add_tab(title=self.title) #Network_UI.Next_Tab(self.title)
 
-        self.pca_curve = Network_UI.Add_plot_curve('PCA singular values', colors=[(0, 0, 0)], legend=False, x_label='singular value', y_label='')
+        self.pca_curve = Network_UI.tab.add_plot(title='PCA singular values', x_label='singular value', y_label='').add_curves(colors=[(0, 0, 0)], legend=False)
+        self.evr_curve = Network_UI.tab.add_plot(title='PCA explained variance ratio', x_label='features', y_label='% variance explained').add_curves(colors=[(0, 0, 0)], legend=False)
 
-        self.evr_curve = Network_UI.Add_plot_curve('PCA explained variance ratio', colors=[(0, 0, 0)], legend=False, x_label='features', y_label='% variance explained')
-
-        Network_UI.Next_H_Block()
+        Network_UI.tab.add_row()
 
         self.singular_value_count=5
 
         self.singular_value_histories = [[] for i in range(self.singular_value_count)]
         self.singular_value_iterations = []
 
-        self.sv_curves = Network_UI.Add_plot_curve(str(self.singular_value_count)+' biggest singular values', number_of_curves=self.singular_value_count, legend=False,x_label='singular value', y_label='')
+        self.sv_curves = Network_UI.tab.add_plot(title=str(self.singular_value_count)+' biggest singular values', x_label='singular value', y_label='').add_curves(number_of_curves=self.singular_value_count, legend=False)
 
 
     def update(self, Network_UI):
@@ -34,8 +33,6 @@ class PCA_tab(TabBase):
             group = Network_UI.selected_neuron_group()
 
             try:
-            #if hasattr(group, self.parameter):
-
                 act = group['n.'+self.parameter, 0, 'np'][-self.timesteps:]
 
                 pca = get_PCA(act, 100)

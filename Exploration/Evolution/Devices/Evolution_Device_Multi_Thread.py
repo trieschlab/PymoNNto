@@ -5,7 +5,7 @@ from multiprocessing import Process, Pipe
 #import os
 import numpy as np
 import sys
-
+import traceback
 
 def local_thread_worker(slave_file, conn):
     #try:
@@ -25,7 +25,7 @@ def local_thread_worker(slave_file, conn):
             except Exception as e:
                 error_type = str(sys.exc_info()[0])
                 msg = str(sys.exc_info()[1])
-                conn.send([genome, 'thread error '+error_type+' '+msg])
+                conn.send([genome, 'thread error '+error_type+' '+msg+'\r\n'+traceback.format_exc()])
 
         conn.send([None, 'idle'])
 

@@ -105,20 +105,25 @@ class Evolution:
         else:
             self.error_event(genome, 'processed gene not found in running_individuals | running:' + str(self.running_individuals)+' scored:'+str(self.scored_individuals))
 
-    def error_event(self, genome, message):#called by devices
+    def error_event(self, genome, message, terminate=False):#called by devices
         print('failed', message, genome)
 
-        found = None
-        for g in self.running_individuals:
-            if self.part_of_genome(g, genome):
-                found = g
-
-        if found is not None:
-            self.running_individuals.remove(found)
-            self.non_scored_individuals.append(found)
-            print('move genome from running_individuals back to non_scored_individuals...')
+        if terminate:
+            ssm= SimpleStorageManager(get_data_folder()+'/')
+            ssm.save_str('error', message+" \r\n"+str(genome))
+            print(get_data_folder()+'error.txt write')
         else:
-            print('not able to find failed genome in running_individuals. Maybe the genome was changed during processing')
+            found = None
+            for g in self.running_individuals:
+                if self.part_of_genome(g, genome):
+                    found = g
+
+            if found is not None:
+                self.running_individuals.remove(found)
+                self.non_scored_individuals.append(found)
+                print('move genome from running_individuals back to non_scored_individuals...')
+            else:
+                print('not able to find failed genome in running_individuals. Maybe the genome was changed during processing')
 
 
     def add_device(self, device_string):

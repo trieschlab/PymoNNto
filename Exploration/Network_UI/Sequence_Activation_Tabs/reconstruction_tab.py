@@ -12,12 +12,12 @@ class reconstruction_tab(TabBase):
 
     def initialize(self, Network_UI):
         if Network_UI.network['Text_Activator', 0] and Network_UI.network['Text_Generator', 0] is not None:
-            self.reconstruction_tab = Network_UI.Next_Tab(self.title)
+            self.reconstruction_tab = Network_UI.add_tab(title=self.title) #Network_UI.Next_Tab(self.title)
 
             self.grid = QGridLayout()
             self.grid.setAlignment(Qt.AlignLeft)
-            Network_UI.current_H_block.addLayout(self.grid)
-            Network_UI.current_H_block.setAlignment(Qt.AlignTop)
+            Network_UI.tab.get_layout().addLayout(self.grid)
+            Network_UI.tab.get_layout().setAlignment(Qt.AlignTop)
 
             generator = Network_UI.network['Text_Generator', 0]
             source = Network_UI.network['Text_Activator', 0]
@@ -34,17 +34,17 @@ class reconstruction_tab(TabBase):
                     label.setFont(font)
                     self.grid.addWidget(label, y, timestep)
 
-            self.img = Network_UI.Add_Image_Item(False, False, title=' neuron rec')
+            self.img = Network_UI.tab.add_plot(title=' neuron rec').add_image() #Network_UI.Add_Image_Item(False, False, )
 
             self.recon_text_label = QLabel()
-            Network_UI.Add_element(self.recon_text_label)
+            Network_UI.tab.add_widget(self.recon_text_label)
 
             #Network_UI.Next_H_Block()
 
             self.net_grid = QGridLayout()
             self.net_grid.setAlignment(Qt.AlignLeft)
-            Network_UI.current_H_block.addLayout(self.net_grid)
-            Network_UI.current_H_block.setAlignment(Qt.AlignTop)
+            Network_UI.tab.get_layout().addLayout(self.net_grid)
+            Network_UI.tab.get_layout().setAlignment(Qt.AlignTop)
 
             self.net_labels = []
 
@@ -59,10 +59,10 @@ class reconstruction_tab(TabBase):
                     net_label.setFont(font)
                     self.net_grid.addWidget(net_label, y, timestep)
 
-            self.net_img = Network_UI.Add_Image_Item(False, False, title='net rec')
+            self.net_img = Network_UI.tab.add_plot(title='net rec').add_image() #Network_UI.Add_Image_Item(False, False, title='net rec')
 
             self.net_recon_text_label = QLabel()
-            Network_UI.Add_element(self.net_recon_text_label)
+            Network_UI.tab.add_widget(self.net_recon_text_label)
 
 
 

@@ -39,11 +39,6 @@ class individual_weight_tab(TabBase):
 
     def start_rec(self, group):
 
-        #if self.current_ng is not None and len(self.current_ng[self.rec_name]) > 0 and self.Network_UI.selected_neuron_id() != self.neuron_index:
-        #    self.Network_UI.network.remove_behaviours_from_object(self.current_ng, tags=[self.rec_name])
-        #    self.my_syn_rec = None
-        #    print('stop')
-
         if self.current_ng is not None and (self.neuron_index != self.Network_UI.selected_neuron_id() or self.current_ng != group):
 
             for s in self.current_ng.afferent_synapses["All"]:
@@ -58,18 +53,10 @@ class individual_weight_tab(TabBase):
             self.neuron_index = -1
             print('removed')
 
-        if self.current_ng is None:#len(self.Network_UI.network[self.key]) == 0:
+        if self.current_ng is None:
 
             self.current_ng = group
             self.neuron_index = self.Network_UI.selected_neuron_id()
-
-            # self.key = 'np.concatenate([s.W[:,np.where(s.dst.id=='+str(self.neuron_index)+')[0]][s.enabled[:,np.where(s.dst.id=='+str(self.neuron_index)+')[0]]] for s in n.afferent_synapses["All"]])'
-            # self.my_syn_rec = Recorder([self.key], tag=self.rec_name)
-
-
-            #if self.my_syn_rec is not None:
-            #    self.Network_UI.network.remove_behaviours_from_neuron_groups([self.current_ng], tags=[self.rec_name])
-            #        print('stop')
 
             print('started')
             self.plot.clear()
@@ -97,63 +84,6 @@ class individual_weight_tab(TabBase):
                         curve.index = i
                         self.plot.addItem(curve)
                         s.UI_curves.append(curve)
-
-
-                #self.curves[k] = []
-                #self.keys.append(k)
-
-                #self.checkboxes[k] = QListWidgetItem(str(s.src.tags[0]))
-                #self.checkboxes[k].setCheckState(2)
-                #self.listWidget.addItem(self.checkboxes[k])
-
-                #for i in range(syn_count):
-
-
-                '''
-                new_id = np.where(s.dst.id == self.neuron_index)[0]
-                if len(new_id) > 0:# and hasattr(s, self.weight_attr): #TODO:
-                    new_id = new_id[0]
-
-                    weight = eval('s.' + self.weight_attr)
-
-                    if type(s.enabled)==bool:
-                        syn_count = len(weight[new_id])
-                    else:
-                        syn_count = len(weight[new_id,:][s.enabled[new_id,:]])
-
-                    #print(weight.shape, new_id, enabled)
-                    #syn_count = len(weight[new_id][enabled])#,:
-                    if syn_count > 0:
-
-                        color = (s.src.color[0], s.src.color[1], s.src.color[2], 255)
-
-                        if type(group.afferent_synapses["All"][i].enabled) == bool:
-                            enabled_string = 'True'
-                        else:
-                            enabled_string='n.afferent_synapses["All"]['+str(i)+'].enabled['+str(new_id)+',:]'
-
-
-                        k = 'n.afferent_synapses["All"]['+str(i)+'].W['+str(new_id)+',:]['+enabled_string+']'
-                        self.curves[k] = []
-                        self.keys.append(k)
-
-                        self.checkboxes[k] = QListWidgetItem(str(s.src.tags[0]))
-                        self.checkboxes[k].setCheckState(2)
-                        self.listWidget.addItem(self.checkboxes[k])
-
-                        for i in range(syn_count):
-                            curve = pg.PlotCurveItem([], pen=color)  # pen=colors[i%len(colors)]
-                            self.plot.addItem(curve)
-                            self.curves[k].append(curve)
-                '''
-
-            #self.my_syn_rec = Recorder(self.keys + ['n.iteration'], tag=self.rec_name, gapwidth=10)
-            #self.Network_UI.network.add_behaviours_to_object({10001: self.my_syn_rec}, group)
-            #self.current_ng = group
-
-
-            #size = len(np.concatenate([s.W[:, new_indx][s.enabled[:, new_indx]] for s in group.afferent_synapses["All"]]))
-            #print(size)
 
 
     def update(self, Network_UI):

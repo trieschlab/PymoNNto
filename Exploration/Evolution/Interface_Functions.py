@@ -4,27 +4,6 @@ import sys
 evolution_genome = None
 default_genome = {}
 
-###############################old
-
-#def load_genome2():
-#    for arg in sys.argv:
-#        if 'genome=' in arg:
-#            set_evolution_genome_from_string(arg[7:])
-
-#def set_evolution_genome_from_string(gene_str):
-#    #print('gene_str', gene_str)
-#    gene_dict = {}
-#    partial_str = gene_str.split('#')
-#    for key_value_str in partial_str:
-#        kv_partial_str = key_value_str.split('@')
-#        if len(kv_partial_str) == 2:
-#            if kv_partial_str[0] != 'score':
-#                gene_dict[kv_partial_str[0]] = kv_partial_str[1] #keys and values are strings!!! have to be casted to default type by get_gene!
-#
-#    set_genome(gene_dict)
-
-#######################################
-
 def execute_local_file(file, genome):
     py_file = open(file, "r")
     file_content = py_file.read()
@@ -64,6 +43,9 @@ def cast_to_default(str_value, default):
     else:
         return str_value
 
+def gene(key, default):
+    return get_gene(key, default)
+
 def get_gene(key, default):
     if evolution_genome is None:
         load_genome()
@@ -76,15 +58,6 @@ def get_gene(key, default):
 
 def get_default_genome():
     return default_genome
-
-def gene(key, default):
-    return get_gene(key, default)
-
-#def get_gene_id(gene):
-#    id = ''
-#    for key, value in gene.items():
-#        id += '#'+key+'@'+str(value)
-#    return id+'#'
 
 def get_gene_file(gene):
     file = gene['evo_name']
@@ -123,3 +96,29 @@ def set_score(score, non_evo_storage_manager=None, _genome=None, info={}):
 
 
 
+###############################old
+
+#def load_genome2():
+#    for arg in sys.argv:
+#        if 'genome=' in arg:
+#            set_evolution_genome_from_string(arg[7:])
+
+#def set_evolution_genome_from_string(gene_str):
+#    #print('gene_str', gene_str)
+#    gene_dict = {}
+#    partial_str = gene_str.split('#')
+#    for key_value_str in partial_str:
+#        kv_partial_str = key_value_str.split('@')
+#        if len(kv_partial_str) == 2:
+#            if kv_partial_str[0] != 'score':
+#                gene_dict[kv_partial_str[0]] = kv_partial_str[1] #keys and values are strings!!! have to be casted to default type by get_gene!
+#
+#    set_genome(gene_dict)
+
+#######################################
+
+#def get_gene_id(gene):
+#    id = ''
+#    for key, value in gene.items():
+#        id += '#'+key+'@'+str(value)
+#    return id+'#'

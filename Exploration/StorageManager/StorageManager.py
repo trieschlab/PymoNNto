@@ -15,11 +15,19 @@ def create_folder_if_not_exist(path):
     if not os.path.exists(path):
         os.mkdir(path)
 
+def get_root_folder(create_when_not_found=True):
+    path='./'
+    while os.path.isdir(path):
+        if os.path.isdir(path+'Data/'):
+            return os.path.abspath(path).replace('\\', '/').replace('//', '/')
+        path='../'+path
+    return './'
+
 def get_data_folder(create_when_not_found=True):
     path='./'
     while os.path.isdir(path):
         if os.path.isdir(path+'Data/'):
-            return os.path.abspath(path+'Data/').replace('\\', '/')
+            return os.path.abspath(path+'Data/').replace('\\', '/').replace('//', '/')
         path='../'+path
 
     if not os.path.exists('./Data'):
@@ -30,7 +38,7 @@ def get_data_folder(create_when_not_found=True):
     return './Data'
     #raise Exception('No "Data" folder found above current working directory! Please create dirctory: ".../Project/Data".')
 
-def zipDir(dirPath, zipPath, filter):
+def zipDir(dirPath, zipPath, filter=[]):
     zipf = zipfile.ZipFile(zipPath, mode='w')
     lenDirPath = len(dirPath)
     for root, _, files in os.walk(dirPath):
@@ -149,6 +157,20 @@ class StorageManager:
             keys=recorder.variables.keys()
         for key in keys:
             self.save_np(tag+key, np.array(recorder.variables[key]))
+
+
+    def save_str(self, key, string):
+        text_file = open(self.absolute_path + key + '.txt', "w")
+        text_file.write(string)
+        text_file.close()
+
+
+    def load_str(self, key):
+        text_file = open(self.absolute_path + key + '.txt', "r")
+        string = text_file.read()
+        text_file.close()
+        return string
+
 
     def save_np(self, key, obj):
         np.save(self.absolute_path + key + '.npy', arr=obj)

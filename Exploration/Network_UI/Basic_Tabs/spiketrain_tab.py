@@ -12,13 +12,13 @@ class spiketrain_tab(TabBase):
             Network_UI.add_recording_variable(neuron_group, 'n.'+self.parameter, timesteps=self.timesteps)
 
     def initialize(self, Network_UI):
-        self.scatter_tab = Network_UI.Next_Tab(self.title)
+        self.scatter_tab = Network_UI.add_tab(title=self.title)
 
         self.spiketrain_images=[]
         for i, group_tag in enumerate(Network_UI.neuron_visible_groups):
             if i!=0:
-                Network_UI.Next_H_Block()
-            self.spiketrain_images.append(Network_UI.Add_Image_Item(False, tooltip_message=self.parameter+' of each neuron(rows) at each timestep(columns)'))
+                Network_UI.tab.add_row()
+            self.spiketrain_images.append(Network_UI.tab.add_plot(tooltip_message=self.parameter+' of each neuron(rows) at each timestep(columns)').add_image())
 
 
     def update(self, Network_UI):
@@ -28,9 +28,6 @@ class spiketrain_tab(TabBase):
 
 
                 try:
-                #if hasattr(group, self.parameter):
-                    #rec = Network_UI.rec(group, self.timesteps)
-
                     data = group['n.'+self.parameter, 0, 'np'][-self.timesteps:].astype(np.float64)
                     mi=0#np.min(data)
                     ma=np.max(data)

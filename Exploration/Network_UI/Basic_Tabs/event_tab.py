@@ -7,9 +7,9 @@ class event_tab(TabBase):
 
 
     def initialize(self, Network_UI):
-        self.event_tab = Network_UI.Next_Tab(self.title)
+        self.event_tab = Network_UI.add_tab(title=self.title)
 
-        _, self.plot = Network_UI.Add_plot_curve('Events', x_label='t (iterations)', y_label='events', number_of_curves=0, return_plot=True)
+        self.plot = Network_UI.tab.add_plot(title='Events', x_label='t (iterations)', y_label='events')
 
         self.current_pos = pg.PlotCurveItem([0, 0], [0, 0], pen=(100,100,100,255))
         self.plot.addItem(self.current_pos)
@@ -27,8 +27,6 @@ class event_tab(TabBase):
 
             self.current_pos.setData([0, Network_UI.network.iteration], [0, 0])
 
-            #self.plot.clear()
-
             #update_plot
             for i,e in enumerate(Network_UI.event_list):
                 if i>self.event_count:
@@ -37,9 +35,6 @@ class event_tab(TabBase):
                         curve = pg.PlotCurveItem([e.start_t, e.end_t], [0, 0], fillLevel=10, brush=(30, 30, 30, 30), pen=(30, 30, 30, 30))
                         self.plot.addItem(curve)
                     else:
-                        #for xp in self.label_x_positions:
-                        #    if np.abs(e.start_t-xp)<200:
-                        #        ypos += 0.5
 
                         if '(False)' in e.tag:
                             line = pg.InfiniteLine(pos=e.start_t, angle=90, pen=(100, 0, 0, 100), span=(0, 0.1))

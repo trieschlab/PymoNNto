@@ -23,7 +23,7 @@ class sidebar_neuron_grid_submodule(TabBase):
         h = Network_UI.network[group_tag, 0].height
         d = Network_UI.network[group_tag, 0].depth
         y_temp = int(
-            (h * d - 1) - np.trunc(event.pos().y()))  # np.clip(int((h - 1) - np.trunc(event.pos().y())), 0, h - 1)
+            (h * d - 1) - np.trunc(event.pos().y()))
 
         neuron_select_x = np.clip(int(np.trunc(event.pos().x())), 0, w - 1)
         neuron_select_y = np.clip(int(y_temp - np.trunc(y_temp / h)), 0, h - 1)
@@ -50,10 +50,16 @@ class sidebar_neuron_grid_submodule(TabBase):
         group_select_box = QComboBox()
         self.color_select_box = Analytics_Results_Select_ComboBox(Network_UI.network[Network_UI.group_tags[index], 0] ,'classifier', first_entry='group color')
 
+        Network_UI.sidebar.add_row()
+        Network_UI.sidebar.add_row(group_select_box)
+        Network_UI.sidebar.add_row(self.color_select_box)
+        Network_UI.sidebar.set_parent_layout()
 
-        Network_UI.Add_Sidebar_Element([group_select_box, self.color_select_box])
+        Network_UI.sidebar.add_row()
+        Network_UI.sidebar.add_widget([group_select_box, self.color_select_box])
+        Network_UI.sidebar.set_parent_layout()
 
-        self.image_item = Network_UI.Add_Image_Item(False, True, tooltip_message='white: active neurons\r\ncolor: neuron classification or base color\r\ngreen: selected neuron')
+        self.image_item = Network_UI.sidebar.add_plot(tooltip_message='white: active neurons\r\ncolor: neuron classification or base color\r\ngreen: selected neuron', stretch=100).add_image()
 
         self.image_item.neuron_group_tag = Network_UI.group_tags[index]
         Network_UI.neuron_visible_groups.append(Network_UI.group_tags[index])
@@ -63,27 +69,19 @@ class sidebar_neuron_grid_submodule(TabBase):
 
 
         def group_changed(select_index):
-            #if select_index<len(Network_UI.group_tags):#none
             tag = Network_UI.group_tags[select_index]
             Network_UI.select_neuron(Network_UI.network[tag, 0], 0)
             self.color_select_box.change_main_object(Network_UI.network[tag, 0])
             self.image_item.neuron_group_tag = tag
             Network_UI.neuron_visible_groups[index] = tag
-            #else:
-            #    self.image_item.neuron_group_tag = 'None'
-            #    Network_UI.neuron_visible_groups[index] = 'None'
-
 
         group_select_box.addItems(Network_UI.group_tags)
-        #group_select_box.addItem('None')
         group_select_box.setCurrentIndex(index)
         group_select_box.currentIndexChanged.connect(group_changed)
 
 
 
     def update(self, Network_UI):
-
-        #for group_tag in Network_UI.group_tags:
         group_tag = self.image_item.neuron_group_tag
         if len(Network_UI.network[group_tag]) > 0:
 

@@ -16,19 +16,19 @@ class isi_tab(TabBase):
             Network_UI.add_recording_variable(neuron_group, self.sum_tag, timesteps=1000)
 
     def initialize(self, Network_UI):
-        self.isi_tab = Network_UI.Next_Tab(self.title)
+        self.isi_tab = Network_UI.add_tab(title=self.title) #Network_UI.Next_Tab(self.title)
 
-        _, self.neuron_isi_plt = Network_UI.Add_plot_curve('selected inter spike interval hist', True, False, legend=False, x_label='ISI', y_label='Frequency')
-        _, self.net_isi_plt = Network_UI.Add_plot_curve('network inter spike interval hist', True, False, legend=False, x_label='ISI', y_label='Frequency')
+        self.neuron_isi_plt = Network_UI.tab.add_plot(title='selected inter spike interval hist', x_label='ISI', y_label='Frequency')
+        self.net_isi_plt = Network_UI.tab.add_plot(title='network inter spike interval hist', x_label='ISI', y_label='Frequency')
 
-        Network_UI.Next_H_Block()
+        Network_UI.tab.add_row()
         self.neuron_isi_bin_slider = QSlider(1)  # QtCore.Horizontal
         self.neuron_isi_bin_slider.setMinimum(1)
         self.neuron_isi_bin_slider.setMaximum(100)
         self.neuron_isi_bin_slider.setSliderPosition(10)
         self.neuron_isi_bin_slider.mouseReleaseEvent = Network_UI.static_update_func
         self.neuron_isi_bin_slider.setToolTip('slide to change bin count')
-        Network_UI.Add_element(self.neuron_isi_bin_slider)  # , stretch=0.1
+        Network_UI.tab.add_widget(self.neuron_isi_bin_slider)  # , stretch=0.1
 
         self.net_isi_bin_slider = QSlider(1)  # QtCore.Horizontal
         self.net_isi_bin_slider.setMinimum(1)
@@ -36,21 +36,19 @@ class isi_tab(TabBase):
         self.net_isi_bin_slider.setSliderPosition(10)
         self.net_isi_bin_slider.mouseReleaseEvent = Network_UI.static_update_func
         self.net_isi_bin_slider.setToolTip('slide to change bin count')
-        Network_UI.Add_element(self.net_isi_bin_slider)  # , stretch=0.1
+        Network_UI.tab.add_widget(self.net_isi_bin_slider)
 
+        Network_UI.tab.add_row()
+        Network_UI.tab.add_widget(QLabel(''))
+        self.net_isi_cb = Network_UI.tab.add_widget(QCheckBox('Compute network isi'))
 
-        Network_UI.Next_H_Block()
-        Network_UI.Add_element(QLabel(''))
-        self.net_isi_cb = Network_UI.Add_element(QCheckBox('Compute network isi'))
+        Network_UI.tab.add_row()
+        self.neuron_avg_act_label = Network_UI.tab.add_widget(QLabel('-'))
+        self.net_avg_hist_plt = Network_UI.tab.add_plot(title='network avg activities', x_label='average activity', y_label='Frequency')
 
+        Network_UI.tab.add_row()
 
-        Network_UI.Next_H_Block()
-        self.neuron_avg_act_label = Network_UI.Add_element(QLabel('-'))
-        _, self.net_avg_hist_plt = Network_UI.Add_plot_curve('network avg activities', True, False, legend=False, x_label='average activity', y_label='Frequency')
-
-        Network_UI.Next_H_Block()
-
-        Network_UI.Add_element(QLabel(''))
+        Network_UI.tab.add_widget(QLabel(''))
 
         self.net_avg_bin_slider = QSlider(1)  # QtCore.Horizontal
         self.net_avg_bin_slider.setMinimum(1)
@@ -58,31 +56,26 @@ class isi_tab(TabBase):
         self.net_avg_bin_slider.setSliderPosition(10)
         self.net_avg_bin_slider.mouseReleaseEvent = Network_UI.static_update_func
         self.net_avg_bin_slider.setToolTip('slide to change bin count')
-        Network_UI.Add_element(self.net_avg_bin_slider)  # , stretch=0.1
+        Network_UI.tab.add_widget(self.net_avg_bin_slider)
 
-        Network_UI.Next_H_Block(stretch=1)
+        Network_UI.tab.add_row(stretch=1)
 
-        Network_UI.Add_element(QLabel('interval length: '+str(self.timesteps)+' steps'))
-
-
-
+        Network_UI.tab.add_widget(QLabel('interval length: '+str(self.timesteps)+' steps'))
 
 
     def update_ISI(self, Network_UI, group, input_mask, not_input_mask, net_color_input):
 
         act_data = group['n.' + self.param, 0, 'np'][-self.timesteps:, :]
 
-
         self.neuron_isi_plt.clear()
         sel_bins = self.neuron_isi_bin_slider.sliderPosition()
 
         sel_hist_data = []
 
-        for i in Network_UI.selected_neuron_ids():#range(act_data.shape[1]):
+        for i in Network_UI.selected_neuron_ids():
             sel_hist_data += SpikeTrain_ISI(act_data[:, i])
         y, x = np.histogram(sel_hist_data, bins=sel_bins)
 
-        #y, x = np.histogram(SpikeTrain_ISI(act_data[:, Network_UI.selected_neuron_id()]), bins=neuron_bins)
         curve = pg.PlotCurveItem(x, y, stepMode=True, fillLevel=0, brush=Network_UI.neuron_select_color)
         self.neuron_isi_plt.addItem(curve)
 
@@ -99,8 +92,6 @@ class isi_tab(TabBase):
 
 
     def update_Mean_Activity(self, Network_UI, group, input_mask, not_input_mask, net_color_input):
-        #rec = Network_UI.rec(group, self.timesteps)
-
         net_bins = self.net_avg_bin_slider.sliderPosition()
 
         avg_acts = np.mean(group['n.' + self.param, 0, 'np'][-self.timesteps:, :], axis=0)

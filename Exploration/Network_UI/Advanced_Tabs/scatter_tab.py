@@ -24,7 +24,6 @@ class scatter_tab(TabBase):
             self.scatter_items.append(spi)
 
             p.addItem(spi)
-            #Network_UI.Next_H_Block()
 
     def update(self, Network_UI):
         if self.scatter_tab.isVisible():

@@ -28,13 +28,13 @@ class single_group_plot_tab(TabBase):
                 Network_UI.add_recording_variable(neuron_group, 'np.mean(n.'+var+')', timesteps=self.timesteps)
 
     def initialize(self, Network_UI):
-        self.inh_exc_tab = Network_UI.Next_Tab(self.title, stretch=0)
+        self.inh_exc_tab = Network_UI.add_tab(title=self.title, stretch=0) #Network_UI.Next_Tab(self.title, stretch=0)
 
-        self.group_title_label = Network_UI.Add_element(QLabel('NeuronGroup'))
+        self.group_title_label = Network_UI.tab.add_widget(QLabel('NeuronGroup'))
 
-        Network_UI.Next_H_Block()
+        Network_UI.tab.add_row()
 
-        tooltip_message = ''#str(self.variables).replace(',', '\r\n')
+        tooltip_message = ''
         for key in self.variables:
             tooltip_message+=str(self.variables[key])+' : '+str(key)+'\r\n'
 
@@ -42,30 +42,30 @@ class single_group_plot_tab(TabBase):
         mean_vars = ['np.mean(n.'+var+')' for var in self.variables]
         colors = list(self.variables.values())
 
-        mean_curves = Network_UI.Add_plot_curve(y_label='NeuronGroup ' + str(single_vars), number_of_curves=len(mean_vars), names=mean_vars, colors=colors, lines=self.net_lines, tooltip_message=tooltip_message, return_list=True)
+        mean_curves = Network_UI.tab.add_plot(y_label='NeuronGroup ' + str(single_vars), tooltip_message=tooltip_message).add_curves(number_of_curves=len(mean_vars), names=mean_vars, colors=colors, lines=self.net_lines)
         self.net_curves=dict(zip(self.variables, mean_curves))
 
-        Network_UI.Next_H_Block(stretch=0)
+        Network_UI.tab.add_row(stretch=0)
 
-        self.neuron_title_label = Network_UI.Add_element(QLabel('Selected Neuron'))
+        self.neuron_title_label = Network_UI.tab.add_widget(QLabel('Selected Neuron'))
 
-        Network_UI.Next_H_Block()
+        Network_UI.tab.add_row()
 
-        single_curves = Network_UI.Add_plot_curve(y_label='Neuron ' + str(single_vars), number_of_curves=len(single_vars), names=single_vars, colors=colors, lines=self.neuron_lines, tooltip_message=tooltip_message, return_list=True)
+        single_curves = Network_UI.tab.add_plot(y_label='Neuron ' + str(single_vars), tooltip_message=tooltip_message).add_curves(number_of_curves=len(single_vars), names=single_vars, colors=colors, lines=self.neuron_lines)
         self.neuron_curves = dict(zip(self.variables, single_curves))
 
-        Network_UI.Next_H_Block(stretch=0)
+        Network_UI.tab.add_row(stretch=0)
 
         self.line_checkboxes = {}
         for var in self.variables:
             c=self.variables[var]
             txt='<font color='+('#%02x%02x%02x'%c).upper()+'>'+var+'</font>'
-            Network_UI.Add_element(QLabel(txt))
+            Network_UI.tab.add_widget(QLabel(txt))
 
-        Network_UI.Next_H_Block(stretch=0)
+        Network_UI.tab.add_row(stretch=0)
 
         for var in self.variables:
-            self.line_checkboxes[var] = Network_UI.Add_element(QCheckBox(''))
+            self.line_checkboxes[var] = Network_UI.tab.add_widget(QCheckBox(''))
             self.line_checkboxes[var].setChecked(True)
 
     def update(self, Network_UI):
@@ -86,7 +86,6 @@ class single_group_plot_tab(TabBase):
                         self.net_curves[var].clear()
                 except:
                     self.net_curves[var].clear()
-                    #print(var, "cannot be evaluated")
 
                 try:
                     if self.line_checkboxes[var].isChecked():
@@ -97,5 +96,4 @@ class single_group_plot_tab(TabBase):
                         self.neuron_curves[var].clear()
                 except:
                     self.neuron_curves[var].clear()
-                    #print(var, "cannot be evaluated")
 

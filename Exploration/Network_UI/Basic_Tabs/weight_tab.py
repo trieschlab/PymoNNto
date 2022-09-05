@@ -10,7 +10,7 @@ class weight_tab(TabBase):
         return
 
     def initialize(self, Network_UI):
-        self.weight_tab = Network_UI.Next_Tab(self.title)
+        self.weight_tab = Network_UI.add_tab(title=self.title)
 
         #get max synapse group size
         max_sgs=2
@@ -26,16 +26,16 @@ class weight_tab(TabBase):
         for transmitter in Network_UI.transmitters:
             self.transmitter_weight_images[transmitter] = []
             for _ in range(max_sgs):
-                image_item = Network_UI.Add_Image_Item(True, False, title='Neuron ' + transmitter + ' ?', tooltip_message='afferent synapse weights of selected neuron')#+self.weight_attr
-                self.transmitter_weight_images[transmitter].append(image_item)
-            Network_UI.Next_H_Block()
+                plt = Network_UI.tab.add_plot(title='Neuron ' + transmitter + ' ?', tooltip_message='afferent synapse weights of selected neuron')
+                image = plt.add_image()
+                self.transmitter_weight_images[transmitter].append([image, plt])
+            Network_UI.tab.add_row()
 
-        Network_UI.Add_element(QLabel('Min Max'), stretch=0)
+        Network_UI.tab.add_widget(QLabel('Min Max'), stretch=0)
         self.select_min_max_box = QComboBox()
         self.select_min_max_box.addItems(['Transmitter', 'Global', 'Variable', 'Single block'])
         self.select_min_max_box.setCurrentIndex(0)
-        Network_UI.Add_element(self.select_min_max_box, stretch=1)
-        #Network_UI.Next_H_Block(stretch=0)
+        Network_UI.tab.add_widget(self.select_min_max_box, stretch=1)
 
     def update(self, Network_UI):
         if self.weight_tab.isVisible():
@@ -44,22 +44,12 @@ class weight_tab(TabBase):
             #collect all synapse information
             syn_dict = {}
 
-            # print(np.sum(group.W, axis=1))
-
             for transmitter in Network_UI.transmitters:
                 syn_dict[transmitter] = {}
                 for weight_attr in self.weight_attrs:
 
                     if transmitter in group.afferent_synapses and len(group.afferent_synapses[transmitter])>0:
                         syn_dict[transmitter][weight_attr] = {transmitter: get_single_neuron_combined_partition_matrix(group, transmitter, weight_attr, Network_UI.selected_neuron_id())}#group.afferent_synapses[transmitter][0].W[Network_UI.selected_neuron_id()
-
-                    #syns = get_combined_syn_mats(group.afferent_synapses[transmitter], Network_UI.selected_neuron_id(), weight_attr)
-
-                    #print(np.sum(syns['GLU,syn,PC_1 => PC_1']), np.max(syns['GLU,syn,PC_1 => PC_1']))
-
-                    #if len(syns.values()) > 0:
-                    #    syn_dict[transmitter][weight_attr]=syns
-
 
             #determine ranges
             min_max_mode = self.select_min_max_box.currentText()
@@ -109,10 +99,5 @@ class weight_tab(TabBase):
 
                         self.transmitter_weight_images[transmitter][i][1].setTitle(key+' '+weight_attr) #1=plot
 
-                        #print('set transmitter', transmitter, np.min(syn_dict[transmitter][weight_attr][key]), np.max(syn_dict[transmitter][weight_attr][key]))
-
                         self.transmitter_weight_images[transmitter][i][0].setImage(np.rot90(syn_dict[transmitter][weight_attr][key], 3), levels=(0, max_w)) #0=image item
                         i += 1
-                    #if weight_attr=='W_temp' and transmitter=='GLU':
-                        #print(ss)
-

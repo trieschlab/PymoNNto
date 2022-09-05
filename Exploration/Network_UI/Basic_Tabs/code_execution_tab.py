@@ -31,20 +31,8 @@ print(num)
     def initialize(self, Network_UI):
         self.Network_UI=Network_UI
 
-        #Network_UI.Next_H_Block()
-
-        #self.timed_execution_list_view = Network_UI.Add_element(QListView(), sidebar=True)
-        #self.timed_execution_model=QtGui.QStandardItemModel()
-        #self.timed_execution_list_view.setModel(self.timed_execution_model)
-
-        #item = QtGui.QStandardItem("TEST")  # str(execution_time)+' | '+base_name)
-        #item.setCheckable(True)
-        #check = QtCore.Qt.Checked  # if checked else QtCore.Qt.Unchecked
-        #item.setCheckState(check)
-        #self.timed_execution_model.appendRow(item)
-
-        self.code_execution_tab = Network_UI.Next_Tab('Code Exec.')
-        self.comboBox = Network_UI.Add_element(QComboBox())
+        self.code_execution_tab = Network_UI.add_tab(title='Code Exec.') #Network_UI.Next_Tab()
+        self.comboBox = Network_UI.tab.add_widget(QComboBox())
 
         self.txt_py_dict={}
 
@@ -80,17 +68,17 @@ print(num)
 
         self.comboBox.currentIndexChanged.connect(on_cb_click)
 
-        Network_UI.Next_H_Block()
+        Network_UI.tab.add_row()
 
-        self.code_field=Network_UI.Add_element(QTextEdit())
+        self.code_field=Network_UI.tab.add_widget(QTextEdit())
 
         self.code_field.setAcceptRichText(False)
 
         self.code_field.textChanged.connect(on_code_changed)
 
-        Network_UI.Next_H_Block(stretch=1)
+        Network_UI.tab.add_row(stretch=1)
 
-        self.exec_btn=Network_UI.Add_element(QPushButton('Execute'))
+        self.exec_btn=Network_UI.tab.add_widget(QPushButton('Execute'))
 
         def exec_btn_click(event):
             net = Network_UI.network
@@ -117,7 +105,6 @@ print(num)
 
                 dlg = QDialog()
                 dlg.setWindowTitle('code stdout (prints)')
-                # dlg.setWindowTitle(sm.absolute_path + sm.config_file_name)
                 dlg.setLayout(layout)
                 dlg.resize(600, 400)
                 dlg.exec()
@@ -132,14 +119,14 @@ print(num)
         self.exec_btn.clicked.connect(exec_btn_click)
 
 
-        self.show_output_window = Network_UI.Add_element(QCheckBox('Show stdout in window'))
+        self.show_output_window = Network_UI.tab.add_widget(QCheckBox('Show stdout in window'))
 
         self.compiled = None
         self.compiled_script_txt = ''
-        self.timestep_execute_cb = Network_UI.Add_element(QCheckBox('Execute every timestep'))
+        self.timestep_execute_cb = Network_UI.tab.add_widget(QCheckBox('Execute every timestep'))
 
 
-        self.save_btn_click = Network_UI.Add_element(QPushButton('Save Script'))
+        self.save_btn_click = Network_UI.tab.add_widget(QPushButton('Save Script'))
 
         def save(input_txt):
             data_folder = get_data_folder(create_when_not_found=False)+'/scripts'
@@ -157,8 +144,6 @@ print(num)
                 self.comboBox.setCurrentIndex(len(self.txt_py_dict)-1)
 
             self.code_field.setStyleSheet("QTextEdit { background-color: rgb(255, 255, 255); }")
-
-            #self.add_timed_script(name)
 
         def save_btn_click(event):
             Network_UI.text_input_dialog("Please name your script", 'save', save, self.comboBox.itemText(self.comboBox.currentIndex()).replace('.py',''))

@@ -7,7 +7,7 @@ class multi_group_plot_tab(TabBase):
         self.timesteps = timesteps
 
         self.original_variables=variables
-        self.variables = [] #{var1:0, var2:0, var3:1, variable:group}
+        self.variables = []
         self.curve_numbers = []
         self.plot_variables = []
         self.ptv = {}
@@ -41,7 +41,7 @@ class multi_group_plot_tab(TabBase):
 
 
     def initialize(self, Network_UI):
-        self.main_tab = Network_UI.Next_Tab(self.title)
+        self.main_tab = Network_UI.add_tab(title=self.title)
 
         group_count = len(Network_UI.neuron_visible_groups)
 
@@ -63,11 +63,7 @@ class multi_group_plot_tab(TabBase):
                     labels.append(var)
 
 
-            curves = Network_UI.Add_plot_curve(stretch=stretch,
-                                               number_of_curves=group_count*curves_per_plot,
-                                               return_list=True,
-                                               x_label='t (iterations)',
-                                               y_label='Network average ' + str(labels)) #, lines=lines #plot_variable_list
+            curves = Network_UI.tab.add_plot(stretch=stretch, x_label='t (iterations)', y_label='Network average ' + str(labels)).add_curves(number_of_curves=group_count*curves_per_plot) #, lines=lines #plot_variable_list
 
             ci=0
             plot_curve_dict = {}
@@ -79,8 +75,7 @@ class multi_group_plot_tab(TabBase):
                 plot_curve_dict[var] = variable_curves
             self.net_plot_dicts.append(plot_curve_dict)
 
-
-        Network_UI.Next_H_Block()
+        Network_UI.tab.add_row()
 
         self.neuron_plot_dicts = []
 
@@ -92,12 +87,7 @@ class multi_group_plot_tab(TabBase):
             if plot_id == 0:
                 stretch = 2
 
-            curves = Network_UI.Add_plot_curve(stretch=stretch,
-                                               number_of_curves=1 + curves_per_plot,
-                                               colors=[Network_UI.neuron_select_color],
-                                               legend=False,
-                                               x_label='t (iterations)',
-                                               y_label='Neuron ' + str(plot_variable_list))
+            curves = Network_UI.tab.add_plot(stretch=stretch, x_label='t (iterations)', y_label='Neuron ' + str(plot_variable_list)).add_curves(number_of_curves=1 + curves_per_plot, colors=[Network_UI.neuron_select_color], legend=False)
 
             ci=0
             plot_curve_dict = {}
@@ -109,7 +99,7 @@ class multi_group_plot_tab(TabBase):
 
 
         if Network_UI.group_display_count > 1:
-            Network_UI.Next_H_Block()
+            Network_UI.tab.add_row()
 
             self.group_sliders = []
             for group_index in range(Network_UI.group_display_count):
@@ -120,7 +110,7 @@ class multi_group_plot_tab(TabBase):
                 self.group_sliders[-1].mouseReleaseEvent = Network_UI.static_update_func
                 self.group_sliders[-1].setToolTip('scale neuron-group plots up and down (only visualization)')
 
-                Network_UI.Add_element(self.group_sliders[-1])
+                Network_UI.tab.add_widget(self.group_sliders[-1])
 
 
     def update(self, Network_UI):

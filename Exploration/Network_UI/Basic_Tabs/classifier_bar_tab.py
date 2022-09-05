@@ -6,8 +6,8 @@ class classifier_bar_tab(TabBase):
 
 
     def initialize(self, Network_UI):
-        self.cluster_bar_tab = Network_UI.Next_Tab('Cluster')
-        self.plot = Network_UI.Add_plot('cluster sizes')
+        self.cluster_bar_tab = Network_UI.add_tab(title='Cluster')
+        self.plot = Network_UI.tab.add_plot('cluster sizes')
         self.bgi = pg.BarGraphItem(x=[], height=[], width=0.6, brush='r')
         self.plot.addItem(self.bgi)
 
@@ -23,11 +23,7 @@ class classifier_bar_tab(TabBase):
 
         self.bgi.mouseClickEvent = mouseClickEvent
 
-
-
-        Network_UI.Next_H_Block()
-
-        #self.vertical_cb = Network_UI.Add_element(QCheckBox('vertical'))
+        Network_UI.tab.add_row()
 
         self.class_tag_dict = None
 
@@ -36,7 +32,7 @@ class classifier_bar_tab(TabBase):
             if hasattr(group, 'classification') and module is not None and generator is not None:
                 self.class_tag_dict = module.get_class_labels(key, group.classification, generator)
 
-        self.comboBox = Network_UI.Add_element(Analytics_Results_Select_ComboBox(Network_UI.network.NeuronGroups[0], tag='labeler', first_entry='none'))
+        self.comboBox = Network_UI.tab.add_widget(Analytics_Results_Select_ComboBox(Network_UI.network.NeuronGroups[0], tag='labeler', first_entry='none'))
         self.comboBox.on_update_func = on_new_label_selected
 
 
@@ -70,18 +66,9 @@ class classifier_bar_tab(TabBase):
 
                 for i, c in enumerate(np.unique(self.current_group.classification)[sort_indx]):
                     self.class_id_positions[c] = i
-                    #if self.clicked_y_pos == i:
-                    #    self.clicked_y_pos = -1
 
-
-                #if self.vertical_cb.isChecked():
                 self.bgi.setOpts(x=np.array(num)[sort_indx] / 2, y=idx, height=0.6, width=np.array(num)[sort_indx], brushes=np.array(col)[sort_indx])
-                #else:
-                #    self.bgi.setOpts(x=idx, y=np.array(num)[sort_indx] / 2, height=np.array(num)[sort_indx], width=0.6, brushes=np.array(col)[sort_indx])
 
-                #if len(labels) > 0:
-                    #if self.current_label_resort is not None:
-                    #    labels = list(np.flip(np.array(labels)[self.current_label_resort]))
                 if len(sort_indx)==len(labels):
                     labels = [(i, l) for i, l in enumerate(np.array(labels)[sort_indx])]
 
@@ -90,19 +77,3 @@ class classifier_bar_tab(TabBase):
                 ax.setTickFont(QFont("Courier"))
                 ax.setWidth(100)
                 ax.setTicks([labels])
-
-
-
-
-'''
-import pyqtgraph as pg
-from pyqtgraph.Qt import QtCore, QtGui
-
-window = pg.plot()
-
-y1 = [5, 5, 7, 10, 3, 8, 9, 1, 6, 2]
-x = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
-bargraph = pg.BarGraphItem(x=np.array(y1)/2, y=x, width=y1, height=0.6)
-window.addItem(bargraph)
-QtGui.QApplication.instance().exec_()
-'''

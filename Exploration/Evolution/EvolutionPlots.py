@@ -164,7 +164,7 @@ class Radar_Plot_Item(pg.GraphicsObject):
         return QtCore.QRectF(br)
 
 def add_evolution_plot_items(ui, tab):
-    tab.interactive_scatter = ui.Add_element(InteractiveScatter('gen', 'score', 'score'))
+    tab.interactive_scatter = ui.tab.add_widget(InteractiveScatter('gen', 'score', 'score'))
 
     def on_item_clicked(sm):
         data=sm.load_param_list(tab.gene_keys + ['id'] + ['gen', 'score'], return_dict=True)
@@ -175,7 +175,8 @@ def add_evolution_plot_items(ui, tab):
 
     tab.clicked_id=-1
 
-    tab.radar_plot = ui.Add_plot(x_label='radar plot', tooltip_message='radar plot of the last genomes. (green=high score/red=low score/blue=selected)')  # axisItems={'left': stringaxis}
+    tab.radar_plot = ui.tab.add_plot(x_label='radar plot', tooltip_message='radar plot of the last genomes. (green=high score/red=low score/blue=selected)')
+    #tab.radar_plot = ui.Add_plot(x_label='radar plot', tooltip_message='radar plot of the last genomes. (green=high score/red=low score/blue=selected)')  # axisItems={'left': stringaxis}
     tab.draw_item = Radar_Plot_Item()
     tab.radar_plot.addItem(tab.draw_item)
 
@@ -183,7 +184,7 @@ def add_evolution_plot_items(ui, tab):
         if hasattr(tab, 'data'):
             tab.draw_item.update_pic(tab.gene_keys, tab.data, tab.clicked_id, tab.slider.value())
 
-    tab.slider = ui.Add_element(QSlider(Qt.Vertical))
+    tab.slider = ui.tab.add_widget(QSlider(Qt.Vertical))
     tab.slider.setMinimum(10)
     tab.slider.setMaximum(5000)
     tab.slider.setValue(100)
@@ -193,11 +194,13 @@ def add_evolution_plot_items(ui, tab):
     tab.radar_plot.hideAxis('left')
     tab.draw_item.update_pic([], None, None, tab.slider.value())
 
-    ui.Next_H_Block(stretch=0)
-    tab.best_evo = ui.Add_element(QLineEdit('...'), stretch=0)
+    ui.tab.add_row(stretch=10)
+    #ui.Next_H_Block(stretch=0)
+    tab.best_evo = ui.tab.add_widget(QLineEdit('...'), stretch=0)
 
-    ui.Next_H_Block(stretch=0)
-    tab.clicked_evo = ui.Add_element(QLineEdit('...'), stretch=0)
+    ui.tab.add_row(stretch=10)
+    #ui.Next_H_Block(stretch=0)
+    tab.clicked_evo = ui.tab.add_widget(QLineEdit('...'), stretch=0)
 
 
 

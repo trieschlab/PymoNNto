@@ -67,10 +67,6 @@ class criticality_tab(TabBase):
         self.WP_test_execute = False
         def on_click(event):
             self.WP_test_execute = True
-            #self.update_branching(Network_UI.selected_neuron_group())
-            #self.log = not self.log
-            #self.avalance_size_plot.setLogMode(self.log, self.log)
-            #self.avalance_duration_plot.setLogMode(self.log, self.log)
 
         btn = QPushButton('WP Test')
         btn.mousePressEvent = on_click
@@ -204,9 +200,6 @@ class criticality_tab(TabBase):
         self.avalance_duration_curve.setData(T_x, T_y)
 
 
-
-        # 5. size distribution
-        #fig_b = plt.subplot(122)
         S_x, S_inverse = np.unique(S_data, return_inverse=True)
         S_y_freq = np.bincount(S_inverse)
         S_y = S_y_freq / float(S_y_freq.sum())  # normalization
@@ -215,7 +208,6 @@ class criticality_tab(TabBase):
             S_x = np.log(S_x)
             S_y = np.log(S_y)
 
-        #print(S_x, S_y)
         self.avalance_size_curve.setData(S_x, S_y)
 
 
@@ -240,40 +232,3 @@ class criticality_tab(TabBase):
                 self.update_avalanche_distributions(Network_UI, group)
                 self.update_branching(Network_UI, group)
                 self.button_update(Network_UI, group)
-
-
-
-        #T_fit = pl.Fit(T_data, xmin=6, xmax=60, discrete=True)
-        #T_alpha = T_fit.alpha
-        #T_sigma = T_fit.sigma
-        #T_xmin = T_fit.xmin
-
-        #plt.plot(T_x, T_y, '.', markersize=2)
-        #pl.plot_pdf(T_data)
-        #T_fit.power_law.plot_pdf(label=r'$\alpha = %.2f$' % T_alpha)
-
-        #fig_lettersize = 12
-        #plt.title('Neuronal Avalanches - duration distribution')
-        #plt.legend(loc='best')
-        #plt.xlabel(r'$T$', fontsize=fig_lettersize)
-        #plt.ylabel(r'$f(T)$', fontsize=fig_lettersize)
-        #plt.xscale('log')
-        #plt.yscale('log')
-
-
-        #S_fit = pl.Fit(S_data, xmin=10, xmax=1500, discrete=True)
-        #S_alpha = S_fit.alpha
-        #S_sigma = S_fit.sigma
-        #S_xmin = S_fit.xmin
-
-        #plt.plot(S_x, S_y, '.', markersize=2)
-        #pl.plot_pdf(S_data)
-        #S_fit.power_law.plot_pdf(label=r'$\tau = %.2f$' % S_alpha)
-
-        #fig_lettersize = 12
-        #plt.title('Neuronal Avalanches - size distribution')
-        #plt.legend(loc='best')
-        #plt.xlabel(r'$S$', fontsize=fig_lettersize)
-        #plt.ylabel(r'$f(S)$', fontsize=fig_lettersize)
-        #plt.xscale('log')
-        #plt.yscale('log')

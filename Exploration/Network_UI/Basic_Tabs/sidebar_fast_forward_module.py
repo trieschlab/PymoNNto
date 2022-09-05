@@ -15,7 +15,6 @@ class sidebar_fast_forward_module(TabBase):
             rec.behaviour_enabled = enable or self.rec_cb.isChecked()
 
     def update_progress(self, progress, network=None):
-        #self.progressbar.setHidden(False)
         QApplication.instance().processEvents()
         self.progressbar.setValue(int(progress))
 
@@ -31,7 +30,8 @@ class sidebar_fast_forward_module(TabBase):
         Network_UI.timer.start()
 
     def initialize(self, Network_UI):
-        self.iteration_display_label=Network_UI.Add_element(QLabel(),sidebar=True)
+
+        self.iteration_display_label=Network_UI.sidebar.add_widget(QLabel())
         self.iteration_display_label.setMaximumHeight(10)
 
         def start_pause_click(event):
@@ -39,10 +39,10 @@ class sidebar_fast_forward_module(TabBase):
 
         self.sp_btn = QPushButton('start/pause', Network_UI.main_window)
         self.sp_btn.clicked.connect(start_pause_click)
-        Network_UI.Add_Sidebar_Element(self.sp_btn)
+        Network_UI.sidebar.add_widget(self.sp_btn)
 
-        h_layout = Network_UI.Add_Sidebar_Element(return_h_layout=True)
-        h_layout.addWidget(QLabel('Render every X frames.'))
+        Network_UI.sidebar.add_row()
+        Network_UI.sidebar.add_widget(QLabel('Render every X frames.'))
         self.render_every_x_frames_spin = QSpinBox()
         self.render_every_x_frames_spin.setMinimum(1)
         self.render_every_x_frames_spin.setMaximum(1000)
@@ -52,7 +52,7 @@ class sidebar_fast_forward_module(TabBase):
 
         self.render_every_x_frames_spin.valueChanged.connect(change_rexf)
 
-        h_layout.addWidget(self.render_every_x_frames_spin)
+        Network_UI.sidebar.add_widget(self.render_every_x_frames_spin)
 
         if Network_UI.storage_manager is not None:
             self.record_frames_cb=QCheckBox('save frames')
@@ -83,14 +83,16 @@ class sidebar_fast_forward_module(TabBase):
                     dlg.exec()
 
             self.record_frames_cb.stateChanged.connect(cb_state_changed)
-            h_layout.addWidget(self.record_frames_cb)
+            Network_UI.sidebar.add_widget(self.record_frames_cb)
 
-        line=Network_UI.Add_element(QFrame(),sidebar=True)
+        Network_UI.sidebar.set_parent_layout()
+
+        line=Network_UI.sidebar.add_widget(QFrame())
         line.setFrameShape(QFrame.HLine)
         line.setFrameShadow(QFrame.Sunken)
 
 
-        h_layout = Network_UI.Add_Sidebar_Element(return_h_layout=True)
+        Network_UI.sidebar.add_row()
 
         Network_UI.step = False
 
@@ -99,14 +101,12 @@ class sidebar_fast_forward_module(TabBase):
 
         self.os_btn = QPushButton('X steps', Network_UI.main_window)
         self.os_btn.clicked.connect(one_step)
-        # self.Add_Sidebar_Element(self.os_btn)
-        h_layout.addWidget(self.os_btn)
-
+        Network_UI.sidebar.add_widget(self.os_btn)
 
         for i, steps in enumerate(self.step_list):
 
             if (i+1)%3==0:
-                h_layout = Network_UI.Add_Sidebar_Element(return_h_layout=True)
+                Network_UI.sidebar.add_row()
 
             def ff_btn_clicked(steps):
                 self.fast_forward(steps, Network_UI)
@@ -119,61 +119,17 @@ class sidebar_fast_forward_module(TabBase):
             ff_btn = QPushButton(txt, Network_UI.main_window)
             ff_btn.clicked.connect(partial(ff_btn_clicked, steps))
 
-            h_layout.addWidget(ff_btn)
+            Network_UI.sidebar.add_widget(ff_btn)
 
-        '''
-        def fast_forward(event):
-            self.fast_forward(100, Network_UI)
+        Network_UI.sidebar.set_parent_layout()
 
-        self.ff_btn = QPushButton('100', Network_UI.main_window)
-        self.ff_btn.clicked.connect(fast_forward)
-        # self.Add_Sidebar_Element(self.ff_btn)
-        h_layout.addWidget(self.ff_btn)
-
-        def fast_forward(event):
-            self.fast_forward(1000, Network_UI)
-
-        self.ff_btn = QPushButton('1k', Network_UI.main_window)
-        self.ff_btn.clicked.connect(fast_forward)
-        # self.Add_Sidebar_Element(self.ff_btn)
-        h_layout.addWidget(self.ff_btn)
-
-        h_layout = Network_UI.Add_Sidebar_Element(return_h_layout=True)
-
-        def fast_forward(event):
-            self.fast_forward(5000, Network_UI)
-
-        self.ff_btn = QPushButton('5k', Network_UI.main_window)
-        self.ff_btn.clicked.connect(fast_forward)
-        # self.Add_Sidebar_Element(self.ff_btn)
-        h_layout.addWidget(self.ff_btn)
-
-        def fast_forward(event):
-            self.fast_forward(15000, Network_UI)
-
-        self.ff_btn = QPushButton('15k', Network_UI.main_window)
-        self.ff_btn.clicked.connect(fast_forward)
-        # self.Add_Sidebar_Element(self.ff_btn)
-        h_layout.addWidget(self.ff_btn)
-
-        def fast_forward(event):
-            self.fast_forward(50000, Network_UI)
-
-        self.ff_btn = QPushButton('50k', Network_UI.main_window)
-        self.ff_btn.clicked.connect(fast_forward)
-        # self.Add_Sidebar_Element(self.ff_btn)
-        h_layout.addWidget(self.ff_btn)
-        '''
-
-        self.rec_cb = QCheckBox()
+        self.rec_cb = Network_UI.sidebar.add_widget(QCheckBox())
         self.rec_cb.setText('fast forward record')
         self.rec_cb.setChecked(False)
-        Network_UI.Add_Sidebar_Element(self.rec_cb)
 
-        self.progressbar, = Network_UI.Add_Sidebar_Element(QProgressBar())
-        #self.progressbar.setHidden(True)
+        self.progressbar = Network_UI.sidebar.add_widget(QProgressBar())
 
-        line=Network_UI.Add_element(QFrame(),sidebar=True)
+        line = Network_UI.sidebar.add_widget(QFrame())
         line.setFrameShape(QFrame.HLine)
         line.setFrameShadow(QFrame.Sunken)
 

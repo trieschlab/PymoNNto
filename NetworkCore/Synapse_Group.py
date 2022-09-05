@@ -40,7 +40,8 @@ class SynapseGroup(NetworkObjectBase):
 
         for k in sorted(list(self.behaviour.keys())):
             if self.behaviour[k].set_variables_on_init:
-                self.behaviour[k].set_variables(self)
+                net._set_variables_check(self, k)
+                #self.behaviour[k].set_variables(self)
 
     def find_objects(self, key):
         result = []

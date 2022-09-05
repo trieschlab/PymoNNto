@@ -383,7 +383,7 @@ class sun_gravity_plot_tab(TabBase):
     def initialize(self, Network_UI):
         self.sun_gravity_plot_tab=None
         if Network_UI.network['Text_Generator', 0]:# is not None or Network_UI.network['grammar_act', 0] is not None or Network_UI.network['drum_act', 0] is not None or Network_UI.network['music_act', 0] is not None:
-            self.sun_gravity_plot_tab = Network_UI.Next_Tab(self.title)
+            self.sun_gravity_plot_tab = Network_UI.add_tab(title=self.title) #Network_UI.Next_Tab(self.title)
 
             #alphabet = Network_UI.network['grammar_act'][0].alphabet
             #a_list = [alphabet[i] for i in range(len(alphabet))]
@@ -429,7 +429,7 @@ class sun_gravity_plot_tab(TabBase):
                   'The point of attraction is not in the center of each particle,\r\n' \
                   'but the particlses position moved one step furter to the center, so one ring indicates one iteration step.'
 
-            self.plot = Network_UI.Add_plot(x_label='buffer steps', tooltip_message=msg)#axisItems={'left': stringaxis}
+            self.plot = Network_UI.tab.add_plot(x_label='buffer steps', tooltip_message=msg)#axisItems={'left': stringaxis}
             self.plot.hideAxis('bottom')
             self.plot.hideAxis('left')
 
@@ -449,68 +449,67 @@ class sun_gravity_plot_tab(TabBase):
             #elif Network_UI.network['music_act', 0] is not None:
             #    source = Network_UI.network['music_act'][0]
             #    self.base_char_masks_dict = dict([(source.midi_index_to_notestring(char), source.get_activation(i, Network_UI.network['prediction_source', 0])) for i, char in enumerate(source.alphabet)])
-            
 
-            Network_UI.Next_H_Block()
+            Network_UI.tab.add_row()
+            #Network_UI.Next_H_Block()
 
             self.sl1 = QSlider(1)
             self.sl1.setMinimum(0)
             self.sl1.setMaximum(1000)
             self.sl1.setSliderPosition(100)
             self.sl1.label = QLabel('Speed:')
-            Network_UI.Add_element(self.sl1.label)
-            Network_UI.Add_element(self.sl1, stretch=10)
+            Network_UI.tab.add_widget(self.sl1.label)
+            Network_UI.tab.add_widget(self.sl1, stretch=10)
 
             self.sl2 = QSlider(1)
             self.sl2.setMinimum(0)
             self.sl2.setMaximum(3000)
             self.sl2.setSliderPosition(100)
             self.sl2.label = QLabel('Anti gravity:')
-            Network_UI.Add_element(self.sl2.label)
-            Network_UI.Add_element(self.sl2, stretch=10)
+            Network_UI.tab.add_widget(self.sl2.label)
+            Network_UI.tab.add_widget(self.sl2, stretch=10)
 
             self.sl3 = QSlider(1)
             self.sl3.setMinimum(0)
             self.sl3.setMaximum(100)
             self.sl3.setSliderPosition(0)
             self.sl3.label = QLabel('Noise:')
-            Network_UI.Add_element(self.sl3.label)
-            Network_UI.Add_element(self.sl3, stretch=10)
+            Network_UI.tab.add_widget(self.sl3.label)
+            Network_UI.tab.add_widget(self.sl3, stretch=10)
 
             self.sl4 = QSlider(1)
             self.sl4.setMinimum(0)
             self.sl4.setMaximum(500)
             self.sl4.setSliderPosition(100)
             self.sl4.label = QLabel('W^:')
-            Network_UI.Add_element(self.sl4.label)
-            Network_UI.Add_element(self.sl4, stretch=10)
+            Network_UI.tab.add_widget(self.sl4.label)
+            Network_UI.tab.add_widget(self.sl4, stretch=10)
 
             self.sl5 = QSlider(1)
             self.sl5.setMinimum(0)
             self.sl5.setMaximum(100)
             self.sl5.setSliderPosition(0)
             self.sl5.label = QLabel('Ring attraction:')
-            Network_UI.Add_element(self.sl5.label)
-            Network_UI.Add_element(self.sl5, stretch=10)
+            Network_UI.tab.add_widget(self.sl5.label)
+            Network_UI.tab.add_widget(self.sl5, stretch=10)
 
-
-
-            Network_UI.Next_H_Block()
+            Network_UI.tab.add_row()
+            #Network_UI.Next_H_Block()
 
             self.sl0 = QSlider(1)
             self.sl0.setMinimum(0)
             self.sl0.setMaximum(100)
             self.sl0.setSliderPosition(50)
             self.sl0.label = QLabel('Size:')
-            Network_UI.Add_element(self.sl0.label)
-            Network_UI.Add_element(self.sl0, stretch=10)
+            Network_UI.tab.add_widget(self.sl0.label)
+            Network_UI.tab.add_widget(self.sl0, stretch=10)
 
             self.weight_plot_cb = QCheckBox()
             self.weight_plot_cb.setText('Show weights')
             self.weight_plot_cb.setChecked(True)
-            Network_UI.Add_element(self.weight_plot_cb, stretch=10)
+            Network_UI.tab.add_widget(self.weight_plot_cb, stretch=10)
 
-            self.comboBox = Network_UI.Add_element(Analytics_Results_Select_ComboBox(Network_UI.network.NeuronGroups[0], tag='labeler', first_entry='none'), stretch=10)
+            self.comboBox = Network_UI.tab.add_widget(Analytics_Results_Select_ComboBox(Network_UI.network.NeuronGroups[0], tag='labeler', first_entry='none'), stretch=10)
 
             self.draw_item.attach_parameter_slider(self.sl0, self.sl1, self.sl2, self.sl3, self.sl4, self.sl5, self.comboBox)
 

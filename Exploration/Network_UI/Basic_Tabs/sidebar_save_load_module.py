@@ -57,10 +57,9 @@ class sidebar_save_load_module(TabBase):
             except:
                 print('was not able to create Data/NetworkStates folder')
 
-        h_layout = Network_UI.Add_Sidebar_Element(return_h_layout=True)
+        Network_UI.sidebar.add_row()
 
-        self.save_edit = QLineEdit('name...')
-        h_layout.addWidget(self.save_edit)
+        self.save_edit = Network_UI.sidebar.add_widget(QLineEdit('name...'))
 
         def save(event):
             net = copy.deepcopy(Network_UI.network)
@@ -68,17 +67,15 @@ class sidebar_save_load_module(TabBase):
             pickle.dump(net, open(self.folder + self.save_edit.text() + '.netstate', 'wb'))
             self.load_box.addItem(self.save_edit.text())
 
-        self.save_btn = QPushButton('save', Network_UI.main_window)
+        self.save_btn = Network_UI.sidebar.add_widget(QPushButton('save', Network_UI.main_window))
         self.save_btn.clicked.connect(save)
-        h_layout.addWidget(self.save_btn)
 
-        #h_layout = Network_UI.Add_Sidebar_Element(return_h_layout=True)
 
-        self.load_box = QComboBox()
+        self.load_box = Network_UI.sidebar.add_widget(QComboBox())
         for file in os.listdir(self.folder):
             if '.obj' in str(file):
                 self.load_box.addItem(file.replace('.netstate', ''))
-        h_layout.addWidget(self.load_box)
+
 
         def load(event):
             Network_UI.network = pickle.load(open(self.folder + self.load_box.currentText() + '.netstate', 'rb'))
@@ -88,10 +85,8 @@ class sidebar_save_load_module(TabBase):
 
             Network_UI.modules.append(info_tab(Network_UI))
 
-        self.load_btn = QPushButton('load', Network_UI.main_window)
+        self.load_btn = Network_UI.sidebar.add_widget(QPushButton('load', Network_UI.main_window))
         self.load_btn.clicked.connect(load)
-        h_layout.addWidget(self.load_btn)
-
 
 
     def update(self, Network_UI):

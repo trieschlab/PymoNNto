@@ -22,7 +22,8 @@ class Network(NetworkObjectBase):
 
         for k in sorted(list(self.behaviour.keys())):
             if self.behaviour[k].set_variables_on_init:
-                self.behaviour[k].set_variables(self)
+                self._set_variables_check(self, k)
+                #self.behaviour[k].set_variables(self)
 
 
     def set_mechanisms(self, keys, enabeled):
@@ -243,6 +244,14 @@ class Network(NetworkObjectBase):
             for k in obj.behaviour:
                 obj.behaviour[k].clear_cache()
 
+    def _set_variables_check(self, obj, key):
+        obj_keys_before = list(obj.__dict__.keys())
+        beh_keys_before = list(obj.behaviour[key].__dict__.keys())
+        obj.behaviour[key].set_variables(obj)
+        obj_keys_after = list(obj.__dict__.keys())
+        beh_keys_after = list(obj.behaviour[key].__dict__.keys())
+        obj.behaviour[key]._created_obj_variables = list(set(obj_keys_after) - set(obj_keys_before))
+        obj.behaviour[key]._created_beh_variables = list(set(beh_keys_after) - set(beh_keys_before))
 
     def set_variables(self):
         for timestep in self.behaviour_timesteps:
@@ -251,7 +260,8 @@ class Network(NetworkObjectBase):
 
                 if timestep in obj.behaviour:
                     if not obj.behaviour[timestep].set_variables_on_init:
-                        obj.behaviour[timestep].set_variables(obj)
+                        self._set_variables_check(obj, timestep)
+                        #obj.behaviour[timestep].set_variables(obj)
                         obj.behaviour[timestep].check_unused_attrs()
 
 

@@ -30,7 +30,7 @@ class info_tab(TabBase):
         title = '[' + str(groups[0].tags[0]) + ']'
         if len(groups)>1:
             title+=' (Partitioned)'
-        infotab = Network_UI.Next_Tab(title)
+        infotab = Network_UI.add_tab(title=title) #Network_UI.Next_Tab(title)
 
         Network_UI.infotabs.append(infotab)
 
@@ -39,8 +39,8 @@ class info_tab(TabBase):
         caption = QLabel(str(groups[0].tags[0]) + ':')
         caption.setFont(QFont('SansSerif', 16))
         h += 240
-        Network_UI.Add_element(caption)
-        Network_UI.Next_H_Block()
+        Network_UI.tab.add_widget(caption)
+        Network_UI.tab.add_row()
 
         for key in groups[0].behaviour:
             main_tag = groups[0].behaviour[key].tags[0]
@@ -48,7 +48,7 @@ class info_tab(TabBase):
             behaviours = [g.behaviour[key] for g in groups]
 
             self.add_line(Network_UI, str(key) + ' ' + main_tag, behaviours, groups)
-            h += 60#60
+            h += 60
 
         infotab.setMaximumHeight(h)
 
@@ -135,9 +135,6 @@ class info_tab(TabBase):
             #curve.setData(x=list(range(len(plot_data))),y=plot_data)
 
 
-
-
-
         for arg in behaviours[0].init_kwargs:
             addArg(arg)
 
@@ -147,7 +144,7 @@ class info_tab(TabBase):
                 element2.setText(cut_length(str(behaviour.init_kwargs)))
 
         h_container = QHBoxLayout()
-        btn = QPushButton('update')  # , self.main_window
+        btn = QPushButton('update')
         btn.clicked.connect(update)
         h_container.addWidget(btn, stretch=2)
         h_container.addWidget(QLabel(''), stretch=5)
@@ -167,19 +164,15 @@ class info_tab(TabBase):
             element2.mousePressEvent = hide_show
             link_font = QFont()  # 'SansSerif', 12
             link_font.setUnderline(True)
-            # palette = QPalette()
-            # palette.setColor(QPalette.Text, QtCore.Qt.blue)
-            # element2.setPalette(palette)
             element2.setFont(link_font)
             element2.setStyleSheet("color: rgb(0,0,200)")
 
-        Network_UI.Add_element(element)
-        Network_UI.Add_element(element2, stretch=5)
-        Network_UI.Next_H_Block()
-        # self.current_H_block.addLayout(container)
+        Network_UI.tab.add_widget(element)
+        Network_UI.tab.add_widget(element2, stretch=500)
+        Network_UI.tab.add_row()
 
-        Network_UI.Add_element(frame)
-        Network_UI.Next_H_Block()
+        Network_UI.tab.add_widget(frame)
+        Network_UI.tab.add_row()
 
     def update(self, Network_UI):
         return

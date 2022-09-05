@@ -13,7 +13,10 @@ def compute_temporal_reconstruction(network, single_neuron_group=None, single_ne
 
     for ng in network[recon_group_tag]:
         baseline = ng.Input_Weights.transpose().dot(ng.temporal_recon[-1])
-        baseline = baseline / np.sum(baseline)
+        if np.sum(baseline)!=0:
+            baseline = baseline / np.sum(baseline)
+        else:
+            baseline = 0
 
         if single_neuron_id is not None and single_neuron_group is not None and ng == single_neuron_group:  # clicked group?
             temp = ng.get_neuron_vec()

@@ -12,10 +12,9 @@ class module_visualizer_tab(TabBase):
         group_tags=[group.tags[0] for group in get_unique_non_partitioned_Groups(Network_UI.network.all_objects())]
 
         for t,timestep in enumerate(Network_UI.network.behaviour_timesteps):
-            #for net_obj in Network_UI.network['exc_neurons']:#Network_UI.network.NeuronGroups:
             for i, net_obj in enumerate(get_unique_non_partitioned_Groups(Network_UI.network.all_objects())):
 
-                if timestep in net_obj.behaviour:# and net_obj.behaviour[timestep].behaviour_enabled
+                if timestep in net_obj.behaviour:
                     beh=net_obj.behaviour[timestep]
                     module_name, inputs, outputs, attributes, module_type = analyze_module_and_get_info(beh)
                     mdi = Module_draw_item(module_name, inputs, outputs, attributes, module_type, x=t*1200, y=i*1200, onlyff=True)

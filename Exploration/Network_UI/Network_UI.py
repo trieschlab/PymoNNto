@@ -5,18 +5,13 @@ from PymoNNto.NetworkBehaviour.Structure.Structure import *
 
 class Network_UI(UI_Base):
 
-    def __init__(self, network, modules=[], label='Network UI', group_tags=[], transmitters=[], storage_manager=None, group_display_count=None, reduced_layout=False):
+    def __init__(self, network, modules=[], title='Network UI', group_tags=[], transmitters=[], storage_manager=None, group_display_count=None, reduced_layout=False):
 
         network.simulate_iteration()
 
         network.clear_recorder()
 
         self.render_every_x_frames = 1
-
-        #network.simulate_iteration()
-        #self.recording = False
-        #if self.recording:
-        #    label += ' rec.'
 
         for ng in network.NeuronGroups:
             if ng['NeuronDimension', 0] is None:
@@ -38,18 +33,8 @@ class Network_UI(UI_Base):
 
         self.reduced_layout=reduced_layout
 
-        #for group in network[inh_group_name]:
-        #    network.add_behaviours_to_neuron_group({10000: Recorder(['np.mean(n.output)',
-        #                           'np.mean(n.TH)',
-        #                           'n.TH',
-        #                           'n.excitation',
-        #                           'n.inhibition',
-        #                           'n.input_act',
-        #                           'n.refractory_counter',
-        #                           '[np.sum(s.slow_add) for s in n.afferent_synapses.get("All")]',
-        #                           '[np.sum(s.fast_add) for s in n.afferent_synapses.get("All")]'], tag='UI_rec')}, group)
-
-        super().__init__(network, label=label)
+        super().__init__(title=title)
+        self.network = network
 
         self.event_list = []
 
@@ -58,8 +43,7 @@ class Network_UI(UI_Base):
 
         self.group_display_count = group_display_count
 
-        #self.exc_group_name = exc_group_name
-        #self.inh_group_name = inh_group_name
+
         self.group_tags = group_tags
         self.transmitters=transmitters
         self.pause = False
@@ -68,7 +52,6 @@ class Network_UI(UI_Base):
 
         self.neuron_visible_groups = []
 
-        #self.neuron_select_id = 0
         self._neuron_select_group = network[group_tags[0], 0]
         self._neuron_select_mask = self._neuron_select_group.get_neuron_vec().astype(np.bool)#np.array([0])
         self._neuron_select_mask[0] = True
@@ -76,10 +59,6 @@ class Network_UI(UI_Base):
         self.neuron_select_x = 0
         self.neuron_select_y = 0
 
-
-        #self.ts_group = 0
-        #self.x_steps = 500
-        #self.group_sliders = []
         self.neuron_select_color = (0, 255, 0, 255)
 
         self.modules = modules
@@ -93,15 +72,13 @@ class Network_UI(UI_Base):
 
         for module in self.modules:
             print('Initialize:', type(module).__name__)
+            self.sidebar.set_parent_layout(root=True)
             module.initialize(self)
 
         for group_tag in group_tags:
             for group in network[group_tag]:
 
                 group._rec_dict = {}
-
-                #rec = Recorder([], tag='UI_rec')
-                #network.add_behaviours_to_neuron_group({10000: rec}, group)
 
                 for module in self.modules:
                     module.add_recorder_variables(group, self)
@@ -187,13 +164,6 @@ class Network_UI(UI_Base):
                     rec = Recorder(rec_time_dict[rec_length] + ['n.iteration'], tag='UI_rec,rec_' + str(rec_length), max_length=rec_length)
                     self.network.add_behaviours_to_object({10000+rec_length: rec}, group)
 
-    #def rec(self, neuron_group, rec_length=-1):
-    #    return neuron_group[self.rec_tag(rec_length),0]
-
-    #def rec_tag(self, rec_length=-1):
-    #    if rec_length==-1:
-    #        rec_length = self.default_rec_recording_length
-    #    return 'rec_'+str(rec_length)
 
     def static_update_func(self, event=None):
         if self.pause:
@@ -227,9 +197,6 @@ class Network_UI(UI_Base):
 
             for module in self.modules:
                 module.update(self)
-
-            #for rec in self.network['UI_rec']:
-            #    rec.cut_length(self.default_recorder_length)
 
             self.update_without_state_change = False
 
@@ -355,10 +322,9 @@ class Analytics_Results_Select_ComboBox(QComboBox):
 
 ########################################################### Exception handling
 
+#def except_hook(cls, exception, traceback):
+#    sys.__excepthook__(cls, exception, traceback)
 
-def except_hook(cls, exception, traceback):
-    sys.__excepthook__(cls, exception, traceback)
-
-sys.excepthook = except_hook
+#sys.excepthook = except_hook
 
 

@@ -46,13 +46,14 @@ class UI_Plot_Overview(UI_Base):
         self.listwidget.setDragDropMode(QtWidgets.QAbstractItemView.InternalMove)
 
     def __init__(self):
-        super().__init__(None, label='Plot Overview', create_sidebar=True)
+        super().__init__(title='Plot Overview', create_sidebar=True)
 
         self.listwidget = QListWidget()
 
-        self.Next_Tab('Plot')
+        self.add_tab(title='Plot')
+        #self.Next_Tab('Plot')
 
-        self.interactive_scatter = self.Add_element(InteractiveScatter())
+        self.interactive_scatter = self.tab.add_widget(InteractiveScatter())
 
         self.refresh_dirs()
 
@@ -66,7 +67,7 @@ class UI_Plot_Overview(UI_Base):
 
         self.listwidget.dropEvent = drop_event
 
-        self.Add_element(self.listwidget, sidebar=True)
+        self.sidebar.add_widget(self.listwidget)
 
         def on_item_clicked(item):
             for i in range(self.listwidget.count()):
@@ -102,7 +103,7 @@ class UI_Plot_Overview(UI_Base):
 
         self.listwidget.doubleClicked.connect(on_item_doubleclicked)
 
-        btn=self.Add_element(QPushButton('refresh'), sidebar=True)
+        btn=self.sidebar.add_widget(QPushButton('refresh'))
 
         def refresh_click():
             self.refresh_dirs()
@@ -110,7 +111,7 @@ class UI_Plot_Overview(UI_Base):
 
         btn.clicked.connect(refresh_click)
 
-        color_btn = self.Add_element(QPushButton('color'), sidebar=True)
+        color_btn = self.sidebar.add_widget(QPushButton('color'))
 
         def color_click():
             self.interactive_scatter.axis_dialog('color')

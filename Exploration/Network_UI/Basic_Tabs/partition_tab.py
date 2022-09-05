@@ -5,7 +5,6 @@ class DrawItem(pg.GraphicsObject):
     def __init__(self, parent=None):
         super().__init__(parent)
         self.picture = QtGui.QPicture()
-        #self.update()
 
     def get_rnd_color(self):
         return (np.random.rand()*255.0,np.random.rand()*255.0,np.random.rand()*255.0,255.0)
@@ -78,7 +77,6 @@ class DrawItem(pg.GraphicsObject):
         painter.end()
         self.prepareGeometryChange()
         self.informViewBoundsChanged()
-        #self.update()
 
     def paint(self, painter, option, widget=None):
         painter.drawPicture(0, 0, self.picture)
@@ -101,7 +99,7 @@ class partition_tab(TabBase):
         return
 
     def initialize(self, Network_UI):
-        self.partition_tab = Network_UI.Next_Tab(self.title)
+        self.partition_tab = Network_UI.add_tab(title=self.title)
 
         def on_click(event):
             for sg in event.currentItem.sub_sgs:
@@ -110,7 +108,7 @@ class partition_tab(TabBase):
         self.draw_items = {}
         self.plots = {}
         for transmitter in Network_UI.transmitters:
-            self.plots[transmitter] = Network_UI.Add_plot(tooltip_message='Click on a block of the right group(selected group) to show the possible inputs to this block\r\nLeft: Source NeuronGroup\r\nRight: Destination NeuronGroup\r\n(Partitioning is used for speeding up synapse operations)')
+            self.plots[transmitter] = Network_UI.tab.add_plot(tooltip_message='Click on a block of the right group(selected group) to show the possible inputs to this block\r\nLeft: Source NeuronGroup\r\nRight: Destination NeuronGroup\r\n(Partitioning is used for speeding up synapse operations)')
             self.draw_items[transmitter] = DrawItem()
             self.draw_items[transmitter].mouseClickEvent = on_click
             self.plots[transmitter].addItem(self.draw_items[transmitter])
@@ -122,5 +120,3 @@ class partition_tab(TabBase):
             for transmitter in Network_UI.transmitters:
                 self.draw_items[transmitter].update_pic(group.afferent_synapses[transmitter],group)
                 self.plots[transmitter].update()
-
-            #self.plot.refresh()

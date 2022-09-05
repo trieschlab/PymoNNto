@@ -9,41 +9,43 @@ class UI_Plot_Manager(Execution_Manager_UI_Base):
     def get_title(self):
         return 'Plot Manager'
 
-    def add_ui_elements(self):
+    def add_ui_elements(self, left_vertical_layout, right_vertical_layout):
 
-        self.qte=QTextEdit()
-        self.qte.setPlainText("""for _ in range(#runs#):
-	file_exec({})
+        #horizontal_layout = QHBoxLayout()
+        #self.sidebar_current_vertical_layout.addLayout(horizontal_layout)
 
+        #vertical_layout = QVBoxLayout()
+        #left_vertical_layout.addLayout(vertical_layout)
+        left_vertical_layout.addWidget(QLabel('slave file'))
+        #left_vertical_layout.addWidget(QLabel('thread number'))
+        left_vertical_layout.addWidget(QLabel('python cmd'))
+        left_vertical_layout.addWidget(QLabel('runs'))
 
-###help###
-#file_exec({'gene1': 1, ...})
-""")
-        self.Add_element(self.qte, sidebar=True)
-
-
-        horizontal_layout = QHBoxLayout()
-        self.sidebar_current_vertical_layout.addLayout(horizontal_layout)
-
-        vertical_layout = QVBoxLayout()
-        horizontal_layout.addLayout(vertical_layout)
-
-        vertical_layout.addWidget(QLabel('slave file'))
-        #vertical_layout.addWidget(QLabel('thread number'))
-        vertical_layout.addWidget(QLabel('python cmd'))
-        vertical_layout.addWidget(QLabel('runs'))
 
         self.slave_file_edit = QLineEdit('Exploration/Evolution/slave_example.py')
         #self.thread_number_edit = QLineEdit('4')
         self.python_cmd_edit = QLineEdit("python")
         self.run_count_edit = QLineEdit('10')
 
-        vertical_layout = QVBoxLayout()
-        horizontal_layout.addLayout(vertical_layout)
-        vertical_layout.addWidget(self.slave_file_edit)
-        #vertical_layout.addWidget(self.thread_number_edit)
-        vertical_layout.addWidget(self.python_cmd_edit)
-        vertical_layout.addWidget(self.run_count_edit)
+        #vertical_layout = QVBoxLayout()
+        #horizontal_layout.addLayout(vertical_layout)
+        right_vertical_layout.addWidget(self.slave_file_edit)
+        #right_vertical_layout.addWidget(self.thread_number_edit)
+        right_vertical_layout.addWidget(self.python_cmd_edit)
+        right_vertical_layout.addWidget(self.run_count_edit)
+
+        ec_label=QLabel(u"\u24D8 " + 'Execution code:')
+        ec_label.setToolTip("file_exec({'gene1': 1, ...})")
+
+        self.sidebar.add_widget(ec_label, stretch=0)
+        #self.Add_element(ec_label, sidebar=True, stretch=0)
+
+        self.qte = QTextEdit()
+        self.qte.setPlainText("""for _ in range(#runs#):
+        	file_exec({})
+""")
+        self.sidebar.add_widget(self.qte, stretch=100)
+        #self.Add_element(self.qte, sidebar=True, stretch=100)
 
 
     def On_Tab_Changed(self, i):
@@ -60,22 +62,22 @@ class UI_Plot_Manager(Execution_Manager_UI_Base):
 
     def get_help_txt(self):
         return '''Every tab corresponds to a folder in:
-        Data/Plot_Project_Clones/
+Data/Plot_Project_Clones/
 
-        For remote SSH servers the local folder only contains some config files while the project copy is located in the user folder of the server.
+For remote SSH servers the local folder only contains some config files while the project copy is located in the user folder of the server.
 
-        When the evolution is started on a ssh server it creates a "screen" session which is named after the evolution name.
+When the evolution is started on a ssh server it creates a "screen" session which is named after the evolution name.
 
-        Useful functions are:
+Useful functions are:
 
-        "screen -list" to show the screen sessions and their ids,
-        "screen -r id" to connect to a session where "id" has to be replaced and
-        "exit" to close a screen session you are connected to.
+    "screen -list" to show the screen sessions and their ids,
+    "screen -r id" to connect to a session where "id" has to be replaced and
+    "exit" to close a screen session you are connected to.
 
-        The project folders also contain the file execute.py which is used to start the evolution.
+The project folders also contain the file execute.py which is used to start the evolution.
 
-        All genomes generate a file with the results and the genes when set_score is called in the slave file. Which are transferred to the local folder when the state is refreshed.
-        '''
+All genomes generate a file with the results and the genes when set_score is called in the slave file. Which are transferred to the local folder when the state is refreshed.
+'''
 
     def create_execution_file(self, name, folder, file):
 
@@ -127,11 +129,12 @@ def file_exec(genes):
         return True
 
     def add_additional_tab_elements(self, tab, name):
-        self.Next_H_Block(stretch=10)
+        self.tab.add_row(stretch=10)
+        #self.Next_H_Block(stretch=10)
 
         #tab.plot = self.Add_plot(title='results')
 
-        tab.interactive_scatter = self.Add_element(InteractiveScatter(default_x='id', default_y='score'))
+        tab.interactive_scatter = self.tab.add_widget(InteractiveScatter(default_x='id', default_y='score'))
 
         #add_evolution_plot_items(self, tab)
         #tab.folder = get_epc_folder(self.folder) + '/' + name + '/'
