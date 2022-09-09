@@ -1,9 +1,6 @@
-from PymoNNto.NetworkCore.Base import *
+from PymoNNto.NetworkCore.Base_Attachable_Modules import *
 import copy
 
-#import random
-#def str_eval_conn(eval_string, synapses, s_id, sx, sy, sz, d_id, dx, dy, dz):
-#    return eval(eval_string)
 
 class SynapseGroup(NetworkObjectBase):
 
@@ -18,7 +15,7 @@ class SynapseGroup(NetworkObjectBase):
         if tag is None and net is not None:
             tag = 'SynapseGroup_'+str(len(net.SynapseGroups)+1)
 
-        super().__init__(tag=tag)
+        super().__init__(tag, net, behaviour)
         self.add_tag('syn')
 
         if len(src.tags) > 0 and len(dst.tags) > 0:
@@ -26,7 +23,6 @@ class SynapseGroup(NetworkObjectBase):
 
         if net is not None:
             net.SynapseGroups.append(self)
-            self.network = net
             setattr(net, self.tags[0], self)
 
         self.recording = True
@@ -35,79 +31,6 @@ class SynapseGroup(NetworkObjectBase):
         self.dst = dst
         self.enabled = True
         self.group_weighting = 1
-
-        self.behaviour = behaviour
-
-        for k in sorted(list(self.behaviour.keys())):
-            if self.behaviour[k].set_variables_on_init:
-                net._set_variables_check(self, k)
-                #self.behaviour[k].set_variables(self)
-
-    def find_objects(self, key):
-        result = []
-
-        if key in self.behaviour:
-            result.append(self.behaviour)
-
-        for bk in self.behaviour:
-            behaviour = self.behaviour[bk]
-            result += behaviour[key]
-
-        for am in self.analysis_modules:
-            result += am[key]
-
-        return result
-
-    '''
-    def set_connectivity(self, connectivity):
-        src = self.src
-        dst = self.dst
-        self.enabled = self.get_synapse_mat()
-
-        s_id = np.tile(np.arange(src.size), (1, dst.size)).reshape(dst.size, src.size)
-
-        if hasattr(src, 'x') and hasattr(src, 'y') and hasattr(src, 'z'):
-            sx = np.tile(src.x, (1, dst.size)).reshape(dst.size, src.size)
-            sy = np.tile(src.y, (1, dst.size)).reshape(dst.size, src.size)
-            sz = np.tile(src.z, (1, dst.size)).reshape(dst.size, src.size)
-
-        d_id = np.tile(np.arange(dst.size), (1, src.size)).reshape(src.size, dst.size).transpose()
-
-        if hasattr(dst, 'x') and hasattr(dst, 'y') and hasattr(dst, 'z'):
-            dx = np.tile(dst.x, (1, src.size)).reshape(src.size, dst.size).transpose()
-            dy = np.tile(dst.y, (1, src.size)).reshape(src.size, dst.size).transpose()
-            dz = np.tile(dst.z, (1, src.size)).reshape(src.size, dst.size).transpose()
-
-        if hasattr(src, 'width') and hasattr(dst, 'width'):  # scaling
-            sxs = dst.width / src.width
-            dxs = src.width / dst.width
-
-        if hasattr(src, 'height') and hasattr(dst, 'height'):  # scaling
-            sys = dst.height / src.height
-            dys = src.height / dst.height
-
-        def in_box(dist):
-            x_diff=np.abs(sx-dx)
-            y_diff=np.abs(sy-dy)
-            z_diff=np.abs(sz-dz)
-            return (x_diff<=dist)*(y_diff<=dist)*(z_diff<=dist)
-
-        def in_circle(dist):
-            x_diff=np.abs(sx-dx)
-            y_diff=np.abs(sy-dy)
-            z_diff=np.abs(sz-dz)
-            return np.sqrt(x_diff*x_diff+y_diff*y_diff+z_diff*z_diff)<=dist
-
-        if type(connectivity) == str:
-            self.enabled = eval(connectivity)
-            #print(self.enabled)
-        elif type(connectivity) == float or type(connectivity) == int:
-            if connectivity >= 0:
-                self.enabled = (np.sqrt(
-                    np.power(np.abs(sx - dx), 2) + np.power(np.abs(sy - dy), 2)) <= connectivity) * (s_id != d_id)
-        else:
-            self.enabled = connectivity(self, s_id, sx, sy, sz, d_id, dx, dy, dz)
-    '''
 
     def __str__(self):
         result = 'SynapseGroup'+str(self.tags)+'(D'+str(self.dst.size)+'xS'+str(self.src.size)+'){'
@@ -119,17 +42,8 @@ class SynapseGroup(NetworkObjectBase):
         setattr(self,key,value)
         return self
 
-    #def add_tag(self, tag):
-    #    self.tags.append(tag)
-    #    return self
-
-
     def get_synapse_mat_dim(self):
-        return self.dst.size, self.src.size#self.get_dest_size(), self.get_src_size()
-
-
-    #def get_synapse_mat(self):
-    #    return np.zeros(self.get_synapse_mat_dim())
+        return self.dst.size, self.src.size
 
     def get_random_synapse_mat_fixed(self, min_number_of_synapses=0):
         dim = self.get_synapse_mat_dim()
@@ -139,10 +53,6 @@ class SynapseGroup(NetworkObjectBase):
                 synapses = np.random.choice(list(range(dim[1])), size=int(min_number_of_synapses), replace=False)
                 result[i, synapses] = np.random.rand(len(synapses))
         return result#*np.random.rand(dim)
-
-    #def get_random_synapse_mat(self, density=1.0, clone_along_first_axis=False, rnd_code=None):
-    #    print("warning: use get_synapse_mat('uniform',...) instead of get_random_synapse_mat")
-    #    return self.get_random_nparray((self.get_synapse_mat_dim()), density, clone_along_first_axis, rnd_code=rnd_code)*self.enabled
 
     def get_synapse_mat(self, mode='zeros()', scale=None, density=None, only_enabled=True, clone_along_first_axis=False, plot=False, kwargs={}, args=[]):# mode in ['zeros', 'zeros()', 'ones', 'ones()', 'uniform(...)', 'lognormal(...)', 'normal(...)']
         result = self._get_mat(mode=mode, dim=(self.get_synapse_mat_dim()), scale=scale, density=density, plot=plot, kwargs=kwargs, args=args)
@@ -199,11 +109,6 @@ class SynapseGroup(NetworkObjectBase):
         max_dy = 1
         max_dz = 1
 
-        #print(self.dst.x[89])
-
-        #print(self.dst.size, self.dst.x.shape, self.dst.y.shape, self.dst.z.shape)
-        #print(self.src.size, self.src.x.shape, self.src.y.shape, self.src.z.shape)
-
         for i in range(self.dst.size):
             if type(self.enabled) is np.ndarray:
                 mask = self.enabled[i]
@@ -228,8 +133,6 @@ class SynapseGroup(NetworkObjectBase):
     def get_sub_synapse_group(self, src_mask, dst_mask):
         result = SynapseGroup(self.src.subGroup(src_mask), self.dst.subGroup(dst_mask), net=None, behaviour={})
 
-        #result.original_synapse_group = self
-
         # partition enabled update
         if type(self.enabled) is np.ndarray:
             mat_mask = dst_mask[:, None] * src_mask[None, :]
@@ -245,26 +148,4 @@ class SynapseGroup(NetworkObjectBase):
                 setattr(result, key, copy.copy(sgd[key]))
 
         return result
-
-    '''
-    def partition(self, split_size='auto'):#, receptive_field_size='auto'
-
-        #if receptive_field_size == 'auto':
-        #    receptive_field_size = self.get_max_receptive_field_size()
-
-        if split_size == 'auto':
-            best_block_size = 7
-            w = int((self.src.width/best_block_size+self.dst.width/best_block_size)/2)
-            h = int((self.src.height/best_block_size+self.dst.height/best_block_size)/2)
-            d = int((self.src.depth / best_block_size + self.dst.depth / best_block_size) / 2)
-            split_size = [np.maximum(w, 1), np.maximum(h, 1), np.maximum(d, 1)]
-            if split_size[0]<3 and split_size[1]<3 and split_size[2]<3:
-                return
-
-        #print('partition:', receptive_field_size, split_size)
-
-        self.network.partition_Synapse_Group3(self, steps=split_size)
-
-        #self.network.partition_Synapse_Group(self, receptive_field_size=self.get_max_receptive_field_size(), split_size=split_size)
-    '''
 

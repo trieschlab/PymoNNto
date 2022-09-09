@@ -1,7 +1,7 @@
-from PymoNNto.NetworkCore.Base import *
+from PymoNNto.NetworkCore.Base_Tagable_Object import *
 from PymoNNto.Exploration.Evolution.Interface_Functions import *
 
-class Behaviour(NetworkObjectBase):
+class Behaviour(TaggableObjectBase):
     set_variables_on_init = False
     attached_UI_Tabs = []
 
@@ -20,11 +20,6 @@ class Behaviour(NetworkObjectBase):
 
     def set_gene_variables(self):
         current_genome = {}
-
-        #for k,v in self._caller_module.__dict__.items():
-        #    if k not in locals():
-        #        print(k)
-        #        locals()[k]=v
 
         for variable_key in self.init_kwargs:
             while type(self.init_kwargs[variable_key]) is str and '[' in self.init_kwargs[variable_key] and ']' in self.init_kwargs[variable_key]:

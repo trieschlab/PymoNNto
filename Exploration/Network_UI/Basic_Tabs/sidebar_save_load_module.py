@@ -1,5 +1,5 @@
 from PymoNNto.Exploration.Network_UI.TabBase import *
-from PymoNNto.NetworkCore.Base import *
+from PymoNNto.NetworkCore.Base_Attachable_Modules import *
 from PymoNNto.Exploration.StorageManager.StorageManager import *
 from PymoNNto.Exploration.Network_UI.Basic_Tabs.info_tabs import *
 import copy

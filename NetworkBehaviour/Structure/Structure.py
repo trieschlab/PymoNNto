@@ -1,3 +1,4 @@
+from PymoNNto import *
 from PymoNNto.NetworkCore.Behaviour import *
 import math
 import numpy as np

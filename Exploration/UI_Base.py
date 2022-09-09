@@ -30,8 +30,8 @@ def deprecated_warning(message):
     def inner_function(function):
         @wraps(function)
         def wrapper(*args, **kwargs):
-            raise Exception(message)
-            #print(message)
+            #raise Exception(message)
+            print(message)
             return function(*args, **kwargs)
         return wrapper
     return inner_function

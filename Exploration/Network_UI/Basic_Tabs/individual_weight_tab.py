@@ -68,7 +68,8 @@ class individual_weight_tab(TabBase):
 
             for s in group.afferent_synapses["All"]:
                 s.UI_recorder = Recorder([self.key, 's.iteration'], tag=self.rec_name, gapwidth=10, save_as_numpy=True)
-                self.Network_UI.network.add_behaviours_to_object({10001: s.UI_recorder}, s)
+                s.add_behaviour(10001, s.UI_recorder)
+                #self.Network_UI.network.add_behaviours_to_object({10001: s.UI_recorder}, s)
 
                 s.UI_curves = []
                 syn_data = eval(self.key)

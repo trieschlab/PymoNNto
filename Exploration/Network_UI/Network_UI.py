@@ -5,7 +5,11 @@ from PymoNNto.NetworkBehaviour.Structure.Structure import *
 
 class Network_UI(UI_Base):
 
-    def __init__(self, network, modules=[], title='Network UI', group_tags=[], transmitters=[], storage_manager=None, group_display_count=None, reduced_layout=False):
+    def __init__(self, network, modules=[], title='Network UI', group_tags=[], transmitters=[], storage_manager=None, group_display_count=None, reduced_layout=False, label=None):
+
+        #compatibility (do not use label/will be removed)
+        if label is not None:
+            title = label
 
         network.simulate_iteration()
 
@@ -15,7 +19,8 @@ class Network_UI(UI_Base):
 
         for ng in network.NeuronGroups:
             if ng['NeuronDimension', 0] is None:
-                network.add_behaviours_to_object({0: get_squared_dim(ng.size)}, ng)
+                ng.add_behaviour(0, get_squared_dim(ng.size))
+                #network.add_behaviours_to_object({0: get_squared_dim(ng.size)}, ng)
 
             if not hasattr(ng, 'color'):
                 ng.color = (0, 0, 255, 255)
@@ -162,7 +167,8 @@ class Network_UI(UI_Base):
 
                 for rec_length in rec_time_dict:
                     rec = Recorder(rec_time_dict[rec_length] + ['n.iteration'], tag='UI_rec,rec_' + str(rec_length), max_length=rec_length)
-                    self.network.add_behaviours_to_object({10000+rec_length: rec}, group)
+                    group.add_behaviour(10000+rec_length, rec)
+                    #self.network.add_behaviours_to_object({10000+rec_length: rec}, group)
 
 
     def static_update_func(self, event=None):
@@ -322,9 +328,9 @@ class Analytics_Results_Select_ComboBox(QComboBox):
 
 ########################################################### Exception handling
 
-#def except_hook(cls, exception, traceback):
-#    sys.__excepthook__(cls, exception, traceback)
+def except_hook(cls, exception, traceback):
+    sys.__excepthook__(cls, exception, traceback)
 
-#sys.excepthook = except_hook
+sys.excepthook = except_hook
 
 

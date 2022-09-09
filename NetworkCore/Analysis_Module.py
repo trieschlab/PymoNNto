@@ -1,4 +1,4 @@
-from PymoNNto.NetworkCore.Base import *
+from PymoNNto.NetworkCore.Base_Tagable_Object import *
 import inspect
 
 #This class can be used to add tag-searchable functions to the neurongroups, synapsegroups and the network object.
@@ -6,7 +6,7 @@ import inspect
 #Other "normal" functions can be added as well.
 #Via the add_tag function, the modules can be categorized into groups
 
-class AnalysisModule(NetworkObjectBase):
+class AnalysisModule(TaggableObjectBase):
 
     def __init__(self, parent=None, **kwargs):
         self.init_kwargs = kwargs

@@ -13,7 +13,7 @@ class sidebar_module_quick_access(TabBase):
     def initialize(self, Network_UI):
         if Network_UI.network['STDP', 0] is not None:
             def learning_on_off(event):
-                Network_UI.network.set_mechanisms(['STDP'], self.stdp_cb.isChecked())
+                Network_UI.network.set_behaviours('STDP', self.stdp_cb.isChecked())
                 Network_UI.add_event('STDP ('+str(self.stdp_cb.isChecked())+')')
 
             self.stdp_cb = QCheckBox()
@@ -102,7 +102,7 @@ class sidebar_grammar_module(TabBase):
             # self.Add_Sidebar_Spacing()
 
             def learning_on_off(event):
-                Network_UI.network.set_mechanisms(['STDP'], self.stdp_cb.isChecked())
+                Network_UI.network.set_behaviours('STDP', self.stdp_cb.isChecked())
 
             self.stdp_cb = QCheckBox()
             self.stdp_cb.setText('STDP')

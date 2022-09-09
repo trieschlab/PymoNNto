@@ -34,17 +34,17 @@ def test_basics():
     My_Network.initialize(storage_manager=sm)
     My_Network.simulate_iterations(1000)
 
-    My_Network.deactivate_mechanisms('Counter')
+    My_Network.deactivate_behaviours('Counter')
     My_Network.simulate_iterations(10)
 
-    My_Network.activate_mechanisms('Counter')
+    My_Network.activate_behaviours('Counter')
     My_Network.simulate_iterations(20)
 
     My_Network.recording_off()
     My_Network.simulate_iterations(30)
 
     assert My_Network.iteration == 1000+10+20+30
-    assert np.sum(My_Neurons.count) == My_Neurons.size*(1000+20+30)
+    assert np.mean(My_Neurons.count) == 1000+20+30
 
     assert My_Synapses.src == My_Neurons
     assert My_Synapses.dst == My_Neurons
@@ -66,3 +66,16 @@ def test_basics():
     assert os.path.isfile('Data/StorageManager/test/test/config.ini')
     sm.save_param('k', 'v')
     assert sm.load_param('k') == 'v'
+
+    My_Neurons.count *= 0
+    My_Neurons.remove_behaviour('Counter')
+    My_Network.simulate_iterations(10)
+    assert np.mean(My_Neurons.count) == 0
+
+    My_Neurons.add_behaviour(0.5, Counter(inc='2'), initialize=True)
+    My_Network.simulate_iterations(10)
+    assert np.mean(My_Neurons.count) == 2*10
+
+    My_Neurons.remove_behaviour('Counter')
+    My_Neurons.add_behaviour(4, Counter(inc='2'), initialize=False)
+    assert np.mean(My_Neurons.count) == 2*10
