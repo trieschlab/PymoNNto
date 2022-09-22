@@ -146,7 +146,7 @@ def test_add_remove_behaviours():
 
 ##########################UI
 
-
+'''
 def test_ui():
     print()
 
@@ -169,7 +169,7 @@ def test_ui():
 
     if os.path.isdir(folder+'test/'):
         shutil.rmtree(folder+'test/')
-
+'''
 
 ############# Evolution
 
