@@ -67,7 +67,8 @@ def get_single_neuron_combined_partition_matrix(neurons, synapse_tag, synapse_va
         base_src = s.src.group_without_subGroup()
         mat = np.zeros(base_src.depth*base_src.height*base_src.width)
         indx = np.where(s.dst.id == neuron_id)[0]
-        mat[s.src.mask] = eval('s.' + synapse_var)[indx].flatten()
+        if hasattr(s, synapse_var):
+            mat[s.src.mask] = eval('s.' + synapse_var)[indx].flatten()
         results.append(mat.reshape((base_src.depth*base_src.height, base_src.width)))
 
     if return_first:

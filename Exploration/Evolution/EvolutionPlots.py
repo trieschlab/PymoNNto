@@ -92,33 +92,31 @@ class Radar_Plot_Item(pg.GraphicsObject):
 
     def draw_genomes(self, alphabet, data, painter, max_gene_draw):
 
-        #mask = data[-2, :] % np.ceil(data.shape[1]/100) == 0
-        #masked_data=data[:, mask]
-        # mask = [i%10 == 0 for i in range(data.shape[1])]
+        if len(data)>0:#todo:test
 
-        if data.shape[1] > max_gene_draw:
-            masked_data = data[:, -max_gene_draw:]
-        else:
-            masked_data = data
+            if data.shape[1] > max_gene_draw:
+                masked_data = data[:, -max_gene_draw:]
+            else:
+                masked_data = data
 
-        min_a = data.min(axis=1)
-        max_a = data.max(axis=1)
+            min_a = data.min(axis=1)
+            max_a = data.max(axis=1)
 
-        masked_min_a = masked_data.min(axis=1)
-        masked_max_a = masked_data.max(axis=1)
+            masked_min_a = masked_data.min(axis=1)
+            masked_max_a = masked_data.max(axis=1)
 
-        la = len(alphabet)
-        score_diff = (masked_max_a[-1] - masked_min_a[-1])
+            la = len(alphabet)
+            score_diff = (masked_max_a[-1] - masked_min_a[-1])
 
-        if la > 0:
-            for j in range(masked_data.shape[1]):
-                if score_diff > 0:
-                    c = int(255.0/score_diff*(masked_data[-1, j]-masked_min_a[-1]))
-                else:
-                    c = 0
-                painter.setPen(pg.mkPen(color=(255-c, c, 0, 255), width=1))
+            if la > 0:
+                for j in range(masked_data.shape[1]):
+                    if score_diff > 0:
+                        c = int(255.0/score_diff*(masked_data[-1, j]-masked_min_a[-1]))
+                    else:
+                        c = 0
+                    painter.setPen(pg.mkPen(color=(255-c, c, 0, 255), width=1))
 
-                self.draw_genome(painter, alphabet, la, min_a, max_a, masked_data[:, j])
+                    self.draw_genome(painter, alphabet, la, min_a, max_a, masked_data[:, j])
 
     def draw_clicked_genome(self, alphabet, data, painter, clicked_id):
         min_a = data.min(axis=1)
@@ -164,11 +162,16 @@ class Radar_Plot_Item(pg.GraphicsObject):
         return QtCore.QRectF(br)
 
 def add_evolution_plot_items(ui, tab):
-    tab.interactive_scatter = ui.tab.add_widget(InteractiveScatter('gen', 'score', 'score'))
+    tab.interactive_scatter = ui.tab.add_widget(InteractiveScatter('generation', 'score', 'score'))
+    if hasattr(tab, 'gene_keys'):
+        tab.interactive_scatter.gene_keys = tab.gene_keys
 
     def on_item_clicked(sm):
-        data=sm.load_param_list(tab.gene_keys + ['id'] + ['gen', 'score'], return_dict=True)
-        tab.clicked_evo.setText('Clicked genome: ' + str(data))#str(dict(zip(tab.gene_keys + ['id'] + ['gen', 'score'], data)))
+        data = sm.load_param_list(tab.gene_keys, return_dict=True)
+        tab.clicked_evo.setText(str(data))#str(dict(zip(tab.gene_keys + ['id'] + ['generation', 'score'], data)))
+        data = sm.load_param_list(['id', 'generation', 'score'], return_dict=True)
+        tab.clicked_evo2.setText(str(data))
+
         tab.draw_item.update_pic(tab.gene_keys, tab.data, data['id'], tab.slider.value())
 
     tab.interactive_scatter.scatter_clicked_event = on_item_clicked
@@ -194,13 +197,21 @@ def add_evolution_plot_items(ui, tab):
     tab.radar_plot.hideAxis('left')
     tab.draw_item.update_pic([], None, None, tab.slider.value())
 
-    ui.tab.add_row(stretch=10)
-    #ui.Next_H_Block(stretch=0)
-    tab.best_evo = ui.tab.add_widget(QLineEdit('...'), stretch=0)
+
 
     ui.tab.add_row(stretch=10)
-    #ui.Next_H_Block(stretch=0)
-    tab.clicked_evo = ui.tab.add_widget(QLineEdit('...'), stretch=0)
+
+    ui.tab.add_column(stretch=0, add_to_parent=False)
+    ui.tab.add_widget(QLabel('Best genome:'), stretch=0)
+    ui.tab.add_widget(QLabel('Clicked genome'), stretch=0)
+
+    ui.tab.add_column(stretch=100)
+    tab.best_evo = ui.tab.add_widget(QLineEdit('...'), stretch=100)
+    tab.clicked_evo = ui.tab.add_widget(QLineEdit('...'), stretch=100)
+
+    ui.tab.add_column(stretch=50)
+    tab.best_evo2 = ui.tab.add_widget(QLineEdit('...'), stretch=10)
+    tab.clicked_evo2 = ui.tab.add_widget(QLineEdit('...'), stretch=10)
 
 
 
@@ -212,15 +223,15 @@ def update_evolution_plot(ui, tab, evo_name, gene_keys, data_folder=get_data_fol
     tab.interactive_scatter.add_StorageManagerGroup(tab.smg)
     tab.interactive_scatter.refresh_data()
 
-    tab.smg.sort_by('score')#gen
-
+    tab.smg.sort_by('score')
     tab.gene_keys = gene_keys
 
-    result_lists = tab.smg.get_multi_param_list(gene_keys+['id']+['gen', 'score'], remove_None=True).astype(np.float64)
+    result_lists = tab.smg.get_multi_param_list(gene_keys+['id']+['generation', 'score'], remove_None=True).astype(np.float64)
 
     tab.data = np.array(result_lists)
 
-    tab.best_evo.setText('Best genome: ' + str(dict(zip(gene_keys+['id']+['gen', 'score'], tab.data[:, -1]))))
+    tab.best_evo.setText(str(dict(zip(gene_keys, tab.data[:-3, -1]))))#'Best genome: ' +
+    tab.best_evo2.setText(str(dict(zip(['id']+['generation', 'score'], tab.data[-3:, -1]))))
 
     tab.draw_item.update_pic(gene_keys, tab.data, tab.clicked_id, tab.slider.value())
 

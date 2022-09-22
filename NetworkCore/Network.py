@@ -51,20 +51,20 @@ class Network(NetworkObjectBase):
                     obj.behaviour[key].clear_recorder()
 
     def set_gene_variables(self, info=True, storage_manager=None):
-        #current_genome = {}
 
         for obj in self.all_objects():
             for key in obj.behaviour:
                 b = obj.behaviour[key]
                 b.set_gene_variables()
-                #current_genome.update(b.set_gene_variables())
 
-        if info and len(get_default_genome())>0:
-            print('default genome:', get_default_genome())#get_default_genome())
+        if info:
+            genome = get_genome()
+            if len(genome)>0:
+                print('genome:', genome)
 
         if storage_manager is not None:
-            storage_manager.save_param(key='evolution_params', value=get_genome())#get_default_genome()
-            storage_manager.save_param_dict(get_genome())#get_default_genome()
+            storage_manager.save_param(key='evolution_params', value=get_genome())
+            storage_manager.save_param_dict(get_genome())
 
     def __str__(self):
         neuron_count = np.sum(np.array([ng.size for ng in self.NeuronGroups]))
@@ -114,28 +114,15 @@ class Network(NetworkObjectBase):
             if storage_manager is not None:
                 storage_manager.save_param('info', desc)
 
-        #self.old_param_list = self.get_all_params()
-
         self.set_synapses_to_neuron_groups()
-
         self.behaviour_timesteps = []
 
         for obj in self.all_objects():
             for b_key in obj.behaviour:
                 self._add_key_to_sorted_behaviour_timesteps(b_key)
 
-        #for ng in self.NeuronGroups:
-        #    self.add_behaviour_keys_dict(ng.behaviour)
-
-        #for sg in self.SynapseGroups:
-        #    self.add_behaviour_keys_dict(sg.behaviour)
-
         self.set_variables()
-        #self.save_network_state()
-
         self.check_unique_tags(warnings)
-
-        #self.save_descriptions(storage_manager)
 
     def check_unique_tags(self,warnings=True):
         unique_tags=[]

@@ -50,10 +50,10 @@ class sidebar_neuron_grid_submodule(TabBase):
         group_select_box = QComboBox()
         self.color_select_box = Analytics_Results_Select_ComboBox(Network_UI.network[Network_UI.group_tags[index], 0] ,'classifier', first_entry='group color')
 
-        Network_UI.sidebar.add_row()
-        Network_UI.sidebar.add_row(group_select_box)
-        Network_UI.sidebar.add_row(self.color_select_box)
-        Network_UI.sidebar.set_parent_layout()
+        #Network_UI.sidebar.add_row()
+        #Network_UI.sidebar.add_widget(group_select_box, stretch=0)
+        #Network_UI.sidebar.add_widget(self.color_select_box, stretch=0)
+        #Network_UI.sidebar.set_parent_layout()
 
         Network_UI.sidebar.add_row()
         Network_UI.sidebar.add_widget([group_select_box, self.color_select_box])

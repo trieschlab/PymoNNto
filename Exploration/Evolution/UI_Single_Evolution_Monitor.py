@@ -7,20 +7,22 @@ from PymoNNto.Exploration.Evolution.EvolutionPlots import *
 class UI_Single_Evolution_Monitor(UI_Base):
 
     def __init__(self, evolution):
-        super().__init__(None, label='Evolution Monitor', create_sidebar=False)
+        super().__init__(title='Evolution Monitor', create_sidebar=False, create_tab_grid=False)
 
         self.evolution = evolution
 
-        self.main_tab = self.Next_Tab('Evolution performance', stretch=0)
+        self.main_tab = self.add_tab('Evolution performance', stretch=0)#self.Next_Tab('Evolution performance', stretch=0)
 
         self.reduced_layout = False
 
-        self.Next_H_Block(stretch=10)
+        self.tab.add_row(stretch=10)
+        #self.Next_H_Block(stretch=10)
 
         add_evolution_plot_items(self, self.main_tab)
 
-        self.Next_H_Block(stretch=0)
-        self.pause_cont_btn = self.Add_element(QPushButton('Pause'), stretch=0)
+        self.tab.add_row(stretch=0)
+        #self.Next_H_Block(stretch=0)
+        self.pause_cont_btn = self.tab.add_widget(QPushButton('Pause'), stretch=0)#self.Add_element(QPushButton('Pause'), stretch=0)
         self.pause_cont_btn.clicked.connect(self.on_pause_cont_click)
 
         #self.Add_element(QLabel('...'), stretch=0)

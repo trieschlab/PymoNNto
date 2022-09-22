@@ -29,43 +29,65 @@ class InteractiveScatter(pg.GraphicsLayoutWidget):#canvas object
     def scatter_clicked(self, plot, points):
         print('clicked')
         if len(points) > 0:
-            self.clicked_generation = points[-1]._data[0]
-            self.clicked_score = points[-1]._data[1]
+            clicked_x = points[-1]._data[0]
+            clicked_y = points[-1]._data[1]
 
             self.clicked_sm = points[-1]._data[3]
             self.clicked_smg = points[-1]._data[4]
-            print(self.clicked_sm)
 
-            self.scatter2.setData(x=[self.clicked_generation], y=[self.clicked_score])  # set second scatter to new selection
+            x = []
+            y = []
+            sml = [self.clicked_sm]
+
+            if hasattr(self, 'gene_keys'):#search for other individuals with same genome
+                clicked_id=self.clicked_sm.load_param('id')
+                if clicked_id is not None:
+                    data = self.clicked_smg.get_multi_param_list(['#SM#','id',self.default_x, self.default_y]+self.gene_keys)
+                    indx=np.where(data[1]==clicked_id)[0]
+                    current_genome = data[4:,indx]
+                    for i in range(data.shape[1]):
+                        if np.sum(data[4:, i]) == np.sum(current_genome):
+                            x.append(data[2, i])
+                            y.append(data[3, i])
+                            sml.append(data[0, i])
+
+
+            x.append(clicked_x)
+            y.append(clicked_y)
+            c = [pg.mkBrush(0, 0, 255, 100) for _ in range(len(x))]
+            c[-1] = pg.mkBrush(0, 0, 255, 255)
+            self.scatter2.setData(x=x,y=y, brush=c)#[clicked_x], y=[clicked_y]  # set second scatter to new selection
+
+            for i, d in enumerate(self.scatter2.data):
+                d[3] = sml[i] #storage manager
+
             self.scatter2.data[0][3] = self.clicked_sm
             if self.scatter_clicked_event is not None:
                 self.scatter_clicked_event(self.clicked_sm)
 
     def scatter_double_clicked(self, plot, points):#scatter2
+        if len(points) > 0:
+            sm = points[-1]._data[3]
 
-        print('double clicked', self.clicked_sm)
+            print('double clicked', sm)
 
-        #evo_id = tab.data[-3, tab.clicked_sm][0]
-        # print(evo_id)
+            #sm = self.clicked_sm
 
-        sm = self.clicked_sm#self.clicked_smg['id==' + str(int(self.clicked_sm))][0]
+            txt = open(sm.absolute_path + sm.config_file_name, 'r').read()
 
-        txt = open(sm.absolute_path + sm.config_file_name, 'r').read()
+            layout = QVBoxLayout()
+            pte = QPlainTextEdit()
+            pte.setPlainText(txt)
+            pte.setReadOnly(True)
+            layout.addWidget(pte)
 
-        layout = QVBoxLayout()
-        pte = QPlainTextEdit()
-        pte.setPlainText(txt)
-        pte.setReadOnly(True)
-        layout.addWidget(pte)
+            dlg = QDialog()
+            dlg.setLayout(layout)
+            dlg.resize(1200, 800)
+            dlg.exec()
 
-        dlg = QDialog()
-        #dlg.setWindowTitle(sm.absolute_path + sm.config_file_name)
-        dlg.setLayout(layout)
-        dlg.resize(1200, 800)
-        dlg.exec()
-
-        if self.scatter_double_clicked_event is not None:
-            self.scatter_double_clicked_event(self.clicked_sm)
+            if self.scatter_double_clicked_event is not None:
+                self.scatter_double_clicked_event(self.clicked_sm)
 
     def change_axis_param(self, axis_name, param):
 
@@ -136,16 +158,10 @@ class InteractiveScatter(pg.GraphicsLayoutWidget):#canvas object
         #if tooltip_message is not None:
         #    self.ci.setToolTip(tooltip_message)
 
-        self.clicked_generation = -1
-        self.clicked_score = -1
         self.clicked_sm = None
         self.clicked_smg = ''
 
-        self.plot = self.addPlot(row=0, col=0)#, axisItems=axisItems
-        #self.plot.addLegend()
-
-        #tab.item = pg.FillBetweenItem(curve1=tab.curves[1], curve2=tab.curves[2], brush=(255, 0, 0, 100))
-        #tab.plot.addItem(tab.item)
+        self.plot = self.addPlot(row=0, col=0)
 
         # trendline
         self.mean_line = pg.PlotCurveItem([],pen=(0,0,0,255))
@@ -255,7 +271,7 @@ class InteractiveScatter(pg.GraphicsLayoutWidget):#canvas object
 
 
     def add_trendline(self, smg):
-        if self.default_x=='gen':
+        if self.default_x=='generation' or self.default_x=='gen':
             result_lists = smg.get_multi_param_list([self.default_x, self.default_y], remove_None=True).astype(np.float64)
 
             xa, ya = smg.remove_duplicates_get_eval(result_lists[-2], result_lists[-1], evalstr='np.average(a)')
@@ -277,7 +293,6 @@ class InteractiveScatter(pg.GraphicsLayoutWidget):#canvas object
             self.min_max_fill.setVisible(False)
 
     def refresh_data(self):
-        single_smg = len(self.storage_manager_groups)==1
 
         #refresh and get global min max color
         color_vals = []
@@ -323,11 +338,12 @@ class InteractiveScatter(pg.GraphicsLayoutWidget):#canvas object
                 smg.error_bar.setVisible(False)
 
             for i, d in enumerate(smg.scatter.data):  # set ids to each point (d[3] very ugly coding...) (each point is a set, not an object)
-                d[3] = data[0][i]
-                d[4] = smg
+                d[3] = data[0][i] #storage manager
+                d[4] = smg  #storage manager group
 
         self.scatter2.clear()
 
+        single_smg = len(self.storage_manager_groups) == 1
         if single_smg:
             self.add_trendline(self.storage_manager_groups[0])
 

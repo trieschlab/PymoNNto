@@ -41,7 +41,7 @@ default_colors=[(0, 0, 0),(255, 0, 0),(0, 0, 255),(0, 250, 150),(255, 0, 255)]
 
 class UI_Base(QApplication):
 
-    def __init__(self, title="Network_Test", create_sidebar=True):#network
+    def __init__(self, title="Network_Test", create_sidebar=True, create_tab_grid=True):#network
         super().__init__(sys.argv)
 
         path = PymoNNto.__file__.replace('__init__.py', '')+ 'icon3232.png'
@@ -60,7 +60,7 @@ class UI_Base(QApplication):
         self.main_window.keyReleaseEvent = self.keyReleaseEvent
         self.control_key_down=False
 
-        self.init_QT_Window(title, create_sidebar)
+        self.init_QT_Window(title, create_sidebar, create_tab_grid)
         quit = QAction("Quit", self.main_window)
         quit.triggered.connect(self.main_window.closeEvent)
         self.closeeventtriggered = False
@@ -74,7 +74,7 @@ class UI_Base(QApplication):
         self.main_window.show()
         sys.exit(self.exec_())
 
-    def init_QT_Window(self, label, create_sidebar=True):
+    def init_QT_Window(self, label, create_sidebar=True, create_tab_grid=True):
         self.width = 1200
         self.height = 600
         self.main_window.setWindowTitle(label)
@@ -85,42 +85,48 @@ class UI_Base(QApplication):
         self.main_split = QSplitter()
         self.main_h_layout.addWidget(self.main_split)
 
-        self.sidebar = QRow_Column_Widget(self)
-        self.main_split.addWidget(self.sidebar)
+        if create_sidebar:
+            self.sidebar = QRow_Column_Widget(self)
+            self.main_split.addWidget(self.sidebar)
+
+        self.add_tab_grid(create_tab_grid=create_tab_grid)
 
 
-        self.add_tab_grid()
+    def add_tab_grid(self, create_tab_grid=True):
 
-
-    def add_tab_grid(self):
-        self.vsplit = QSplitter()
-        self.vsplit.setOrientation(Qt.Vertical)
-
-        self.hsplit1 = QSplitter()
         self.tabs = MyTabWidget(new=True)
-        self.tabs2 = MyTabWidget(new=True)
-        self.hsplit1.addWidget(self.tabs)
-        self.hsplit1.addWidget(self.tabs2)
-        self.hsplit1.setSizes([1, 0])
 
-        self.hsplit2 = QSplitter()
-        self.tabs3 = MyTabWidget(new=True)
-        self.tabs4 = MyTabWidget(new=True)
-        self.hsplit2.addWidget(self.tabs3)
-        self.hsplit2.addWidget(self.tabs4)
-        self.hsplit2.setSizes([1, 0])
+        if not create_tab_grid:
+            self.main_split.addWidget(self.tabs)
+        else:
+            self.vsplit = QSplitter()
+            self.vsplit.setOrientation(Qt.Vertical)
+            #...
+            self.hsplit1 = QSplitter()
 
-        self.vsplit.addWidget(self.hsplit1)
-        self.vsplit.addWidget(self.hsplit2)
-        self.vsplit.setSizes([1, 0])
+            self.tabs2 = MyTabWidget(new=True)
+            self.hsplit1.addWidget(self.tabs)
+            self.hsplit1.addWidget(self.tabs2)
+            self.hsplit1.setSizes([1, 0])
 
-        self.main_split.addWidget(self.vsplit)
-        self.main_split.setSizes([300, 800])
+            self.hsplit2 = QSplitter()
+            self.tabs3 = MyTabWidget(new=True)
+            self.tabs4 = MyTabWidget(new=True)
+            self.hsplit2.addWidget(self.tabs3)
+            self.hsplit2.addWidget(self.tabs4)
+            self.hsplit2.setSizes([1, 0])
 
-        self.tabs.currentChanged.connect(self._onTabChange)
-        self.tabs2.currentChanged.connect(self._onTabChange)
-        self.tabs3.currentChanged.connect(self._onTabChange)
-        self.tabs4.currentChanged.connect(self._onTabChange)
+            self.vsplit.addWidget(self.hsplit1)
+            self.vsplit.addWidget(self.hsplit2)
+            self.vsplit.setSizes([1, 0])
+
+            self.main_split.addWidget(self.vsplit)
+            self.main_split.setSizes([300, 800])
+
+            self.tabs.currentChanged.connect(self._onTabChange)
+            self.tabs2.currentChanged.connect(self._onTabChange)
+            self.tabs3.currentChanged.connect(self._onTabChange)
+            self.tabs4.currentChanged.connect(self._onTabChange)
 
     def _onTabChange(self, i):
         self.on_tab_change(i)
@@ -509,7 +515,7 @@ class QRow_Column_Widget(QWidget):
             self.set_parent_layout()
         layout = QHBoxLayout()
         layout._parent = self.get_layout()
-        layout._parent.addLayout(layout)
+        layout._parent.addLayout(layout, stretch=stretch)
         self.set_layout(layout)
         return layout
 
@@ -518,7 +524,7 @@ class QRow_Column_Widget(QWidget):
             self.set_parent_layout()
         layout = QVBoxLayout()
         layout._parent = self.get_layout()
-        layout._parent.addLayout(layout)
+        layout._parent.addLayout(layout, stretch=stretch)
         self.set_layout(layout)
         return layout
 
@@ -553,8 +559,8 @@ class PymoNNto_PlotItem(PlotItem):
             self.addItem(curve)
             curves.append(curve)
 
-        if number_of_curves == 1 and not return_list:
-            curves = curves[0]
+        #if number_of_curves == 1 and not return_list:
+        #    curves = curves[0]
 
         if legend:
             self.addLegend()

@@ -2,21 +2,18 @@ from PymoNNto.Exploration.Evolution.Devices.Evolution_Device import *
 
 class Evolution_Device_Single_Thread(Evolution_Device):
 
-    def get_score(self, genome):
-        sm = StorageManager(main_folder_name=genome['evo_name'], folder_name=get_gene_file(genome), add_new_when_exists=False)#, print_msg=False
-        return sm.load_param('score', default=None)
-
     def main_loop_update(self):
-        current_genome = self.parent.get_next_genome()
+        current_individual = self.parent.get_next_individual()
 
-        if current_genome is not None:
+        if current_individual is not None:
 
-            if os.path.isfile(self.parent.slave_file):
-                execute_local_file(self.parent.slave_file, current_genome)
-            else:
-                print('file not found')
+            #if os.path.isfile(self.parent.slave_file):
+            #print('exec', current_individual.id)
+            execute_local_file(self.parent.slave_file, self.parent.name , current_individual.id, self.parent.Breed_And_Select.generation, current_individual.genome, self.parent.inactive_genome_info)
+            #else:
+            #    print('file not found', self.parent.slave_file)
 
-            self.score_processing(current_genome)
+            self.score_processing(current_individual.id)
 
         else:
             print('no genes found to process')

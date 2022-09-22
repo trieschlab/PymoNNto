@@ -104,7 +104,7 @@ def file_exec(genes):
 #import sys
 #
 #for run in range(#run_count#):
-#    execute_local_file('#slave_file#', {'evo_name': '#name#', 'gen': run, 'id': run})
+#    execute_local_file('#slave_file#', {'evo_name': '#name#', 'generation': run, 'id': run})
 #        """
 
         print('generate execute.py...')

@@ -7,7 +7,7 @@ import numpy as np
 import sys
 import traceback
 
-def local_thread_worker(slave_file, conn):
+def local_thread_worker(slave_file, evo_name, static_genome, conn):
     #try:
     #    import psutil as psu
     #    parent = psu.Process()
@@ -18,10 +18,10 @@ def local_thread_worker(slave_file, conn):
     while True:
         time.sleep(np.random.rand()/10)#avoid creating same storage manager files at same time
         if conn.poll():
-            genome = conn.recv()
+            evo_id, generation, genome = conn.recv()
             try:
-                execute_local_file(slave_file, genome)
-                conn.send([genome, 'success'])
+                execute_local_file(slave_file, evo_name, evo_id, generation, genome, static_genome)
+                conn.send([evo_id, 'success'])
             except Exception as e:
                 error_type = str(sys.exc_info()[0])
                 msg = str(sys.exc_info()[1])
@@ -32,40 +32,28 @@ def local_thread_worker(slave_file, conn):
 
 class Evolution_Device_Multi_Thread(Evolution_Device):
 
-    def get_score(self, genome):
-        sm = StorageManager(main_folder_name=genome['evo_name'], folder_name=get_gene_file(genome), add_new_when_exists=False)#, print_msg=False
-        return sm.load_param('score', default=None)
-
     def initialize(self):
         self.parent_conn, child_conn = Pipe()
-        self.process = Process(target=local_thread_worker, args=(self.parent.slave_file, child_conn))
-
-    def start(self):
-        self.process.start()
+        self.process = Process(target=local_thread_worker, args=(self.parent.slave_file, self.parent.name, self.parent.inactive_genome_info, child_conn))
 
     def main_loop_update(self):
 
         if self.parent_conn.poll():
-            genome, thread_msg = self.parent_conn.recv()
-
-            #print(thread_msg)
-
+            evo_id, thread_msg = self.parent_conn.recv()
             if thread_msg == 'success':
-                self.score_processing(genome)
-
+                self.score_processing(evo_id)
             elif thread_msg == 'idle':
-                current_genome = self.parent.get_next_genome()
-                if current_genome is not None:
-                    self.parent_conn.send(current_genome)
-                #else:
-                #    print('no genes found to process')
-
+                current_individual = self.parent.get_next_individual()
+                if current_individual is not None:
+                    arguments = [current_individual.id, self.parent.Breed_And_Select.generation, current_individual.genome]
+                    self.parent_conn.send(arguments)
             else:
-                self.error_event(genome, thread_msg)
+                self.parent.error_event(evo_id, thread_msg)
 
+    def start(self):
+        self.process.start()
 
     def stop(self):
-        return
-        #self.process.stop()#???
+        self.process.stop()#???
 
 

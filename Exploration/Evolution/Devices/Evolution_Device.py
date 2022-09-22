@@ -27,14 +27,13 @@ class Evolution_Device():#one device per thread
         self.parent = parent
         self.current_gene = None
 
-    def score_processing(self, genome):
-        score = self.get_score(genome)
+    def score_processing(self, evo_id):
+        score = self.get_score(self.parent.name, evo_id)
 
         if score is not None:
-            genome['score'] = score
-            self.new_score_event(genome)
+            self.parent.new_score_event(evo_id, score)
         else:
-            self.error_event(genome, 'loaded score is None/ not able to load score')
+            self.parent.error_event(evo_id, 'not able to load score (score=None)', False)
 
     def initialize_device_group(self):# override / called before initialize but only once per thread group
         return
@@ -51,17 +50,18 @@ class Evolution_Device():#one device per thread
     def stop(self):# override
         return
 
-    def new_score_event(self, genome):
-        if genome['gen'] == self.parent.Breed_And_Select.generation:  # part of current execution? still relevant?
-            self.parent.new_score_event(genome)
-        else:
-            self.parent.error_event(genome, 'processed gene result from previous generation', False)
+    #def new_score_event(self, id, score):
+    #    if genome.generation == self.parent.Breed_And_Select.generation:  # part of current execution? still relevant?
+    #        self.parent.new_score_event(id, score)
+    #    else:
+    #        self.parent.error_event(id, 'processed gene result from previous generation', False)
 
-    def error_event(self, genome, message):
-        if genome['gen'] == self.parent.Breed_And_Select.generation: #part of current execution? still relevant?
-            self.parent.error_event(genome, message, True)
-        else:
-            self.parent.error_event(genome, message+' (from previous generation)')
+    #def error_event(self, genome, message):
+    #    if genome.generation == self.parent.Breed_And_Select.generation: #part of current execution? still relevant?
+    #        self.parent.error_event(genome, message, True)
+    #    else:
+    #        self.parent.error_event(genome, message+' (from previous generation)')
 
-    def get_score(self, genome):# override
-        return
+    def get_score(self, evo_name, evo_id):
+        sm = StorageManager(main_folder_name=evo_name, folder_name=get_gene_file(evo_name, evo_id), add_new_when_exists=False, use_evolution_path=False)#, print_msg=False
+        return float(sm.load_param('score', default=None))

@@ -20,7 +20,7 @@ def get_response(out, err):
         result.append(line.decode("utf-8"))
     return result
 
-def split_ssh_user_host_password_string(user_host_pw_str):
+def split_ssh_user_host_password_string(user_host_pw_str, messages=True):
     password = None
     user = None
     host = None
@@ -33,11 +33,14 @@ def split_ssh_user_host_password_string(user_host_pw_str):
             if len(host_pw) == 2:
                 host = host_pw[0]
                 password = host_pw[1]
-                print('warning: a clear text ssh password inside of the code is dangerous!')
+                if messages:
+                    print('warning: a clear text ssh password inside of the code is dangerous!')
             else:
-                print('space in host but no password detected')
+                if messages:
+                    print('space in host but no password detected')
     else:
-        print('cannot split user and host')
+        if messages:
+            print('cannot split user and host')
 
     return user, host, password
 
@@ -144,13 +147,13 @@ def get_Data(name, user, host, password, main_folder='Evolution_Project_Clones')
     else:
         print('Error No root "Data" folder found')
 
-def ssh_execute_evo(server, name, python_cmd='python3'):
+def ssh_execute_evo(server, name):
     user, host, password = split_ssh_user_host_password_string(server)
     ssh = get_ssh_connection(host, user, password)
 
     command = 'cd ' + name + '; '
     #command = 'nano .bashrc'
-    command += 'screen -dmS ' + name + ' sh; screen -S ' + name + ' -X stuff "'+python_cmd+' execute.py \r\n"'
+    command += 'screen -dmS ' + name + ' sh; screen -S ' + name + ' -X stuff "python3 execute.py \r\n"'
 
     ssh_stdin, ssh_stdout, ssh_stderr = ssh.exec_command(command)
     response = get_response(ssh_stdout, ssh_stderr)

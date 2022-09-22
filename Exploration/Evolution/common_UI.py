@@ -18,7 +18,7 @@ class QVLine(QFrame):
         self.setFrameShape(QFrame.VLine)
         self.setFrameShadow(QFrame.Sunken)
 
-def evolution_thread_worker(name, folder, python_cmd, conn):
+def evolution_thread_worker(name, folder, conn):
     print('local thread started')
     try:
         dir = os.getcwd()
@@ -27,11 +27,11 @@ def evolution_thread_worker(name, folder, python_cmd, conn):
 
         system_str = sys.platform
         if 'darwin' in system_str:#mac os
-            os.system(python_cmd+' execute.py')
+            os.system('python3 execute.py')
         elif 'win' in system_str:#windows
-            os.system('start /wait cmd /c '+python_cmd+' execute.py')
+            os.system('start /wait cmd /c python3 execute.py')
         else:
-            os.system('gnome-terminal -x '+python_cmd+' execute.py')
+            os.system('gnome-terminal -x python3 execute.py')
 
         os.chdir(dir)
 
@@ -224,7 +224,7 @@ class Execution_Manager_UI_Base(UI_Base):
     #        tab = self.tabs.currentWidget()
     #        print(tab.clicked_id)
     #        smg = StorageManagerGroup(tab.name, data_folder=get_data_folder() + '/'+self.folder+'/' + tab.name + '/Data')
-    #        smg.sort_by('gen')
+    #        smg.sort_by('generation')
     #        sm = smg.StorageManagerList[tab.clicked_id]
     #        file = sm.absolute_path + sm.config_file_name
     #        print(file)
@@ -308,9 +308,7 @@ class Execution_Manager_UI_Base(UI_Base):
             tab.gene_keys = eval(tab.gene_keys)
 
         tab.process = None
-        tab.python_cmd = tab.ssm.load_param('python_cmd', default='python3')
-
-
+        #tab.python_cmd = tab.ssm.load_param('python_cmd', default='python3')
 
         if tab.ssm.load_param('executable', default=None) is not None:###################################################################################################
 
@@ -338,7 +336,7 @@ class Execution_Manager_UI_Base(UI_Base):
             def start_continue():
                 if 'ssh ' in tab.server:
                     if not self.update_status(tab, name):
-                        ssh_execute_evo(tab.server, name, python_cmd=tab.python_cmd)  # python3
+                        ssh_execute_evo(tab.server, name)  # python3
                     else:
                         print('thread already running')
 
@@ -346,7 +344,7 @@ class Execution_Manager_UI_Base(UI_Base):
                     if tab.process is None:
                         tab.parent_conn, child_conn = Pipe()
                         tab.process = Process(target=evolution_thread_worker,
-                                              args=(name, self.folder, tab.python_cmd, child_conn))  # python
+                                              args=(name, self.folder, child_conn))  # python
                         print('start', self.folder+'/'+name+'/execute.py')
                         tab.process.start()
                     else:
@@ -418,6 +416,16 @@ class Execution_Manager_UI_Base(UI_Base):
         self.add_additional_tab_elements(tab, name)
 
         self.On_Tab_Changed(None)
+
+
+
+        # TODO: remove
+        #smg = StorageManagerGroup(tab.name, data_folder=get_data_folder() + '/' + self.folder + '/' + tab.name + '/Data')
+        #params = smg.get_all_params()
+        #if 'generation' not in params and 'gen' in params:
+        #    for sm in smg.StorageManagerList:
+        #        g = sm.load_param('gen')
+        #        sm.save_param('generation', g)
 
     def on_server_delete(self):
         txt = self.listwidget2.currentText()

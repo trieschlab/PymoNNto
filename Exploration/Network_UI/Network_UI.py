@@ -3,6 +3,8 @@ from PymoNNto.NetworkBehaviour.Recorder.Recorder import *
 from PymoNNto.Exploration.Network_UI.Neuron_Classification_Colorizer import *
 from PymoNNto.NetworkBehaviour.Structure.Structure import *
 
+import numpy as np
+
 class Network_UI(UI_Base):
 
     def __init__(self, network, modules=[], title='Network UI', group_tags=[], transmitters=[], storage_manager=None, group_display_count=None, reduced_layout=False, label=None):
@@ -135,8 +137,6 @@ class Network_UI(UI_Base):
 
     def selected_neuron_ids(self):
         return np.where(self._neuron_select_mask)[0]
-
-
 
     def add_recording_variable(self, group, var, timesteps):
 

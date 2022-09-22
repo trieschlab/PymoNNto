@@ -1,4 +1,5 @@
 from PymoNNto.Exploration.Evolution.common_UI import *
+from PymoNNto.Exploration.Evolution.communication import *
 
 class UI_Evolution_Manager(Execution_Manager_UI_Base):
 
@@ -50,9 +51,9 @@ class UI_Evolution_Manager(Execution_Manager_UI_Base):
         label.setToolTip("number of individuals with bad scores which are removed from each generation")
         left_vertical_layout.addWidget(label)
 
-        pc_label = QLabel(u"\u24D8 " + 'Python cmd')
-        pc_label.setToolTip("python command of the execution device (python or python3)")
-        left_vertical_layout.addWidget(pc_label)
+        #pc_label = QLabel(u"\u24D8 " + 'Python cmd')
+        #pc_label.setToolTip("python command of the execution device (python or python3)")
+        #left_vertical_layout.addWidget(pc_label)
 
         ii_label = QLabel(u"\u24D8 " + 'Inactive info')
         ii_label.setToolTip("additional genome that is passed to individuals but is not changed or optimized during the evolution run")
@@ -67,9 +68,9 @@ class UI_Evolution_Manager(Execution_Manager_UI_Base):
         left_vertical_layout.addWidget(eo_label)
 
 
-        self.slave_file_edit = QLineEdit('Exploration/Evolution/test_slave.py')
+        self.slave_file_edit = QLineEdit('Exploration/Evolution/example_slave.py')
         self.thread_number_edit = QLineEdit('4')
-        self.python_cmd_edit = QLineEdit("python3")
+        #self.python_cmd_edit = QLineEdit("python3")
         #self.python_cmd_edit = QComboBox()
         #self.python_cmd_edit.addItems(["python3", "python"])
         self.individual_count_edit = QLineEdit('10')
@@ -100,7 +101,7 @@ class UI_Evolution_Manager(Execution_Manager_UI_Base):
         right_vertical_layout.addWidget(self.individual_count_edit)
         right_vertical_layout.addWidget(self.mutation_edit)
         right_vertical_layout.addWidget(self.death_rate_edit)
-        right_vertical_layout.addWidget(self.python_cmd_edit)
+        #right_vertical_layout.addWidget(self.python_cmd_edit)
         right_vertical_layout.addWidget(self.inactive_genome_info_edit)
         right_vertical_layout.addWidget(self.constraints_edit)
         right_vertical_layout.addWidget(self.evo_options_edit)
@@ -120,22 +121,22 @@ class UI_Evolution_Manager(Execution_Manager_UI_Base):
         #right_vertical_layout.addWidget(self.start_genomes_edit, stretch=5)
 
         more_info_label.setVisible(True)
-        pc_label.setVisible(False)
+        #pc_label.setVisible(False)
         ii_label.setVisible(False)
         c_label.setVisible(False)
         eo_label.setVisible(False)
-        self.python_cmd_edit.setVisible(False)
+        #self.python_cmd_edit.setVisible(False)
         self.inactive_genome_info_edit.setVisible(False)
         self.constraints_edit.setVisible(False)
         self.evo_options_edit.setVisible(False)
 
         def more_clicked(event):
             more_info_label.setVisible(False)
-            pc_label.setVisible(True)
+            #pc_label.setVisible(True)
             ii_label.setVisible(True)
             c_label.setVisible(True)
             #eo_label.setVisible(True)
-            self.python_cmd_edit.setVisible(True)
+            #self.python_cmd_edit.setVisible(True)
             self.inactive_genome_info_edit.setVisible(True)
             self.constraints_edit.setVisible(True)
             #self.evo_options_edit.setVisible(True)
@@ -160,7 +161,7 @@ class UI_Evolution_Manager(Execution_Manager_UI_Base):
                 self.set_text(ssm, self.death_rate_edit, 'death_rate')
                 self.set_text(ssm, self.start_genomes_edit, 'start_genomes')
                 self.set_text(ssm, self.constraints_edit, 'constraints')
-                self.set_text(ssm, self.python_cmd_edit, 'python_cmd')
+                #self.set_text(ssm, self.python_cmd_edit, 'python_cmd')
                 self.set_text(ssm, self.evo_options_edit, 'evo_options')
                 #self.refresh_view(tab)
 
@@ -193,6 +194,8 @@ Remote Servers:
         -unzip             (for transfer back to controller | sudo apt install unzip)
         -libgl1-mesa-glx   (if you have PyQT5 elements imported | sudo apt install libgl1-mesa-glx)
             
+    Make sure that the python3 (python3 file.py) command is working on your system. "python file.py" (usually on windows) 
+    is not supported. (create copy of python.exe named python3.exe if this problem occurs)
             
     When the evolution is started on a ssh server it creates a "screen" session which is named after the evolution name.
 
@@ -249,7 +252,7 @@ if __name__ == '__main__':
         ssm.save_param('death_rate', self.death_rate_edit.text())
         ssm.save_param('start_genomes', self.start_genomes_edit.toPlainText().replace('\r', '').replace('\n', ''))
         ssm.save_param('constraints', self.constraints_edit.text())
-        ssm.save_param('python_cmd', self.python_cmd_edit.text())
+        #ssm.save_param('python_cmd', self.python_cmd_edit.text())
         ssm.save_param('evo_options', self.evo_options_edit.text())
 
         gene_keys = list(eval(self.start_genomes_edit.toPlainText().replace('\r', '').replace('\n', ''))[0].keys())
@@ -259,7 +262,7 @@ if __name__ == '__main__':
         valid_genomes = False
         try:
             sg = eval(self.start_genomes_edit.toPlainText().replace('\r', '').replace('\n', ''))
-            for key in ['gen', 'score', 'id']:
+            for key in ['generation', 'score', 'id']:
                 for genome in sg:
                     if key in genome:
                         genome.pop(key)
@@ -275,6 +278,20 @@ if __name__ == '__main__':
         return valid_genomes
 
     def add_additional_tab_elements(self, tab, name):
+
+        def send(genome):
+            user, host, password = split_ssh_user_host_password_string(tab.server,False)
+            if host is None:
+                host = 'localhost'
+            print(socket_send(host, 'insert\r\n' + genome))
+
+        def insert_click(event):
+            self.text_input_dialog('enter genome', 'send', send, default_text='{}')
+
+
+        insert_btn = self.tab.add_widget(QPushButton("insert genome"))
+        insert_btn.clicked.connect(insert_click)
+
         self.tab.add_row(stretch=10)
         #self.Next_H_Block(stretch=10)
         add_evolution_plot_items(self, tab)

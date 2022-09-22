@@ -69,14 +69,16 @@ class StorageManager:
 
     def __init__(self, main_folder_name, folder_name=None, random_nr=False, print_msg=True, add_new_when_exists=True, data_folder=get_data_folder(), use_evolution_path=True):
 
+        #when evolution is active, all storage managers with use_evolution_path=True will automatically save all data in the right evolution folder
         if use_evolution_path:
-            import PymoNNto.Exploration.Evolution.Interface_Functions as evo_func
-            #if evo_func.get_gene('evo_name', None) is not None: # and evo_func.get_gene('gen', None) is not None and evo_func.get_gene('id', None) is not None
-            if 'evo_name' in evo_func.get_default_genome() and evo_func.get_default_genome()['evo_name'] is not None:
-                main_folder_name = evo_func.get_gene('evo_name', None)
-                folder_name = evo_func.get_gene_file(evo_func.evolution_genome)
-                #add_new_when_exists = True#??? Test
-                random_nr=False
+            import PymoNNto.Exploration.Evolution.Interface_Functions as I_func
+            evo_name = I_func.get_evo_name()
+            evo_id = I_func.get_evo_id()
+            if evo_name is not None and evo_id is not None:
+                main_folder_name = evo_name
+                folder_name = I_func.get_gene_file(evo_name, evo_id)
+                random_nr = False
+
 
         if type(main_folder_name) is dict:
             main_folder_name = self.dict_to_folder_name(main_folder_name)
@@ -311,7 +313,7 @@ class StorageManagerGroup:
         if os.path.exists(self.absolute_path):
             for folder in os.listdir(self.absolute_path):
                 if os.path.isdir(self.absolute_path+folder) and self.Tag in folder:
-                    self.StorageManagerList.append(StorageManager(self.Tag, folder, add_new_when_exists=False, data_folder=self.data_folder))
+                    self.StorageManagerList.append(StorageManager(self.Tag, folder, add_new_when_exists=False, data_folder=self.data_folder, use_evolution_path=False))
 
 
     def sort_by(self, param, section='Parameters'):

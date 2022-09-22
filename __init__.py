@@ -1,3 +1,4 @@
+import numpy as np
 from PymoNNto.NetworkCore.Network import *
 from PymoNNto.NetworkCore.Behaviour import *
 from PymoNNto.NetworkCore.Neuron_Group import *

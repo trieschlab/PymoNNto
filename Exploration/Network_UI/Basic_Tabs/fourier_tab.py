@@ -15,6 +15,7 @@ class fourier_tab(TabBase):
             print(self.parameter, 'cannot be added to recorder')
 
     def initialize(self, Network_UI):
+
         self.fourier_tab = Network_UI.add_tab(title=self.title)
 
         exc_plt = Network_UI.tab.add_plot(title='Selected Group Frequencies', x_label='Frequency [Hz]', y_label='Amplitude')
@@ -90,6 +91,7 @@ class fourier_tab(TabBase):
 
     def update(self, Network_UI):
         if self.fourier_tab.isVisible():
+
             group = Network_UI.selected_neuron_group()
 
             try:

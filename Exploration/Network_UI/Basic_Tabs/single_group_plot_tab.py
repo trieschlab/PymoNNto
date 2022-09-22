@@ -75,25 +75,26 @@ class single_group_plot_tab(TabBase):
             self.group_title_label.setText('NeuronGroup ('+Network_UI.selected_neuron_group().tags[0]+')')
 
             for var in self.variables:
-                iterations = group['n.iteration', 0, 'np'][-self.timesteps:]
+                if hasattr(group, var):
+                    iterations = group['n.iteration', 0, 'np'][-self.timesteps:]
 
-                try:
-                    if self.line_checkboxes[var].isChecked():
-                        mean_var = 'np.mean(n.'+var+')'
-                        data_mean = group[mean_var, 0, 'np'][-self.timesteps:]
-                        self.net_curves[var].setData(iterations, data_mean)
-                    else:
+                    try:
+                        if self.line_checkboxes[var].isChecked():
+                            mean_var = 'np.mean(n.'+var+')'
+                            data_mean = group[mean_var, 0, 'np'][-self.timesteps:]
+                            self.net_curves[var].setData(iterations, data_mean)
+                        else:
+                            self.net_curves[var].clear()
+                    except:
                         self.net_curves[var].clear()
-                except:
-                    self.net_curves[var].clear()
 
-                try:
-                    if self.line_checkboxes[var].isChecked():
-                        single_var = 'n.' + var
-                        data_neuron = group[single_var, 0, 'np'][-self.timesteps:, Network_UI.selected_neuron_id()].astype(def_dtype)
-                        self.neuron_curves[var].setData(iterations, data_neuron)
-                    else:
+                    try:
+                        if self.line_checkboxes[var].isChecked():
+                            single_var = 'n.' + var
+                            data_neuron = group[single_var, 0, 'np'][-self.timesteps:, Network_UI.selected_neuron_id()].astype(def_dtype)
+                            self.neuron_curves[var].setData(iterations, data_neuron)
+                        else:
+                            self.neuron_curves[var].clear()
+                    except:
                         self.neuron_curves[var].clear()
-                except:
-                    self.neuron_curves[var].clear()
 

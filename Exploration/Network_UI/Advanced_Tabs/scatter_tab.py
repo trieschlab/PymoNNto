@@ -4,15 +4,15 @@ class scatter_tab(TabBase):
 
     def __init__(self, x_var, y_var, title='Scatter', timesteps=500):
         super().__init__(title)
-        self.x_var = x_var
-        self.y_var = y_var
+        self.x_var = self.interpret_recording_variable(x_var)
+        self.y_var = self.interpret_recording_variable(y_var)
         self.timesteps=timesteps
 
     def add_recorder_variables(self, neuron_group, Network_UI):
-        if hasattr(neuron_group, self.x_var):
-            Network_UI.add_recording_variable(neuron_group, 'n.' + self.x_var, timesteps=self.timesteps)
-        if hasattr(neuron_group, self.y_var):
-            Network_UI.add_recording_variable(neuron_group, 'n.' + self.y_var, timesteps=self.timesteps)
+        #if hasattr(neuron_group, self.x_var):
+        Network_UI.add_recording_variable(neuron_group, self.x_var, timesteps=self.timesteps)
+        #if hasattr(neuron_group, self.y_var):
+        Network_UI.add_recording_variable(neuron_group, self.y_var, timesteps=self.timesteps)
 
     def initialize(self, Network_UI):
         self.scatter_tab = Network_UI.Next_Tab(self.title)
@@ -31,12 +31,15 @@ class scatter_tab(TabBase):
                 if len(Network_UI.network[group_tag]) > 0:
                     group = Network_UI.network[group_tag, 0]
 
-                    if hasattr(group, self.x_var) and hasattr(group, self.y_var):
+                    try:
+                    #if hasattr(group, self.x_var) and hasattr(group, self.y_var):
                         #rec = Network_UI.rec(group, self.timesteps)
-                        x_values = group['n.'+self.x_var, 0, 'np'][-self.timesteps:]
-                        y_values = group['n.'+self.y_var, 0, 'np'][-self.timesteps:]
+                        x_values = group[self.x_var, 0, 'np'][-self.timesteps:]
+                        y_values = group[self.y_var, 0, 'np'][-self.timesteps:]
 
-                        x_val = np.mean(x_values, axis=0)
-                        y_val = np.mean(y_values, axis=0)
+                        x_val = np.mean(x_values, axis=1)
+                        y_val = np.mean(y_values, axis=1)
 
                         self.scatter_items[i].setData(x_val.copy(), y_val.copy(), brush=group.color)
+                    except:
+                        pass

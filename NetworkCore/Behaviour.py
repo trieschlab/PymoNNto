@@ -19,7 +19,6 @@ class Behaviour(TaggableObjectBase):
         return
 
     def set_gene_variables(self):
-        current_genome = {}
 
         for variable_key in self.init_kwargs:
             while type(self.init_kwargs[variable_key]) is str and '[' in self.init_kwargs[variable_key] and ']' in self.init_kwargs[variable_key]:
@@ -38,10 +37,9 @@ class Behaviour(TaggableObjectBase):
                     gene_key = content
                     default_value = None
 
-                current_genome[gene_key] = get_gene(gene_key, default_value)
+                gene_value = get_gene(gene_key, default_value)
 
-                self.init_kwargs[variable_key] = s[:start] + '{:.15f}'.format(current_genome[gene_key]).rstrip('0').rstrip('.') + s[end + 1:]
-        return current_genome
+                self.init_kwargs[variable_key] = s[:start] + '{:.15f}'.format(gene_value).rstrip('0').rstrip('.') + s[end + 1:]
 
     def __str__(self):
         result = self.__class__.__name__+'('
@@ -112,7 +110,10 @@ class Behaviour(TaggableObjectBase):
             if '%' in result and is_number(result.replace('%', '')):
                 result = str(float(result.replace('%', '')) / 100.0)
 
-            result = type(default)(result)#cast
+            try:
+                result = type(default)(result)#cast
+            except:
+                result = float(result)#to prevent int error during evolution
 
 
         return result
