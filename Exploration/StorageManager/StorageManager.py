@@ -56,15 +56,20 @@ def zipDir(dirPath, zipPath, filter=[]):
     zipf.close()
 
 def add_project_root_path():
-    root = get_root_folder().replace('/', '\\')
+    root = get_root_folder()#.replace('/', '\\')
 
     #add root folder (folder that contains Data folder) to import paths for easier import management
     if root not in sys.path:
         sys.path.append(root)
 
     # if project is a copy inside of a Data folder of the original project (e.g. Evolution_Project_Clones), ten remove the original folder from import paths
-    if '\\Data\\' in root:
+    if '\\Data\\' in root:#windows
         original_project_folder = root[0:root.find('\\Data\\')]
+        if original_project_folder in sys.path:
+            sys.path.remove(original_project_folder)
+
+    if '/Data/' in root:#linux
+        original_project_folder = root[0:root.find('/Data/')]
         if original_project_folder in sys.path:
             sys.path.remove(original_project_folder)
 
