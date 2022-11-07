@@ -146,8 +146,9 @@ class Network(NetworkObjectBase):
 
 
     def _add_key_to_sorted_behaviour_timesteps(self, key):
-        self.behaviour_timesteps.append(key)
-        self.behaviour_timesteps.sort()
+        if key not in self.behaviour_timesteps:
+            self.behaviour_timesteps.append(key)
+            self.behaviour_timesteps.sort()
 
 
 
@@ -170,6 +171,7 @@ class Network(NetworkObjectBase):
         obj.behaviour[key]._created_beh_variables = list(set(beh_keys_after) - set(beh_keys_before))
 
     def set_variables(self):
+
         for timestep in self.behaviour_timesteps:
 
             for obj in self.all_objects():

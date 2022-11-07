@@ -24,15 +24,30 @@ class hist_tab(TabBase):
             self.net_weight_hist_plots[transmitter] = Network_UI.tab.add_plot(title=transmitter + ' network weight hist', x_label=transmitter + ' synapse size', y_label='Frequency')
 
         Network_UI.tab.add_row()
-        self.min_hist_slider = QSlider(1)  # QtCore.Horizontal
-        self.min_hist_slider.setMinimum(-1)
-        self.min_hist_slider.setMaximum(10)
-        self.min_hist_slider.setSliderPosition(0)
-        self.min_hist_slider.mouseReleaseEvent = Network_UI.static_update_func
-        self.min_hist_slider.setToolTip('slide to cut away smallest weights')
-        Network_UI.tab.add_widget(self.min_hist_slider)  # , stretch=0.1
+        #self.min_hist_slider = QSlider(1)  # QtCore.Horizontal
+        #self.min_hist_slider.setMinimum(-1)
+        #self.min_hist_slider.setMaximum(10)
+        #self.min_hist_slider.setSliderPosition(0)
+        #self.min_hist_slider.mouseReleaseEvent = Network_UI.static_update_func
+        #self.min_hist_slider.setToolTip('slide to cut away smallest weights')
+        #Network_UI.tab.add_widget(self.min_hist_slider)  # , stretch=0.1
 
-        Network_UI.tab.add_row()
+        Network_UI.tab.add_widget(QLabel('min: '))
+        self.qsb_min = QDoubleSpinBox()
+        self.qsb_min.setDecimals(5)
+        self.qsb_min.setValue(0.0)
+        self.qsb_min.setSingleStep(0.00001)
+        Network_UI.tab.add_widget(self.qsb_min)
+
+        Network_UI.tab.add_widget(QLabel('max: '))
+        self.qsb_max = QDoubleSpinBox()
+        self.qsb_max.setDecimals(5)
+        self.qsb_max.setValue(1.0)
+        self.qsb_max.setSingleStep(0.00001)
+        Network_UI.tab.add_widget(self.qsb_max)
+
+        #Network_UI.tab.add_row()
+        Network_UI.tab.add_widget(QLabel('bins: '))
         self.bin_slider = QSlider(1)  # QtCore.Horizontal
         self.bin_slider.setMinimum(1)
         self.bin_slider.setMaximum(100)
@@ -42,7 +57,10 @@ class hist_tab(TabBase):
         Network_UI.tab.add_widget(self.bin_slider)  # , stretch=0.1
 
     def update_Synapse_Historgrams(self, Network_UI, group, net_color_input):
-        msl = self.min_hist_slider.sliderPosition() * 0.001
+        #msl = self.min_hist_slider.sliderPosition() * 0.001
+
+        min_weight = self.qsb_min.value()
+        max_weight = self.qsb_max.value()
 
         bins = self.bin_slider.sliderPosition()
 
@@ -58,7 +76,7 @@ class hist_tab(TabBase):
                 GLU_syn_list_en = get_combined_syn_mats(glu_syns, None, "enabled")
                 if len(GLU_syn_list) > 0:
                     GLU_syn = GLU_syn_list[list(GLU_syn_list.keys())[0]]
-                    en_mask = GLU_syn_list_en[list(GLU_syn_list_en.keys())[0]].astype(bool)*(GLU_syn > msl)
+                    en_mask = GLU_syn_list_en[list(GLU_syn_list_en.keys())[0]].astype(bool)*(GLU_syn > min_weight)*(GLU_syn < max_weight)#GLU_syn > msl
 
                     self.net_weight_hist_plots[transmitter].clear()
                     y, x = np.histogram(GLU_syn[en_mask], bins=bins)#[GLU_syn[not_input_mask] > msl]

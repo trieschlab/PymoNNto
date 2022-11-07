@@ -218,6 +218,21 @@ class Execution_Manager_UI_Base(UI_Base):
             if not os.path.isdir(get_epc_folder(self.folder) + '/' + dir) and '.zip' in dir:
                 self.archive_list.addItem(dir)
 
+    def select_file(self):
+        dialog = QFileDialog()
+        dialog.setWindowTitle('Select evolvable file')
+        dialog.setNameFilter('Python Files (*.py)')
+        dialog.setDirectory(get_root_folder())#QtCore.QDir.currentPath()
+        dialog.setFileMode(QtWidgets.QFileDialog.ExistingFile)
+        if dialog.exec_() == QtWidgets.QDialog.Accepted:
+            file=str(dialog.selectedFiles()[0])
+            if get_root_folder() in file:
+                file=file.replace(get_root_folder()+'/','')
+                self.slave_file_edit.setText(file)
+            else:
+                print('file not in project directory')
+        else:
+            print('no file selected')
 
     #def keyPressEvent(self, event):
     #    if event.key() in [Qt.Key_I]:
@@ -372,23 +387,9 @@ class Execution_Manager_UI_Base(UI_Base):
 
         #############################################################################################################
 
-        def remove():
-            if tab.server is not None and 'ssh ' in tab.server:
-                ssh_stop_evo(tab.server, name, remove_evo=True)
+        self.tab.add_row(stretch=0)
 
-            if tab.server is not None and 'local' in tab.server:
-                if tab.process is not None:
-                    print('Please close terminal manually')
-                    tab.process.kill()
-                    tab.process.terminate()
-                    tab.process.close()
-                    tab.process = None
-
-            shutil.rmtree(get_epc_folder(self.folder) + '/' + name + '/')
-            self.tabs.removeTab(self.tabs.currentIndex())
-
-        remove_btn = self.tab.add_widget(QPushButton('remove'))
-        remove_btn.clicked.connect(remove)
+        self.tab.add_widget(QLabel(tab.server))
 
         def archive():
             if  tab.server is not None and 'ssh ' in tab.server:
@@ -411,7 +412,24 @@ class Execution_Manager_UI_Base(UI_Base):
         archive_btn = self.tab.add_widget(QPushButton('archive'))
         archive_btn.clicked.connect(archive)
 
-        self.tab.add_widget(QLabel(tab.server))
+        def remove():
+            if tab.server is not None and 'ssh ' in tab.server:
+                ssh_stop_evo(tab.server, name, remove_evo=True)
+
+            if tab.server is not None and 'local' in tab.server:
+                if tab.process is not None:
+                    print('Please close terminal manually')
+                    tab.process.kill()
+                    tab.process.terminate()
+                    tab.process.close()
+                    tab.process = None
+
+            shutil.rmtree(get_epc_folder(self.folder) + '/' + name + '/')
+            self.tabs.removeTab(self.tabs.currentIndex())
+
+        remove_btn = self.tab.add_widget(QPushButton('remove'))
+        remove_btn.clicked.connect(remove)
+
 
         self.add_additional_tab_elements(tab, name)
 

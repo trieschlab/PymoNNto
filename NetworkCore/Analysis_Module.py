@@ -89,9 +89,12 @@ class AnalysisModule(TaggableObjectBase):
         self.current_key = self.generate_current_key(kwargs)
         return self.save_result(self.current_key,self.execute(self.parent, **kwargs))
 
+    def _get_name(self):
+        return self.__class__.__name__
 
     def _get_base_name_(self):
-        return self.__class__.__name__
+        args = [str(v) for v in self.init_kwargs.values()]
+        return self._get_name() + '('+ ', '.join(args) +')'
 
     def generate_current_key(self, args_key, add_args=True):
         key = self._get_base_name_()

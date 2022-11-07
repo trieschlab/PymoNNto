@@ -50,8 +50,7 @@ def set_genome(genome):
     global __evolution_genome__
     __evolution_genome__ = genome
 
-
-def execute_local_file(file, evo_name, evo_id, evo_generation, genome, static_genome={}):
+def execute_local_file(file, evo_name, evo_id, evo_generation=0, genome={}, static_genome={}):
     cmd = 'python3 '+file
 
     cmd+=' __evo_name__' + '="' + evo_name+'"'
@@ -63,6 +62,8 @@ def execute_local_file(file, evo_name, evo_id, evo_generation, genome, static_ge
 
     for key, value in static_genome.items():
         cmd+=' ' + str(key) + '="' + str(value)+'"'
+
+    print(os.getcwd(), file)
 
     os.system(cmd)#python3 file.py __evo_name__=myname __evo_id__=10001 gene1=5 gene2=a gene3=...
 

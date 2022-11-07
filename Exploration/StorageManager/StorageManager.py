@@ -6,6 +6,7 @@ from subprocess import call
 import os
 import pickle
 import imageio
+import sys
 
 
 #import matplotlib.pylab as plt
@@ -23,19 +24,20 @@ def get_root_folder(create_when_not_found=True):
         path='../'+path
     return './'
 
-def get_data_folder(create_when_not_found=True):
+def get_data_folder(create_when_not_found=True, default='./Data'):
     path='./'
     while os.path.isdir(path):
         if os.path.isdir(path+'Data/'):
             return os.path.abspath(path+'Data/').replace('\\', '/').replace('//', '/')
         path='../'+path
 
-    if not os.path.exists('./Data'):
-        try:
-            os.mkdir('./Data')
-        except:
-            print('was not able to create Data folder')
-    return './Data'
+    if default is not None:
+        if not os.path.exists(default):
+            try:
+                os.mkdir(default)
+            except:
+                print('was not able to create Data folder')
+    return default
     #raise Exception('No "Data" folder found above current working directory! Please create dirctory: ".../Project/Data".')
 
 def zipDir(dirPath, zipPath, filter=[]):
@@ -52,6 +54,20 @@ def zipDir(dirPath, zipPath, filter=[]):
                 print(filePath)
                 zipf.write(filePath , filePath[lenDirPath :] )
     zipf.close()
+
+def add_project_root_path():
+    root = get_root_folder().replace('/', '\\')
+
+    #add root folder (folder that contains Data folder) to import paths for easier import management
+    if root not in sys.path:
+        sys.path.append(root)
+
+    # if project is a copy inside of a Data folder of the original project (e.g. Evolution_Project_Clones), ten remove the original folder from import paths
+    if '\\Data\\' in root:
+        original_project_folder = root[0:root.find('\\Data\\')]
+        if original_project_folder in sys.path:
+            sys.path.remove(original_project_folder)
+
 
 #searches for "Data" folder in project by default
 #default folder: .../Data/StorageManager/main_folder_name/folder_name/

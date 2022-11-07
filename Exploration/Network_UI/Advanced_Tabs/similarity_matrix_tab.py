@@ -1,7 +1,6 @@
 from PymoNNto.Exploration.Network_UI.Network_UI import *
 from PymoNNto.Exploration.Network_UI.TabBase import *
 import scipy.cluster.hierarchy as sch
-import pandas as pd
 import matplotlib.pyplot as plt
 
 def generatePgColormap(cm_name):

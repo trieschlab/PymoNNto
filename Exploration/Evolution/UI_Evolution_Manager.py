@@ -9,21 +9,7 @@ class UI_Evolution_Manager(Execution_Manager_UI_Base):
     def get_title(self):
         return 'Evolution Monitor'
 
-    def select_file(self):
-        dialog = QFileDialog()
-        dialog.setWindowTitle('Select evolvable file')
-        dialog.setNameFilter('Python Files (*.py)')
-        dialog.setDirectory(get_root_folder())#QtCore.QDir.currentPath()
-        dialog.setFileMode(QtWidgets.QFileDialog.ExistingFile)
-        if dialog.exec_() == QtWidgets.QDialog.Accepted:
-            file=str(dialog.selectedFiles()[0])
-            if get_root_folder() in file:
-                file=file.replace(get_root_folder()+'/','')
-                self.slave_file_edit.setText(file)
-            else:
-                print('file not in project directory')
-        else:
-            print('no file selected')
+
 
     def add_ui_elements(self, left_vertical_layout, right_vertical_layout):
         #horizontal_layout = QHBoxLayout()

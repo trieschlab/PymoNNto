@@ -1,4 +1,6 @@
 from PymoNNto import *
+import scipy.cluster.hierarchy as sch
+import pandas as pd
 
 class Classifier_base(AnalysisModule):
 
@@ -20,8 +22,6 @@ class Classifier_base(AnalysisModule):
 
     def execute(self, neurons, sensitivity=2):
         print('computing cluster classes...')
-        import scipy.cluster.hierarchy as sch
-        import pandas as pd
 
         data = self.get_data_matrix(neurons)
 
@@ -47,7 +47,7 @@ class Classifier_base(AnalysisModule):
         result = np.zeros(data.shape[0]) - 1
         #result = np.zeros(data.shape[1]) - 1#test!
 
-        print(result.shape, mask, idx_to_cluster_array)
+        #print(result.shape, mask, idx_to_cluster_array)
         result = idx_to_cluster_array
         #result[mask] = idx_to_cluster_array
 

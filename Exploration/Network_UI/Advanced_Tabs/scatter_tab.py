@@ -9,20 +9,17 @@ class scatter_tab(TabBase):
         self.timesteps=timesteps
 
     def add_recorder_variables(self, neuron_group, Network_UI):
-        #if hasattr(neuron_group, self.x_var):
         Network_UI.add_recording_variable(neuron_group, self.x_var, timesteps=self.timesteps)
-        #if hasattr(neuron_group, self.y_var):
         Network_UI.add_recording_variable(neuron_group, self.y_var, timesteps=self.timesteps)
 
     def initialize(self, Network_UI):
-        self.scatter_tab = Network_UI.Next_Tab(self.title)
+        self.scatter_tab = Network_UI.add_tab(self.title)
 
-        p = Network_UI.Add_plot(x_label=self.x_var, y_label=self.y_var)
+        p = Network_UI.tab.add_plot(x_label=self.x_var, y_label=self.y_var)
         self.scatter_items=[]
         for i, _ in enumerate(Network_UI.neuron_visible_groups):
             spi = pg.ScatterPlotItem()
             self.scatter_items.append(spi)
-
             p.addItem(spi)
 
     def update(self, Network_UI):
@@ -32,8 +29,6 @@ class scatter_tab(TabBase):
                     group = Network_UI.network[group_tag, 0]
 
                     try:
-                    #if hasattr(group, self.x_var) and hasattr(group, self.y_var):
-                        #rec = Network_UI.rec(group, self.timesteps)
                         x_values = group[self.x_var, 0, 'np'][-self.timesteps:]
                         y_values = group[self.y_var, 0, 'np'][-self.timesteps:]
 

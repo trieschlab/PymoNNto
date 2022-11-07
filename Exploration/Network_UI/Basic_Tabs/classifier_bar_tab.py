@@ -19,7 +19,9 @@ class classifier_bar_tab(TabBase):
             for c in self.class_id_positions:
                 y_pos = self.class_id_positions[c]
                 if click_y_pos == y_pos:
+                    #print('exec')
                     Network_UI.select_neuron_class(self.current_group, c)
+
 
         self.bgi.mouseClickEvent = mouseClickEvent
 
@@ -63,7 +65,7 @@ class classifier_bar_tab(TabBase):
 
                 sort_indx = np.argsort(-np.array(num))
 
-
+                self.class_id_positions.clear()
                 for i, c in enumerate(np.unique(self.current_group.classification)[sort_indx]):
                     self.class_id_positions[c] = i
 

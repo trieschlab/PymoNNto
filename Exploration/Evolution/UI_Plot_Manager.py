@@ -18,20 +18,35 @@ class UI_Plot_Manager(Execution_Manager_UI_Base):
         #left_vertical_layout.addLayout(vertical_layout)
         left_vertical_layout.addWidget(QLabel('slave file'))
         #left_vertical_layout.addWidget(QLabel('thread number'))
-        left_vertical_layout.addWidget(QLabel('python cmd'))
+        #left_vertical_layout.addWidget(QLabel('python cmd'))
         left_vertical_layout.addWidget(QLabel('runs'))
 
 
-        self.slave_file_edit = QLineEdit('Exploration/Evolution/slave_example.py')
+        self.slave_file_edit = QLineEdit('Exploration/Evolution/example_slave.py')
         #self.thread_number_edit = QLineEdit('4')
-        self.python_cmd_edit = QLineEdit("python")
+        #self.python_cmd_edit = QLineEdit("python")
         self.run_count_edit = QLineEdit('10')
 
         #vertical_layout = QVBoxLayout()
         #horizontal_layout.addLayout(vertical_layout)
-        right_vertical_layout.addWidget(self.slave_file_edit)
+
+
+        #right_vertical_layout.addWidget(self.slave_file_edit)
+
+        file_horizontal_layout = QHBoxLayout()
+        file_horizontal_layout.addWidget(self.slave_file_edit, stretch=10)
+
+        file_btn = QPushButton("...")
+        file_btn.clicked.connect(self.select_file)
+        file_btn.setMaximumWidth(30)
+        file_horizontal_layout.addWidget(file_btn, stretch=0)
+
+
+        right_vertical_layout.addLayout(file_horizontal_layout)
+
+
         #right_vertical_layout.addWidget(self.thread_number_edit)
-        right_vertical_layout.addWidget(self.python_cmd_edit)
+        #right_vertical_layout.addWidget(self.python_cmd_edit)
         right_vertical_layout.addWidget(self.run_count_edit)
 
         ec_label=QLabel(u"\u24D8 " + 'Execution code:')
@@ -58,7 +73,7 @@ class UI_Plot_Manager(Execution_Manager_UI_Base):
                 self.set_text(ssm, self.slave_file_edit, 'slave_file')
                 #self.set_text(ssm, self.thread_number_edit, 'thread_number')
                 self.set_text(ssm, self.run_count_edit, 'run_count')
-                self.set_text(ssm, self.python_cmd_edit, 'python_cmd')
+                #self.set_text(ssm, self.python_cmd_edit, 'python_cmd')
 
     def get_help_txt(self):
         return '''Every tab corresponds to a folder in:
@@ -83,7 +98,8 @@ All genomes generate a file with the results and the genes when set_score is cal
 
         #from PymoNNto.Exploration.Evolution.Interface_Functions import *
 
-        exec_file = """from PymoNNto.Exploration.Evolution.Interface_Functions import *
+        exec_file = """from PymoNNto import *
+from PymoNNto.Exploration.Evolution.Interface_Functions import *
 
 ids = StorageManagerGroup('evo_name').get_param_list('id', remove_None=True)
 if len(ids) == 0:
@@ -93,9 +109,7 @@ else:
 
 def file_exec(genes):
     global execution_counter_
-    genes['evo_name']='#name#'
-    genes['id'] = execution_counter_
-    execute_local_file('#file#', genes)
+    execute_local_file(file='#file#', evo_name='#name#', evo_id=execution_counter_, genome=genes)
     execution_counter_+=1
     
 """+self.qte.toPlainText()
@@ -122,7 +136,7 @@ def file_exec(genes):
         ssm.save_param('slave_file', self.slave_file_edit.text())
         #ssm.save_param('thread_number', self.thread_number_edit.text())
         ssm.save_param('run_count', self.run_count_edit.text())
-        ssm.save_param('python_cmd', self.python_cmd_edit.text())
+        #ssm.save_param('python_cmd', self.python_cmd_edit.text())
 
 
     def valid_configuration(self):
