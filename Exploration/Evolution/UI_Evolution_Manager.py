@@ -266,10 +266,12 @@ if __name__ == '__main__':
     def add_additional_tab_elements(self, tab, name):
 
         def send(genome):
-            user, host, password = split_ssh_user_host_password_string(tab.server,False)
-            if host is None:
-                host = 'localhost'
-            print(socket_send(host, 'insert\r\n' + genome))
+            return
+            #TODO
+            #user, host, password = split_ssh_user_host_password_string(tab.server,False)
+            #if host is None:
+            #    host = 'localhost'
+            #print(socket_send(host, 'insert\r\n' + genome))
 
         def insert_click(event):
             self.text_input_dialog('enter genome', 'send', send, default_text='{}')

@@ -39,7 +39,7 @@ def get_squared_dim(number_of_neurons, depth=1, round_up=True):
     else:
         h = 0
 
-    print('set network size to', w, 'x', h)
+    print('set group size to', w, 'x', h)
     return NeuronDimension(width=w, height=h, depth=depth)
 
 

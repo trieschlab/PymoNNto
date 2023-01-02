@@ -67,8 +67,10 @@ class Recorder(Behaviour):
         s = parent_obj
         neurons = parent_obj
         synapse = parent_obj
-
-        return copy.copy(eval(self.compiled[variable]))
+        try:
+            return copy.copy(eval(self.compiled[variable]))
+        except:
+            return None
 
     def save_data_v(self, data, variable):
         if self.save_as_numpy:
@@ -111,14 +113,14 @@ class Recorder(Behaviour):
     def swap(self, x):
         return np.swapaxes(np.array(x), 1, 0)
 
+    def clear(self):
+        self.clear_recorder()
+
     def clear_recorder(self):
         print('clear')
 
         for v in self.variables:
             self.variables[v].clear()
-
-        #for v in self.variables:
-        #    self.add_varable(v)
 
 class EventRecorder(Recorder):
 

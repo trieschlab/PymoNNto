@@ -6,10 +6,12 @@ def is_invalid_evo_name(name):
     return '/' in name or '.' in name or ' ' in name or '   ' in name or '\\' in name or name in ['Documents', 'Pictures', 'Music', 'Public', 'Videos', 'Dokumente', 'Bilder', 'Musik', 'Downloads', 'Öffentlich']
 
 
-def get_ssh_connection(host, user, password):
+def get_ssh_connection(ssh_string):#host, user, password
+    host, user, password, port = split_ssh_user_host_password_string(ssh_string)
+
     ssh = paramiko.SSHClient()
     ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
-    ssh.connect(host, username=user, password=password)
+    ssh.connect(host, port=port, username=user, password=password)
     return ssh
 
 def get_response(out, err):
@@ -20,29 +22,58 @@ def get_response(out, err):
         result.append(line.decode("utf-8"))
     return result
 
-def split_ssh_user_host_password_string(user_host_pw_str, messages=True):
+def split_ssh_user_host_password_string(ssh_string, messages=True):
     password = None
     user = None
     host = None
-    user_host = user_host_pw_str.replace('ssh ', '').split('@')
-    if len(user_host) == 2:
-        user = user_host[0]
-        host = user_host[1]
-        if ' ' in host:
-            host_pw = host.split(' ')
-            if len(host_pw) == 2:
-                host = host_pw[0]
-                password = host_pw[1]
-                if messages:
-                    print('warning: a clear text ssh password inside of the code is dangerous!')
-            else:
-                if messages:
-                    print('space in host but no password detected')
-    else:
-        if messages:
-            print('cannot split user and host')
+    port = 22
+    is_ssh = False
 
-    return user, host, password
+    parts = ssh_string.split(' ')
+
+    try:
+
+        for i in range(len(parts)):
+
+            if i==0 and parts[i]=='ssh':
+                is_ssh=True
+
+            if '@' in parts[i]:
+                user, host = parts[i].split('@')
+
+            if parts[i]=='-p' or parts[i]=='port':
+                port = int(parts[i+1])
+
+            if parts[i]=='password':
+                password = parts[i+1]
+
+    except:
+        is_ssh = False
+
+    if is_ssh:
+        return host, user, password, port
+    else:
+        return None, None, None, None
+
+
+    #user_host = user_host_pw_str.replace('ssh ', '').split('@')
+    #if len(user_host) == 2:
+    #    user = user_host[0]
+    #    host = user_host[1]
+    #    if ' ' in host:
+    #        host_pw = host.split(' ')
+    #        if len(host_pw) == 2:
+    #            host = host_pw[0]
+    #            password = host_pw[1]
+    #            if messages:
+    #                print('warning: a clear text ssh password inside of the code is dangerous!')
+    #        else:
+    #            if messages:
+    #                print('space in host but no password detected')
+    #else:
+    #    if messages:
+    #        print('cannot split user and host')
+    #return user, host, password
 
 def zip_project(Main_Folder, zip_file_path):
     zipDir(Main_Folder, zip_file_path, ['.git', '.zip', '.idea', '\\Evolution_Project_Clones\\', '\\Plot_Project_Clones\\', '\\Execution_Project_Clones\\', '\\StorageManager\\', '\\NetworkStates\\', '\\Evo\\', '\\__pycache__\\', '\\midis\\'])
@@ -72,7 +103,7 @@ def clone_project(name, folder):
     else:
         print('Error No root "Data" folder found')
 
-def transfer_project(name, user, host, password=None):
+def transfer_project(name, device_string, password=None):
     # search main project folder
     Data_Folder = get_data_folder()
     if Data_Folder != './Data':
@@ -86,8 +117,8 @@ def transfer_project(name, user, host, password=None):
         zip_project(Main_Folder, src)
 
         # transfer
-        print('Transfer zip to', host)
-        ssh = get_ssh_connection(host, user, password)
+        print('Transfer zip to', device_string)
+        ssh = get_ssh_connection(device_string)
         scp = SCPClient(ssh.get_transport())
         scp.put(src, dst)
 
@@ -95,7 +126,7 @@ def transfer_project(name, user, host, password=None):
         os.remove(src)
 
         # remote unzip and remote remove zip
-        print('Extract zip at', host)
+        print('Extract zip at', device_string)
         cmd = 'rm -r -d ' + name + '; '  # remove old directory
         cmd += 'mkdir ' + name + '; '  # create new directory
         cmd += 'unzip ' + name + '.zip -d ' + name + '; '  # unzip
@@ -108,7 +139,7 @@ def transfer_project(name, user, host, password=None):
     else:
         print('Error No root "Data" folder found')
 
-def get_Data(name, user, host, password, main_folder='Evolution_Project_Clones'):
+def get_Data(name, device_string, main_folder='Evolution_Project_Clones'):
     # search main project folder
     Data_Folder = get_data_folder()
     if Data_Folder != './Data':
@@ -119,7 +150,7 @@ def get_Data(name, user, host, password, main_folder='Evolution_Project_Clones')
 
         print(src,dst_path,dst)
 
-        ssh = get_ssh_connection(host, user, password)
+        ssh = get_ssh_connection(device_string)
 
         # zip project
         cmd = 'cd ' + name + ' ; '
@@ -128,7 +159,7 @@ def get_Data(name, user, host, password, main_folder='Evolution_Project_Clones')
         print(get_response(ssh_stdout, ssh_stderr))
 
         # transfer
-        print('Transfer zip from', host)
+        print('Transfer zip from', device_string)
         scp = SCPClient(ssh.get_transport())
         scp.get(src, dst)
 
@@ -148,8 +179,7 @@ def get_Data(name, user, host, password, main_folder='Evolution_Project_Clones')
         print('Error No root "Data" folder found')
 
 def ssh_execute_evo(server, name):
-    user, host, password = split_ssh_user_host_password_string(server)
-    ssh = get_ssh_connection(host, user, password)
+    ssh = get_ssh_connection(server)
 
     command = 'cd ' + name + '; '
     #command = 'nano .bashrc'
@@ -162,8 +192,7 @@ def ssh_execute_evo(server, name):
     ssh.close()
 
 def ssh_stop_evo(server, name, remove_evo=False):
-    user, host, password = split_ssh_user_host_password_string(server)
-    ssh = get_ssh_connection(host, user, password)
+    ssh = get_ssh_connection(server)
 
     command = 'screen -XS ' + name + ' quit;'
     ssh_stdin, ssh_stdout, ssh_stderr = ssh.exec_command(command)
@@ -181,8 +210,7 @@ def ssh_stop_evo(server, name, remove_evo=False):
 def ssh_get_running(server):
     response=''
     try:
-        user, host, password = split_ssh_user_host_password_string(server)
-        ssh = get_ssh_connection(host, user, password)
+        ssh = get_ssh_connection(server)
 
         command = 'screen -ls'
         ssh_stdin, ssh_stdout, ssh_stderr = ssh.exec_command(command, timeout=10)

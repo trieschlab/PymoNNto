@@ -28,6 +28,18 @@ for syn in n.afferent_synapses['GLU']:
 print(num)
 '''
 
+    base_code = '''###Quick Access Variables###
+    
+# network | net
+# neuron_group | neurons | ng | n
+# Network_UI | ui | UI
+# storage_manager | storage | sm
+
+###Python Code###
+
+
+'''
+
     def initialize(self, Network_UI):
         self.Network_UI=Network_UI
 
@@ -36,7 +48,7 @@ print(num)
 
         self.txt_py_dict={}
 
-        self.txt_py_dict[''] = ''
+        self.txt_py_dict[''] = self.base_code
         self.txt_py_dict["show synapse matrices"] = self.sample_code1
         self.txt_py_dict["count synapses"] = self.sample_code2
 
@@ -74,6 +86,8 @@ print(num)
 
         self.code_field.setAcceptRichText(False)
 
+        self.code_field.setText(self.base_code)
+
         self.code_field.textChanged.connect(on_code_changed)
 
         Network_UI.tab.add_row(stretch=1)
@@ -81,8 +95,16 @@ print(num)
         self.exec_btn=Network_UI.tab.add_widget(QPushButton('Execute'))
 
         def exec_btn_click(event):
+            ui = Network_UI
+            UI = ui
+
+            sm = Network_UI.storage_manager
+            storage = sm
+            storage_manager = sm
+
             net = Network_UI.network
             network = net
+
             n = Network_UI.selected_neuron_group()
             ng = n
             neurons = n

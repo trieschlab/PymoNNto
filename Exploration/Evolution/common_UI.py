@@ -46,9 +46,7 @@ def copy_project(evo_name, device_str, folder):
         clone_project(evo_name, folder)
 
     if 'ssh' in device_str:
-        user, host, password = split_ssh_user_host_password_string(device_str)
-        if user is not None and host is not None:
-            transfer_project(evo_name, user, host, password)
+        transfer_project(evo_name, device_str)
 
         Data_Folder = get_data_folder()
         if Data_Folder != './Data':
@@ -336,9 +334,8 @@ class Execution_Manager_UI_Base(UI_Base):
                 try:
                     print('refresh')
                     if tab.server is not None and 'ssh ' in tab.server:
-                        user, host, password = split_ssh_user_host_password_string(tab.server)
                         print('get Data')
-                        get_Data(name, user, host, password, self.folder)
+                        get_Data(tab.name, tab.server, self.folder)
                 except:
                     print('no plot data found in', name)
 
@@ -392,16 +389,19 @@ class Execution_Manager_UI_Base(UI_Base):
         self.tab.add_widget(QLabel(tab.server))
 
         def archive():
-            if  tab.server is not None and 'ssh ' in tab.server:
-                ssh_stop_evo(tab.server, name, remove_evo=False)
+            try:
+                if  tab.server is not None and 'ssh ' in tab.server:
+                    ssh_stop_evo(tab.server, name, remove_evo=False)
 
-            if  tab.server is not None and 'local' in tab.server:
-                if tab.process is not None:
-                    print('Please close terminal manually')
-                    tab.process.kill()
-                    tab.process.terminate()
-                    tab.process.close()
-                    tab.process = None
+                if  tab.server is not None and 'local' in tab.server:
+                    if tab.process is not None:
+                        print('Please close terminal manually')
+                        tab.process.kill()
+                        tab.process.terminate()
+                        tab.process.close()
+                        tab.process = None
+            except:
+                print('evo cannot be stopped')
 
             zipDir(get_epc_folder(self.folder) + '/' + name, get_epc_folder(self.folder) + '/' + name + '.zip')
             shutil.rmtree(get_epc_folder(self.folder) + '/' + name + '/')
@@ -459,7 +459,7 @@ class Execution_Manager_UI_Base(UI_Base):
     def on_server_add(self):
         #server_str = self.listwidget2.currentItem().text()
         #if server_str == '+':
-        text, ok = QInputDialog.getText(self.main_window, 'Add...', 'Add computing device "ssh user@host" or "ssh user@host password"')
+        text, ok = QInputDialog.getText(self.main_window, 'Add...', 'Add computing device "ssh user@host" optional arguments:"ssh ... password pw port 123"')
         if ok:
             self.listwidget2.addItem(text)
             ssm = SimpleStorageManager(get_epc_folder(self.folder) + '/')
@@ -501,9 +501,8 @@ class Execution_Manager_UI_Base(UI_Base):
                     print('saving config...')
 
                     if 'ssh' in server_str:
-                        user, host, password = split_ssh_user_host_password_string(server_str)
-                        print('transfer execute.py to ' + host + '...')
-                        ssh = get_ssh_connection(host, user, password)
+                        print('transfer execute.py to ' + server_str + '...')
+                        ssh = get_ssh_connection(server_str)
                         scp = SCPClient(ssh.get_transport())
                         scp.put(evo_file, name + '/execute.py')
                         scp.close()

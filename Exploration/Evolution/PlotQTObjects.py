@@ -5,7 +5,7 @@ from PyQt5.QtGui import *
 from PyQt5.QtWidgets import *
 import pyqtgraph as pg
 import numpy as np
-
+from distutils.dir_util import copy_tree
 
 #UI_base.Add_element(InteractiveScatter(...), sidebar, stretch)
 class InteractiveScatter(pg.GraphicsLayoutWidget):#canvas object
@@ -25,6 +25,8 @@ class InteractiveScatter(pg.GraphicsLayoutWidget):#canvas object
         self.scatter_clicked_event = None
         self.scatter_double_clicked_event = None
 
+        self.selected_sml = []
+
 
     def scatter_clicked(self, plot, points):
         print('clicked')
@@ -37,7 +39,7 @@ class InteractiveScatter(pg.GraphicsLayoutWidget):#canvas object
 
             x = []
             y = []
-            sml = [self.clicked_sm]
+            self.selected_sml = [self.clicked_sm]
 
             if hasattr(self, 'gene_keys'):#search for other individuals with same genome
                 clicked_id=self.clicked_sm.load_param('id')
@@ -49,7 +51,7 @@ class InteractiveScatter(pg.GraphicsLayoutWidget):#canvas object
                         if np.sum(data[4:, i]) == np.sum(current_genome):
                             x.append(data[2, i])
                             y.append(data[3, i])
-                            sml.append(data[0, i])
+                            self.selected_sml.append(data[0, i])
 
 
             x.append(clicked_x)
@@ -59,11 +61,50 @@ class InteractiveScatter(pg.GraphicsLayoutWidget):#canvas object
             self.scatter2.setData(x=x,y=y, brush=c)#[clicked_x], y=[clicked_y]  # set second scatter to new selection
 
             for i, d in enumerate(self.scatter2.data):
-                d[3] = sml[i] #storage manager
+                d[3] = self.selected_sml[i] #storage manager
 
             self.scatter2.data[0][3] = self.clicked_sm
             if self.scatter_clicked_event is not None:
                 self.scatter_clicked_event(self.clicked_sm)
+
+            self.selected_sml=list(set(self.selected_sml))#remove dublicats
+
+    def copy_selected(self, target_folder):
+        # copy subdirectory example
+        #from_directory = "/a/b/c"
+        #to_directory = "/x/y/z"
+
+        if len(target_folder)>0:
+            for sm_src in self.selected_sml:
+                print(sm_src.absolute_path, " ==> ")
+                sm_dst = StorageManager(target_folder)
+                copy_tree(sm_src.absolute_path, sm_dst.absolute_path)
+
+
+
+    def copy_dialog(self):
+        dlg = QDialog()
+        dlg.setWindowTitle("Enter target folder name (Data/StorageManager/#target#/...)")
+        layout = QVBoxLayout()
+
+        input_le = QLineEdit("evo_copy")
+        layout.addWidget(input_le)
+
+        def btn_clicked():
+            self.copy_selected(input_le.text())
+            dlg.close()
+
+        btn = QPushButton("copy data")
+        btn.clicked.connect(btn_clicked)
+
+        layout.addWidget(btn)
+        dlg.setLayout(layout)
+        dlg.resize(300, 50)
+        dlg.exec()
+
+
+
+
 
     def scatter_double_clicked(self, plot, points):#scatter2
         if len(points) > 0:
@@ -79,7 +120,12 @@ class InteractiveScatter(pg.GraphicsLayoutWidget):#canvas object
             pte = QPlainTextEdit()
             pte.setPlainText(txt)
             pte.setReadOnly(True)
-            layout.addWidget(pte)
+            layout.addWidget(pte, stretch=100)
+
+            if len(self.selected_sml)>1:
+                copy_btn = QPushButton('Copy selected ('+str(len(self.selected_sml))+')')
+                layout.addWidget(copy_btn, stretch=1)
+                copy_btn.clicked.connect(self.copy_dialog)
 
             dlg = QDialog()
             dlg.setLayout(layout)
@@ -329,7 +375,7 @@ class InteractiveScatter(pg.GraphicsLayoutWidget):#canvas object
             smg.scatter.setData(x=data[1], y=data[2], brush=c)  #
 
             #error = pg.ErrorBarItem(x=x, y=y, top=top, bottom=bottom, beam=0.5)
-            if self.default_x == 'index':
+            if self.default_x == 'index' and len(data[1])>0:
                 meany= np.mean(data[2])
                 stdy = np.std(data[2])
                 smg.error_bar.setData(x=np.mean(data[1]), y=meany, top=stdy, bottom=stdy, beam=0.3)

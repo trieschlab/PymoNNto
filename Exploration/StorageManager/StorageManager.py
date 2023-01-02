@@ -88,6 +88,17 @@ class StorageManager:
     def get_path(self):
         return self.absolute_path
 
+    def _create_StorageManager_Main_Folder(self, data_folder):
+        storage_manager_folder = data_folder +'/StorageManager/'
+
+        if not os.path.exists(storage_manager_folder):
+            try:
+                os.mkdir(storage_manager_folder)
+            except:
+                print('SM folder already exists...')
+
+        return storage_manager_folder
+
     def __init__(self, main_folder_name, folder_name=None, random_nr=False, print_msg=True, add_new_when_exists=True, data_folder=get_data_folder(), use_evolution_path=True):
 
         #when evolution is active, all storage managers with use_evolution_path=True will automatically save all data in the right evolution folder
@@ -104,13 +115,9 @@ class StorageManager:
         if type(main_folder_name) is dict:
             main_folder_name = self.dict_to_folder_name(main_folder_name)
 
-        storage_manager_folder = data_folder +'/StorageManager/'
 
-        if not os.path.exists(storage_manager_folder):
-            try:
-                os.mkdir(storage_manager_folder)
-            except:
-                print('SM folder already exists...')
+        storage_manager_folder = self._create_StorageManager_Main_Folder(data_folder)
+
 
         if folder_name is None:
             folder_name = main_folder_name
@@ -310,7 +317,11 @@ class SimpleStorageManager(StorageManager):
         self.frame_counter = {}
 
 
+
 class StorageManagerGroup:
+
+    def __iter__(self):
+        return self.StorageManagerList.__iter__()
 
     def __init__(self, Tag, main_folder_name=None, data_folder=get_data_folder()):
 
@@ -402,6 +413,7 @@ class StorageManagerGroup:
                     result.append(sm)
 
         return result
+
 
     def get_all_params(self, section='Parameters', include_virtual_parameters=True):
         result_dict = {}
