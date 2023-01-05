@@ -4,6 +4,8 @@ import os
 from io import StringIO
 from contextlib import redirect_stdout
 
+from PymoNNto.Exploration.Network_UI.Basic_Tabs.Helper.syntax import *
+
 class code_execution_tab(TabBase):
 
     sample_code1='''import matplotlib.pyplot as plt
@@ -46,6 +48,9 @@ print(num)
         self.code_execution_tab = Network_UI.add_tab(title='Code Exec.') #Network_UI.Next_Tab()
         self.comboBox = Network_UI.tab.add_widget(QComboBox())
 
+        #self.CB_line_edit = QLineEdit()
+        #self.comboBox.setLineEdit(self.CB_line_edit)
+
         self.txt_py_dict={}
 
         self.txt_py_dict[''] = self.base_code
@@ -72,22 +77,28 @@ print(num)
 
         def on_cb_click(event):
             txt=self.comboBox.itemText(self.comboBox.currentIndex())
-            self.code_field.setText(self.txt_py_dict[txt])
-            self.code_field.setStyleSheet("QTextEdit { background-color: rgb(255, 255, 255); }")
+            self.code_field.setPlainText(self.txt_py_dict[txt])#setText
+            #self.code_field.setStyleSheet("QTextEdit { background-color: rgb(255, 255, 255); }")
+            self.comboBox.setStyleSheet("background-color: rgb(255, 255, 255);")
 
         def on_code_changed():
-            self.code_field.setStyleSheet("QTextEdit { background-color: rgb(255, 210, 210); }")
+            #self.code_field.setStyleSheet("QTextEdit { background-color: rgb(255, 210, 210); }")
+            self.comboBox.setStyleSheet("background-color : rgb(255, 210, 210);")
+
 
         self.comboBox.currentIndexChanged.connect(on_cb_click)
 
         Network_UI.tab.add_row()
 
-        self.code_field=Network_UI.tab.add_widget(QTextEdit())
+        #self.code_field=Network_UI.tab.add_widget(QTextEdit())
+        #self.code_field.setAcceptRichText(False)
+        #self.code_field.setText(self.base_code)
+        #self.code_field.textChanged.connect(on_code_changed)
 
-        self.code_field.setAcceptRichText(False)
-
-        self.code_field.setText(self.base_code)
-
+        self.code_field = Network_UI.tab.add_widget(QPlainTextEdit())
+        self.code_field.highlight = PythonHighlighter(self.code_field.document())
+        #self.code_field.setAcceptRichText(False)
+        self.code_field.setPlainText(self.base_code)#setText
         self.code_field.textChanged.connect(on_code_changed)
 
         Network_UI.tab.add_row(stretch=1)

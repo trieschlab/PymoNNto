@@ -43,7 +43,7 @@ class NeuronGroup(NetworkObjectBase):
         self.afferent_synapses = {} #set by Network
         self.efferent_synapses = {}
 
-        self.mask = True#np.array([True for _ in range(size)]).astype(np.bool)#True#used for subgroup reconstruction
+        self.mask = True#np.array([True for _ in range(size)]).astype(bool)#True#used for subgroup reconstruction
 
         self.learning = True
         self.recording = True

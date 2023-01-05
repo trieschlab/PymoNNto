@@ -60,7 +60,7 @@ class Network_UI(UI_Base):
         self.neuron_visible_groups = []
 
         self._neuron_select_group = network[group_tags[0], 0]
-        self._neuron_select_mask = self._neuron_select_group.get_neuron_vec().astype(np.bool)#np.array([0])
+        self._neuron_select_mask = self._neuron_select_group.get_neuron_vec().astype(bool)#np.array([0])
         self._neuron_select_mask[0] = True
 
         self.neuron_select_x = 0
@@ -109,7 +109,7 @@ class Network_UI(UI_Base):
         group_changed = group != self._neuron_select_group
         self._neuron_select_group = group
         if group_changed or not add_to_select_group:
-            self._neuron_select_mask = self._neuron_select_group.get_neuron_vec().astype(np.bool)
+            self._neuron_select_mask = self._neuron_select_group.get_neuron_vec().astype(bool)
         self._neuron_select_mask[mask] = True
 
         print(np.where(self._neuron_select_mask>0)[0])
