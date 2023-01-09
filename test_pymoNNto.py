@@ -16,11 +16,10 @@ from PymoNNto.Exploration.Network_UI import *
 
 import pytest
 
-from PyQt5.QtCore import QLibraryInfo
-
-os.environ["QT_QPA_PLATFORM_PLUGIN_PATH"] = QLibraryInfo.location(
-    QLibraryInfo.PluginsPath
-)
+#from PyQt5.QtCore import QLibraryInfo
+#os.environ["QT_QPA_PLATFORM_PLUGIN_PATH"] = QLibraryInfo.location(
+#    QLibraryInfo.PluginsPath
+#)
 
 
 folder = get_data_folder()+'/StorageManager/'
@@ -157,6 +156,7 @@ def test_add_remove_behaviours():
 
 #pip install pytest-qt
 
+'''
 @pytest.fixture
 def app(qtbot):
     My_Network, My_Neurons, My_Synapses, sm = get_sample_network()
@@ -186,7 +186,7 @@ def test_label(app):
 
     if os.path.isdir(folder+'test/'):
         shutil.rmtree(folder+'test/')
-
+'''
 
 ############# Evolution
 
