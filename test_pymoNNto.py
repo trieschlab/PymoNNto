@@ -186,7 +186,7 @@ def test_label(app):
 
     if os.path.isdir(folder+'test/'):
         shutil.rmtree(folder+'test/')
-'''
+
 
 ############# Evolution
 
@@ -241,3 +241,4 @@ def test_evolution():
     assert second_run_score >= first_run_score
     assert evo.Breed_And_Select.generation == 3
     
+'''
