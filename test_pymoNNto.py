@@ -16,6 +16,13 @@ from PymoNNto.Exploration.Network_UI import *
 
 import pytest
 
+from PyQt5.QtCore import QLibraryInfo
+
+os.environ["QT_QPA_PLATFORM_PLUGIN_PATH"] = QLibraryInfo.location(
+    QLibraryInfo.PluginsPath
+)
+
+
 folder = get_data_folder()+'/StorageManager/'
 def clear_folder(f):
     if os.path.isdir(folder+f+'/'):
