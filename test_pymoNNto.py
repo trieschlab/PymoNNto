@@ -14,6 +14,8 @@ import shutil
 
 from PymoNNto.Exploration.Network_UI import *
 
+import pytest
+
 folder = get_data_folder()+'/StorageManager/'
 def clear_folder(f):
     if os.path.isdir(folder+f+'/'):
@@ -146,34 +148,42 @@ def test_add_remove_behaviours():
 
 ##########################UI
 
-'''
-def test_ui():
-    print()
+#pip install pytest-qt
 
+@pytest.fixture
+def app(qtbot):
     My_Network, My_Neurons, My_Synapses, sm = get_sample_network()
     My_Network.simulate_iteration()
 
-    ui = Network_UI(My_Network, modules=get_default_UI_modules(), title='test', storage_manager=sm, group_display_count=1, reduced_layout=False)
-    ui.pause = True
+    ui_app = Network_UI(My_Network, modules=get_default_UI_modules(), title='test', storage_manager=sm, group_display_count=1, reduced_layout=False)
+    ui_app.pause = True
 
-    #My_Neurons['n.iteration', 0, 'np'][-500:]
+    qtbot.addWidget(ui_app.main_window)
+
+    return ui_app
+
+
+def test_label(app):
+
+    assert app.width == 1200
 
     def visible():
         return True
 
-    for i in range(ui.tabs.count()):
-        ui.tabs.widget(i).isVisible=visible
+    for i in range(app.tabs.count()):
+        app.tabs.widget(i).isVisible=visible
 
-    for module in ui.modules:
-        module.update(ui)
+    for _ in range(10):
+        for module in app.modules:
+            module.update(app)
 
     if os.path.isdir(folder+'test/'):
         shutil.rmtree(folder+'test/')
-'''
+
 
 ############# Evolution
 
-'''
+
 def test_evolution():
     print()
 
@@ -224,4 +234,3 @@ def test_evolution():
     assert second_run_score >= first_run_score
     assert evo.Breed_And_Select.generation == 3
     
-'''
