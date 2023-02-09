@@ -95,9 +95,18 @@ print(num)
         #self.code_field.setText(self.base_code)
         #self.code_field.textChanged.connect(on_code_changed)
 
+        net = Network_UI.network
+        network = net
+        n = Network_UI.selected_neuron_group()
+        ng = n
+        neurons = n
+        neuron_group = n
+
         self.code_field = Network_UI.tab.add_widget(QPlainTextEdit())
-        self.code_field.highlight = PythonHighlighter(self.code_field.document())
+        special_keywords = ['Network_UI', 'net', 'n', 'ng', 'network', 'neurons', 'neuron_group']
+        self.code_field.highlight = PythonHighlighter(self.code_field.document(), special_keywords)
         #self.code_field.setAcceptRichText(False)
+        self.code_field.setStyleSheet("QPlainTextEdit { background-color: rgb(43, 43, 43); }")
         self.code_field.setPlainText(self.base_code)#setText
         self.code_field.textChanged.connect(on_code_changed)
 

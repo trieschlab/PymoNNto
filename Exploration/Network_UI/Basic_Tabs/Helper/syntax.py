@@ -15,8 +15,11 @@ from PyQt5.QtWidgets import *
 def format(color, style=''):
     """Return a QTextCharFormat with the given attributes.
     """
-    _color = QColor()
-    _color.setNamedColor(color)
+    if type(color) is str:
+        _color = QColor()
+        _color.setNamedColor(color)
+    else:
+        _color = color
 
     _format = QTextCharFormat()
     _format.setForeground(_color)
@@ -30,15 +33,18 @@ def format(color, style=''):
 
 # Syntax styles that can be shared by all languages
 STYLES = {
-    'keyword': format('darkOrange'),
-    'operator': format('black'),
-    'brace': format('black'),
-    'defclass': format('black', 'bold'),
-    'string': format('darkGreen'),
-    'string2': format('darkGreen'),
+    'keyword': QColor(242,141,32),#format('darkOrange'),
+    'operator': format('lightGray'),
+    'brace': format('white'),
+    'defclass': QColor(242,141,32),
+    'string': QColor(120,153,101),#format('darkGreen')
+    'string2': QColor(120,153,101),#format('darkGreen')
     'comment': format('gray'),
-    'self': format('darkOrange'),
-    'numbers': format('blue'),
+    'numbers': QColor(37,150,242),#format('blue'),
+    'default_text': format('lightGray'),
+    'initself': QColor(211,17,212),
+    'defclassnames': QColor(227,203,4),
+    'special': QColor(211,79,79),
 }
 
 
@@ -47,12 +53,12 @@ class PythonHighlighter(QSyntaxHighlighter):
     """
     # Python keywords
     keywords = [
-        'and', 'assert', 'break', 'class', 'continue', 'def',
+        'and', 'assert', 'break', 'continue',
         'del', 'elif', 'else', 'except', 'exec', 'finally',
         'for', 'from', 'global', 'if', 'import', 'in',
         'is', 'lambda', 'not', 'or', 'pass', 'print',
-        'raise', 'return', 'try', 'while', 'yield',
-        'None', 'True', 'False',
+        'raise', 'try', 'while', 'yield',
+        'None', 'True', 'False', 'def', 'class', 'return',
     ]
 
     # Python operators
@@ -73,7 +79,7 @@ class PythonHighlighter(QSyntaxHighlighter):
         '\{', '\}', '\(', '\)', '\[', '\]',
     ]
 
-    def __init__(self, document):
+    def __init__(self, document, special_keywords=[]):
         QSyntaxHighlighter.__init__(self, document)
 
         # Multi-line strings (expression, flag, style)
@@ -84,6 +90,29 @@ class PythonHighlighter(QSyntaxHighlighter):
 
         rules = []
 
+
+
+        # All other rules
+        rules += [
+            # 'self'
+            (r'[^\n]', 0, STYLES['default_text']),
+
+            (r'\bdef\b\s*(\w+)', 0, STYLES['defclassnames']),#def and class will be overwritten by keywords
+            (r'\bclass\b\s*(\w+)', 0, STYLES['defclassnames']),
+
+            (r'\b__init__\b', 0, STYLES['initself']),
+            (r'\bself\b', 0, STYLES['initself']),
+
+            # Numeric literals
+            (r'\b[+-]?[0-9]+[lL]?\b', 0, STYLES['numbers']),
+            (r'\b[+-]?0[xX][0-9A-Fa-f]+[lL]?\b', 0, STYLES['numbers']),
+            (r'\b[+-]?[0-9]+(?:\.[0-9]+)?(?:[eE][+-]?[0-9]+)?\b', 0, STYLES['numbers']),
+        ]
+
+        # Keyword, operator, and brace rules
+        rules += [(r'\b%s\b' % w, 0, STYLES['special'])
+                  for w in special_keywords]
+
         # Keyword, operator, and brace rules
         rules += [(r'\b%s\b' % w, 0, STYLES['keyword'])
                   for w in PythonHighlighter.keywords]
@@ -92,28 +121,13 @@ class PythonHighlighter(QSyntaxHighlighter):
         rules += [(r'%s' % b, 0, STYLES['brace'])
                   for b in PythonHighlighter.braces]
 
-        # All other rules
         rules += [
-            # 'self'
-            (r'\bself\b', 0, STYLES['self']),
-
             # Double-quoted string, possibly containing escape sequences
             (r'"[^"\\]*(\\.[^"\\]*)*"', 0, STYLES['string']),
             # Single-quoted string, possibly containing escape sequences
             (r"'[^'\\]*(\\.[^'\\]*)*'", 0, STYLES['string']),
-
-            # 'def' followed by an identifier
-            (r'\bdef\b\s*(\w+)', 1, STYLES['defclass']),
-            # 'class' followed by an identifier
-            (r'\bclass\b\s*(\w+)', 1, STYLES['defclass']),
-
             # From '#' until a newline
             (r'#[^\n]*', 0, STYLES['comment']),
-
-            # Numeric literals
-            (r'\b[+-]?[0-9]+[lL]?\b', 0, STYLES['numbers']),
-            (r'\b[+-]?0[xX][0-9A-Fa-f]+[lL]?\b', 0, STYLES['numbers']),
-            (r'\b[+-]?[0-9]+(?:\.[0-9]+)?(?:[eE][+-]?[0-9]+)?\b', 0, STYLES['numbers']),
         ]
 
         # Build a QRegExp for each pattern

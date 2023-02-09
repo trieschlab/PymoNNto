@@ -1,13 +1,14 @@
 from PymoNNto.Exploration.Evolution.common_UI import *
 from PymoNNto.Exploration.Evolution.communication import *
+from tkinter import Tk  #for clipboard access
 
-class UI_Evolution_Manager(Execution_Manager_UI_Base):
+class Evolution_UI(Execution_Manager_UI_Base):
 
     def get_folder(self):
         return 'Evolution_Project_Clones'
 
     def get_title(self):
-        return 'Evolution Monitor'
+        return 'Evolution Manager'
 
 
 
@@ -54,7 +55,10 @@ class UI_Evolution_Manager(Execution_Manager_UI_Base):
         left_vertical_layout.addWidget(eo_label)
 
 
-        self.slave_file_edit = QLineEdit('Exploration/Evolution/example_slave.py')
+        self.slave_file_edit = QLineEdit('')
+        self.slave_file_edit.textChanged.connect(self.check_file)
+        self.slave_file_edit.setText('Exploration/Evolution/example_slave.py')
+
         self.thread_number_edit = QLineEdit('4')
         #self.python_cmd_edit = QLineEdit("python3")
         #self.python_cmd_edit = QComboBox()
@@ -94,14 +98,33 @@ class UI_Evolution_Manager(Execution_Manager_UI_Base):
 
         more_info_label = self.sidebar.add_widget(QLabel("..."), stretch=1)
 
-
         label = self.sidebar.add_widget(QLabel(u"\u24D8 " + "Start genomes:"), stretch=1)
-        label.setToolTip("Genomes of the initial individuals. Example: [{'a':1,'b':2,'c':2}, {'a':3,'b':2,'c':1}] for two individuals with genes a,b and c")
-        txt = QTextEdit()
-        txt.setText("""[
-{'a':1,'b':2,'c':2}
-]""")
-        self.start_genomes_edit = self.sidebar.add_widget(txt, stretch=100)
+        label.setToolTip(
+            "Initial individuals and their genes.")
+
+
+        self.sidebar.add_row()
+
+        extract_btn = self.sidebar.add_widget(QPushButton('extract default genome'))
+        extract_btn.clicked.connect(self.extract_genome)
+
+        add_ind_btn = self.sidebar.add_widget(QPushButton('add individual '+u"\u24D8"))
+        add_ind_btn.setToolTip('Adds an empty row or genomes that are copied to the clipboard.')
+        add_ind_btn.clicked.connect(self.add_individual)
+
+        add_gene_btn = self.sidebar.add_widget(QPushButton('add gene'))
+        add_gene_btn.clicked.connect(self.add_gene)
+
+        self.sidebar.set_parent_layout()
+
+        self.gene_table = self.sidebar.add_widget(QGeneTableWidget())
+
+
+        #txt = QTextEdit()
+        #txt.setText("""[
+        #{'a':1,'b':2,'c':2}
+        #]""")
+        #self.start_genomes_edit = self.sidebar.add_widget(txt, stretch=100)
 
 
         #right_vertical_layout.addWidget(self.start_genomes_edit, stretch=5)
@@ -131,6 +154,64 @@ class UI_Evolution_Manager(Execution_Manager_UI_Base):
         more_info_label.mouseReleaseEvent = more_clicked
         #more_info_label.clicked.connect(more_clicked)
 
+    def add_individual(self):
+        #self.text_input_dialog(txt, 'genomes (leave empty for empty ): ', func, default_text='[{}]')
+        genomes=[{}]
+        try:
+            clipboard = Tk().clipboard_get()
+            if clipboard[0]=='[' and clipboard[-1]==']':
+                genomes=eval(clipboard)
+            if clipboard[0]=='{' and clipboard[-1]=='}':
+                genomes=[eval(clipboard)]
+        except:
+            pass
+        self.gene_table.add_genomes(genomes)
+
+    def add_gene(self):
+        gene_name = self.text_input_dialog('Gene name:', 'add gene', self.__add_gene)
+
+    def __add_gene(self, gene_name):
+        if len(gene_name)>0:
+            self.gene_table.add_gene(gene_name)
+
+    def get_genomes_from_file(self, file):
+        print_output = execute_local_file(file, 'None', 0, get_gene_mode=True, get_output=True)
+
+        print(print_output)
+
+        result = []
+        result.append({})
+
+        for line in print_output.split('\n'):
+            # if '#get_gene#' in line:
+            ls = line.split('#')
+
+            if len(ls) == 3 and (ls[1] == 'set_genome' or ls[1] == 'genome_set'):
+                if len(result[-1])>0:
+                    result.append({})
+
+            if len(ls) == 6 and ls[1] == 'get_gene':
+                gene = ls[2]
+                default = ls[3]
+                result[-1][gene] = default
+
+                #type = ls[4]
+                #result.append([gene, default, type])
+                #print(gene, default, type)
+
+        return result
+
+    def extract_genome(self):
+        file = get_root_folder()+'/'+self.slave_file_edit.text()
+        default_genomes = self.get_genomes_from_file(file)
+
+        #default_genes = self.get_genome_from_file(get_root_folder()+'/'+self.slave_file_edit.text())
+        #default_genome = {g[0]:g[1] for g in default_genes}
+        #test_gemone = {'a':1, 'b':2, 'c':100, 'd':9}
+        #test_gemone2 = {'a': 2, 'b': 2, 'x': 999, 'c': 100, 'd': 9}
+        #test_gemone3 = {'a': 1}
+
+        self.gene_table.add_genomes(default_genomes)
 
     def On_Tab_Changed(self, i):
         if i is not None:
@@ -145,7 +226,14 @@ class UI_Evolution_Manager(Execution_Manager_UI_Base):
                 self.set_text(ssm, self.individual_count_edit, 'individual_count')
                 self.set_text(ssm, self.mutation_edit, 'mutation')
                 self.set_text(ssm, self.death_rate_edit, 'death_rate')
-                self.set_text(ssm, self.start_genomes_edit, 'start_genomes')
+
+                #self.set_text(ssm, self.start_genomes_edit, 'start_genomes')
+                self.gene_table.clear()
+                data = ssm.load_param('start_genomes', default='', return_string=True)
+                if data is not None and data != '':
+                    print(data)
+                    self.gene_table.add_genomes(eval(data))
+
                 self.set_text(ssm, self.constraints_edit, 'constraints')
                 #self.set_text(ssm, self.python_cmd_edit, 'python_cmd')
                 self.set_text(ssm, self.evo_options_edit, 'evo_options')
@@ -219,7 +307,7 @@ if __name__ == '__main__':
         exec_file = exec_file.replace('#individual_count#', self.individual_count_edit.text())
         exec_file = exec_file.replace('#mutation#', self.mutation_edit.text())
         exec_file = exec_file.replace('#death_rate#', self.death_rate_edit.text())
-        exec_file = exec_file.replace('#start_genomes#', self.start_genomes_edit.toPlainText().replace('\r', '').replace('\n', ''))
+        exec_file = exec_file.replace('#start_genomes#', str(self.gene_table.get_genomes()))#self.start_genomes_edit.toPlainText().replace('\r', '').replace('\n', '')
         exec_file = exec_file.replace('#constraints#', self.constraints_edit.text())
         exec_file = exec_file.replace('#evo_options#', self.evo_options_edit.text())
 
@@ -236,32 +324,37 @@ if __name__ == '__main__':
         ssm.save_param('individual_count', self.individual_count_edit.text())
         ssm.save_param('mutation', self.mutation_edit.text())
         ssm.save_param('death_rate', self.death_rate_edit.text())
-        ssm.save_param('start_genomes', self.start_genomes_edit.toPlainText().replace('\r', '').replace('\n', ''))
+        ssm.save_param('start_genomes', str(self.gene_table.get_genomes()))#self.start_genomes_edit.toPlainText().replace('\r', '').replace('\n', '')
         ssm.save_param('constraints', self.constraints_edit.text())
         #ssm.save_param('python_cmd', self.python_cmd_edit.text())
         ssm.save_param('evo_options', self.evo_options_edit.text())
 
-        gene_keys = list(eval(self.start_genomes_edit.toPlainText().replace('\r', '').replace('\n', ''))[0].keys())
+        gene_keys = self.gene_table.get_genes() #list(eval(self.start_genomes_edit.toPlainText().replace('\r', '').replace('\n', ''))[0].keys())
         ssm.save_param('gene_keys', gene_keys)
 
     def valid_configuration(self):
-        valid_genomes = False
-        try:
-            sg = eval(self.start_genomes_edit.toPlainText().replace('\r', '').replace('\n', ''))
-            for key in ['generation', 'score', 'id']:
-                for genome in sg:
-                    if key in genome:
-                        genome.pop(key)
-                        print(key, 'removed from genomes')
-            self.start_genomes_edit.setText(str(sg))
-            valid_genomes = True
-        except:
-            print('error parsing start genomes')
+        #valid_genomes = False
+        #try:
+        #    sg = eval(self.start_genomes_edit.toPlainText().replace('\r', '').replace('\n', ''))
+        #    for key in ['generation', 'score', 'id']:
+        #        for genome in sg:
+        #            if key in genome:
+        #                genome.pop(key)
+        #                print(key, 'removed from genomes')
+        #    self.start_genomes_edit.setText(str(sg))
+        #    valid_genomes = True
+        #except:
+        #    print('error parsing start genomes')
 
-        if not valid_genomes:
-            print('error parsing start genomes')
+        #if not valid_genomes:
+       #     print('error parsing start genomes')
 
-        return valid_genomes
+        valid = self.gene_table.check_cells()
+
+        if not valid:
+            self.show_message('Error', 'cannot parse genomes', 'ok')
+
+        return valid
 
     def add_additional_tab_elements(self, tab, name):
 
@@ -289,8 +382,129 @@ if __name__ == '__main__':
         if tab.gene_keys is not None:
             update_evolution_plot(self, tab, tab.name, tab.gene_keys,data_folder=get_data_folder() + '/' + self.folder + '/' + tab.name + '/Data')
 
-########################################################### Exception handling
 
+class QGeneTableWidget(QTableWidget):
+
+    def __init__(self):
+        super().__init__()
+        self.clear()
+        self.horizontalHeader().setSectionResizeMode(QHeaderView.Stretch)
+
+        #self.verticalHeader().hide()
+        #self.cellClicked.connect(self.cell_clicked)
+        self.cellChanged.connect(self.cell_changed)
+
+        self.horizontalHeader().sectionClicked.connect(self.horizontal_header_clicked)
+        self.verticalHeader().sectionClicked.connect(self.vertical_header_clicked)
+
+    def clear(self):
+        self.clearContents()
+        self.setRowCount(0)
+        self.setColumnCount(0)
+
+    def get_genomes(self):
+        check = self.check_cells()
+        if check:
+            result = []
+            for r in range(self.rowCount()):
+                genome = {}
+                for c in range(self.columnCount()):
+                    gene_key = self.horizontalHeaderItem(c).text()
+                    gene_value = self.item(r, c).text()
+                    genome[gene_key] = gene_value
+                result.append(genome)
+            return result
+        else:
+            return None
+
+
+    def check_cells(self):
+        check = True
+        for r in range(self.rowCount()):
+            for c in range(self.columnCount()):
+                item = self.item(r, c)
+                if item is None:
+                    item=QTableWidgetItem()
+                    self.setItem(r, c, item)
+                if not is_number(item.text()):
+                    item.setBackground(QColor(255,150,150))
+                    check=False
+                else:
+                    item.setBackground(QColor("white"))
+        return check
+
+
+    def cell_changed(self, row, column):
+        self.check_cells()
+
+    #def cell_clicked(self, row, column):
+    #    print(self.get_genomes())
+    #    print("Row %d and Column %d was clicked " % (row, column))
+    #    item = self.item(row, column)
+    #    print(item.text())
+
+    def horizontal_header_clicked(self, i):
+        self.removeColumn(i)
+
+    def vertical_header_clicked(self, i):
+        self.removeRow(i)
+
+
+    def add_genomes(self, genomes):
+        for genome in genomes:
+            self.add_genome(genome)
+
+    def add_genome(self, genome):
+        rc=self.rowCount()
+        self.insertRow(rc)
+        self.setVerticalHeaderItem(rc, QTableWidgetItem('x'))
+        for gene_key, gene_value in genome.items():
+            self.row_insert(gene_key, gene_value)
+        self.check_cells()
+
+    def row_insert(self, key, value):
+        col_index = self.get_column(key, True)
+        row_index = self.rowCount()-1
+        self.setItem(row_index, col_index, QTableWidgetItem(str(value)))
+
+    def get_column(self, key, append_if_missing=False):
+        for i, g in enumerate(self.get_genes()):
+            if key==g:
+                return i
+
+        if append_if_missing:
+            return self.add_gene(key)
+
+        return -1
+
+    def add_gene(self, key):
+        cc=self.columnCount()
+        self.insertColumn(cc)
+        self.setHorizontalHeaderItem(cc, QTableWidgetItem(str(key)))
+        self.check_cells()
+        return cc
+
+    def get_genes(self):
+        #print(self.getHorizontalHeaderLabels)
+        return [self.horizontalHeaderItem(c).text() for c in range(self.columnCount())]#self.verticalHeaderItems()
+
+    #def dsfads(self):
+    #    self.gene_table.setRowCount(0)
+    #    self.gene_table.setColumnCount(len(default_genes)+1)
+    #    self.gene_table.setHorizontalHeaderLabels([g[0] for g in default_genes]+['+'])
+
+    #    for r, genome in enumerate([default_genome, [2,2,1,3], [7,2,3,9]]):
+    #        #QTableWidget.insertRow(0)
+    #        self.gene_table.insertRow(self.gene_table.rowCount())
+    #        for c,g in enumerate(genome+['remove']):
+    #            self.gene_table.setItem(r, c, QTableWidgetItem(str(g)))
+
+    #    self.gene_table.insertRow(self.gene_table.rowCount())
+
+
+
+
+########################################################### Exception handling
 
 def except_hook(cls, exception, traceback):
     sys.__excepthook__(cls, exception, traceback)
@@ -298,5 +512,5 @@ def except_hook(cls, exception, traceback):
 sys.excepthook = except_hook
 
 if __name__ == '__main__':
-    UI_Evolution_Manager().show()
+    Evolution_UI().show()
 

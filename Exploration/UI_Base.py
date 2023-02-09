@@ -217,6 +217,25 @@ class UI_Base(QApplication):
         dlg.resize(300, 50)
         dlg.exec()
 
+    def show_message(self, title, message, btn_text='Ok'):
+        dlg = QDialog()
+        dlg.setWindowTitle(title)
+        layout = QVBoxLayout()
+
+        label = QLabel(message)
+        layout.addWidget(label)
+
+        def btn_clicked():
+            dlg.close()
+
+        btn = QPushButton(btn_text)
+        btn.clicked.connect(btn_clicked)
+
+        layout.addWidget(btn)
+        dlg.setLayout(layout)
+        dlg.resize(300, 50)
+        dlg.exec()
+
 
 
 

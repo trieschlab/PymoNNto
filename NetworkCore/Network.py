@@ -5,6 +5,7 @@ from PymoNNto.NetworkCore.Synapse_Group import *
 from PymoNNto.Exploration.Evolution.Interface_Functions import *
 import copy
 import time
+import sys
 
 class Network(NetworkObjectBase):
 
@@ -51,6 +52,9 @@ class Network(NetworkObjectBase):
                     obj.behaviour[key].clear_recorder()
 
     def set_gene_variables(self, info=True, storage_manager=None):
+
+        if get_gene_mode():
+            sys.exit()
 
         for obj in self.all_objects():
             for key in obj.behaviour:
@@ -207,7 +211,7 @@ class Network(NetworkObjectBase):
     def simulate_iteration(self, measure_behaviour_execution_time=False):
 
         if measure_behaviour_execution_time:
-            time_measures={}
+            time_measures={ts:0.0 for ts in self.behaviour_timesteps}
 
         self.iteration += 1
         for timestep in self.behaviour_timesteps:
@@ -216,9 +220,9 @@ class Network(NetworkObjectBase):
                 net_obj.iteration=self.iteration
                 if timestep in net_obj.behaviour and net_obj.behaviour[timestep].behaviour_enabled:
                     if measure_behaviour_execution_time:
-                        start_time = time()
+                        start_time = time.time()
                         net_obj.behaviour[timestep].new_iteration(net_obj)
-                        time_measures[timestep] = (time() - start_time) * 1000
+                        time_measures[timestep] += (time.time() - start_time) * 1000
                     else:
                         net_obj.behaviour[timestep].new_iteration(net_obj)
 
@@ -251,8 +255,8 @@ class Network(NetworkObjectBase):
                 self.simulate_iteration()
             if measure_block_time:
                 time_diff = (time.time() - start_time) * 1000
-
-                print('\r{}xBatch: {}/{} ({}%) {:.3f}ms'.format(block_iterations,t+1, outside_it, int(100/outside_it*(t+1)),time_diff), end='')#, end='')
+                remaining = time_diff * (outside_it-t) / 1000 / 60
+                print('\r{}xBatch: {}/{} ({}%) {}ms {}min'.format(block_iterations,t+1, outside_it, int(100/outside_it*(t+1)), int(time_diff), int(remaining)), end='')#, end='')
 
             if batch_progress_update_func is not None:
                 batch_progress_update_func((t+1.0)/int(outside_it)*100.0, self)

@@ -1,7 +1,7 @@
 from PymoNNto.Exploration.Evolution.common_UI import *
 from PymoNNto.Exploration.Evolution.PlotQTObjects import *
 
-class UI_Plot_Overview(UI_Base):
+class Overview_UI(UI_Base):
 
     def update_order(self):
         for i in range(self.listwidget.count()):
@@ -131,4 +131,4 @@ sys.excepthook = except_hook
 
 
 if __name__ == '__main__':
-    UI_Plot_Overview().show()
+    Overview_UI().show()

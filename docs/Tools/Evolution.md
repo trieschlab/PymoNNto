@@ -107,11 +107,11 @@ The name of the file is execute_evolution.py and it is located in the copied pro
 Note that the slave file path has to be set relative to this file.
 
 ```python
-#master.py
-from PymoNNto.Exploration.Evolution.UI_Evolution_Manager import *
+# master.py
+from PymoNNto.Exploration.Evolution.Evolution_UI import *
 
 if __name__ == '__main__':
-    UI_Evolution_Manager().show()
+    Evolution_UI().show()
 ```
 
 ![User interface example](https://raw.githubusercontent.com/trieschlab/PymoNNto/Images/UI_Evolution_Manager.png)

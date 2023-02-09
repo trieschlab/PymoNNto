@@ -4,7 +4,7 @@ from PymoNNto.Exploration.Evolution.EvolutionPlots import *
 
 
 
-class UI_Single_Evolution_Monitor(UI_Base):
+class Single_Evolution_UI(UI_Base):
 
     def __init__(self, evolution):
         super().__init__(title='Evolution Monitor', create_sidebar=False, create_tab_grid=False)

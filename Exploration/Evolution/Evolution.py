@@ -1,7 +1,7 @@
 from PymoNNto.Exploration.Evolution.Devices.Evolution_Device_Single_Thread import *
 from PymoNNto.Exploration.Evolution.Devices.Evolution_Device_SSH import *
 from PymoNNto.Exploration.Evolution.Breed_And_Selection_Module import *
-from PymoNNto.Exploration.Evolution.UI_Single_Evolution_Monitor import *
+from PymoNNto.Exploration.Evolution.Single_Evolution_UI import *
 from PymoNNto.Exploration.Evolution.genome_exchange_com import *
 import os.path
 import time
@@ -192,7 +192,7 @@ class Evolution:
             device.start()
 
         if ui:
-            self.ui = UI_Single_Evolution_Monitor(self)
+            self.ui = Single_Evolution_UI(self)
             self.ui.show()
         else:
             self.active = True

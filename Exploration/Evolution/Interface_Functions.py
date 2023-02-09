@@ -5,6 +5,10 @@ __evolution_genome__ = {}
 __evo_name__ = None
 __evo_id__ = None
 __evo_generation__ = None
+__get_gene_mode__ = False
+
+def get_gene_mode():
+    return __get_gene_mode__
 
 def get_evo_name():
     if __evo_name__ is None:
@@ -26,6 +30,8 @@ def get_genome():
         update_evolution_parameters()
     return __evolution_genome__
 
+def __print_gene(key, default):
+    print('#get_gene#' + str(key) + '#' + str(default) + '#' + str(type(default)) + '#')
 
 def get_gene(key, default):
     if len(__evolution_genome__)==0:
@@ -33,6 +39,9 @@ def get_gene(key, default):
 
     if not key in __evolution_genome__:
         __evolution_genome__[key] = default
+
+    if get_gene_mode():
+        __print_gene(key, default)
 
     return cast_to_default(__evolution_genome__[key], default)
 
@@ -47,15 +56,24 @@ def gene(key, default):
     return get_gene(key, default)
 
 def set_genome(genome):
+    update_evolution_parameters()
     global __evolution_genome__
     __evolution_genome__ = genome
+    if get_gene_mode():
+        print('#set_genome#')
+        for key, default in genome.items():
+            __print_gene(key, default)
+        print('#genome_set#')
 
-def execute_local_file(file, evo_name, evo_id, evo_generation=0, genome={}, static_genome={}):
+def execute_local_file(file, evo_name, evo_id, evo_generation=0, genome={}, static_genome={}, get_gene_mode=False, get_output=False):
     cmd = 'python3 '+file
 
     cmd+=' __evo_name__' + '="' + evo_name+'"'
     cmd+=' __evo_id__' + '=' + str(evo_id)
     cmd+=' __evo_generation__' + '=' + str(evo_generation)
+
+    if get_gene_mode:
+        cmd += ' __get_gene_mode__'
 
     for key, value in genome.items():
         cmd+=' ' + str(key) + '="' + str(value)+'"'
@@ -65,15 +83,21 @@ def execute_local_file(file, evo_name, evo_id, evo_generation=0, genome={}, stat
 
     print(os.getcwd(), file)
 
-    os.system(cmd)#python3 file.py __evo_name__=myname __evo_id__=10001 gene1=5 gene2=a gene3=...
+    if get_output:
+        return os.popen(cmd).read()
+    else:
+        os.system(cmd)#python3 file.py __evo_name__=myname __evo_id__=10001 gene1=5 gene2=a gene3=...
 
 def update_evolution_parameters():# pythonfile.py __evo_name__=myname __evo_id__=10001 gene1=5 gene2=a gene3=...
     global __evo_name__
     global __evo_id__
     global __evo_generation__
     global __evolution_genome__
+    global __get_gene_mode__
 
     for arg in sys.argv[1:]:
+        if arg == '__get_gene_mode__':
+            __get_gene_mode__ = True
         if '=' in arg:
             key_value = arg.split('=')
             if len(key_value)==2:
@@ -93,7 +117,9 @@ def get_gene_file(evo_name, id=None):
     file = evo_name +' id' + str(id)
     return file
 
-def set_score(score, info={}):
+
+
+def set_score(score, info={}, sm=None):
     update_evolution_parameters()
 
     global __evo_name__
@@ -101,21 +127,23 @@ def set_score(score, info={}):
     global __evo_generation__
     global __evolution_genome__
 
-    if __evo_name__ is not None and __evo_id__ is not None:
+    if sm is None and __evo_name__ is not None and __evo_id__ is not None:
         import PymoNNto.Exploration.StorageManager.StorageManager as storage_manager
         sm = storage_manager.StorageManager(main_folder_name=__evo_name__, folder_name=get_gene_file(__evo_name__, __evo_id__), print_msg=False, add_new_when_exists=False)
-        sm.save_param('score', score)
-        sm.save_param('evo_name', __evo_name__)
-        sm.save_param('id', __evo_id__)
-        if __evo_generation__ is not None:
-            sm.save_param('generation', __evo_generation__)
-            sm.save_param_dict(__evolution_genome__)
+
+    if sm is not None:
+        sm.save_param('score', str(score))
+        sm.save_param('evo_name', str(__evo_name__))
+        sm.save_param('id', str(__evo_id__))
+        sm.save_param('generation', str(__evo_generation__))
+        sm.save_param_dict(__evolution_genome__)
         sm.save_param_dict(info)
 
     __evo_name__ = None
     __evo_id__ = None
     __evo_generation__ = None
     __evolution_genome__ = {}
+
 
 '''
 def set_score(score, non_evo_storage_manager=None, _genome=None, info={}):

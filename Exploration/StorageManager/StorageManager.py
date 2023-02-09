@@ -7,6 +7,7 @@ import os
 import pickle
 import imageio
 import sys
+import shutil
 
 
 #import matplotlib.pylab as plt
@@ -109,7 +110,11 @@ class StorageManager:
             if evo_name is not None and evo_id is not None:
                 main_folder_name = evo_name
                 folder_name = I_func.get_gene_file(evo_name, evo_id)
-                random_nr = False
+                evo_gen = I_func.get_evo_id()
+                if evo_gen is not None:
+                    random_nr = False
+                else:
+                    random_nr = True
 
 
         if type(main_folder_name) is dict:
@@ -200,6 +205,17 @@ class StorageManager:
         string = text_file.read()
         text_file.close()
         return string
+
+    def backup_execued_file(self):
+        executed_file = sys.argv[0]
+        self.backup(executed_file)
+
+    def backup(self, file_or_folder):
+        file_or_folder.replace('\\','/')
+        if file_or_folder[-1]=='/':
+            file_or_folder=file_or_folder[:-1]
+        parts = file_or_folder.split('/')
+        shutil.copy(file_or_folder, self.absolute_path+parts[-1])
 
 
     def save_np(self, key, obj):

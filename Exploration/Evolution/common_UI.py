@@ -216,18 +216,32 @@ class Execution_Manager_UI_Base(UI_Base):
             if not os.path.isdir(get_epc_folder(self.folder) + '/' + dir) and '.zip' in dir:
                 self.archive_list.addItem(dir)
 
+    def check_file(self):
+        file = self.slave_file_edit.text()
+        root = get_root_folder()
+        if root in file:
+            file = file.replace(root + '/', '')
+            self.slave_file_edit.setText(file)
+        else:
+            if os.path.isfile(root+'/'+file):
+                self.slave_file_edit.setStyleSheet("background-color: rgb(255, 255, 255);")
+            else:
+                self.slave_file_edit.setStyleSheet("background-color: rgb(255, 150, 150);")
+
     def select_file(self):
+        root=get_root_folder()
         dialog = QFileDialog()
         dialog.setWindowTitle('Select evolvable file')
         dialog.setNameFilter('Python Files (*.py)')
-        dialog.setDirectory(get_root_folder())#QtCore.QDir.currentPath()
+        dialog.setDirectory(root)#QtCore.QDir.currentPath()
         dialog.setFileMode(QtWidgets.QFileDialog.ExistingFile)
         if dialog.exec_() == QtWidgets.QDialog.Accepted:
             file=str(dialog.selectedFiles()[0])
-            if get_root_folder() in file:
-                file=file.replace(get_root_folder()+'/','')
+            if root in file:
+                file=file.replace(root+'/','')
                 self.slave_file_edit.setText(file)
             else:
+                self.show_message('Error', 'file not in project directory')
                 print('file not in project directory')
         else:
             print('no file selected')
@@ -481,6 +495,7 @@ class Execution_Manager_UI_Base(UI_Base):
             else:
                 server_str = item
                 if os.path.exists(get_data_folder() + '/'+self.folder+'/' + name):
+                    self.show_message('Error', 'Folder already exists', 'Ok')
                     print('folder already exists: '+ get_data_folder() + '/'+self.folder+'/' + name)
                 elif self.valid_configuration():
 

@@ -1,13 +1,13 @@
 from PymoNNto.Exploration.Evolution.common_UI import *
 from PymoNNto.Exploration.Evolution.PlotQTObjects import *
 
-class UI_Plot_Manager(Execution_Manager_UI_Base):
+class Execute_UI(Execution_Manager_UI_Base):
 
     def get_folder(self):
         return 'Plot_Project_Clones'
 
     def get_title(self):
-        return 'Plot Manager'
+        return 'Execution Manager'
 
     def add_ui_elements(self, left_vertical_layout, right_vertical_layout):
 
@@ -22,7 +22,11 @@ class UI_Plot_Manager(Execution_Manager_UI_Base):
         left_vertical_layout.addWidget(QLabel('runs'))
 
 
-        self.slave_file_edit = QLineEdit('Exploration/Evolution/example_slave.py')
+        #self.slave_file_edit = QLineEdit('Exploration/Evolution/example_slave.py')
+        self.slave_file_edit = QLineEdit('')
+        self.slave_file_edit.textChanged.connect(self.check_file)
+        self.slave_file_edit.setText('Exploration/Evolution/example_slave.py')
+
         #self.thread_number_edit = QLineEdit('4')
         #self.python_cmd_edit = QLineEdit("python")
         self.run_count_edit = QLineEdit('10')
@@ -171,4 +175,4 @@ def except_hook(cls, exception, traceback):
 sys.excepthook = except_hook
 
 if __name__ == '__main__':
-    UI_Plot_Manager().show()
+    Execute_UI().show()
