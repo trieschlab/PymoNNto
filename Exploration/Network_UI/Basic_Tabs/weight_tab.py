@@ -11,93 +11,93 @@ class weight_tab(TabBase):
 
     def initialize(self, Network_UI):
         self.weight_tab = Network_UI.add_tab(title=self.title)
+        self.main_plot = Network_UI.tab.add_plot()
 
-        #get max synapse group size
-        max_sgs=2
-        for group_tag in Network_UI.group_tags:
-            for ng in Network_UI.network[group_tag]:
-                for transmitter in Network_UI.transmitters:
-                    l = 0
-                    for weight_attr in self.weight_attrs:
-                        l += len(get_combined_syn_mats(ng[transmitter], None, weight_attr))
-                    max_sgs = np.maximum(max_sgs, l)
+        Network_UI.tab.add_row()
 
-        self.transmitter_weight_images = {}
-        for transmitter in Network_UI.transmitters:
-            self.transmitter_weight_images[transmitter] = []
-            for _ in range(max_sgs):
-                plt = Network_UI.tab.add_plot(title='Neuron ' + transmitter + ' ?', tooltip_message='afferent synapse weights of selected neuron')
-                image = plt.add_image()
-                self.transmitter_weight_images[transmitter].append([image, plt])
-            Network_UI.tab.add_row()
+        self.select_mode = QComboBox()
+        self.select_mode.addItems(['selected neuron', 'all'])
+        self.select_mode.setCurrentIndex(0)
+        Network_UI.tab.add_widget(self.select_mode, stretch=1)
 
-        Network_UI.tab.add_widget(QLabel('Min Max'), stretch=0)
-        self.select_min_max_box = QComboBox()
-        self.select_min_max_box.addItems(['Transmitter', 'Global', 'Variable', 'Single block'])
-        self.select_min_max_box.setCurrentIndex(0)
-        Network_UI.tab.add_widget(self.select_min_max_box, stretch=1)
+        self.select_aff_eff = QComboBox()
+        self.select_aff_eff.addItems(['afferent', 'efferent'])
+        self.select_aff_eff.setCurrentIndex(0)
+        Network_UI.tab.add_widget(self.select_aff_eff, stretch=1)
+
+        self.select_min_box = QComboBox()
+        self.select_min_box.addItems(['global min', 'single min', '0'])
+        self.select_min_box.setCurrentIndex(1)
+        Network_UI.tab.add_widget(self.select_min_box, stretch=1)
+
+        self.select_max_box = QComboBox()
+        self.select_max_box.addItems(['global max', 'single max', '1'])
+        self.select_max_box.setCurrentIndex(1)
+        Network_UI.tab.add_widget(self.select_max_box, stretch=1)
+
 
     def update(self, Network_UI):
         if self.weight_tab.isVisible():
-
             group = Network_UI.selected_neuron_group()
-            #collect all synapse information
-            syn_dict = {}
+            selected = Network_UI.selected_neuron_id()
 
-            for transmitter in Network_UI.transmitters:
-                syn_dict[transmitter] = {}
-                for weight_attr in self.weight_attrs:
+            self.main_plot.clear()
 
-                    if transmitter in group.afferent_synapses and len(group.afferent_synapses[transmitter])>0:
-                        syn_dict[transmitter][weight_attr] = {transmitter: get_single_neuron_combined_partition_matrix(group, transmitter, weight_attr, Network_UI.selected_neuron_id())}#group.afferent_synapses[transmitter][0].W[Network_UI.selected_neuron_id()
+            afferent=self.select_aff_eff.currentText() == 'afferent'
+            single = self.select_mode.currentText() != 'all'
+            max_mode = self.select_max_box.currentText()
+            min_mode = self.select_min_box.currentText()
 
-            #determine ranges
-            min_max_mode = self.select_min_max_box.currentText()
+            c = 0
+            syns = []
+            syn_tags=[]
+            max_s = []
+            min_s = []
 
-            glob_max=0
-            tr_max={}
-            var_max={}
-            key_max = {}
+            if afferent:
+                for s in group.afferent_synapses['All']:
+                    if single:
+                        data = np.rot90(s.W[selected].reshape(s.src.height, s.src.width), 3)
+                    else:
+                        data=s.W
+                    syns.append(data)
+                    syn_tags.append(s.tags)
+            else:
+                for s in group.efferent_synapses['All']:
+                    if single:
+                        data = np.rot90(s.W[:, selected].reshape(s.dst.height, s.dst.width), 3)
+                    else:
+                        data = s.W
+                    syns.append(data)
+                    syn_tags.append(s.tags)
 
-            for transmitter in syn_dict:
-                tr_max[transmitter]=0
-                var_max[transmitter] = {}
-                key_max[transmitter] = {}
-                for weight_attr in syn_dict[transmitter]:
-                    var_max[transmitter][weight_attr] = 0
-                    key_max[transmitter][weight_attr] = {}
-                    for key in syn_dict[transmitter][weight_attr]:
-                        m = np.max(syn_dict[transmitter][weight_attr][key])
+            for data in syns:
+                max_s.append(np.max(data))
+                min_s.append(np.min(data))
 
-                        tr_max[transmitter] = max(tr_max[transmitter], m)
-                        var_max[transmitter][weight_attr] = max(var_max[transmitter][weight_attr], m)
-                        key_max[transmitter][weight_attr][key] = m
-                        glob_max = max(glob_max, m)
+            max_s = np.array(max_s)
+            min_s = np.array(min_s)
 
-            if min_max_mode == 'Global':
-                max_w = glob_max
+            if len(max_s) > 0:
+                if max_mode == 'global max':
+                    max_s[:] = np.max(max_s)
+                elif max_mode == 'single max':
+                    max_s[:] = max_s[:]
+                else:
+                    max_s[:] = float(max_mode)
 
-            for transmitter in syn_dict:
+                if min_mode == 'global min':
+                    min_s[:] = np.max(min_s)
+                elif min_mode == 'single min':
+                    min_s[:] = min_s[:]
+                else:
+                    min_s[:] = float(min_mode)
 
-                if min_max_mode == 'Transmitter':
-                    max_w = tr_max[transmitter]
+            for data, ma, mi, tags in zip(syns, max_s, min_s, syn_tags):
+                image = self.main_plot.add_image()
+                image.setImage(data, levels=(mi, ma))
+                text = self.main_plot.add_text(str(tags))
 
-                for image, plot in self.transmitter_weight_images[transmitter]:
-                    plot.setTitle('')
-                    image.clear()
-
-                i = 0
-                for weight_attr in syn_dict[transmitter]:
-
-                    if min_max_mode == 'Variable':
-                        max_w = var_max[transmitter][weight_attr]
-
-                    for key in syn_dict[transmitter][weight_attr]:
-
-                        if min_max_mode == 'Single block':
-                            max_w = key_max[transmitter][weight_attr][key]
-
-                        self.transmitter_weight_images[transmitter][i][1].setTitle(key+' '+weight_attr) #1=plot
-
-                        self.transmitter_weight_images[transmitter][i][0].setImage(np.rot90(syn_dict[transmitter][weight_attr][key], 3), levels=(0, max_w)) #0=image item
-                        i += 1
+                text.setPos(0, c+10)
+                image.setRect(0, c-data.shape[1], data.shape[0], data.shape[1])
+                c -= data.shape[1] + 20

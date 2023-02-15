@@ -382,10 +382,10 @@ class Module_draw_item(pg.GraphicsObject):
 
     def boundingRect(self):
         br = self.picture.boundingRect()
-        br.setLeft(self.x)  # min(br.top()-10, br.left()-10)
-        br.setTop(-self.y+self.border*self.size)#max(br.top()-10, br.left()-10)
-        br.setRight(self.x+self.size)#,max(br.right()+10, br.bottom()+10)
-        br.setBottom(-self.y+self.size-self.border*self.size)#,max(br.right()+10, br.bottom()+10)
+        br.setLeft(int(self.x))  # min(br.top()-10, br.left()-10)
+        br.setTop(int(-self.y+self.border*self.size))#max(br.top()-10, br.left()-10)
+        br.setRight(int(self.x+self.size))#,max(br.right()+10, br.bottom()+10)
+        br.setBottom(int(-self.y+self.size-self.border*self.size))#,max(br.right()+10, br.bottom()+10)
 
         #for p in self.conn_points:
         #    if p.x() < br.left(): br.setLeft(p.x())
@@ -520,7 +520,7 @@ def analyze_module_and_get_info(module):
 class module_drawer(UI_Base):
 
     def __init__(self):
-        super().__init__(None, label='Drawer', create_sidebar=False)
+        super().__init__(title='Drawer', create_sidebar=False)
 
         pg.setConfigOptions(antialias=True)
 
@@ -529,8 +529,8 @@ class module_drawer(UI_Base):
         self.di_modules = []
 
     def add_flow_chart(self, ff_only=False):
-        self.flow_tab = self.Next_Tab('Flow_Chart', stretch=0.0)
-        self.flow_tab.plot = self.Add_plot()
+        self.flow_tab = self.add_tab('Flow_Chart', stretch=0)
+        self.flow_tab.plot = self.tab.add_plot()
         self.flow_tab.plot.hideAxis('bottom')
         self.flow_tab.plot.hideAxis('left')
         self.flow_tab.modules = []
@@ -578,8 +578,8 @@ class module_drawer(UI_Base):
 
     def add_module_tab(self, module_name, inputs, outputs, attributes, module_type):
 
-        self.main_tab = self.Next_Tab(module_name, stretch=0.0)
-        self.main_tab.plot = self.Add_plot()
+        self.main_tab = self.add_tab(module_name, stretch=0)
+        self.main_tab.plot = self.tab.add_plot()
 
         mdi = Module_draw_item(module_name, inputs, outputs, attributes, module_type)
         self.main_tab.draw_item = mdi

@@ -139,6 +139,8 @@ def set_score(score, info={}, sm=None):
         sm.save_param_dict(__evolution_genome__)
         sm.save_param_dict(info)
 
+    print('score set to:', score, info)
+
     __evo_name__ = None
     __evo_id__ = None
     __evo_generation__ = None

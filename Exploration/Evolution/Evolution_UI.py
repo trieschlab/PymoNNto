@@ -410,7 +410,7 @@ class QGeneTableWidget(QTableWidget):
                 genome = {}
                 for c in range(self.columnCount()):
                     gene_key = self.horizontalHeaderItem(c).text()
-                    gene_value = self.item(r, c).text()
+                    gene_value = float(self.item(r, c).text())
                     genome[gene_key] = gene_value
                 result.append(genome)
             return result

@@ -393,7 +393,7 @@ class Execution_Manager_UI_Base(UI_Base):
                         tab.process.close()
                         tab.process = None
 
-            stop_btn = self.tab.add_widget(QPushButton('stop evolution'))
+            stop_btn = self.tab.add_widget(QPushButton('stop'))
             stop_btn.clicked.connect(stop)
 
         #############################################################################################################
@@ -419,7 +419,8 @@ class Execution_Manager_UI_Base(UI_Base):
 
             zipDir(get_epc_folder(self.folder) + '/' + name, get_epc_folder(self.folder) + '/' + name + '.zip')
             shutil.rmtree(get_epc_folder(self.folder) + '/' + name + '/')
-            self.tabs.removeTab(self.tabs.currentIndex())
+            #self.tabs.removeTab(self.tabs.currentIndex())
+            self.remove_tab(tab)
 
             self.update_archive()
 
@@ -439,7 +440,8 @@ class Execution_Manager_UI_Base(UI_Base):
                     tab.process = None
 
             shutil.rmtree(get_epc_folder(self.folder) + '/' + name + '/')
-            self.tabs.removeTab(self.tabs.currentIndex())
+            self.remove_tab(tab)
+            #self.tabs.removeTab(self.tabs.currentIndex())
 
         remove_btn = self.tab.add_widget(QPushButton('remove'))
         remove_btn.clicked.connect(remove)

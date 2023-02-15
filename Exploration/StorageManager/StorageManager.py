@@ -397,8 +397,10 @@ class StorageManagerGroup:
         for param in params:
             if param in self.vp:
                 results.append(self.vp[param])#virtual parameter
+                #print(param, len((self.vp[param])))
             else:
                 results.append(np.array(self.get_param_list(param, section)))#stored parameter
+                #print(param, len(np.array(self.get_param_list(param, section))))
             remove*=(results[-1]!=None)*(results[-1]!=np.nan)
         results = np.array(results)
         if remove_None:

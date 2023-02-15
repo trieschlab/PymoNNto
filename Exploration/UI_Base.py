@@ -92,9 +92,16 @@ class UI_Base(QApplication):
         self.add_tab_grid(create_tab_grid=create_tab_grid)
 
 
+    def remove_tab(self, tab):
+        for tab_widget in self._tab_widgets:
+            indx = tab_widget.indexOf(tab)
+            if indx!=-1:
+                tab_widget.removeTab(indx)
+
     def add_tab_grid(self, create_tab_grid=True):
 
         self.tabs = MyTabWidget(new=True)
+        self._tab_widgets = [self.tabs]
 
         if not create_tab_grid:
             self.main_split.addWidget(self.tabs)
@@ -105,13 +112,16 @@ class UI_Base(QApplication):
             self.hsplit1 = QSplitter()
 
             self.tabs2 = MyTabWidget(new=True)
+            self._tab_widgets.append(self.tabs2)
             self.hsplit1.addWidget(self.tabs)
             self.hsplit1.addWidget(self.tabs2)
             self.hsplit1.setSizes([1, 0])
 
             self.hsplit2 = QSplitter()
             self.tabs3 = MyTabWidget(new=True)
+            self._tab_widgets.append(self.tabs3)
             self.tabs4 = MyTabWidget(new=True)
+            self._tab_widgets.append(self.tabs4)
             self.hsplit2.addWidget(self.tabs3)
             self.hsplit2.addWidget(self.tabs4)
             self.hsplit2.setSizes([1, 0])
@@ -589,9 +599,14 @@ class PymoNNto_PlotItem(PlotItem):
     def add_image(self):
         self.hideAxis('left')
         self.hideAxis('bottom')
-        image_item = pg.ImageItem(np.zeros((100, 100, 3)))
+        image_item = pg.ImageItem()#np.zeros((100, 100, 3))
         self.addItem(image_item)
         return image_item
+
+    def add_text(self, txt):
+        text_item = pg.TextItem(txt)
+        self.addItem(text_item)
+        return text_item
 
 
 class MyTabWidget(QTabWidget):

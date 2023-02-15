@@ -17,6 +17,9 @@ class Network(NetworkObjectBase):
 
         self.iteration = 0
 
+    @property
+    def tag(self):
+        return self.tags[0]
 
     def set_behaviours(self, tag, enabeled):
         if enabeled:

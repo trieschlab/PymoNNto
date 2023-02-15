@@ -18,6 +18,7 @@ class Behaviour_Parser_Object:
     same_name=None
     same_tag=None
     base_or_derivative=None
+    duplicates=None
 
     def __str__(self):
         return self.name+'('+self.md5_hash+')'
@@ -152,6 +153,7 @@ class Behaviour_UI(UI_Base):
             b.same_name=[b]
             b.same_tag=[]
             b.base_or_derivative=[]
+            b.duplicates=[]
             for b2 in self.behaviours:
                 if b is not b2:
                     if b.name==b2.name:
@@ -161,6 +163,8 @@ class Behaviour_UI(UI_Base):
                             b.same_tag.append(b2)
                     if b.base_class == b2.name or b.name == b2.base_class:
                         b.base_or_derivative.append(b2)
+                    if b.md5_hash==b2.md5_hash:
+                        b.duplicates.append(b2)
 
         self.update_file_list()
 
@@ -260,8 +264,6 @@ class Behaviour_UI(UI_Base):
         return search_found
 
     def update_file_list(self):
-
-
         self.beh_list.clear()
 
         last_file = ''
@@ -283,7 +285,11 @@ class Behaviour_UI(UI_Base):
 
                 count_info=''+str(len(b.same_name))+'|'+str(len(b.same_tag)-len(b.same_name)+1)+'|'+str(len(b.base_or_derivative))+''
 
-                item=QListWidgetItem('          '+count_info+'    '+b.name+'  ')
+                duplicates=''
+                if len(b.duplicates)>0:
+                    duplicates+='!'
+
+                item=QListWidgetItem('          '+count_info+'    '+b.name+'    '+duplicates)
                 item.bpo=b
                 self.beh_list.addItem(item)
 

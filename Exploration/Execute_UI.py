@@ -19,7 +19,7 @@ class Execute_UI(Execution_Manager_UI_Base):
         left_vertical_layout.addWidget(QLabel('slave file'))
         #left_vertical_layout.addWidget(QLabel('thread number'))
         #left_vertical_layout.addWidget(QLabel('python cmd'))
-        left_vertical_layout.addWidget(QLabel('runs'))
+        #left_vertical_layout.addWidget(QLabel('runs'))
 
 
         #self.slave_file_edit = QLineEdit('Exploration/Evolution/example_slave.py')
@@ -29,7 +29,7 @@ class Execute_UI(Execution_Manager_UI_Base):
 
         #self.thread_number_edit = QLineEdit('4')
         #self.python_cmd_edit = QLineEdit("python")
-        self.run_count_edit = QLineEdit('10')
+        #self.run_count_edit = QLineEdit('10')
 
         #vertical_layout = QVBoxLayout()
         #horizontal_layout.addLayout(vertical_layout)
@@ -51,7 +51,7 @@ class Execute_UI(Execution_Manager_UI_Base):
 
         #right_vertical_layout.addWidget(self.thread_number_edit)
         #right_vertical_layout.addWidget(self.python_cmd_edit)
-        right_vertical_layout.addWidget(self.run_count_edit)
+        #right_vertical_layout.addWidget(self.run_count_edit)
 
         ec_label=QLabel(u"\u24D8 " + 'Execution code:')
         ec_label.setToolTip("file_exec({'gene1': 1, ...})")
@@ -60,7 +60,7 @@ class Execute_UI(Execution_Manager_UI_Base):
         #self.Add_element(ec_label, sidebar=True, stretch=0)
 
         self.qte = QTextEdit()
-        self.qte.setPlainText("""for _ in range(#runs#):
+        self.qte.setPlainText("""for _ in range(100):
         	file_exec({})
 """)
         self.sidebar.add_widget(self.qte, stretch=100)
@@ -76,7 +76,7 @@ class Execute_UI(Execution_Manager_UI_Base):
                 self.set_text(ssm, self.task_name_edit, 'name')
                 self.set_text(ssm, self.slave_file_edit, 'slave_file')
                 #self.set_text(ssm, self.thread_number_edit, 'thread_number')
-                self.set_text(ssm, self.run_count_edit, 'run_count')
+                #self.set_text(ssm, self.run_count_edit, 'run_count')
                 #self.set_text(ssm, self.python_cmd_edit, 'python_cmd')
 
     def get_help_txt(self):
@@ -129,7 +129,7 @@ def file_exec(genes):
         exec_file = exec_file.replace('#name#', name)
         exec_file = exec_file.replace('#file#', self.slave_file_edit.text())
         #exec_file = exec_file.replace('#thread_number#', self.thread_number_edit.text())
-        exec_file = exec_file.replace('#runs#', self.run_count_edit.text())
+        #exec_file = exec_file.replace('#runs#', self.run_count_edit.text())
 
         md_file = open(file, "w")
         md_file.write(exec_file)
@@ -139,7 +139,7 @@ def file_exec(genes):
     def save_configuration(self, ssm):#SimpleStorageManager
         ssm.save_param('slave_file', self.slave_file_edit.text())
         #ssm.save_param('thread_number', self.thread_number_edit.text())
-        ssm.save_param('run_count', self.run_count_edit.text())
+        #ssm.save_param('run_count', self.run_count_edit.text())
         #ssm.save_param('python_cmd', self.python_cmd_edit.text())
 
 
