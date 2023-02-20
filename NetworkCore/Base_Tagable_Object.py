@@ -83,13 +83,7 @@ class TaggableObjectBase:
             return result
 
     def add_tag(self, tag):
-        tag = tag.replace(' ', '')
         for subtag in tag.split(','):
-            allowed = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ_'
-            for c in subtag:
-                if c not in allowed:
-                    subtag = subtag.replace(c, '')
-                    print('Warning: do not use "'+c+'" in tags.')
             self.tags.append(subtag)
         return self
 

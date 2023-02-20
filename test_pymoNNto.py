@@ -54,6 +54,7 @@ def test_basics():
     NeuronGroup(net=net, tag='neurons', size=100, behaviour={})
     NeuronGroup(net=net, tag='neurons2', size=50, behaviour={})
     SynapseGroup(net=net, tag='syn', src='neurons', dst='neurons2', behaviour={})
+
     net.initialize()
 
     zero_vec = net.neurons.vector()
