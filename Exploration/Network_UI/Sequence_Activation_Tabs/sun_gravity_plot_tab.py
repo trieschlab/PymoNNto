@@ -272,7 +272,7 @@ class DrawItem2(pg.GraphicsObject):
                 tag = self.label_cb.get_selected_key()
                 module = self.label_cb.get_selected_module()
                 res = self.label_cb.get_selected_result()
-                generator = group.network['Text_Generator', 0]
+                generator = group.network['TextGenerator', 0]
                 colors = self.get_neuron_color(group)
 
                 if tag in self.label_cb.current_modules and module is not None and generator is not None:
@@ -314,7 +314,7 @@ class DrawItem2(pg.GraphicsObject):
         for group in nui.network.NeuronGroups:
             if hasattr(group, 'Input_Weights'):
                 self.fixate_points(group, alphabet, group.Input_Weights)
-            #self.fixate_points(group, alphabet, group['Text_Activator',0].mat)
+            #self.fixate_points(group, alphabet, group['TextActivator',0].mat)
 
         #for group in groups:
         #    self.initialize_neuron_positons(group)
@@ -382,7 +382,7 @@ class sun_gravity_plot_tab(TabBase):
 
     def initialize(self, Network_UI):
         self.sun_gravity_plot_tab=None
-        if Network_UI.network['Text_Generator', 0]:# is not None or Network_UI.network['grammar_act', 0] is not None or Network_UI.network['drum_act', 0] is not None or Network_UI.network['music_act', 0] is not None:
+        if Network_UI.network['TextGenerator', 0]:# is not None or Network_UI.network['grammar_act', 0] is not None or Network_UI.network['drum_act', 0] is not None or Network_UI.network['music_act', 0] is not None:
             self.sun_gravity_plot_tab = Network_UI.add_tab(title=self.title) #Network_UI.Next_Tab(self.title)
 
             #alphabet = Network_UI.network['grammar_act'][0].alphabet
@@ -458,7 +458,7 @@ class sun_gravity_plot_tab(TabBase):
             self.sl1.setMaximum(1000)
             self.sl1.setSliderPosition(100)
             self.sl1.label = QLabel('Speed:')
-            Network_UI.tab.add_widget(self.sl1.label)
+            Network_UI.tab.add_widget(self.sl1.label, stretch=0)
             Network_UI.tab.add_widget(self.sl1, stretch=10)
 
             self.sl2 = QSlider(1)
@@ -466,7 +466,7 @@ class sun_gravity_plot_tab(TabBase):
             self.sl2.setMaximum(3000)
             self.sl2.setSliderPosition(100)
             self.sl2.label = QLabel('Anti gravity:')
-            Network_UI.tab.add_widget(self.sl2.label)
+            Network_UI.tab.add_widget(self.sl2.label, stretch=0)
             Network_UI.tab.add_widget(self.sl2, stretch=10)
 
             self.sl3 = QSlider(1)
@@ -474,7 +474,7 @@ class sun_gravity_plot_tab(TabBase):
             self.sl3.setMaximum(100)
             self.sl3.setSliderPosition(0)
             self.sl3.label = QLabel('Noise:')
-            Network_UI.tab.add_widget(self.sl3.label)
+            Network_UI.tab.add_widget(self.sl3.label, stretch=0)
             Network_UI.tab.add_widget(self.sl3, stretch=10)
 
             self.sl4 = QSlider(1)
@@ -482,7 +482,7 @@ class sun_gravity_plot_tab(TabBase):
             self.sl4.setMaximum(500)
             self.sl4.setSliderPosition(100)
             self.sl4.label = QLabel('W^:')
-            Network_UI.tab.add_widget(self.sl4.label)
+            Network_UI.tab.add_widget(self.sl4.label, stretch=0)
             Network_UI.tab.add_widget(self.sl4, stretch=10)
 
             self.sl5 = QSlider(1)
@@ -490,7 +490,7 @@ class sun_gravity_plot_tab(TabBase):
             self.sl5.setMaximum(100)
             self.sl5.setSliderPosition(0)
             self.sl5.label = QLabel('Ring attraction:')
-            Network_UI.tab.add_widget(self.sl5.label)
+            Network_UI.tab.add_widget(self.sl5.label, stretch=0)
             Network_UI.tab.add_widget(self.sl5, stretch=10)
 
             Network_UI.tab.add_row()
@@ -501,7 +501,7 @@ class sun_gravity_plot_tab(TabBase):
             self.sl0.setMaximum(100)
             self.sl0.setSliderPosition(50)
             self.sl0.label = QLabel('Size:')
-            Network_UI.tab.add_widget(self.sl0.label)
+            Network_UI.tab.add_widget(self.sl0.label, stretch=0)
             Network_UI.tab.add_widget(self.sl0, stretch=10)
 
             self.weight_plot_cb = QCheckBox()
@@ -521,8 +521,8 @@ class sun_gravity_plot_tab(TabBase):
 
         if self.sun_gravity_plot_tab is not None and self.sun_gravity_plot_tab.isVisible():
 
-            if Network_UI.network['Text_Generator', 0] is not None:
-                self.draw_item.update_pic(groups, Network_UI.network['Text_Generator', 0].alphabet, Network_UI, Network_UI.network['Text_Generator', 0].count_chars_in_blocks(), self.weight_plot_cb.isChecked())
+            if Network_UI.network['TextGenerator', 0] is not None:
+                self.draw_item.update_pic(groups, Network_UI.network['TextGenerator', 0].alphabet, Network_UI, Network_UI.network['TextGenerator', 0].count_chars_in_blocks(), self.weight_plot_cb.isChecked())
                 self.plot.update()
 
             '''

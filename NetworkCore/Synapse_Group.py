@@ -19,11 +19,13 @@ class SynapseGroup(NetworkObjectBase):
         self.add_tag('syn')
 
         if len(src.tags) > 0 and len(dst.tags) > 0:
-            self.add_tag(src.tags[0]+' => '+dst.tags[0])
+            self.add_tag(src.tags[0]+'_to_'+dst.tags[0])
 
         if net is not None:
             net.SynapseGroups.append(self)
-            setattr(net, self.tags[0], self)
+            for tag in self.tags:
+                if not hasattr(net, tag):
+                    setattr(net, tag, self)
 
         self.recording = True
 
@@ -42,6 +44,10 @@ class SynapseGroup(NetworkObjectBase):
         setattr(self,key,value)
         return self
 
+    @property
+    def def_dtype(self):
+        return self.network.def_dtype
+
     def get_synapse_mat_dim(self):
         return self.dst.size, self.src.size
 
@@ -54,17 +60,22 @@ class SynapseGroup(NetworkObjectBase):
                 result[i, synapses] = np.random.rand(len(synapses))
         return result#*np.random.rand(dim)
 
-    def get_synapse_mat(self, mode='zeros()', scale=None, density=None, only_enabled=True, clone_along_first_axis=False, plot=False, kwargs={}, args=[]):# mode in ['zeros', 'zeros()', 'ones', 'ones()', 'uniform(...)', 'lognormal(...)', 'normal(...)']
-        result = self._get_mat(mode=mode, dim=(self.get_synapse_mat_dim()), scale=scale, density=density, plot=plot, kwargs=kwargs, args=args)
+    def get_synapse_mat(self, mode='zeros()', scale=None, density=None, plot=False):
+        return self._get_mat(mode=mode, dim=(self.get_synapse_mat_dim()), scale=scale, density=density, plot=plot)
 
-        if clone_along_first_axis:
-            result = np.array([result[0] for _ in range(self.get_synapse_mat_dim()[0])])
+    matrix = get_synapse_mat
+    mat = get_synapse_mat
 
-        if only_enabled:
-            result *= self.enabled
+    #def get_synapse_mat(self, mode='zeros()', scale=None, density=None, only_enabled=True, clone_along_first_axis=False, plot=False, kwargs={}, args=[]):# mode in ['zeros', 'zeros()', 'ones', 'ones()', 'uniform(...)', 'lognormal(...)', 'normal(...)']
+    #    result = self._get_mat(mode=mode, dim=(self.get_synapse_mat_dim()), scale=scale, density=density, plot=plot, kwargs=kwargs, args=args)
 
-        return result
+    #    if clone_along_first_axis:
+    #        result = np.array([result[0] for _ in range(self.get_synapse_mat_dim()[0])])
 
+    #    if only_enabled:
+    #        result *= self.enabled
+
+    #    return result
 
     def get_synapse_group_size_factor(self, synapse_group, synapse_type):
 

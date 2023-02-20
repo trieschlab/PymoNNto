@@ -1,7 +1,5 @@
 import numpy as np
 
-def_dtype = np.float64
-
 class TaggableObjectBase:
 
     def __init__(self, tag):
@@ -12,6 +10,10 @@ class TaggableObjectBase:
             self.add_tag(tag)
         self.add_tag(self.__class__.__name__)
         self._searching = False
+
+    @property
+    def tag(self):
+        return self.tags[0]
 
     def has_module(self, tag):
         return self[tag, 0] is not None
@@ -81,7 +83,13 @@ class TaggableObjectBase:
             return result
 
     def add_tag(self, tag):
+        tag = tag.replace(' ', '')
         for subtag in tag.split(','):
+            allowed = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ_'
+            for c in subtag:
+                if c not in allowed:
+                    subtag = subtag.replace(c, '')
+                    print('Warning: do not use "'+c+'" in tags.')
             self.tags.append(subtag)
         return self
 

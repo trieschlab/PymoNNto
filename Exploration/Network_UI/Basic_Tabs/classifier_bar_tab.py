@@ -30,7 +30,7 @@ class classifier_bar_tab(TabBase):
         self.class_tag_dict = None
 
         def on_new_label_selected(group, module, key, labels):
-            generator = group.network['Text_Generator', 0]
+            generator = group.network['TextGenerator', 0]
             if hasattr(group, 'classification') and module is not None and generator is not None:
                 self.class_tag_dict = module.get_class_labels(key, group.classification, generator)
 

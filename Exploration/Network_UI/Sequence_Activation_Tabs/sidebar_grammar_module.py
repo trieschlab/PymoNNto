@@ -22,14 +22,14 @@ class sidebar_module_quick_access(TabBase):
             self.stdp_cb.stateChanged.connect(learning_on_off)
             Network_UI.Add_Sidebar_Element(self.stdp_cb)
 
-        if Network_UI.network['Text_Activator', 0] is not None:
+        if Network_UI.network['TextActivator', 0] is not None:
             def activator_on_off(event):
-                Network_UI.network['Text_Activator', 0].behaviour_enabled = self.act_cb.isChecked()
-                Network_UI.add_event('Text_Activator (' + str(self.act_cb.isChecked()) + ')')
+                Network_UI.network['TextActivator', 0].behaviour_enabled = self.act_cb.isChecked()
+                Network_UI.add_event('TextActivator (' + str(self.act_cb.isChecked()) + ')')
 
             self.act_cb = QCheckBox()
             self.act_cb.setText('Text input:')
-            self.act_cb.setChecked(Network_UI.network['Text_Activator',0].behaviour_enabled)
+            self.act_cb.setChecked(Network_UI.network['TextActivator',0].behaviour_enabled)
             self.act_cb.stateChanged.connect(activator_on_off)
             Network_UI.Add_Sidebar_Element(self.act_cb)
 
@@ -42,7 +42,7 @@ class sidebar_grammar_module_new(TabBase):
 
     def initialize(self, Network_UI):
 
-        if Network_UI.network['Text_Activator', 0] is not None:
+        if Network_UI.network['TextActivator', 0] is not None:
             self.inp_text_label = QLabel(Network_UI.main_window)
             Network_UI.sidebar.add_widget(self.inp_text_label, stretch=2)
             #Network_UI.Add_Sidebar_Element()
@@ -50,7 +50,7 @@ class sidebar_grammar_module_new(TabBase):
             self.inp_text_label.setFont(QFont("Courier"))
             self.inp_text_label.setToolTip('current network input')
 
-        if Network_UI.network['Text_Reconstructor', 0] is not None:
+        if Network_UI.network['TextReconstructor', 0] is not None:
             rl = QLabel(Network_UI.main_window)
             Network_UI.sidebar.add_widget(rl, stretch=2)
             #Network_UI.Add_Sidebar_Element(rl, stretch=2)
@@ -65,15 +65,15 @@ class sidebar_grammar_module_new(TabBase):
 
     def update(self, Network_UI):
 
-        if Network_UI.network['Text_Generator', 0] is not None and Network_UI.network['Text_Activator', 0] is not None:
-            if Network_UI.network['Text_Activator', 0].behaviour_enabled:
-                inp_text = Network_UI.network['Text_Generator', 0].history[-self.text_length:]
+        if Network_UI.network['TextGenerator', 0] is not None and Network_UI.network['TextActivator', 0] is not None:
+            if Network_UI.network['TextActivator', 0].behaviour_enabled:
+                inp_text = Network_UI.network['TextGenerator', 0].history[-self.text_length:]
             else:
                 inp_text = 'deactivated'
             self.inp_text_label.setText(inp_text)
 
-        if Network_UI.network['Text_Reconstructor', 0] is not None:
-            recon_text = Network_UI.network['Text_Reconstructor', 0].reconstruction_history[-self.text_length:]
+        if Network_UI.network['TextReconstructor', 0] is not None:
+            recon_text = Network_UI.network['TextReconstructor', 0].reconstruction_history[-self.text_length:]
             self.recon_text_label.setText(recon_text)
 '''
 
@@ -92,7 +92,7 @@ class sidebar_grammar_module(TabBase):
         #    Network_UI.add_recording_variable(neuron_group, 'n.output', timesteps=100)
 
     def initialize(self, Network_UI):
-        if Network_UI.network['grammar_act', 0] is not None or Network_UI.network['Text_Activator', 0] is not None:
+        if Network_UI.network['grammar_act', 0] is not None or Network_UI.network['TextActivator', 0] is not None:
 
             self.grammar_tab = Network_UI.Next_Tab('text analysis')
 
@@ -113,8 +113,8 @@ class sidebar_grammar_module(TabBase):
             def grammar_activator_on_off(event):
                 if Network_UI.network['grammar_act', 0] is not None:
                     Network_UI.network['grammar_act', 0].behaviour_enabled = self.input_select_box.currentText() != 'None'
-                if Network_UI.network['Text_Activator', 0] is not None:
-                    Network_UI.network['Text_Activator', 0].behaviour_enabled = self.input_select_box.currentText() != 'None'
+                if Network_UI.network['TextActivator', 0] is not None:
+                    Network_UI.network['TextActivator', 0].behaviour_enabled = self.input_select_box.currentText() != 'None'
 
             self.input_select_box = QComboBox()
             self.input_select_box.addItem("Grammar Act.")

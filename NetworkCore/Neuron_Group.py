@@ -38,7 +38,9 @@ class NeuronGroup(NetworkObjectBase):
 
         if net is not None:
             net.NeuronGroups.append(self)
-            setattr(net, self.tags[0], self)
+            for tag in self.tags:
+                if not hasattr(net, tag):
+                    setattr(net, tag, self)
 
         self.afferent_synapses = {} #set by Network
         self.efferent_synapses = {}
@@ -53,6 +55,10 @@ class NeuronGroup(NetworkObjectBase):
         if color is not None:
             self.color = color
 
+    @property
+    def def_dtype(self):
+        return self.network.def_dtype
+
     def require_synapses(self, name, afferent=True, efferent=True, warning=True):
         if afferent and not name in self.afferent_synapses:
             if warning:
@@ -64,8 +70,16 @@ class NeuronGroup(NetworkObjectBase):
                 print('warning: no efferent {} synapses found'.format(name))
             self.efferent_synapses[name] = []
 
-    def get_neuron_vec(self, mode='zeros()', scale=None, density=None, plot=False, kwargs={}, args=[]):# mode in ['zeros', 'zeros()', 'ones', 'ones()', 'uniform(...)', 'lognormal(...)', 'normal(...)', ...]
-        return self._get_mat(mode=mode, dim=(self.size), scale=scale, density=density, plot=plot, kwargs=kwargs, args=args)
+
+    def get_neuron_vec(self, mode='zeros()', scale=None, density=None, plot=False):
+        return self._get_mat(mode=mode, dim=(self.size), scale=scale, density=density, plot=plot)
+    
+    vector = get_neuron_vec
+    vec = get_neuron_vec
+    array = get_neuron_vec
+
+    #def get_neuron_vec(self, mode='zeros()', scale=None, density=None, plot=False, kwargs={}, args=[]):# mode in ['zeros', 'zeros()', 'ones', 'ones()', 'uniform(...)', 'lognormal(...)', 'normal(...)', ...]
+    #    return self._get_mat(mode=mode, dim=(self.size), scale=scale, density=density, plot=plot, kwargs=kwargs, args=args)
 
     def get_neuron_vec_buffer(self, buffer_size):
         return self.get_buffer_mat((self.size), buffer_size)

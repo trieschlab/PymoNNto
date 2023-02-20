@@ -26,6 +26,8 @@ def rotation_matrix(axis, theta):
                      [2 * (bc - ad), aa + cc - bb - dd, 2 * (cd + ab)],
                      [2 * (bd + ac), 2 * (cd - ab), aa + dd - bb - cc]])
 
+
+
 def get_squared_dim(number_of_neurons, depth=1, round_up=True):
 
     divider=int(np.trunc(np.sqrt(number_of_neurons)))
@@ -42,6 +44,10 @@ def get_squared_dim(number_of_neurons, depth=1, round_up=True):
     print('set group size to', w, 'x', h)
     return NeuronDimension(width=w, height=h, depth=depth)
 
+#different names:
+getGrid=get_squared_dim
+
+
 
 class NeuronDimension(Behaviour):#width height depth
 
@@ -51,9 +57,9 @@ class NeuronDimension(Behaviour):#width height depth
     #    super().__init__()
 
     def set_positions(self, width=1, height=1, depth=1):
-        self.neurons.x = np.array([i%width for i in range(self.neurons.size)]).astype(def_dtype)
-        self.neurons.y = np.array([np.floor(i/width)%height for i in range(self.neurons.size)]).astype(def_dtype)
-        self.neurons.z = np.array([np.floor(i/(width*height)) for i in range(self.neurons.size)]).astype(def_dtype)
+        self.neurons.x = np.array([i%width for i in range(self.neurons.size)]).astype(self.def_dtype)
+        self.neurons.y = np.array([np.floor(i/width)%height for i in range(self.neurons.size)]).astype(self.def_dtype)
+        self.neurons.z = np.array([np.floor(i/(width*height)) for i in range(self.neurons.size)]).astype(self.def_dtype)
 
     def get_area_mask(self, xmin=0, xmax=-1, ymin=0, ymax=-1, zmin=0, zmax=-1):
         if xmax < 1: xmax = self.width - xmax
@@ -131,6 +137,7 @@ class NeuronDimension(Behaviour):#width height depth
 
 
     def set_variables(self, neurons):
+        self.def_dtype=neurons.def_dtype
         self.width = self.get_init_attr('width', 1, neurons)
         self.height = self.get_init_attr('height', 1, neurons)
         self.depth = self.get_init_attr('depth', 1, neurons)
@@ -157,6 +164,8 @@ class NeuronDimension(Behaviour):#width height depth
     def new_iteration(self, neurons):
         return
 
-
+#different names
+Grid = NeuronDimension
+NeuronGrid = NeuronDimension
 
 

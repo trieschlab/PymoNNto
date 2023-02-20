@@ -43,6 +43,11 @@ class NetworkObjectBase(TaggableObjectBase):
         if type(behaviour) == list:
             self.behaviour = dict(zip(range(len(self.behaviour)), self.behaviour))
 
+        for b in self.behaviour.values():
+            for tag in b.tags:
+                if not hasattr(self, tag):
+                    setattr(self, tag, b)
+
         for k in sorted(list(self.behaviour.keys())):
             if self.behaviour[k].set_variables_on_init:
                 network._set_variables_check(self, k)
@@ -133,6 +138,61 @@ class NetworkObjectBase(TaggableObjectBase):
     def get_nparray(self, dim):
         return np.zeros(dim).astype(def_dtype)
 
+    def _get_mat(self, mode, dim, density=None, scale=None, plot=False):
+        if mode not in self._mat_eval_dict:
+            ev_str = mode
+
+            cast = True
+
+            if ev_str == bool or ev_str == 'bool':
+                cast = False
+                ev_str = 'zeros(dtype=bool)'
+
+            if ev_str == int or ev_str == 'int':
+                cast = False
+                ev_str = 'zeros(dtype=int)'
+
+            if ev_str == 'random' or ev_str == 'rand' or ev_str == 'rnd':
+                ev_str = 'uniform'
+
+            if type(ev_str) == int or type(ev_str) == float:
+                ev_str = str(ev_str)+'*ones()'
+
+            if '(' not in ev_str and ')' not in ev_str:
+                ev_str += '()'
+
+            if 'zeros' in ev_str or 'ones' in ev_str:
+                a1 = 'shape=dim'
+            else:
+                a1 = 'size=dim'
+
+            ev_str = ev_str.replace(')', ',' + a1 + ')')
+            ev_str = ev_str.replace('(,', '(')
+
+            if cast:
+                ev_str += '.astype(self.def_dtype)'
+
+            self._mat_eval_dict[mode] = compile(ev_str, '<string>', 'eval')
+
+        result = eval(self._mat_eval_dict[mode])
+
+        if density is not None:
+            if type(density) == int or type(density) == float:
+                result = (result * (random_sample(dim) <= density))
+            elif type(density) is np.ndarray:
+                result = (result * (random_sample(dim) <= density[:, None]))
+
+        if scale is not None:
+            result *= scale
+
+        if plot:
+            import matplotlib.pyplot as plt
+            plt.hist(result.flatten(), bins=50)
+            plt.show()
+
+        return result
+
+    '''
     def _get_mat(self, mode, dim, scale=None, density=None, plot=False, kwargs={}, args=[]): # mode in ['zeros', 'zeros()', 'ones', 'ones()', 'uniform(...)', 'lognormal(...)', 'normal(...)']
 
         if mode == 'random' or mode == 'rand' or mode == 'rnd':
@@ -175,7 +235,7 @@ class NetworkObjectBase(TaggableObjectBase):
             plt.show()
 
         return result.astype(def_dtype)
-
+    '''
 
     def get_random_nparray(self, dim, density=None, clone_along_first_axis=False, rnd_code=None):#rnd_code=random_sample(dim)
         if rnd_code is None:

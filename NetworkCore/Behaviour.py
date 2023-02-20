@@ -118,7 +118,10 @@ class Behaviour(TaggableObjectBase):
 
         return result
 
-
+    kwargs = get_init_attr
+    args = get_init_attr
+    parameter = get_init_attr
+    argument = get_init_attr
 
     def visualize_module(self, vmi=None, vmo=None, vma=None):
         from PymoNNto.Exploration.Visualization import Module_visualizer as drawer

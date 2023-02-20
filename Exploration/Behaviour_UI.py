@@ -3,6 +3,9 @@ import os
 import time
 import numpy as np
 from PymoNNto.Exploration.StorageManager.StorageManager import *
+from PymoNNto.Exploration.UI_Base import *
+from PymoNNto.Exploration.Network_UI.Basic_Tabs.Helper.syntax import *
+
 
 class Behaviour_Parser_Object:
     md5_hash=''
@@ -94,8 +97,7 @@ def get_behaviours(file, base_classes=['Behaviour']):
 
 
 
-from PymoNNto.Exploration.UI_Base import *
-from PymoNNto.Exploration.Network_UI.Basic_Tabs.Helper.syntax import *
+
 
 class Behaviour_UI(UI_Base):
 

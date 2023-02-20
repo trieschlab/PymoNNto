@@ -9,7 +9,8 @@ import sys
 
 class Network(NetworkObjectBase):
 
-    def __init__(self, tag=None, behaviour={}):
+    def __init__(self, tag=None, behaviour={}, def_dtype=np.float32):
+        self.def_dtype = def_dtype
         super().__init__(tag, self, behaviour)
 
         self.NeuronGroups = []
@@ -17,9 +18,6 @@ class Network(NetworkObjectBase):
 
         self.iteration = 0
 
-    @property
-    def tag(self):
-        return self.tags[0]
 
     def set_behaviours(self, tag, enabeled):
         if enabeled:

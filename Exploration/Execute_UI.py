@@ -1,5 +1,6 @@
 from PymoNNto.Exploration.Evolution.common_UI import *
 from PymoNNto.Exploration.Evolution.PlotQTObjects import *
+from PymoNNto.Exploration.Network_UI.Basic_Tabs.Helper.syntax import *
 
 class Execute_UI(Execution_Manager_UI_Base):
 
@@ -59,10 +60,17 @@ class Execute_UI(Execution_Manager_UI_Base):
         self.sidebar.add_widget(ec_label, stretch=0)
         #self.Add_element(ec_label, sidebar=True, stretch=0)
 
-        self.qte = QTextEdit()
+        self.qte = QPlainTextEdit()
+
+        self.qte.highlight = PythonHighlighter(self.qte.document(), ['neurons', 'synapses', 'network', 'file_exec'])
+        font = QFont()
+        font.setPointSize(9)
+        self.qte.setFont(font)
+
         self.qte.setPlainText("""for _ in range(100):
-        	file_exec({})
+    file_exec({})
 """)
+        self.qte.setStyleSheet("QPlainTextEdit { background-color: rgb(43, 43, 43); }")
         self.sidebar.add_widget(self.qte, stretch=100)
         #self.Add_element(self.qte, sidebar=True, stretch=100)
 

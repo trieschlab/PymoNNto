@@ -1,3 +1,4 @@
+import numpy as np
 from PymoNNto.NetworkCore.Network import *
 from PymoNNto.NetworkCore.Behaviour import *
 from PymoNNto.NetworkCore.Neuron_Group import *
@@ -47,6 +48,64 @@ def get_sample_network():
 
     return My_Network, My_Neurons, My_Synapses, sm
 
+
+def test_basics():
+    net = Network()
+    NeuronGroup(net=net, tag='neurons', size=100, behaviour={})
+    NeuronGroup(net=net, tag='neurons2', size=50, behaviour={})
+    SynapseGroup(net=net, tag='syn', src='neurons', dst='neurons2', behaviour={})
+    net.initialize()
+
+    zero_vec = net.neurons.vector()
+
+    one_vec = net.neurons.vector(1)
+    m10_vec = net.neurons.vector(-10)
+
+    bool_vec = net.neurons.vector(bool)
+    int_vec = net.neurons.vector(int)
+
+    uni_vec = net.neurons.vector('uniform')#, plot=True
+    rnd_vec = net.neurons.vector('random')#, plot=True
+    log_vec = net.neurons.vector('lognormal(mean=1, sigma=1)')#, plot=True
+    norm_vec = net.neurons.vector('normal(loc=1,scale=1)')#, plot=True
+
+    assert len(zero_vec) == 100 and zero_vec[0] == 0
+    assert len(one_vec) == 100 and one_vec[0] == 1
+    assert len(m10_vec) == 100 and m10_vec[0] == -10
+
+    assert bool_vec[0] == False and bool_vec.dtype == bool
+    assert int_vec[0] == 0 and int_vec.dtype == int
+
+    assert len(uni_vec) == 100 and uni_vec[0]>=0 and uni_vec[0]<=1
+    assert len(rnd_vec) == 100 and rnd_vec[0]>=0 and rnd_vec[0]<=1
+    assert len(log_vec) == 100
+    assert len(norm_vec) == 100
+
+
+    zero_mat = net.syn.matrix()
+
+    one_mat = net.syn.matrix(1)
+    m10_mat = net.syn.matrix(-10)
+
+    bool_mat = net.syn.matrix(bool)
+    int_mat = net.syn.matrix(int)
+
+    uni_mat = net.syn.matrix('uniform')#, plot=True
+    rnd_mat = net.syn.matrix('random')#, plot=True
+    log_mat = net.syn.matrix('lognormal(mean=1, sigma=1)')#, plot=True
+    norm_mat = net.syn.matrix('normal(loc=1,scale=1)')#, plot=True
+
+    assert zero_mat.shape[0] == 50 and zero_mat.shape[1] == 100 and zero_mat[0, 0] == 0
+    assert one_mat.shape[0] == 50 and one_mat.shape[1] == 100 and one_mat[0, 0] == 1
+    assert m10_mat.shape[0] == 50 and m10_mat.shape[1] == 100 and m10_mat[0, 0] == -10
+
+    assert bool_mat[0, 0] == False and bool_mat.dtype == bool
+    assert int_mat[0, 0] == 0 and int_mat.dtype == int
+
+    assert uni_mat.shape[0] == 50 and uni_mat.shape[1] == 100 and uni_mat[0, 0]>=0 and uni_mat[0, 0]<=1
+    assert rnd_mat.shape[0] == 50 and rnd_mat.shape[1] == 100 and rnd_mat[0, 0]>=0 and rnd_mat[0, 0]<=1
+    assert log_mat.shape[0] == 50 and log_mat.shape[1] == 100
+    assert norm_mat.shape[0] == 50 and norm_mat.shape[1] == 100
 
 def test_behaviour_and_tagging():
     print()

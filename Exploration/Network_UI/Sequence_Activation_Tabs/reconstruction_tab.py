@@ -11,7 +11,7 @@ class reconstruction_tab(TabBase):
         return
 
     def initialize(self, Network_UI):
-        if Network_UI.network['Text_Activator', 0] and Network_UI.network['Text_Generator', 0] is not None:
+        if Network_UI.network['TextActivator', 0] and Network_UI.network['TextGenerator', 0] is not None:
             self.reconstruction_tab = Network_UI.add_tab(title=self.title) #Network_UI.Next_Tab(self.title)
 
             self.grid = QGridLayout()
@@ -19,8 +19,8 @@ class reconstruction_tab(TabBase):
             Network_UI.tab.get_layout().addLayout(self.grid)
             Network_UI.tab.get_layout().setAlignment(Qt.AlignTop)
 
-            generator = Network_UI.network['Text_Generator', 0]
-            source = Network_UI.network['Text_Activator', 0]
+            generator = Network_UI.network['TextGenerator', 0]
+            source = Network_UI.network['TextActivator', 0]
             self.labels = []
 
             for y, char in enumerate(generator.alphabet):
@@ -70,7 +70,7 @@ class reconstruction_tab(TabBase):
 
 
     def update(self, Network_UI):
-        if Network_UI.network['Text_Activator', 0] is not None and self.reconstruction_tab.isVisible():
+        if Network_UI.network['TextActivator', 0] is not None and self.reconstruction_tab.isVisible():
             group=Network_UI.selected_neuron_group()
 
             '''
@@ -79,8 +79,8 @@ class reconstruction_tab(TabBase):
             group.recon[Network_UI.selected_neuron_id()] = 1
             RALN.propagation('W', 10, 'backward', 'forget', 'all', temporal_recon_groups=Network_UI.network['prediction_source'], exponent=4, normalize=True, filter_weakest_percent=40.0)  # forget
 
-            generator = Network_UI.network['Text_Generator', 0]
-            source = Network_UI.network['Text_Activator', 0]
+            generator = Network_UI.network['TextGenerator', 0]
+            source = Network_UI.network['TextActivator', 0]
 
             for ng in Network_UI.network['prediction_source']:
                 baseline = ng.Input_Weights.transpose().dot(ng.temporal_recon[-1])
@@ -132,7 +132,7 @@ class reconstruction_tab(TabBase):
                         val = 255-np.clip(int((res[y, x]-(np.mean(res[y, :])/2.0))/m*255.0), 0, None)
                         self.labels[x][y].setText('<font color='+('#%02x%02x%02x' % (val, val, val)).upper()+'>'+self.labels[x][y].char.replace(' ','_')+'</font>')
 
-                text = generate_text_from_recon_mat(res, Network_UI.network['Text_Generator', 0])
+                text = generate_text_from_recon_mat(res, Network_UI.network['TextGenerator', 0])
 
                 if text is not None:
                     self.recon_text_label.setText(text)
@@ -150,8 +150,8 @@ class reconstruction_tab(TabBase):
 
 
 
-            generator = Network_UI.network['Text_Generator', 0]
-            source = Network_UI.network['Text_Activator', 0]
+            generator = Network_UI.network['TextGenerator', 0]
+            source = Network_UI.network['TextActivator', 0]
 
             for ng in Network_UI.network['prediction_source']:
                 baseline = ng.Input_Weights.transpose().dot(ng.temporal_recon[-1])
@@ -201,7 +201,7 @@ class reconstruction_tab(TabBase):
                         val = 255 - np.clip(int((res[y, x] - (np.mean(res[y, :]) / 2.0)) / m * 255.0), 0, None)
                         self.net_labels[x][y].setText('<font color=' + ('#%02x%02x%02x' % (val, val, val)).upper() + '>' + self.net_labels[x][y].char.replace(' ','_') + '</font>')
 
-                text = generate_text_from_recon_mat(res, Network_UI.network['Text_Generator', 0])
+                text = generate_text_from_recon_mat(res, Network_UI.network['TextGenerator', 0])
 
                 if text is not None:
                     self.net_recon_text_label.setText(text)
