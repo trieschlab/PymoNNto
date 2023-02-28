@@ -49,7 +49,7 @@ def set_partitioned_synapse_matrix(neurons, synapse_tag, synapse_var, mat):#warn
     for s in neurons.afferent_synapses[synapse_tag]:
         try:
             mask = s.dst.mask[:, None] * s.src.mask[None, :]
-            setattr(s, synapse_var, mat[mask].reshape(s.get_synapse_mat_dim()))
+            setattr(s, synapse_var, mat[mask].reshape(s.matrix_dim()))
         except:
             print(synapse_var, "cannot be set")
 
@@ -85,7 +85,7 @@ def get_single_neuron_combined_partition_matrix(neurons, synapse_tag, synapse_va
 
 #        try:
 #            mask = s.dst.mask[:, None] * s.src.mask[None, :]
-#            setattr(s, synapse_var, mat[mask].reshape(s.get_synapse_mat_dim()))
+#            setattr(s, synapse_var, mat[mask].reshape(s.matrix_dim()))
 #        except:
 #            print(synapse_var, "cannot be set")
 

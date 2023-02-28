@@ -23,7 +23,7 @@ ng = NeuronGroup(net=net, size=100, behaviour={
     3: Variable(eq='tau=100*ms'),
     4: Equation(eq='dv/dt=(0*mV-v)/tau'),
 
-    9: Recorder(['n.v', 'n.t'], tag='my_rec')
+    9: Recorder(['v', 't'], tag='my_rec')
 })
 
 net.initialize()
@@ -33,7 +33,7 @@ start_time=time_p.time()
 net.simulate_iterations('1000*ms')
 print('t2', time_p.time()-start_time)
 
-plot(net['n.t', 0], net['n.v', 0])
+plot(net['t', 0], net['v', 0])
 show()
 
 

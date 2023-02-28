@@ -613,13 +613,13 @@ def set_read_event_function(object, ref):
         if attr_name in ['wef', 'ref', 'current_dict'] or self.current_dict is None or attr_name in self.current_dict:
             return super().__getattribute__(attr_name)
         self.ref(self, attr_name)
-        return super().__getattribute__(attr_name)#self.get_neuron_vec('uniform')
+        return super().__getattribute__(attr_name)#self.vector('uniform')
 
     def __getattribute__(self, attr_name):
         if attr_name in ['wef', 'ref', 'current_dict'] or self.current_dict is None or attr_name in self.current_dict:
             return super().__getattribute__(attr_name)
         self.ref(self, attr_name)
-        return super().__getattribute__(attr_name)#self.get_neuron_vec('uniform')
+        return super().__getattribute__(attr_name)#self.vector('uniform')
 
     object.__getattr__ = __getattr__
     object.__getattribute__ = __getattribute__
@@ -655,13 +655,13 @@ class NeuronGroup_read_write_event(NeuronGroup):
         if attr_name in ['wef', 'ref', 'current_dict'] or self.current_dict is None or attr_name in self.current_dict:
             return super().__getattribute__(attr_name)
         self.ref(self, attr_name)
-        return super().__getattribute__(attr_name)#self.get_neuron_vec('uniform')
+        return super().__getattribute__(attr_name)#self.vector('uniform')
 
     def __getattribute__(self, attr_name):
         if attr_name in ['wef', 'ref', 'current_dict'] or self.current_dict is None or attr_name in self.current_dict:
             return super().__getattribute__(attr_name)
         self.ref(self, attr_name)
-        return super().__getattribute__(attr_name)#self.get_neuron_vec('uniform')
+        return super().__getattribute__(attr_name)#self.vector('uniform')
 
     def __setattr__(self, attr_name, val):
         if self.wef is not None:
@@ -686,13 +686,13 @@ class SynapseGroup_read_write_event(SynapseGroup):
         if attr_name in ['wef', 'ref', 'current_dict'] or self.current_dict is None or attr_name in self.current_dict:
             return super().__getattribute__(attr_name)
         self.ref(self, attr_name)
-        return super().__getattribute__(attr_name)#self.get_synapse_mat('uniform')
+        return super().__getattribute__(attr_name)#self.matrix('uniform')
 
     def __getattribute__(self, attr_name):
         if attr_name in ['wef', 'ref', 'current_dict'] or self.current_dict is None or attr_name in self.current_dict:
             return super().__getattribute__(attr_name)
         self.ref(self, attr_name)
-        return super().__getattribute__(attr_name)#self.get_synapse_mat('uniform')
+        return super().__getattribute__(attr_name)#self.matrix('uniform')
 
     def __setattr__(self, attr_name, val):
         if self.wef is not None:
@@ -736,12 +736,12 @@ def analyze_function(object, function_name, ng, sg, arg):
 
                     if 'SynapseGroup_read_write_event' in msg:
                         used_variable_keys_sg.append('s.'+key)
-                        var = sg.get_synapse_mat()
+                        var = sg.matrix()
                         setattr(sg, key, var)
 
                     elif 'NeuronGroup_read_write_event' in msg:
                         used_variable_keys_ng.append('n.'+key)
-                        var = ng.get_neuron_vec()
+                        var = ng.vector()
                         setattr(ng, key, var)
 
             elif str(error_type.__name__) == 'KeyError':

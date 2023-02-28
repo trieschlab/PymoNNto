@@ -61,13 +61,13 @@ class individual_weight_tab(TabBase):
             print('started')
             self.plot.clear()
 
-            self.key = 's.'+self.weight_attr+'['+str(self.neuron_index)+']'
+            self.key = self.weight_attr+'['+str(self.neuron_index)+']'
 
             self.checkboxes={}
             self.listWidget.clear()
 
             for s in group.afferent_synapses["All"]:
-                s.UI_recorder = Recorder([self.key, 's.iteration'], tag=self.rec_name, gapwidth=10, save_as_numpy=True)
+                s.UI_recorder = Recorder([self.key, 'iteration'], tag=self.rec_name, gapwidth=10, save_as_numpy=True)
                 s.add_behaviour(10001, s.UI_recorder)
                 #self.Network_UI.network.add_behaviours_to_object({10001: s.UI_recorder}, s)
 
@@ -100,7 +100,7 @@ class individual_weight_tab(TabBase):
                     print('recorder started')
                 if s.cb.checkState() == 2:
                     if s.UI_recorder.is_new_data_available():
-                        x_data = s.UI_recorder['s.iteration', 0]
+                        x_data = s.UI_recorder['iteration', 0]
                         y_data = s.UI_recorder[self.key, 0]
 
                         if len(x_data) > 0 and len(y_data) > 0:

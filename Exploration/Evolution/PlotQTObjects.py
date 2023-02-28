@@ -1,11 +1,19 @@
 from PymoNNto.Exploration.Network_UI.TabBase import *
 from PymoNNto.Exploration.StorageManager.StorageManager import *
+from PymoNNto.Exploration.Evolution.TxtHighlighter import *
 from PyQt5 import QtCore
 from PyQt5.QtGui import *
 from PyQt5.QtWidgets import *
 import pyqtgraph as pg
 import numpy as np
 from distutils.dir_util import copy_tree
+
+def unique(l):
+    return list(sorted(set(l)))
+
+
+def get_words(blocks):
+    return unique([word for word in ' '.join(blocks).split(' ') if word != ''])
 
 #UI_base.Add_element(InteractiveScatter(...), sidebar, stretch)
 class InteractiveScatter(pg.GraphicsLayoutWidget):#canvas object
@@ -104,8 +112,6 @@ class InteractiveScatter(pg.GraphicsLayoutWidget):#canvas object
 
 
 
-
-
     def scatter_double_clicked(self, plot, points):#scatter2
         if len(points) > 0:
             sm = points[-1]._data[3]
@@ -118,6 +124,21 @@ class InteractiveScatter(pg.GraphicsLayoutWidget):#canvas object
 
             layout = QVBoxLayout()
             pte = QPlainTextEdit()
+            #############################################################################################################################################################
+
+            coloration = get_settings('txt_coloration')
+            coloration_list = []
+            #try:
+            coloration_list = [[eval('QColor'+color), text] for color, text in coloration.items()]
+            #coloration_list = [[QColor(0, 200, 0), words], [QColor(0, 0, 200), sentences]]
+            pte.highlight = TxtHighlighter(pte.document(), coloration_list)
+            #except:
+            #    pass
+
+            #sentences = ['fox eats meat.', 'boy drinks juice.', 'penguin likes ice.', 'man drives car.',
+            #             'the fish swims.', 'plant loves rain.', 'parrots can fly.']
+            #words = get_words(sentences)
+            ###########################################################################################################################################
             pte.setPlainText(txt)
             pte.setReadOnly(True)
             layout.addWidget(pte, stretch=100)

@@ -3,22 +3,22 @@ from PymoNNto import *
 class Basic_Behaviour(Behaviour):
 
     def set_variables(self, neurons):
-        neurons.voltage = neurons.get_neuron_vec()
+        neurons.voltage = neurons.vector()
         self.threshold = 0.5
-        self.leak_factor = self.get_init_attr('leak_factor', 0.9, neurons)
+        self.leak_factor = self.parameter('leak_factor', 0.9, neurons)
 
     def new_iteration(self, neurons):
         neurons.spike = neurons.voltage > self.threshold #spikes
         neurons.voltage[neurons.spike] = 0.0 #reset
 
         neurons.voltage *= self.leak_factor #voltage decay
-        neurons.voltage += neurons.get_neuron_vec('uniform',density=0.01) #noise
+        neurons.voltage += neurons.vector('uniform',density=0.01) #noise
 
 class Input_Behaviour(Behaviour):
 
     def set_variables(self, neurons):
         for synapse in neurons.afferent_synapses['GLUTAMATE']:
-            synapse.W = synapse.get_synapse_mat('uniform', density=0.1)
+            synapse.W = synapse.matrix('uniform', density=0.1)
             synapse.enabled = synapse.W > 0
 
     def new_iteration(self, neurons):
@@ -32,8 +32,8 @@ My_Network = Network()
 My_Neurons = NeuronGroup(net=My_Network, tag='my_neurons', size=get_squared_dim(100), behaviour={
     1: Basic_Behaviour(),
     2: Input_Behaviour(),
-    #9: Recorder(tag='my_recorder', variables=['n.voltage', 'np.mean(n.voltage)']),
-    #10: EventRecorder(tag='my_event_recorder', variables=['n.spike'])
+    #9: Recorder(['voltage', 'np.mean(voltage)'], tag='my_recorder'),
+    #10: EventRecorder('spike', tag='my_event_recorder')
 })
 
 #My_Neurons.visualize_module()
@@ -47,14 +47,14 @@ My_Network.initialize()
 #My_Network.simulate_iterations(200, measure_block_time=True)
 
 #import matplotlib.pyplot as plt
-#plt.plot(My_Network['n.voltage', 0, 'np'][:, 0:10])
-#plt.plot(My_Network['np.mean(n.voltage)', 0], color='black')
+#plt.plot(My_Network['voltage', 0, 'np'][:, 0:10])
+#plt.plot(My_Network['np.mean(voltage)', 0], color='black')
 #plt.axhline(My_Neurons['Basic_Behaviour', 0].threshold, linestyle='dashed')
 #plt.xlabel('iterations (ms)')
 #plt.ylabel('voltage')
 #plt.show()
 
-#plt.plot(My_Network['n.spike.t', 0], My_Network['n.spike.i', 0], '.k')
+#plt.plot(My_Network['spike.t', 0], My_Network['spike.i', 0], '.k')
 #plt.xlabel('iterations (ms)')
 #plt.ylabel('neuron index')
 #plt.show()

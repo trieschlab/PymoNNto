@@ -18,6 +18,8 @@ class Network(NetworkObjectBase):
 
         self.iteration = 0
 
+        self.behaviour_timesteps = []
+
 
     def set_behaviours(self, tag, enabeled):
         if enabeled:
@@ -120,7 +122,6 @@ class Network(NetworkObjectBase):
                 storage_manager.save_param('info', desc)
 
         self.set_synapses_to_neuron_groups()
-        self.behaviour_timesteps = []
 
         for obj in self.all_objects():
             for b_key in obj.behaviour:
@@ -177,18 +178,22 @@ class Network(NetworkObjectBase):
 
     def set_variables(self):
 
-        for timestep in self.behaviour_timesteps:
-
+        for timestep in self.behaviour_timesteps:#normal
             for obj in self.all_objects():
-
                 if timestep in obj.behaviour:
-                    if not obj.behaviour[timestep].set_variables_on_init:
+                    if not obj.behaviour[timestep].set_variables_on_init and not obj.behaviour[timestep].set_variables_last:
                         self._set_variables_check(obj, timestep)
-                        #obj.behaviour[timestep].set_variables(obj)
+                        obj.behaviour[timestep].check_unused_attrs()
+
+        for timestep in self.behaviour_timesteps:#set_variables_last
+            for obj in self.all_objects():
+                if timestep in obj.behaviour:
+                    if obj.behaviour[timestep].set_variables_last:
+                        self._set_variables_check(obj, timestep)
                         obj.behaviour[timestep].check_unused_attrs()
 
 
-    def set_synapses_to_neuron_groups(self):
+    def set_synapses_to_neuron_groups(self):# todo: move to synapse group __init__
         for ng in self.NeuronGroups:
 
             ng.afferent_synapses = {'All':[]}
@@ -212,7 +217,8 @@ class Network(NetworkObjectBase):
     def simulate_iteration(self, measure_behaviour_execution_time=False):
 
         if measure_behaviour_execution_time:
-            time_measures={ts:0.0 for ts in self.behaviour_timesteps}
+            if not hasattr(self, 'time_measures'):
+                self.time_measures={ts:0.0 for ts in self.behaviour_timesteps}
 
         self.iteration += 1
         for timestep in self.behaviour_timesteps:
@@ -223,18 +229,21 @@ class Network(NetworkObjectBase):
                     if measure_behaviour_execution_time:
                         start_time = time.time()
                         net_obj.behaviour[timestep].new_iteration(net_obj)
-                        time_measures[timestep] += (time.time() - start_time) * 1000
+                        self.time_measures[timestep] += (time.time() - start_time) * 1000
                     else:
                         net_obj.behaviour[timestep].new_iteration(net_obj)
 
         if measure_behaviour_execution_time:
-            return time_measures
+            return self.time_measures
 
 
     def simulate_iterations(self, iterations, batch_size=-1, measure_block_time=True, disable_recording=False, batch_progress_update_func=None):
 
         if type(iterations) is str:
             iterations=self['Clock', 0].time_to_iterations(iterations)
+
+        if type(batch_size) is str:
+            batch_size=self['Clock', 0].time_to_iterations(batch_size)
 
         time_diff=None
 
@@ -249,6 +258,8 @@ class Network(NetworkObjectBase):
             outside_it=int(iterations/batch_size)
             block_iterations=batch_size
 
+        out_it=range(int(outside_it))
+
         for t in range(int(outside_it)):
             if measure_block_time:
                 start_time = time.time()
@@ -257,7 +268,7 @@ class Network(NetworkObjectBase):
             if measure_block_time:
                 time_diff = (time.time() - start_time) * 1000
                 remaining = time_diff * (outside_it-t) / 1000 / 60
-                print('\r{}xBatch: {}/{} ({}%) {}ms {}min'.format(block_iterations,t+1, outside_it, int(100/outside_it*(t+1)), int(time_diff), int(remaining)), end='')#, end='')
+                print('\r{}x {}/{} ({}%) {}ms {:.1f}min'.format(block_iterations,t+1, outside_it, int(100/outside_it*(t+1)), int(time_diff), remaining), end='')#, end='')
 
             if batch_progress_update_func is not None:
                 batch_progress_update_func((t+1.0)/int(outside_it)*100.0, self)

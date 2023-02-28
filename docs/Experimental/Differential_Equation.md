@@ -24,7 +24,7 @@ ng = NeuronGroup(net=net, size=100, behaviour={
     3: Variable(eq='tau=100*ms'),
     4: EquationModule(eq='dv/dt=(0*mV-v)/tau'),
 
-    100: Recorder(['n.v', 'n.t'], tag='my_rec')
+    100: Recorder(['v', 't'], tag='my_rec')
 })
 
 net.initialize(info=False)
@@ -34,7 +34,7 @@ start_time=time_p.time()
 net.simulate_iterations('100000*ms')
 print('t2', time_p.time()-start_time)
 
-plot(net['n.t', 0], net['n.v', 0])
+plot(net['t', 0], net['v', 0])
 show()
 ```
 
@@ -87,7 +87,7 @@ class Brian2_embedding(Behaviour):
         self.add_tag('Brian2_embedding')
         defaultclock.dt = 1 * ms
 
-        eqs = self.get_init_attr('eqs', '')
+        eqs = self.parameter('eqs', '')
 
         self.G = NeuronGroup(100, eqs, method='euler')      #this is a Biran2 NeuronGroup!
         self.net = Network(self.G)                          #this is a Biran2 Network!

@@ -7,10 +7,16 @@ class SynapseGroup(NetworkObjectBase):
     def __init__(self, src, dst, net, tag=None, behaviour={}):
 
         if type(src) is str:
+            s=src
             src = net[src, 0]
+            if src is None:
+                print(s, 'src not found for', tag)
 
         if type(dst) is str:
+            d=dst
             dst = net[dst, 0]
+            if dst is None:
+                print(d, 'dst not found for', tag)
 
         if tag is None and net is not None:
             tag = 'SynapseGroup_'+str(len(net.SynapseGroups)+1)
@@ -18,8 +24,11 @@ class SynapseGroup(NetworkObjectBase):
         super().__init__(tag, net, behaviour)
         self.add_tag('syn')
 
-        if len(src.tags) > 0 and len(dst.tags) > 0:
-            self.add_tag(src.tags[0]+'_to_'+dst.tags[0])
+        if src is not None and dst is not None:
+            if len(src.tags) > 0 and len(dst.tags) > 0:
+                self.add_tag(src.tag+'_to_'+dst.tag)
+        else:
+            print('Warning: Not able to find source or taget for SynapseGroup '+str(self.tags))
 
         if net is not None:
             net.SynapseGroups.append(self)
@@ -48,11 +57,11 @@ class SynapseGroup(NetworkObjectBase):
     def def_dtype(self):
         return self.network.def_dtype
 
-    def get_synapse_mat_dim(self):
+    def matrix_dim(self):
         return self.dst.size, self.src.size
 
     def get_random_synapse_mat_fixed(self, min_number_of_synapses=0):
-        dim = self.get_synapse_mat_dim()
+        dim = self.matrix_dim()
         result = np.zeros(dim)
         if min_number_of_synapses != 0:
             for i in range(dim[0]):
@@ -60,17 +69,18 @@ class SynapseGroup(NetworkObjectBase):
                 result[i, synapses] = np.random.rand(len(synapses))
         return result#*np.random.rand(dim)
 
-    def get_synapse_mat(self, mode='zeros()', scale=None, density=None, plot=False):
-        return self._get_mat(mode=mode, dim=(self.get_synapse_mat_dim()), scale=scale, density=density, plot=plot)
+    def matrix(self, mode='zeros()', scale=None, density=None, plot=False):
+        return self._get_mat(mode=mode, dim=(self.matrix_dim()), scale=scale, density=density, plot=plot)
 
-    matrix = get_synapse_mat
-    mat = get_synapse_mat
+    matrix = matrix
+    mat = matrix
+    get_synapse_mat = matrix
 
-    #def get_synapse_mat(self, mode='zeros()', scale=None, density=None, only_enabled=True, clone_along_first_axis=False, plot=False, kwargs={}, args=[]):# mode in ['zeros', 'zeros()', 'ones', 'ones()', 'uniform(...)', 'lognormal(...)', 'normal(...)']
-    #    result = self._get_mat(mode=mode, dim=(self.get_synapse_mat_dim()), scale=scale, density=density, plot=plot, kwargs=kwargs, args=args)
+    #def matrix(self, mode='zeros()', scale=None, density=None, only_enabled=True, clone_along_first_axis=False, plot=False, kwargs={}, args=[]):# mode in ['zeros', 'zeros()', 'ones', 'ones()', 'uniform(...)', 'lognormal(...)', 'normal(...)']
+    #    result = self._get_mat(mode=mode, dim=(self.matrix_dim()), scale=scale, density=density, plot=plot, kwargs=kwargs, args=args)
 
     #    if clone_along_first_axis:
-    #        result = np.array([result[0] for _ in range(self.get_synapse_mat_dim()[0])])
+    #        result = np.array([result[0] for _ in range(self.matrix_dim()[0])])
 
     #    if only_enabled:
     #        result *= self.enabled
@@ -147,7 +157,7 @@ class SynapseGroup(NetworkObjectBase):
         # partition enabled update
         if type(self.enabled) is np.ndarray:
             mat_mask = dst_mask[:, None] * src_mask[None, :]
-            result.enabled = self.enabled[mat_mask].copy().reshape(result.get_synapse_mat_dim())
+            result.enabled = self.enabled[mat_mask].copy().reshape(result.matrix_dim())
 
         # copy al attributes
         sgd = self.__dict__

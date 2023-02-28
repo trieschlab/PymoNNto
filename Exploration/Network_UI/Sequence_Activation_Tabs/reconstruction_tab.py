@@ -87,11 +87,11 @@ class reconstruction_tab(TabBase):
                 baseline = baseline/np.sum(baseline)
 
                 if ng == group:#clicked group?
-                    temp = ng.get_neuron_vec()
+                    temp = ng.vector()
                     temp[Network_UI.selected_neuron_id()] = 1.0
                     ng.temporal_recon.insert(0, temp)
                 else:
-                    ng.temporal_recon.append(ng.get_neuron_vec())
+                    ng.temporal_recon.append(ng.vector())
 
                 text = ''
                 res = []
@@ -157,7 +157,7 @@ class reconstruction_tab(TabBase):
                 baseline = ng.Input_Weights.transpose().dot(ng.temporal_recon[-1])
                 baseline = baseline / np.sum(baseline)
 
-                ng.temporal_recon.append(ng.get_neuron_vec())
+                ng.temporal_recon.append(ng.vector())
 
                 text = ''
                 res = []

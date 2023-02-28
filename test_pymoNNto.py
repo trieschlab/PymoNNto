@@ -31,8 +31,8 @@ def clear_folder(f):
 
 class Counter(Behaviour):
     def set_variables(self, neurons):
-        self.inc = self.get_init_attr('inc', 1)
-        neurons.count = neurons.get_neuron_vec()
+        self.inc = self.parameter('inc', 1)
+        neurons.count = neurons.vector()
     def new_iteration(self, neurons):
         neurons.count += self.inc
 
@@ -40,7 +40,7 @@ def get_sample_network():
     My_Network = Network()
     My_Neurons = NeuronGroup(net=My_Network, tag='my_neurons', size=100, behaviour={
         1: Counter(inc='[2#I]'),
-        2: Recorder(variables=['n.count'])
+        2: Recorder('count')
     })
     My_Synapses = SynapseGroup(net=My_Network, src=My_Neurons, dst=My_Neurons, tag='GLUTAMATE')
     sm = StorageManager('test', random_nr=False, print_msg=False)
@@ -138,10 +138,10 @@ def test_behaviour_and_tagging():
 
     #tagging system
     assert My_Network['my_neurons'] == [My_Neurons]
-    assert len(My_Network['n.count', 0]) == My_Network.iteration-30
+    assert len(My_Network['count', 0]) == My_Network.iteration-30
 
     My_Network.clear_recorder()
-    assert len(My_Neurons['n.count', 0]) == 0
+    assert len(My_Neurons['count', 0]) == 0
 
     assert My_Network.tag_shortcuts['my_neurons'] == My_Network['my_neurons']
 

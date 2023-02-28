@@ -28,9 +28,9 @@ class score_visualization_recorder(visualization_recorder):
 
     def __init__(self):
         super().__init__()
-        self.neu_rec = Recorder(['n.norm_value', 'n.output_activity_history[0]', 'n.activity'], gapwidth=100)
+        self.neu_rec = Recorder(['norm_value', 'output_activity_history[0]', 'activity'], gapwidth=100)
         self.recorderlist.append(self.neu_rec)
-        self.syn_rec = SynapseGroupRecorder(['syn.GLU_Synapses'], gapwidth=1000)
+        self.syn_rec = SynapseGroupRecorder(['GLU_Synapses'], gapwidth=1000)
         self.recorderlist.append(self.syn_rec)
 
     def visualize(self):
@@ -44,18 +44,18 @@ class score_visualization_recorder(visualization_recorder):
         #axes[0, 2].set_xlabel('weights')
 
         print('- activity diversity score...')
-        axes[0, 0].plot(EvalF.get_diversity_score_sliding_window(np.array(self.neu_rec['n.activity'])))
+        axes[0, 0].plot(EvalF.get_diversity_score_sliding_window(np.array(self.neu_rec['activity'])))
         print('- activity sparseness score...')
-        axes[0, 1].plot(EvalF.get_sparseness_score_sliding_window(np.array(self.neu_rec['n.activity'])))
+        axes[0, 1].plot(EvalF.get_sparseness_score_sliding_window(np.array(self.neu_rec['activity'])))
         print('- weight diversity score...')
-        axes[1, 0].plot(EvalF.get_diversity_score_timeline(np.array(self.syn_rec['syn.GLU_Synapses']), self.neurons.get_combined_synapse_shape('GLU')))#(50,100)(400, 100)
+        axes[1, 0].plot(EvalF.get_diversity_score_timeline(np.array(self.syn_rec['GLU_Synapses']), self.neurons.get_combined_synapse_shape('GLU')))#(50,100)(400, 100)
         #axes[1, 1].get_TF_ANN_trining_accuracy_score
 
 class activity_visualization_recorder(visualization_recorder):
 
     def __init__(self):
         super().__init__()
-        self.neu_rec = Recorder(['n[8].avg', 'n.norm_value', 'n.output_activity_history[0]', 'n.activity'], gapwidth=100)
+        self.neu_rec = Recorder(['n[8].avg', 'norm_value', 'output_activity_history[0]', 'activity'], gapwidth=100)
         self.recorderlist.append(self.neu_rec)
 
     def visualize(self):
@@ -69,12 +69,12 @@ class activity_visualization_recorder(visualization_recorder):
         axes[0, 0].axhline(y=np.average(self.neurons[HomeostaticMechanism].max))
         axes[0, 0].set_xlabel('avg_act')
 
-        axes[1, 0].plot(self.neu_rec['n.norm_value'],linewidth=2)
+        axes[1, 0].plot(self.neu_rec['norm_value'],linewidth=2)
         axes[1, 0].set_xlabel('norm_value')
 
-        axes[0, 1].plot(self.neu_rec['n.output_activity_history[0]'],linewidth=2)
+        axes[0, 1].plot(self.neu_rec['output_activity_history[0]'],linewidth=2)
         axes[0, 1].set_xlabel('norm_value')
-        axes[1, 1].plot(self.neu_rec['n.activity'],linewidth=2)
+        axes[1, 1].plot(self.neu_rec['activity'],linewidth=2)
         axes[1, 1].set_xlabel('activity')
 
         #axes[0, 2].plot(EvalF.get_diversity_score_sliding_window(np.array(self.neu_rec['n.activity'])))
@@ -86,7 +86,7 @@ class input_visualization_recorder(visualization_recorder):
 
     def __init__(self):#todo: LGN n[8]
         super().__init__()
-        self.neu_rec = Recorder(['n[8].avg', 'n.norm_value', 'n.output_activity_history[0]', 'n.activity'], gapwidth=100)
+        self.neu_rec = Recorder(['n[8].avg', 'norm_value', 'output_activity_history[0]', 'activity'], gapwidth=100)
         self.recorderlist.append(self.neu_rec)
 
     def visualize(self):
@@ -108,23 +108,23 @@ class input_visualization_recorder(visualization_recorder):
         axes[1, 1].plot(self.neu_rec['n.activity'])
         axes[1, 1].set_xlabel('activity')
 
-        axes[0, 2].imshow(get_reconstruction_activations(np.array(self.neu_rec['n.activity'])[-10:-1], 10, 10), cmap=plt.cm.gist_gray, interpolation='nearest')
+        axes[0, 2].imshow(get_reconstruction_activations(np.array(self.neu_rec['activity'])[-10:-1], 10, 10), cmap=plt.cm.gist_gray, interpolation='nearest')
 
-        axes[1, 2].matshow(np.array(self.neu_rec['n.norm_value'])[-1].reshape((10, 10)))
+        axes[1, 2].matshow(np.array(self.neu_rec['norm_value'])[-1].reshape((10, 10)))
         axes[1, 2].set_xlabel('last norm_values')
 
 
-        axes[0, 3].hist(np.array(self.neu_rec['n.activity'])[:, 0], bins=50)
+        axes[0, 3].hist(np.array(self.neu_rec['activity'])[:, 0], bins=50)
         axes[0, 3].set_xlabel('first neuron activity distribution')
 
-        axes[1, 3].hist(np.array(self.neu_rec['n.activity'])[:, 25], bins=50)
+        axes[1, 3].hist(np.array(self.neu_rec['activity'])[:, 25], bins=50)
         axes[1, 3].set_xlabel('25. neuron activity distribution')
 
 class weight_visualization_recorder(visualization_recorder):
 
     def __init__(self):
         super().__init__()
-        self.syn_rec = SynapseGroupRecorder(['syn.GLU_Synapses'], gapwidth=100)
+        self.syn_rec = SynapseGroupRecorder('GLU_Synapses', gapwidth=100)
         self.recorderlist.append(self.syn_rec)
 
     def visualize(self):
@@ -137,7 +137,7 @@ class weight_visualization_recorder(visualization_recorder):
         syns = self.neurons.afferent_synapses.get(self.syn_rec.transmitter,[])
         input_size = syns[0].get_src_size()
 
-        data = np.array(self.syn_rec['syn.GLU_Synapses'])
+        data = np.array(self.syn_rec['GLU_Synapses'])
 
         fig.add_subplot(2, 3, 1).plot(data[:, 0:input_size])
         fig.add_subplot(2, 3, 2).matshow(data[:, 0:input_size].transpose())
@@ -166,7 +166,7 @@ class firing_rate_visualization_recorder(visualization_recorder):
 
     def __init__(self):
         super().__init__()
-        self.neu_rec = Recorder(['n.output_activity_history[0]', 'n.pre_inhibition_act', 'n.activity', 'n.norm_value'], gapwidth=1)
+        self.neu_rec = Recorder(['output_activity_history[0]', 'pre_inhibition_act', 'activity', 'norm_value'], gapwidth=1)
         self.recorderlist.append(self.neu_rec)
 
     def visualize(self):
@@ -177,22 +177,22 @@ class firing_rate_visualization_recorder(visualization_recorder):
 
         resolution = 100
 
-        act = np.array(self.neu_rec['n.output_activity_history[0]'])[:, 0]
+        act = np.array(self.neu_rec['output_activity_history[0]'])[:, 0]
         act = act[act > 0]
         #plot_histogram(fig.add_subplot(2, 2, 1), act, resolution)
         plot_3D_histogram(fig.add_subplot(2, 2, 1, projection='3d'), act, resolution, 10, x_label_caption='output_activity_history')
 
-        act = np.array(self.neu_rec['n.pre_inhibition_act'])[:, 0]
+        act = np.array(self.neu_rec['pre_inhibition_act'])[:, 0]
         act = act[act > 0]
         #plot_histogram(fig.add_subplot(2, 2, 2), np.array(self.neu_rec['n.pre_inhibition_act'])[:, 0], resolution)
         plot_3D_histogram(fig.add_subplot(2, 2, 2, projection='3d'), act, resolution, 10, x_label_caption='pre_inhibition_act')
 
-        act = np.array(self.neu_rec['n.activity'])[:, 0]
+        act = np.array(self.neu_rec['activity'])[:, 0]
         act = act[act > 0]
         #plot_histogram(fig.add_subplot(2, 2, 3), np.array(self.neu_rec['n.activity'])[:, 0], resolution)
         plot_3D_histogram(fig.add_subplot(2, 2, 3, projection='3d'), act, resolution, 10, x_label_caption='activity')
 
-        fig.add_subplot(2, 2, 4).plot(self.neu_rec['n.norm_value'])
+        fig.add_subplot(2, 2, 4).plot(self.neu_rec['norm_value'])
         #plot_3D_histogram(fig.add_subplot(2, 2, 4, projection='3d'), np.array(self.neu_rec['n.pre_inhibition_act'])[:, 0], resolution, 10, x_label_caption='pre_inhibition_act')
 
 

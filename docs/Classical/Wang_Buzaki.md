@@ -2,7 +2,8 @@
 
 The following code creates a neuron which is updated with ruled derived from the "Wang Buzaki 1996" paper.
 
-```python
+```python
+
 from PymoNNto import *
 
 #https://brian2.readthedocs.io/en/stable/examples/frompapers.Wang_Buszaki_1996.html
@@ -16,7 +17,7 @@ def exprel(x):
 class Wang_Buzaki_main(Behaviour):
 
     def set_variables(self, n):
-        self.set_init_attrs_as_variables(self)
+        self.set_parameters_as_variables(self)
         self.dt = 0.01# * ms
 
         #Cm = 1# * uF  # /cm**2
@@ -28,9 +29,9 @@ class Wang_Buzaki_main(Behaviour):
         #gNa = 35# * msiemens
         #gK = 9# * msiemens
 
-        n.v = n.get_neuron_vec()-70
-        n.h = n.get_neuron_vec()+1
-        n.n = n.get_neuron_vec()
+        n.v = n.vector()-70
+        n.h = n.vector()+1
+        n.n = n.vector()
 
 
     def new_iteration(self, neurons):
@@ -53,7 +54,7 @@ My_Network = Network()
 
 N_e = NeuronGroup(net=My_Network, tag='excitatory_neurons', size=1, behaviour={
     1: Wang_Buzaki_main(Cm=1, Iapp=2, gL=0.1, EL=-65, ENa=55, EK=-90, gNa=35, gK=9),
-    9: Recorder(tag='my_recorder', variables=['n.v'])
+    9: Recorder('v', tag='my_recorder')
 })
 
 My_Network.initialize()
@@ -62,8 +63,9 @@ My_Network.simulate_iterations(10000, measure_block_time=True)
 
 import matplotlib.pyplot as plt
 
-plt.plot(My_Network['n.v', 0, 'np'][:, 0])
-plt.show()
+plt.plot(My_Network['v', 0, 'np'][:, 0])
+plt.show()
+
 ```
 
 

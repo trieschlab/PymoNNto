@@ -228,7 +228,7 @@ class Reconstruct_Analyze_Label_Network():
 
     def zero_recon(self):
         for ng in self.network.NeuronGroups:
-            ng.recon = ng.get_neuron_vec()
+            ng.recon = ng.vector()
 
 
     #propagation variables:
@@ -274,7 +274,7 @@ class Reconstruct_Analyze_Label_Network():
     def propagation(self, weight_attribute_name,  recon_steps, propagation_mode='forward', accumulation_mode='addititve', synapse_filter='all', clip_min=None, clip_max=None, temporal_recon_groups=[], layer_compute_groups=[], exponent=None, normalize=None, filter_weakest_percent=None):
 
         for ng in self.ng_list(layer_compute_groups):
-            ng.layer_recon = ng.get_neuron_vec()+np.inf
+            ng.layer_recon = ng.vector()+np.inf
 
         for ng in self.ng_list(temporal_recon_groups):
             ng.temporal_recon = []
@@ -282,7 +282,7 @@ class Reconstruct_Analyze_Label_Network():
         for step in range(recon_steps):
 
             for ng in self.network.NeuronGroups:
-                ng.recon_temp = ng.get_neuron_vec()
+                ng.recon_temp = ng.vector()
 
 
             if propagation_mode == 'simulation':#todo implement
@@ -338,7 +338,7 @@ class Reconstruct_Analyze_Label_Network():
             for ng in self.network.NeuronGroups:
 
                 if accumulation_mode == 'additive':
-                    ng.recon += ng.recon_temp#.copy()??? not neccessary because of ng.get_neuron_vec() ?
+                    ng.recon += ng.recon_temp#.copy()??? not neccessary because of ng.vector() ?
 
                 if accumulation_mode == 'first_touch':
                     ng.recon += ng.recon_temp*(ng.recon==0)
@@ -363,7 +363,7 @@ class Reconstruct_Analyze_Label_Network():
 
         for ng in self.network.NeuronGroups:
             ng.class_label = []
-            ng.temporal_layer = ng.get_neuron_vec()+np.inf
+            ng.temporal_layer = ng.vector()+np.inf
 
 
         for label_vec in label_vectors:
@@ -617,7 +617,7 @@ class Reconstruct_Analyze_Label_Network():
         plt.fill_between(x, lower_edge, upper_edge, color='gray', alpha=0.4)
 
 
-    def plot_transition_frequencies(self, transitions, frequencies, plot_single=False, plot_multiple=True, show_labels=True):
+    def plot_transition_frequencies(self, transitions, frequencies, plot_single=False, plot_multiple=True, show_labels=True, network=None):
 
         txt = []
         x = []
@@ -633,7 +633,7 @@ class Reconstruct_Analyze_Label_Network():
             for txt,xv,yv in zip(txt,x,y):
                 plt.annotate(txt.replace(' ','_'), (xv, yv))
 
-        return np.array(x).astype(def_dtype), np.array(y).astype(def_dtype)
+        return np.array(x).astype(network.def_dtype), np.array(y).astype(network.def_dtype)
 
     def get_transition_classes(self, transitions, frequencies):
 

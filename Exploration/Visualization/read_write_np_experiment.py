@@ -21,7 +21,7 @@ class NeuronGroup_read_write_event(NeuronGroup):
         print(attr_name+'-')
         if hasattr(self,attr_name):
             self.ref(self, attr_name+'-')
-        return super().__getattr__(attr_name)#self.get_neuron_vec('uniform')
+        return super().__getattr__(attr_name)#self.vector('uniform')
 
     def __getattribute__(self, attr_name):
         if attr_name in ['wef', 'ref', 'current_dict'] or self.current_dict is None or attr_name in self.current_dict:
@@ -29,7 +29,7 @@ class NeuronGroup_read_write_event(NeuronGroup):
         #print(attr_name+'+')
         #if hasattr(self, attr_name):
         self.ref(self, attr_name+'+')
-        return super().__getattribute__(attr_name)#self.get_neuron_vec('uniform')
+        return super().__getattribute__(attr_name)#self.vector('uniform')
 
     def __setattr__(self, attr_name, val):
         if self.wef is not None:

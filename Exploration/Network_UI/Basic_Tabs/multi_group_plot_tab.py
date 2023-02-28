@@ -35,8 +35,8 @@ class multi_group_plot_tab(TabBase):
             if '_plot_tab_var_' in var:
                 setattr(neuron_group, var, self.ptv[var])
 
-            Network_UI.add_recording_variable(neuron_group, 'np.mean(n.' + var + ')', timesteps=self.timesteps)
-            Network_UI.add_recording_variable(neuron_group, 'n.'+var, timesteps=self.timesteps)
+            Network_UI.add_recording_variable(neuron_group, 'np.mean(' + var + ')', timesteps=self.timesteps)
+            Network_UI.add_recording_variable(neuron_group, var, timesteps=self.timesteps)
 
 
 
@@ -129,22 +129,23 @@ class multi_group_plot_tab(TabBase):
                             squeeze = 1
 
                         try:
-                            net_data = group['np.mean(n.' + variable + ')', 0, 'np'][-self.timesteps:]
-                            iterations = group['n.iteration', 0, 'np'][-self.timesteps:]
+                            net_data = group['np.mean(' + variable + ')', 0, 'np'][-self.timesteps:]
+                            iterations = group['iteration', 0, 'np'][-self.timesteps:]
                             curve.setData(iterations, net_data * squeeze, pen=group.color)
                         except:  # else:
                             curve.clear()
 
             group = Network_UI.selected_neuron_group()
+
             for curve_dict in self.neuron_plot_dicts:
                 for variable in curve_dict:
                     curve = curve_dict[variable]
 
                     try:
-                        neuron_data = group['n.' + variable, 0, 'np'][-self.timesteps:].astype(def_dtype)#for bool
-                        iterations = group['n.iteration', 0, 'np'][-self.timesteps:]
+                        neuron_data = group[variable, 0, 'np'][-self.timesteps:].astype(Network_UI.network.def_dtype)#for bool
+                        iterations = group['iteration', 0, 'np'][-self.timesteps:]
                         if len(neuron_data.shape) > 1:
                             neuron_data = np.mean(neuron_data[:, Network_UI.selected_neuron_mask()], axis=1)
                         curve.setData(iterations, neuron_data)
                     except:
-                        curve.clear()
+                        curve.setData([], [])

@@ -46,29 +46,29 @@ class Instant_Homeostasis(Behaviour):
 
         self.compiled_mp=None
 
-        self.min_th = self.get_init_attr('min_th', None, neurons)                           #minumum threshold for measurement param
-        self.max_th = self.get_init_attr('max_th', None, neurons)                           #maximum threshold for measurement param
+        self.min_th = self.parameter('min_th', None, neurons)                           #minumum threshold for measurement param
+        self.max_th = self.parameter('max_th', None, neurons)                           #maximum threshold for measurement param
 
         self.set_threshold(                                                                 #optional
-            self.get_init_attr('threshold', None, neurons),                                 #threshold for measurement param (min=max=th)
-            self.get_init_attr('gap_percent', None, neurons)                                #min max gap is created via a percentage from th (additional param for th)
+            self.parameter('threshold', None, neurons),                                 #threshold for measurement param (min=max=th)
+            self.parameter('gap_percent', None, neurons)                                #min max gap is created via a percentage from th (additional param for th)
         )
 
-        self.distance_sensitive = self.get_init_attr('distance_sensitive', True, neurons)   #stronger adjustment when value is further away from optimum
+        self.distance_sensitive = self.parameter('distance_sensitive', True, neurons)   #stronger adjustment when value is further away from optimum
 
-        self.inc = self.get_init_attr('inc', 1.0, neurons)                                  #increase factor
-        self.dec = self.get_init_attr('dec', 1.0, neurons)                                  #decrease factor
-        self.adj_strength = self.get_init_attr('adj_strength', 1.0, neurons)                #change factor
+        self.inc = self.parameter('inc', 1.0, neurons)                                  #increase factor
+        self.dec = self.parameter('dec', 1.0, neurons)                                  #decrease factor
+        self.adj_strength = self.parameter('adj_strength', 1.0, neurons)                #change factor
 
-        self.adjustment_param = self.get_init_attr('adjustment_param', None, neurons)       #name of neurons target attribute
+        self.adjustment_param = self.parameter('adjustment_param', None, neurons)       #name of neurons target attribute
 
-        self.measurement_param = self.get_init_attr('measurement_param', None, neurons)     #name of parameter to be measured
+        self.measurement_param = self.parameter('measurement_param', None, neurons)     #name of parameter to be measured
 
-        self.measurement_min = self.get_init_attr('measurement_min', None, neurons)         #minumum value which can be measured (below=0)
-        self.measurement_max = self.get_init_attr('measurement_max', None, neurons)         #maximum value which can be measured (above=max)
+        self.measurement_min = self.parameter('measurement_min', None, neurons)         #minumum value which can be measured (below=0)
+        self.measurement_max = self.parameter('measurement_max', None, neurons)         #maximum value which can be measured (above=max)
 
-        self.target_clip_min = self.get_init_attr('target_clip_min', None, neurons)         #target clip min
-        self.target_clip_max = self.get_init_attr('target_clip_max', None, neurons)         #target clip max
+        self.target_clip_min = self.parameter('target_clip_min', None, neurons)         #target clip min
+        self.target_clip_max = self.parameter('target_clip_max', None, neurons)         #target clip max
 
 
     def new_iteration(self, neurons):
@@ -88,8 +88,8 @@ class Time_Integration_Homeostasis(Instant_Homeostasis):
     def set_variables(self, neurons):
         super().set_variables(neurons)
 
-        self.integration_length = self.get_init_attr('integration_length', 1, neurons)      #factor that determines the inertia of the leaky integrator (0=instant) (a*i)/(1+i)
+        self.integration_length = self.parameter('integration_length', 1, neurons)      #factor that determines the inertia of the leaky integrator (0=instant) (a*i)/(1+i)
 
-        self.average = self.get_init_attr('init_avg', (self.min_th+self.max_th)/2, neurons)                          #initialize average measurement for each neuron
+        self.average = self.parameter('init_avg', (self.min_th+self.max_th)/2, neurons)                          #initialize average measurement for each neuron
 
 #Time_Integration_Homeostasis().visualize_module(vmi=['measure'], vmo=['adjust'], vma=['measurement_param','adjustment_param','threshold','integration_length','...'])

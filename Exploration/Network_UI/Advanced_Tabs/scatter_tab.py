@@ -4,8 +4,8 @@ class scatter_tab(TabBase):
 
     def __init__(self, x_var, y_var, title='Scatter', timesteps=500):
         super().__init__(title)
-        self.x_var = self.interpret_recording_variable(x_var)
-        self.y_var = self.interpret_recording_variable(y_var)
+        self.x_var = x_var
+        self.y_var = y_var
         self.timesteps=timesteps
 
     def add_recorder_variables(self, neuron_group, Network_UI):

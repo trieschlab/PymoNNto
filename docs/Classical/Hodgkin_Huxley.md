@@ -3,7 +3,8 @@
 The following code creates a Neuron with multiple Hodgkin Huxley segments. Over time the input current of the first compartment changes, which creates different spike patterns flowing through the segments.
 
 
-```python
+```python
+
 from PymoNNto import *
 import scipy as sp
 import matplotlib.pyplot as plt
@@ -45,7 +46,7 @@ class HH_main(Behaviour):
         return 5*(i*self.dt>100) - 5*(i*self.dt>200) + 10*(i*self.dt>300) - 10*(i*self.dt>400)
 
     def set_variables(self, n):
-        self.set_init_attrs_as_variables(self)
+        self.set_parameters_as_variables(self)
         #C_m = 1.0  # membrane capacitance, in uF/cm^2
         #g_Na = 120.0  # Sodium (Na) maximum conductances, in mS/cm^2
         #g_K = 36.0  # Postassium (K) maximum conductances, in mS/cm^2
@@ -58,11 +59,11 @@ class HH_main(Behaviour):
 
         self.dt = 0.01
 
-        n.v = np.array([n.get_neuron_vec()*self.v for i in range(self.blocks)])
-        n.h = np.array([n.get_neuron_vec()*self.h for i in range(self.blocks)])
-        n.m = np.array([n.get_neuron_vec()*self.m for i in range(self.blocks)])
-        n.n = np.array([n.get_neuron_vec()*self.n for i in range(self.blocks)])
-        n.I = np.array([n.get_neuron_vec() for i in range(self.blocks)])
+        n.v = np.array([n.vector()*self.v for i in range(self.blocks)])
+        n.h = np.array([n.vector()*self.h for i in range(self.blocks)])
+        n.m = np.array([n.vector()*self.m for i in range(self.blocks)])
+        n.n = np.array([n.vector()*self.n for i in range(self.blocks)])
+        n.I = np.array([n.vector() for i in range(self.blocks)])
 
 
 
@@ -103,7 +104,7 @@ My_Network = Network()
 
 N_e = NeuronGroup(net=My_Network, tag='excitatory_neurons', size=1, behaviour={
     1: HH_main(blocks=20, b_r=0.15, v=-65, m=0.05, h=0.6, n=0.32, C_m=1.0, g_Na=120.0, g_K=36.0, g_L=0.3, E_Na=50.0, E_K=-77.0, E_L=-54.387),
-    9: Recorder(tag='my_recorder', variables=['n.v','n.m','n.h','n.n'])
+    9: Recorder(['v','m','h','n'], tag='my_recorder')
 })
 
 SynapseGroup(net=My_Network, src=N_e, dst=N_e, tag='GLUTAMATE')
@@ -113,7 +114,7 @@ My_Network.initialize()
 My_Network.simulate_iterations(50000, measure_block_time=True)
 
 
-data = My_Network['n.v', 0, 'np'][:, :, 0]#numpy array of first recorder \ only the forst neuron and all compartments
+data = My_Network['v', 0, 'np'][:, :, 0]#numpy array of first recorder \ only the forst neuron and all compartments
 
 for d in range(data.shape[1]):
     plt.plot(data[:, d]-10*d)
@@ -121,7 +122,8 @@ plt.show()
 
 plt.imshow(data.transpose(), cmap='gray', aspect='auto', interpolation='none')
 plt.show()
-
+
+
 ```
 
 

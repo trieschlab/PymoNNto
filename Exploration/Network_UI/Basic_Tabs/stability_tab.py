@@ -10,7 +10,7 @@ class stability_tab(TabBase):
 
     def add_recorder_variables(self, neuron_group, Network_UI):
         try:
-            Network_UI.add_recording_variable(neuron_group, 'n.'+self.parameter, timesteps=self.timesteps)
+            Network_UI.add_recording_variable(neuron_group, self.parameter, timesteps=self.timesteps)
         except:
             print(self.parameter, 'cannot be added to recorder')
 
@@ -48,8 +48,8 @@ class stability_tab(TabBase):
                         group2 = Network_UI.network[group_tag2, 0]
 
                         try:
-                            act1 = np.mean(np.array(group1['n.'+self.parameter, 0][-self.timesteps:]), axis=1)
-                            act2 = np.mean(np.array(group2['n.'+self.parameter, 0][-self.timesteps:]), axis=1)
+                            act1 = np.mean(np.array(group1[self.parameter, 0][-self.timesteps:]), axis=1)
+                            act2 = np.mean(np.array(group2[self.parameter, 0][-self.timesteps:]), axis=1)
                             self.image_items[y][x].setImage(get_t_vs_tp1_mat(act1, act2, self.resolution_slider.sliderPosition(), False))
                         except:
                             print(self.parameter, 'cannot be evaluated')

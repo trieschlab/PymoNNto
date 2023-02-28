@@ -3,13 +3,16 @@ from PymoNNto.Exploration.Evolution.Interface_Functions import *
 
 class Behaviour(TaggableObjectBase):
     set_variables_on_init = False
+    set_variables_last = False
     attached_UI_Tabs = []
 
-    def __init__(self, **kwargs):
+    def __init__(self, *args, **kwargs):
         self.init_kwargs = kwargs
+        for i, arg in enumerate(args):
+           self.init_kwargs['arg_'+str(i)]=arg
         self.used_attr_keys = []
-        self.behaviour_enabled = self.get_init_attr('behaviour_enabled', True, None)
-        super().__init__(tag=self.get_init_attr('tag', None, None))
+        self.behaviour_enabled = self.parameter('behaviour_enabled', True, None)
+        super().__init__(tag=self.parameter('tag', None, None))
 
 
     def set_variables(self, neurons):
@@ -64,10 +67,10 @@ class Behaviour(TaggableObjectBase):
 
         if '(' in ds and ')' in ds:#is function
             if type(neurons_or_synapses).__name__ == "NeuronGroup":
-                result = neurons_or_synapses.get_neuron_vec(ds)
+                result = neurons_or_synapses.vector(ds)
 
             if type(neurons_or_synapses).__name__ == "SynapseGroup":
-                result = neurons_or_synapses.get_synapse_mat(ds)
+                result = neurons_or_synapses.matrix(ds)
 
         if plot:
             if type(result) == np.ndarray:
@@ -78,18 +81,18 @@ class Behaviour(TaggableObjectBase):
         return result
 
 
-    def set_init_attrs_as_variables(self, object):
+    def set_parameters_as_variables(self, object):
         for key in self.init_kwargs:
-            setattr(object, key, self.get_init_attr(key, None, neurons=object))
-            print('init', key)
-            #get_init_attr
+            setattr(object, key, self.parameter(key, None, neurons=object))
+
+    set_init_attrs_as_variables = set_parameters_as_variables
 
     def check_unused_attrs(self):
         for key in self.init_kwargs:
             if not key in self.used_attr_keys:
-                print('Warning: "'+key+'" not used in set_variables of '+str(self)+' behaviour! Make sure that "'+key+'" is spelled correctly and get_init_attr('+key+',...) is called in set_variables. Valid attributes are:'+str(self.used_attr_keys))
+                print('Warning: "'+key+'" not used in set_variables of '+str(self)+' behaviour! Make sure that "'+key+'" is spelled correctly and parameter('+key+',...) is called in set_variables. Valid attributes are:'+str(self.used_attr_keys))
 
-    def get_init_attr(self, key, default, neurons=None, do_not_diversify=False, search_other_behaviours=False, required=False):
+    def parameter(self, key, default, neurons=None, do_not_diversify=False, search_other_behaviours=False, required=False):
 
         if required and not key in self.init_kwargs:
             print('Warning:',key,'has to be specified for the behaviour to run properly.', self)
@@ -118,10 +121,11 @@ class Behaviour(TaggableObjectBase):
 
         return result
 
-    kwargs = get_init_attr
-    args = get_init_attr
-    parameter = get_init_attr
-    argument = get_init_attr
+    get_init_attr = parameter
+    kwargs = parameter
+    args = parameter
+    parameter = parameter
+    argument = parameter
 
     def visualize_module(self, vmi=None, vmo=None, vma=None):
         from PymoNNto.Exploration.Visualization import Module_visualizer as drawer

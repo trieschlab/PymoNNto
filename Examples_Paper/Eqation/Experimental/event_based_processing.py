@@ -5,10 +5,10 @@ import numpy as np
 class neuron_event(Behaviour):
 
     def set_variables(self, neurons):
-        self.condition = self.get_init_attr('condition', 'False', None)#'s.src.spike==1'
+        self.condition = self.parameter('condition', 'False', None)#'s.src.spike==1'
         self.compiled_condition = compile(self.condition, '<string>', 'eval')
 
-        self.formula = self.get_init_attr('eq', None)
+        self.formula = self.parameter('eq', None)
 
         for neuron_var in sorted(neurons.__dict__, key=len, reverse=True):
             self.formula = self.formula.replace('n.' + neuron_var, 'neurons.' + neuron_var + '[indx]')
@@ -28,13 +28,13 @@ class syn_event(Behaviour):
 
     def set_variables(self, synapse):
         s=synapse
-        self.src_condition = self.get_init_attr('src_condition', 'True', None)#'s.src.spike==1'
+        self.src_condition = self.parameter('src_condition', 'True', None)#'s.src.spike==1'
         self.compiled_src_condition = compile(self.src_condition, '<string>', 'eval')
 
-        self.dst_condition = self.get_init_attr('dst_condition', 'True', None)#'s.dst.spike==1'
+        self.dst_condition = self.parameter('dst_condition', 'True', None)#'s.dst.spike==1'
         self.compiled_dst_condition = compile(self.dst_condition, '<string>', 'eval')
 
-        self.formula = self.get_init_attr('eq', None)#eq_split()
+        self.formula = self.parameter('eq', None)#eq_split()
 
         for syn_var in sorted(synapse.__dict__, key=len, reverse=True):
             self.formula = self.formula.replace('s.'+syn_var, 'synapse.'+syn_var+'[src_indx,dst_indx]')
@@ -97,7 +97,7 @@ class on_simu(syn_event):
 #class on_pre(EquationModule):
 
 #    def set_variables(self, synapse):
-#        formula = eq_split(self.get_init_attr('eq', None))
+#        formula = eq_split(self.parameter('eq', None))
 
 #    def new_iteration(self, synapse):
 #        pre_mask = synapse.src.spike

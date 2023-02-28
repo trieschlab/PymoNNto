@@ -13,22 +13,22 @@ from Examples_Paper.STDP_Hom_Norm.Homeostasis import *
 class Basic_Behaviour(Behaviour):
 
     def set_variables(self, neurons):
-        neurons.voltage = neurons.get_neuron_vec()
+        neurons.voltage = neurons.vector()
         self.threshold = 0.5
 
     def new_iteration(self, neurons):
         firing = neurons.voltage > self.threshold
-        neurons.spike = firing.astype(def_dtype) #spikes
+        neurons.spike = firing.astype(neurons.def_dtype) #spikes
         neurons.voltage[firing] = 0.0#reset
 
         neurons.voltage *= 0.9 #voltage decay
-        neurons.voltage += neurons.get_neuron_vec('uniform', density=0.01) #noise
+        neurons.voltage += neurons.vector('uniform', density=0.01) #noise
 
 class Input_Behaviour(Behaviour):
 
     def set_variables(self, neurons):
         for synapse in neurons.afferent_synapses['GLUTAMATE']:
-            synapse.W = synapse.get_synapse_mat('uniform',density=0.1)
+            synapse.W = synapse.matrix('uniform',density=0.1)
             synapse.enabled = synapse.W > 0
 
     def new_iteration(self, neurons):
@@ -43,8 +43,8 @@ My_Neurons = NeuronGroup(net=My_Network, tag='my_neurons', size=get_squared_dim(
     3: Homeostasis(target_voltage=0.05),
     4: STDP(stdp_factor=0.00015),
     5: Normalization(norm_factor=10),
-    9: Recorder(tag='my_recorder', variables=['n.voltage', 'np.mean(n.voltage)']),
-    10: EventRecorder(tag='my_event_recorder', variables=['n.spike'])
+    9: Recorder(['voltage', 'np.mean(voltage)'], tag='my_recorder'),
+    10: EventRecorder('spike', tag='my_event_recorder')
 })
 
 My_Neurons.visualize_module()#, only_feed_forward_connections=True

@@ -9,7 +9,7 @@ class spiketrain_tab(TabBase):
 
     def add_recorder_variables(self, neuron_group, Network_UI):
         if hasattr(neuron_group, self.parameter):
-            Network_UI.add_recording_variable(neuron_group, 'n.'+self.parameter, timesteps=self.timesteps)
+            Network_UI.add_recording_variable(neuron_group, self.parameter, timesteps=self.timesteps)
 
     def initialize(self, Network_UI):
         self.scatter_tab = Network_UI.add_tab(title=self.title)
@@ -28,7 +28,7 @@ class spiketrain_tab(TabBase):
 
 
                 try:
-                    data = group['n.'+self.parameter, 0, 'np'][-self.timesteps:].astype(np.float64)
+                    data = group[self.parameter, 0, 'np'][-self.timesteps:].astype(np.float64)
                     mi=0#np.min(data)
                     ma=np.max(data)
                     if group_tag == Network_UI.selected_neuron_group().tags[0]:

@@ -14,7 +14,7 @@ The second way is to use "n.spikes.t" to access the timesteps and "n.spikes.i" f
 EventRecorders can be attached to NeuronGroups, SynapseGroups and the Network object.
 
 ```python
-EventRecorder(tag='my_recorder', variables=['n.spikes'])
+EventRecorder('spikes', tag='my_recorder')
 
 ...
 

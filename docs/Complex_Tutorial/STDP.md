@@ -20,9 +20,9 @@ class STDP(Behaviour):
 
     def set_variables(self, neurons):
         self.add_tag('STDP')
-        neurons.stdp_factor = self.get_init_attr('stdp_factor', 0.00015, neurons)
-        self.syn_type = self.get_init_attr('syn_type', 'GLUTAMATE', neurons)
-        neurons.voltage_old = neurons.get_neuron_vec()
+        neurons.stdp_factor = self.parameter('stdp_factor', 0.00015, neurons)
+        self.syn_type = self.parameter('syn_type', 'GLUTAMATE', neurons)
+        neurons.voltage_old = neurons.vector()
 
     def new_iteration(self, neurons):
 

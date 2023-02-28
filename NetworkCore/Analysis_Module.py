@@ -10,7 +10,7 @@ class AnalysisModule(TaggableObjectBase):
 
     def __init__(self, parent=None, **kwargs):
         self.init_kwargs = kwargs
-        super().__init__(tag=self.get_init_attr('tag', None))
+        super().__init__(tag=self.parameter('tag', None))
 
         self.used_attr_keys = []
 
@@ -44,7 +44,7 @@ class AnalysisModule(TaggableObjectBase):
         self.initialize(parent)
 
     def initialize(self, neurons): #override
-        #access arguments via get_init_attr(key, default)
+        #access arguments via parameter(key, default)
         #self.add_tag('classifier')
         #self.add_execution_argument(...)
         #execute does not have to be used. You can just add all kinds of easy access convenience funtions to the class
@@ -59,7 +59,7 @@ class AnalysisModule(TaggableObjectBase):
         return type(self).execute != AnalysisModule.execute
         #return self.execute is super(AnalysisModule, self).execute
 
-    def get_init_attr(self, key, default):
+    def parameter(self, key, default):
         if key in self.init_kwargs:
             return self.init_kwargs[key]
         else:

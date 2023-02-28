@@ -14,18 +14,18 @@ from PymoNNto import *
 class Diesmann_main(Behaviour):
 
     def set_variables(self, n):
-        self.set_init_attrs_as_variables(self)
+        self.set_parameters_as_variables(self)
         n.dt = 0.01
-        n.v = n.get_neuron_vec() - self.Vr + n.get_neuron_vec('uniform') * (self.Vt - self.Vr)
-        n.x = n.get_neuron_vec()
-        n.y = n.get_neuron_vec()
+        n.v = n.vector() - self.Vr + n.vector('uniform') * (self.Vt - self.Vr)
+        n.x = n.vector()
+        n.y = n.vector()
 
     def new_iteration(self, n):
         v, x, y = n.v.copy(), n.x.copy(), n.y.copy()
 
         n.v += (-(v - self.Vr) + x) * (1. / self.taum) * n.dt#: volt
         n.x += (-x + y) * (1. / self.taupsp) * n.dt#: volt
-        n.y += (-y * (1. / self.taupsp) + 25.27 + (39.24 ** 0.5) * n.get_neuron_vec('uniform')*10) * n.dt#: volt
+        n.y += (-y * (1. / self.taupsp) + 25.27 + (39.24 ** 0.5) * n.vector('uniform')*10) * n.dt#: volt
 
         n.spike = (n.v > self.Vt)
         n.v[n.spike] = self.Vr
@@ -34,10 +34,10 @@ class Diesmann_main(Behaviour):
 class Diesmann_input(Behaviour):
 
     def set_variables(self, n):
-        self.set_init_attrs_as_variables(self)
+        self.set_parameters_as_variables(self)
 
         for s in n.afferent_synapses['GLUTAMATE']:
-            s.W = s.get_synapse_mat('uniform')
+            s.W = s.matrix('uniform')
 
         #[k for k in range((int(i/group_size)+1)*group_size, (int(i/group_size)+2)*group_size) if i<N_pre-group_size]
 
@@ -46,7 +46,7 @@ class Diesmann_input(Behaviour):
             n.v += np.sum(s.W[:, s.src.spike], axis=1)
 
         if self.external_noise:
-            n.v += n.get_neuron_vec('uniform')
+            n.v += n.vector('uniform')
 
 
 #Pinput = SpikeGeneratorGroup(85, np.arange(85), np.random.randn(85) + 50)
@@ -61,7 +61,7 @@ for group in range(n_groups):
     N_e = NeuronGroup(net=My_Network, tag='excitatory_neurons', size=get_squared_dim(group_size), behaviour={
         1: Diesmann_main(Vr=-70, Vt=-55, taum=10, taupsp=0.325, weight=4.86),
         2: Diesmann_input(external_noise=group==0),
-        9: Recorder(tag='my_recorder', variables=['n.v', 'n.spike'])
+        9: Recorder(['v', 'spike'], tag='my_recorder')
     })
     groups.append(N_e)
 

@@ -28,7 +28,7 @@ for ms_i, sm in enumerate(smg.StorageManagerList):
         print(ocd)
         classes = RALN.get_transition_classes(trans, freq)
 
-        x_n, y_n = RALN.plot_transition_frequencies(filtered_trans, freq, plot_single=True, plot_multiple=True, show_labels=True)
+        x_n, y_n = RALN.plot_transition_frequencies(filtered_trans, freq, plot_single=True, plot_multiple=True, show_labels=True, network=network)
 
         print(x_n)
 

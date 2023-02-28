@@ -26,21 +26,21 @@ class Brunel_Hakim_main(Behaviour):
         self.muext = 25 # mV
         self.sigmaext = 1 # mV
 
-        n.v = n.get_neuron_vec()+self.Vr
-        n.spike = n.get_neuron_vec()
-        n.refrac = n.get_neuron_vec()+10
+        n.v = n.vector()+self.Vr
+        n.spike = n.vector()
+        n.refrac = n.vector()+10
 
-        n.spikes = [n.get_neuron_vec()>0 for i in range(tau*self.delta)]
+        n.spikes = [n.vector()>0 for i in range(tau*self.delta)]
         print(len(n.spikes))
 
         #self.dt = 0.001
 
         #self.rnd()
 
-        #n.xi = n.get_neuron_vec()
+        #n.xi = n.vector()
 
     def new_iteration(self, n):
-        #xi = (n.get_neuron_vec('uniform',density=0.5)>0)
+        #xi = (n.vector('uniform',density=0.5)>0)
         xi = np.random.normal(loc=0.0, scale=1.0, size=n.size)*13#*5
 
         #xi = np.sqrt(1/tau)*np.random.normal(loc=0.0, scale=1.0, size=n.size)
@@ -68,7 +68,7 @@ class Brunel_Hakim_input(Behaviour):
 
     def set_variables(self, n):
         for s in n.afferent_synapses['GLUTAMATE']:
-            s.W = (s.get_synapse_mat('uniform')<n.sparseness).astype(def_dtype) * (-n.J)#density=n.sparseness
+            s.W = (s.matrix('uniform')<n.sparseness).astype(n.def_dtype) * (-n.J)#density=n.sparseness
 
             #print(s.W)
 
@@ -88,7 +88,7 @@ My_Network = Network()
 N_e = NeuronGroup(net=My_Network, tag='excitatory_neurons', size=get_squared_dim(1000), behaviour={
     1: Brunel_Hakim_main(),
     2: Brunel_Hakim_input(),
-    9: Recorder(tag='my_recorder', variables=['np.sum(n.spike)', 'n.spike'])
+    9: Recorder(['np.sum(spike)', 'spike'], tag='my_recorder')
 })
 
 SynapseGroup(net=My_Network, src=N_e, dst=N_e, tag='GLUTAMATE')
@@ -105,7 +105,7 @@ My_Network.simulate_iterations(100*tau, measure_block_time=True)
 #plt.show()
 
 w=5
-data = My_Network['np.sum(n.spike)', 0, 'np']
+data = My_Network['np.sum(spike)', 0, 'np']
 data_smooth = data.copy()
 for i in range(len(data)):
     mi = np.maximum(i-w, 0)

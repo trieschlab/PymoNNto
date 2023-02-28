@@ -5,8 +5,8 @@ import matplotlib.pyplot as plt
 
 class Counter(Behaviour):
     def set_variables(self, neurons):
-        self.inc = self.get_init_attr('inc', 1.0)
-        neurons.count = np.zeros(neurons.size)#neurons.get_neuron_vec()
+        self.inc = self.parameter('inc', 1.0)
+        neurons.count = np.zeros(neurons.size)#neurons.vector()
         plt.plot([1,2,3])
         plt.show()
 
@@ -17,7 +17,7 @@ class Counter(Behaviour):
 My_Network = Network()
 My_Neurons = NeuronGroup(net=My_Network, tag='my_neurons', size=100, behaviour={
     1: Counter(inc='[2.0#a]'),
-    2: Recorder(variables=['n.count'])
+    2: Recorder('count')
 })
 My_Synapses = SynapseGroup(net=My_Network, src=My_Neurons, dst=My_Neurons, tag='GLUTAMATE')
 sm = StorageManager('test', random_nr=False, print_msg=False)

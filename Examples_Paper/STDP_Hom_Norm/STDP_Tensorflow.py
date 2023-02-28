@@ -5,10 +5,10 @@ class STDP_TF(Behaviour):
 
     def set_variables(self, neurons):
         self.add_tag('STDP_TF')
-        eta_stdp = self.get_init_attr('eta_stdp', 0.0015, neurons)
+        eta_stdp = self.parameter('eta_stdp', 0.0015, neurons)
         neurons.eta_stdp = tf.constant(eta_stdp, dtype='float32')
-        self.syn_type = self.get_init_attr('syn_type', 'GLU', neurons)
-        neurons.spike_old = neurons.get_neuron_vec()
+        self.syn_type = self.parameter('syn_type', 'GLU', neurons)
+        neurons.spike_old = neurons.vector()
 
     def new_iteration(self, neurons):
 

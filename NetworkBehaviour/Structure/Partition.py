@@ -47,7 +47,7 @@ class Partition(Behaviour):
 
     def set_variables(self, synapses):
 
-        split_size = self.get_init_attr('split_size', 'auto')
+        split_size = self.parameter('split_size', 'auto')
 
         if split_size == 'auto':
             best_block_size = 7

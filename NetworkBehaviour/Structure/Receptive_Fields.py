@@ -28,7 +28,7 @@ class Receptive_Fields(Behaviour):
     def set_variables(self, synapses):
         src = synapses.src
         dst = synapses.dst
-        #synapses.enabled = synapses.get_synapse_mat()
+        #synapses.enabled = synapses.matrix()
 
         s_id = np.tile(np.arange(src.size), (1, dst.size)).reshape(dst.size, src.size)#vec_to_mat(np.arange(src.size), dst.size) #
 
@@ -58,14 +58,14 @@ class Receptive_Fields(Behaviour):
 
         synapses.enabled *= self.get_enabled_mat(synapses, s_id, sx, sy, sz, d_id, dx, dy, dz)
 
-        if self.get_init_attr('remove_autapses', False):
+        if self.parameter('remove_autapses', False):
             synapses.enabled *= (s_id != d_id)
 
 
 class Box_Receptive_Fields(Receptive_Fields):
 
     def get_enabled_mat(self, synapses, s_id, sx, sy, sz, d_id, dx, dy, dz):
-        range=self.get_init_attr('range', None, required=True)
+        range=self.parameter('range', None, required=True)
         if sx is not None and sy is not None and sz is not None and dx is not None and dy is not None and dz is not None:
             x_diff = np.abs(sx - dx)
             y_diff = np.abs(sy - dy)
@@ -78,7 +78,7 @@ class Box_Receptive_Fields(Receptive_Fields):
 class Circle_Receptive_Fields(Receptive_Fields):
 
     def get_enabled_mat(self, synapses, s_id, sx, sy, sz, d_id, dx, dy, dz):
-        radius = self.get_init_attr('radius', None, required=True)
+        radius = self.parameter('radius', None, required=True)
         if sx is not None and sy is not None and sz is not None and dx is not None and dy is not None and dz is not None:
             x_diff = np.abs(sx - dx)
             y_diff = np.abs(sy - dy)

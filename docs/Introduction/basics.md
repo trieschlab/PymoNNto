@@ -6,15 +6,15 @@ The following code creates a network of 100 neurons with recurrent connections a
 ```python
 from PymoNNto import *
 
-My_Network = Network()
+net = Network()
 
-My_Neurons = NeuronGroup(net=My_Network, tag='my_neurons', size=100, behaviour={})
+NeuronGroup(net=net, tag='my_neurons', size=100, behaviour={})
 
-SynapseGroup(net=My_Network, src=My_Neurons, dst=My_Neurons, tag='GLUTAMATE')
+SynapseGroup(net=net, src='my_neurons', dst='my_neurons', tag='GLUTAMATE')
 
-My_Network.initialize()
+net.initialize()
 
-My_Network.simulate_iterations(1000)
+net.simulate_iterations(1000)
 ```
 
 ## Behaviour
@@ -29,7 +29,7 @@ In this example we define a variable `activity` and a `decay_factor`. The activi
 class Basic_Behaviour(Behaviour):
 
   def set_variables(self, neurons):
-    neurons.activity = neurons.get_neuron_vec('uniform')
+    neurons.activity = neurons.vector('uniform')
     self.decay_factor = 0.99
 
   def new_iteration(self, neurons):
@@ -55,7 +55,7 @@ from PymoNNto import *
 class Basic_Behaviour(Behaviour):
 
   def set_variables(self, neurons):
-    neurons.activity = neurons.get_neuron_vec('uniform')
+    neurons.activity = neurons.vector('uniform')
     self.decay_factor = 0.99
 
   def new_iteration(self, neurons):
@@ -63,24 +63,24 @@ class Basic_Behaviour(Behaviour):
 
 
 
-My_Network = Network()
+net = Network()
 
-My_Neurons = NeuronGroup(net=My_Network, tag='my_neurons', size=100, behaviour={
+NeuronGroup(net=net, tag='my_neurons', size=100, behaviour={
     1: Basic_Behaviour(),
-    9: Recorder(tag='my_recorder', variables=['n.activity', 'np.mean(n.activity)'])
+    9: Recorder(['activity', 'np.mean(activity)'], tag='my_recorder')
 })
 
-SynapseGroup(net=My_Network, src=My_Neurons, dst=My_Neurons, tag='GLUTAMATE')
+SynapseGroup(net=net, src='my_neurons', dst='my_neurons', tag='GLUTAMATE')
 
-My_Network.initialize()
+net.initialize()
 
-My_Network.simulate_iterations(1000)
+net.simulate_iterations(1000)
 
 
 
 import matplotlib.pyplot as plt
-plt.plot(My_Network['n.activity', 0])
-plt.plot(My_Network['np.mean(n.activity)', 0], color='black')
+plt.plot(net['activity', 0])
+plt.plot(net['np.mean(activity)', 0], color='black')
 plt.show()
 ```
 
@@ -97,20 +97,20 @@ class Input_Behaviour(Behaviour):
 
   def set_variables(self, neurons):
     for synapse in neurons.afferent_synapses['GLUTAMATE']:
-        synapse.W = synapse.get_synapse_mat('uniform',density=0.1)
+        synapse.W = synapse.matrix('uniform',density=0.1)
 
   def new_iteration(self, neurons):
     for synapse in neurons.afferent_synapses['GLUTAMATE']:
         neurons.activity += synapse.W.dot(synapse.src.activity)/synapse.src.size
 
-    neurons.activity += neurons.get_neuron_vec('uniform',density=0.01)
+    neurons.activity += neurons.vector('uniform',density=0.01)
 
 
 
 class Basic_Behaviour(Behaviour):
 
   def set_variables(self, neurons):
-    neurons.activity = neurons.get_neuron_vec('uniform')
+    neurons.activity = neurons.vector('uniform')
     self.decay_factor = 0.99
 
   def new_iteration(self, neurons):
@@ -123,7 +123,7 @@ My_Network = Network()
 My_Neurons = NeuronGroup(net=My_Network, tag='my_neurons', size=100, behaviour={
     1: Basic_Behaviour(),
     2: Input_Behaviour(),
-    9: Recorder(tag='my_recorder', variables=['n.activity', 'np.mean(n.activity)'])
+    9: Recorder(['activity', 'np.mean(activity)'], tag='my_recorder')
 })
 
 SynapseGroup(net=My_Network, src=My_Neurons, dst=My_Neurons, tag='GLUTAMATE')
@@ -135,8 +135,8 @@ My_Network.simulate_iterations(1000)
 
 
 import matplotlib.pyplot as plt
-plt.plot(My_Network['n.activity', 0])
-plt.plot(My_Network['np.mean(n.activity)', 0], color='black')
+plt.plot(My_Network['activity', 0])
+plt.plot(My_Network['np.mean(activity)', 0], color='black')
 plt.show()
 ```
 

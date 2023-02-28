@@ -4,9 +4,9 @@ import numpy as np
 class Synaptic_Normalization(Behaviour):
 
     def set_variables(self, neurons):
-        self.syn_type = self.get_init_attr('syn_type', 'GLU', neurons)
-        self.clip_max = self.get_init_attr('clip_max', None, neurons)
-        neurons.weight_norm_factor = neurons.get_neuron_vec()+self.get_init_attr('norm_factor', 1.0, neurons)
+        self.syn_type = self.parameter('syn_type', 'GLU', neurons)
+        self.clip_max = self.parameter('clip_max', None, neurons)
+        neurons.weight_norm_factor = neurons.vector()+self.parameter('norm_factor', 1.0, neurons)
 
     def new_iteration(self, neurons):
         normalize_synapse_attr('W', 'W', neurons.weight_norm_factor, neurons, self.syn_type)
@@ -19,7 +19,7 @@ class Synaptic_Normalization(Behaviour):
 
 
 def normalize_synapse_attr(src_attr, target_attr, target_value, neurons, synapse_type):
-    neurons.temp_weight_sum = neurons.get_neuron_vec()
+    neurons.temp_weight_sum = neurons.vector()
 
     for s in neurons.afferent_synapses[synapse_type]:
         s.dst.temp_weight_sum += np.sum(np.abs(getattr(s, src_attr)), axis=1)
@@ -33,7 +33,7 @@ def normalize_synapse_attr(src_attr, target_attr, target_value, neurons, synapse
 
 
 def normalize_synapse_attr_efferent(src_attr, target_attr, target_value, neurons, synapse_type):
-    neurons.temp_weight_sum = neurons.get_neuron_vec()
+    neurons.temp_weight_sum = neurons.vector()
 
     for s in neurons.efferent_synapses[synapse_type]:
         s.src.temp_weight_sum += np.sum(np.abs(getattr(s, target_attr)), axis=0)
@@ -53,7 +53,7 @@ sg = SynapseGroup(tag='GLU', src=ng, dst=ng, net=net, behaviour={})
 
 net.initialize()
 
-sg.W = sg.get_synapse_mat('random')
+sg.W = sg.matrix('random')
 
 print(np.sum(sg.W,0))
 print(np.sum(sg.W,1))

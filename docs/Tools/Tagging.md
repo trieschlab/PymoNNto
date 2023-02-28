@@ -10,11 +10,11 @@ My_Network['my_recorder']
 My_Neurons['my_recorder'] 
 => [<PymoNNto.NetworkBehaviour.Recorder.Recorder.Recorder object at 0x0000021F1B61D5E0>]
 
-My_Neurons['n.activity']
-My_Neurons['my_recorder', 0]['n.activity']
+My_Neurons['activity']
+My_Neurons['my_recorder', 0]['activity']
 => [[array(data iteration 1), array(data iteration 2), array(data iteration 3), ...]]
 
-My_Neurons['n.activity', 0] 
+My_Neurons['activity', 0] 
 is equivalent to 
-My_Neurons['n.activity'][0] 
+My_Neurons['activity'][0] 
 ```

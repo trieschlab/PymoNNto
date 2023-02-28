@@ -56,7 +56,7 @@ class character_activation_tab(TabBase):
                 if len(self.max_char_scatter.activity_data) > 50:
                     self.max_char_scatter.activity_data = self.max_char_scatter.activity_data[1:]
 
-                iterations = group['n.iteration', 0, 'np'][-len(self.max_char_scatter.activity_data):]
+                iterations = group['iteration', 0, 'np'][-len(self.max_char_scatter.activity_data):]
                 self.max_char_scatter.setData(iterations, self.max_char_scatter.activity_data, size=50)
 
                 for i, char_scatter in enumerate(self.char_scatter_plots):

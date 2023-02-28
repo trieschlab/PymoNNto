@@ -24,8 +24,8 @@ class single_group_plot_tab(TabBase):
 
         for var in self.variables:
             if hasattr(neuron_group, var):
-                Network_UI.add_recording_variable(neuron_group, 'n.'+var, timesteps=self.timesteps)
-                Network_UI.add_recording_variable(neuron_group, 'np.mean(n.'+var+')', timesteps=self.timesteps)
+                Network_UI.add_recording_variable(neuron_group, var, timesteps=self.timesteps)
+                Network_UI.add_recording_variable(neuron_group, 'np.mean('+var+')', timesteps=self.timesteps)
 
     def initialize(self, Network_UI):
         self.inh_exc_tab = Network_UI.add_tab(title=self.title, stretch=0) #Network_UI.Next_Tab(self.title, stretch=0)
@@ -39,7 +39,7 @@ class single_group_plot_tab(TabBase):
             tooltip_message+=str(self.variables[key])+' : '+str(key)+'\r\n'
 
         single_vars = list(self.variables.keys())
-        mean_vars = ['np.mean(n.'+var+')' for var in self.variables]
+        mean_vars = ['np.mean('+var+')' for var in self.variables]
         colors = list(self.variables.values())
 
         mean_curves = Network_UI.tab.add_plot(y_label='NeuronGroup ' + str(single_vars), tooltip_message=tooltip_message).add_curves(number_of_curves=len(mean_vars), names=mean_vars, colors=colors, lines=self.net_lines)
@@ -76,25 +76,25 @@ class single_group_plot_tab(TabBase):
 
             for var in self.variables:
                 if hasattr(group, var):
-                    iterations = group['n.iteration', 0, 'np'][-self.timesteps:]
+                    iterations = group['iteration', 0, 'np'][-self.timesteps:]
 
                     try:
                         if self.line_checkboxes[var].isChecked():
-                            mean_var = 'np.mean(n.'+var+')'
+                            mean_var = 'np.mean('+var+')'
                             data_mean = group[mean_var, 0, 'np'][-self.timesteps:]
                             self.net_curves[var].setData(iterations, data_mean)
                         else:
-                            self.net_curves[var].clear()
+                            self.net_curves[var].setData([],[])#clear()
                     except:
-                        self.net_curves[var].clear()
+                        self.net_curves[var].setData([],[])
 
                     try:
                         if self.line_checkboxes[var].isChecked():
-                            single_var = 'n.' + var
-                            data_neuron = group[single_var, 0, 'np'][-self.timesteps:, Network_UI.selected_neuron_id()].astype(def_dtype)
+                            single_var = var
+                            data_neuron = group[single_var, 0, 'np'][-self.timesteps:, Network_UI.selected_neuron_id()].astype(Network_UI.network.def_dtype)
                             self.neuron_curves[var].setData(iterations, data_neuron)
                         else:
-                            self.neuron_curves[var].clear()
+                            self.neuron_curves[var].setData([],[])
                     except:
-                        self.neuron_curves[var].clear()
+                        self.neuron_curves[var].setData([],[])
 

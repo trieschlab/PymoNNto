@@ -1,36 +1,76 @@
 from PymoNNto.NetworkCore.Behaviour import *
 import copy
 
-def get_Recorder(variable):
-    return Recorder(variables=[variable])
-
-
 class Recorder(Behaviour):
+    set_variables_last = True
+
     visualization_module_outputs = []
 
-    def __init__(self, variables, gapwidth=0, tag=None, max_length=None, save_as_numpy=False):
-        super().__init__(tag=tag, variables=variables, gapwidth=gapwidth, max_length=max_length, save_as_numpy=save_as_numpy)
-        #if tag is not None:
-        #    self.add_tag(tag)
+    def set_variables(self, parent_obj):
         self.add_tag('recorder')
 
-        self.gapwidth = self.get_init_attr('gapwidth', 0)
-        self.counter = 0
-        self.new_data_available=False
+        variables = self.parameter('variables', None)
+        if variables is None:
+            variables = self.parameter('arg_0', None)
+            if variables is None:
+                variables = []
 
         if type(variables) is str:
-            variables=[variables]
+            variables = [variables]
 
+        self.gapwidth = self.parameter('gapwidth', 0)
+        self.save_as_numpy = self.parameter('save_as_numpy', False)
+        self.max_length = self.parameter('max_length', None)
+        self.counter = 0
+        self.new_data_available=False
         self.variables = {}
         self.compiled = {}
-        self.save_as_numpy = self.get_init_attr('save_as_numpy', False)
 
-        self.add_variables(self.get_init_attr('variables', []))
+        self.add_variables(variables)
         self.reset()
-        self.max_length = self.get_init_attr('max_length', None)
 
-    def set_variables(self, neurons):
-        self.reset()
+    def new_iteration(self, parent_obj):
+
+        if parent_obj.recording:
+
+            self.counter += 1
+            if self.counter >= self.gapwidth:
+                self.new_data_available = True
+                self.counter = 0
+                for v in self.variables:
+                    if self.compiled[v] is None:
+                        annotated_v = self.annotate_var_str(v, parent_obj)
+                        self.compiled[v] = compile(annotated_v, '<string>', 'eval')
+                    data = self.get_data_v(v, parent_obj)
+                    if data is not None:
+                        self.save_data_v(data, v)
+
+        if self.max_length is not None:
+            self.cut_length(self.max_length)
+
+    def eq_split(self, eq, splitter):
+        str = eq.replace(' ', '')
+        parts = []
+        str_buf = ''
+        for s in str:
+            if s in splitter:
+                parts.append(str_buf)
+                parts.append(s)
+                str_buf = ''
+            else:
+                str_buf += s
+
+        parts.append(str_buf)
+        return parts
+
+    def annotate_var_str(self, variable, parent_obj):
+        splitter = ['*', '/', '+', '-', '%', ':', ';', '=', '!', '(', ')', '[', ']', '{', '}']
+        annotated_var = ''
+        for part in self.eq_split(variable, splitter):
+            if hasattr(parent_obj, part):
+                part = 'n.'+part
+            annotated_var += part
+        return annotated_var
 
     def add_varable(self, v):
         if self.save_as_numpy:
@@ -81,22 +121,7 @@ class Recorder(Behaviour):
         else:
             self.variables[variable].append(data)
 
-    def new_iteration(self, parent_obj):
-        if parent_obj.recording:
 
-            self.counter += 1
-            if self.counter >= self.gapwidth:
-                self.new_data_available = True
-                self.counter = 0
-                for v in self.variables:
-                    if self.compiled[v] is None:
-                        self.compiled[v] = compile(v, '<string>', 'eval')
-                    data = self.get_data_v(v, parent_obj)
-                    if data is not None:
-                        self.save_data_v(data, v)
-
-        if self.max_length is not None:
-            self.cut_length(self.max_length)
 
     def cut_length(self, max_length):
         if max_length is not None:
@@ -122,10 +147,8 @@ class Recorder(Behaviour):
         for v in self.variables:
             self.variables[v].clear()
 
-class EventRecorder(Recorder):
 
-    def __init__(self, variables, tag=None):
-        super().__init__(variables, gapwidth=0, tag=tag, max_length=None, save_as_numpy=True)
+class EventRecorder(Recorder): #10: EventRecorder(tag='my_event_recorder', variables=['spike']) #plt.plot(My_Network['spike.t', 0], My_Network['spike.i', 0], '.k')
 
     def find_objects(self, key):
 
@@ -133,10 +156,10 @@ class EventRecorder(Recorder):
         if key in self.variables:
             result.append(self.variables[key])
 
-        if type(key) is str and key[-2:] == '.t' and key[:-2] in self.variables:
+        if type(key) is str and key[-2:] == '.t' and key[:-2] in self.variables:#time
             result.append(self.variables[key[:-2]][:, 0])
 
-        if type(key) is str and key[-2:] == '.i' and key[:-2] in self.variables:
+        if type(key) is str and key[-2:] == '.i' and key[:-2] in self.variables:#neuron index
             result.append(self.variables[key[:-2]][:, 1])
 
         return result
@@ -164,127 +187,3 @@ class EventRecorder(Recorder):
         else:
             self.variables[variable] = np.concatenate([self.variables[variable], data], axis=0)
 
-'''
-class SynapseGroupRecorder(Recorder):
-
-    def __init__(self, variables, transmitter='GLU', gapwidth=0, tag=None, max_length=None):
-        self.transmitter = transmitter
-        super().__init__([], gapwidth, tag=tag, max_length=max_length)
-        self.add_variables(variables)
-
-    def find_objects(self, key):
-        result = []
-        k = self.get_synapse_command(key)
-        if k in self.variables:
-            result.append(self.variables[k])
-        return result
-
-    def add_variables(self, vars):
-        super().add_variables([self.get_synapse_command(v) for v in vars])
-
-    def get_synapse_command(self, var):
-        return 'np.concatenate([' + var + ' for s in neurons.afferent_synapses.get("' + self.transmitter + '", np.array([]))], axis=1).flatten()'
-
-    #def __getitem__(self, key):
-    #    return np.array(self.variables[self.get_synapse_command(key)])
-'''
-
-
-
-
-
-
-
-
-
-'''
-
-class TRENRecorder(Neuron_Behaviour):
-
-    def __init__(self, variables, behaviour_index=None, gapwidth=0):
-        super().__init__()
-        self.gapwidth=gapwidth
-        self.counter = 0
-        self.variables = []
-        self.indexes = []
-        for var in variables:
-            var, indx = self.split_attribute_and_index(var)
-            self.variables.append(var)
-            self.indexes.append(indx)
-        self.behaviour_index = behaviour_index
-        self.reset()
-
-    def reset(self):
-        for var in self.variables:
-            setattr(self, var, [])
-
-    def set_variables(self, neurons):
-        self.reset()
-
-    def new_iteration(self, neurons):
-        self.counter+=1
-        if self.counter>self.gapwidth:
-            self.counter=0
-            src = neurons
-            if self.behaviour_index is not None:
-                src = neurons.behaviour[self.behaviour_index]
-
-            for var, indx in zip(self.variables, self.indexes):
-                val = getattr(src, var).copy()
-
-                if indx is None:
-                    getattr(self, var).append(val)
-                else:
-                    getattr(self, var).append(val[indx])
-
-    def swaped(self, name):
-        return self.swap(getattr(self, name))
-
-    def swap(self, x):
-        return np.swapaxes(np.array(x), 1, 0)
-
-    def split_attribute_and_index(self, name):
-        if '[' in name:
-            split = name.split('[')
-            return split[0], int(split[1][:-1])
-        else:
-            return [name, None]
-
-
-class TRENSynapseRecorder(TRENRecorder):
-
-    def __init__(self, transmitter, variables, gapwidth=0):
-        super().__init__(variables, gapwidth)
-        self.transmitter = transmitter
-
-    def set_variables(self, neurons):
-        super().set_variables(neurons)
-        syns = neurons.afferent_synapses.get(self.transmitter, [])
-        start = 0
-        self.block_sizes = []
-        for s in syns:
-            size = s.get_dest_size()*s.get_src_size()
-            end = start+size
-            self.block_sizes.append([start, end])
-            start=end
-
-    def get_block_num(self):
-        return len(self.block_sizes)
-
-    def get_block(self, index, mat):
-        return np.array(mat)[:, self.block_sizes[index][0]:self.block_sizes[index][1]]
-
-    def new_iteration(self, neurons):
-        self.counter+=1
-        if self.counter>self.gapwidth:
-            self.counter=0
-            for var in self.variables:
-                syns = neurons.afferent_synapses.get(self.transmitter, [])
-
-                vals=np.array([])
-                for s in syns:
-                    vals = np.concatenate((vals, getattr(s, var).flatten()))
-
-                getattr(self, var).append(vals)
-                
-'''

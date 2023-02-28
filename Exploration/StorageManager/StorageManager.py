@@ -75,6 +75,22 @@ def add_project_root_path():
             sys.path.remove(original_project_folder)
 
 
+def get_settings(section):
+    path = get_data_folder()+'/settings.ini'
+    result = {}
+    if os.path.exists(path):
+        try:
+            config = ConfigParser()
+            config.read(path)
+            for option in config.options(section):
+                try:
+                    result[option] = eval(config.get(section, option))
+                except:
+                    pass
+        except:
+            pass
+    return result
+
 #searches for "Data" folder in project by default
 #default folder: .../Data/StorageManager/main_folder_name/folder_name/
 #example:

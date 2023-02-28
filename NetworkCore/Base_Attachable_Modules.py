@@ -52,6 +52,9 @@ class NetworkObjectBase(TaggableObjectBase):
             if self.behaviour[k].set_variables_on_init:
                 network._set_variables_check(self, k)
 
+        #self.learning = True
+        self.recording = True
+
         self.analysis_modules = []
 
     def add_behaviour(self, key, behaviour, initialize=True):
@@ -76,8 +79,6 @@ class NetworkObjectBase(TaggableObjectBase):
                 remove_keys.append(key)
         for key in remove_keys:
             self.behaviour.pop(key)
-
-
 
     def set_behaviours(self, tag, enabeled):
         if enabeled:
@@ -136,7 +137,7 @@ class NetworkObjectBase(TaggableObjectBase):
         return mat
 
     def get_nparray(self, dim):
-        return np.zeros(dim).astype(def_dtype)
+        return np.zeros(dim).astype(self.def_dtype)
 
     def _get_mat(self, mode, dim, density=None, scale=None, plot=False):
         if mode not in self._mat_eval_dict:
@@ -234,7 +235,7 @@ class NetworkObjectBase(TaggableObjectBase):
             plt.hist(result.flatten(), bins=30)
             plt.show()
 
-        return result.astype(def_dtype)
+        return result.astype(self.def_dtype)
     '''
 
     def get_random_nparray(self, dim, density=None, clone_along_first_axis=False, rnd_code=None):#rnd_code=random_sample(dim)
@@ -249,11 +250,11 @@ class NetworkObjectBase(TaggableObjectBase):
             result = eval(rnd_code)
 
         if density is None:
-            result = result.astype(def_dtype)
+            result = result.astype(self.def_dtype)
         elif type(density) == int or type(density) == float:
-            result = (result * (random_sample(dim) <= density)).astype(def_dtype)
+            result = (result * (random_sample(dim) <= density)).astype(self.def_dtype)
         elif type(density) is np.ndarray:
-            result = (result * (random_sample(dim) <= density[:, None])).astype(def_dtype)
+            result = (result * (random_sample(dim) <= density[:, None])).astype(self.def_dtype)
 
 
         if not clone_along_first_axis:

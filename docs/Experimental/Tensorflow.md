@@ -7,12 +7,12 @@ class STDP_TF(TensorflowBehaviour):
         super().set_variables(neurons)
         self.add_tag('STDP_TF')
 
-        neurons.output = tf.Variable(neurons.get_neuron_vec(), dtype='float32')
-        neurons.output_old = tf.Variable(neurons.get_neuron_vec(), dtype='float32')
+        neurons.output = tf.Variable(neurons.vector(), dtype='float32')
+        neurons.output_old = tf.Variable(neurons.vector(), dtype='float32')
 
-        neurons.eta_stdp = tf.constant(self.get_init_attr('eta_stdp', 0.00015, neurons), dtype='float32')
+        neurons.eta_stdp = tf.constant(self.parameter('eta_stdp', 0.00015, neurons), dtype='float32')
 
-        self.syn_type = self.get_init_attr('syn_type', 'GLU', neurons)
+        self.syn_type = self.parameter('syn_type', 'GLU', neurons)
 
     def new_iteration(self, neurons):
 

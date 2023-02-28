@@ -32,7 +32,7 @@ If so, we access the recorded data via the tagging system.
 Like in the previous plotting example we can use the same string for variable evaluation and tagging.
 Therefore ['np.mean(n.voltage)', 0, 'np'] gives us the recorded mean of the voltage, selects the first and only element in the list of the tagged objects and directly converts it to a numpy array with the 'np' attribute.
 The [-1000:] at the end is optional and ensures that the plotted trace is not longer than 1000 elements, which could be the case when merging recorders of different length.
-This, however, only gives us the y-axis data. If we want to get the corresponding time steps on the x-axis, we can access the n.iteration trace in the same way as the y-data.
+This, however, only gives us the y-axis data. If we want to get the corresponding time steps on the x-axis, we can access the "iteration" trace in the same way as the y-data.
 This is possible, because the Network_UI adds this recorder automatically.
 To display the custom tab, we can add it to the list of ui_modules from the first examples, which is shown at the bottom of the code block.
 
@@ -47,7 +47,7 @@ class MyUITab(TabBase):
 
     def add_recorder_variables(self, net_obj, Network_UI):
         #if hasattr(net_obj, 'activity'):
-        Network_UI.add_recording_variable(net_obj, 'np.mean(n.voltage)', timesteps=1000)
+        Network_UI.add_recording_variable(net_obj, 'np.mean(voltage)', timesteps=1000)
 
     def initialize(self, Network_UI):
         self.my_Tab = Network_UI.Next_Tab(self.title)
@@ -55,8 +55,8 @@ class MyUITab(TabBase):
 
     def update(self, Network_UI):
         if self.my_Tab.isVisible():
-            data = Network_UI.network['np.mean(n.voltage)', 0, 'np'][-1000:]
-            iterations = Network_UI.network['n.iteration', 0, 'np'][-1000:]
+            data = Network_UI.network['np.mean(voltage)', 0, 'np'][-1000:]
+            iterations = Network_UI.network['iteration', 0, 'np'][-1000:]
             self.my_curve.setData(iterations, data)
 
         #...

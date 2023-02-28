@@ -10,9 +10,9 @@ class isi_tab(TabBase):
 
     def add_recorder_variables(self, neuron_group, Network_UI):
         if hasattr(neuron_group, self.param):
-            Network_UI.add_recording_variable(neuron_group, 'n.' + self.param, timesteps=self.timesteps)
+            Network_UI.add_recording_variable(neuron_group, self.param, timesteps=self.timesteps)
         if hasattr(neuron_group, self.param):
-            self.sum_tag='np.sum(n.'+self.param+')'
+            self.sum_tag='np.sum('+self.param+')'
             Network_UI.add_recording_variable(neuron_group, self.sum_tag, timesteps=1000)
 
     def initialize(self, Network_UI):
@@ -65,7 +65,7 @@ class isi_tab(TabBase):
 
     def update_ISI(self, Network_UI, group, input_mask, not_input_mask, net_color_input):
 
-        act_data = group['n.' + self.param, 0, 'np'][-self.timesteps:, :]
+        act_data = group[self.param, 0, 'np'][-self.timesteps:, :]
 
         self.neuron_isi_plt.clear()
         sel_bins = self.neuron_isi_bin_slider.sliderPosition()
@@ -94,7 +94,7 @@ class isi_tab(TabBase):
     def update_Mean_Activity(self, Network_UI, group, input_mask, not_input_mask, net_color_input):
         net_bins = self.net_avg_bin_slider.sliderPosition()
 
-        avg_acts = np.mean(group['n.' + self.param, 0, 'np'][-self.timesteps:, :], axis=0)
+        avg_acts = np.mean(group[self.param, 0, 'np'][-self.timesteps:, :], axis=0)
 
         color_str=('#%02x%02x%02x'% Network_UI.neuron_select_color[0:3]).upper()
         self.neuron_avg_act_label.setText('Selected neuron average spike rate:<br><font color='+color_str+'>'+str(avg_acts[Network_UI.selected_neuron_id()])+'</font>')

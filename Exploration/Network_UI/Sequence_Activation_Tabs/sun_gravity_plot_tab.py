@@ -51,11 +51,11 @@ class DrawItem2(pg.GraphicsObject):
         weight_exp = self.p4s.sliderPosition() / 100
         attractor_rad_fac = self.p5s.sliderPosition() / 100
 
-        #group.buffer_posx += (group.get_neuron_vec('uniform') - 0.5)*0.1
-        #group.buffer_posy += (group.get_neuron_vec('uniform') - 0.5)*0.1
+        #group.buffer_posx += (group.vector('uniform') - 0.5)*0.1
+        #group.buffer_posy += (group.vector('uniform') - 0.5)*0.1
 
-        group.add_x = (group.get_neuron_vec('uniform') - 0.5) * random_movement_fac# + (-group.buffer_posx)*p2
-        group.add_y = (group.get_neuron_vec('uniform') - 0.5) * random_movement_fac# + (-group.buffer_posy)*p2#np.sin(group.buffer_posy/lb*2*np.pi)*10*p2
+        group.add_x = (group.vector('uniform') - 0.5) * random_movement_fac# + (-group.buffer_posx)*p2
+        group.add_y = (group.vector('uniform') - 0.5) * random_movement_fac# + (-group.buffer_posy)*p2#np.sin(group.buffer_posy/lb*2*np.pi)*10*p2
 
         for sg in group.afferent_synapses['GLU']:
             theta_src, rho_src = cart2pol(sg.src.buffer_posx, sg.src.buffer_posy)
@@ -250,7 +250,7 @@ class DrawItem2(pg.GraphicsObject):
         self.label_cb = label_cb
 
     #def compute_similarity(self, group, neuron_index):
-    #    group._syn_differences_ = group.get_neuron_vec()
+    #    group._syn_differences_ = group.vector()
     #    for sg in group.afferent_synapses['GLU']:
     #        if neuron_index in sg.dst.id:
     #            sg.dst._syn_differences_ += np.sum(sg.W * sg.W[:,np.where(sg.dst.id==neuron_index)[0]], axis=1)
@@ -261,7 +261,7 @@ class DrawItem2(pg.GraphicsObject):
 
         #print(group._syn_differences_)
 
-    #    return group.get_neuron_vec('uniform')#group._syn_differences_
+    #    return group.vector('uniform')#group._syn_differences_
 
     def draw_labels(self, painter, group, selection):
 
@@ -395,7 +395,7 @@ class sun_gravity_plot_tab(TabBase):
             #stringaxis.setTicks([ydict.items()])
 
             for group in Network_UI.network.NeuronGroups:
-                group.buffer_posx, group.buffer_posy = pol2cart(group.get_neuron_vec('uniform') * 2 * np.pi, group.get_neuron_vec('uniform') * 100)
+                group.buffer_posx, group.buffer_posy = pol2cart(group.vector('uniform') * 2 * np.pi, group.vector('uniform') * 100)
 
             self.last_id = -1
             self.last_group = -1

@@ -33,14 +33,3 @@ class TabBase:
     def on_selected_neuron_changed(self, Network_UI):
         return
 
-    def interpret_recording_variable(self, var):
-        chars = '.,()[]+-*/%'
-        found = False
-        for c in chars:
-            if c in var:
-                found = True
-
-        if not found:
-            var = 'n.' + var
-
-        return var

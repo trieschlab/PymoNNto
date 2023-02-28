@@ -3,9 +3,9 @@ from PymoNNto import *
 class LIF_main(Behaviour):
 
     def set_variables(self, n):
-        self.set_init_attrs_as_variables(n)
-        n.v = n.get_neuron_vec('uniform')*n.v_rest
-        n.fired = n.get_neuron_vec() > 0
+        self.set_parameters_as_variables(n)
+        n.v = n.vector('uniform')*n.v_rest
+        n.fired = n.vector() > 0
         n.dt = 0.1
 
     def new_iteration(self, n):
@@ -20,13 +20,13 @@ class LIF_input(Behaviour):
 
     def set_variables(self, n):
         for s in n.afferent_synapses['All']:
-            s.W = s.get_synapse_mat('uniform')
+            s.W = s.matrix('uniform')
 
-        n.I = n.get_neuron_vec()
+        n.I = n.vector()
 
     def new_iteration(self, n):
 
-        n.I = 90 * n.get_neuron_vec('uniform')
+        n.I = 90 * n.vector('uniform')
 
         for s in n.afferent_synapses['GLUTAMATE']:
             n.I += np.sum(s.W[:, s.src.fired], axis=1)
@@ -42,13 +42,13 @@ My_Network = Network()
 N_e = NeuronGroup(net=My_Network, tag='excitatory_neurons', size=get_squared_dim(800), behaviour={
     1: LIF_main(v_rest=-65, v_reset=-80, v_threshold=-10),
     2: LIF_input(),
-    9: Recorder(tag='my_recorder', variables=['n.v', 'n.fired'])
+    9: Recorder(['v', 'fired'], tag='my_recorder')
 })
 
 N_i = NeuronGroup(net=My_Network, tag='inhibitory_neurons', size=get_squared_dim(200), behaviour={
     1: LIF_main(v_rest=-65, v_reset=-80, v_threshold=-30),
     2: LIF_input(),
-    9: Recorder(tag='my_recorder', variables=['n.v', 'n.fired'])
+    9: Recorder(['v', 'fired'], tag='my_recorder')
 })
 
 SynapseGroup(net=My_Network, src=N_e, dst=N_e, tag='GLUTAMATE')
@@ -61,10 +61,10 @@ My_Network.initialize()
 My_Network.simulate_iterations(1000, measure_block_time=True)
 
 import matplotlib.pyplot as plt
-plt.plot(My_Network['n.v', 0])
+plt.plot(My_Network['v', 0])
 plt.show()
 
-plt.imshow(My_Network['n.fired', 0, 'np'].transpose(),cmap='gray', aspect='auto')
+plt.imshow(My_Network['fired', 0, 'np'].transpose(),cmap='gray', aspect='auto')
 plt.show()
 
 

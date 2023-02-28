@@ -10,7 +10,7 @@ class fourier_tab(TabBase):
 
     def add_recorder_variables(self, neuron_group, Network_UI):
         try:
-            Network_UI.add_recording_variable(neuron_group, 'np.mean(n.'+self.parameter+')', timesteps=self.timesteps)
+            Network_UI.add_recording_variable(neuron_group, 'np.mean('+self.parameter+')', timesteps=self.timesteps)
         except:
             print(self.parameter, 'cannot be added to recorder')
 
@@ -99,7 +99,7 @@ class fourier_tab(TabBase):
                 ms_per_cycle = int(self.ms_per_cycle_slider.sliderPosition())
                 self.mspc_label.setText('ms/cycle: {}'.format(ms_per_cycle))
 
-                exc_act = group['np.mean(n.'+self.parameter+')', 0, 'np'][-self.timesteps:]
+                exc_act = group['np.mean('+self.parameter+')', 0, 'np'][-self.timesteps:]
                 N = len(exc_act)
                 T = ms_per_cycle / 1000
                 yf = scipy.fftpack.fft(exc_act)

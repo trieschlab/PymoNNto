@@ -2,7 +2,7 @@ import numpy as np
 
 def normalize_synapse_attr_sparse(src_attr, target_attr, target_value, neurons, synapse_type):
 
-    neurons.temp_weight_sum = neurons.get_neuron_vec()
+    neurons.temp_weight_sum = neurons.vector()
 
     for s in neurons.afferent_synapses[synapse_type]:
         if 'sparse' in s.tags:

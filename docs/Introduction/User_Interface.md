@@ -27,23 +27,23 @@ from PymoNNto import *
 class Basic_Behaviour(Behaviour):
 
     def set_variables(self, neurons):
-        neurons.voltage = neurons.get_neuron_vec()
+        neurons.voltage = neurons.vector()
         self.leak_factor = 0.9
         self.threshold = 0.5
 
     def new_iteration(self, neurons):
         firing = neurons.voltage > self.threshold
-        neurons.spike = firing.astype(def_dtype) #spikes
+        neurons.spike = firing.astype(neurons.def_dtype) #spikes
         neurons.voltage[firing] = 0.0#reset
 
         neurons.voltage *= self.leak_factor #voltage decay
-        neurons.voltage += neurons.get_neuron_vec('uniform',density=0.01) #noise
+        neurons.voltage += neurons.vector('uniform',density=0.01) #noise
 
 class Input_Behaviour(Behaviour):
 
     def set_variables(self, neurons):
         for synapse in neurons.afferent_synapses['GLUTAMATE']:
-            synapse.W = synapse.get_synapse_mat('uniform', density=0.1)
+            synapse.W = synapse.matrix('uniform', density=0.1)
             synapse.enabled = synapse.W > 0
 
     def new_iteration(self, neurons):

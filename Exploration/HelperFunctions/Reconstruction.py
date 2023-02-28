@@ -19,11 +19,11 @@ def compute_temporal_reconstruction(network, single_neuron_group=None, single_ne
             baseline = 0
 
         if single_neuron_id is not None and single_neuron_group is not None and ng == single_neuron_group:  # clicked group?
-            temp = ng.get_neuron_vec()
+            temp = ng.vector()
             temp[single_neuron_id] = 1.0
             ng.temporal_recon.insert(0, temp)
         else:
-            ng.temporal_recon.append(ng.get_neuron_vec())
+            ng.temporal_recon.append(ng.vector())
 
 
         res = []

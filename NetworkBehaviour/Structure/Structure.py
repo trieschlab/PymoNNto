@@ -41,7 +41,7 @@ def get_squared_dim(number_of_neurons, depth=1, round_up=True):
     else:
         h = 0
 
-    print('set group size to', w, 'x', h)
+    #print('set group size to', w, 'x', h)
     return NeuronDimension(width=w, height=h, depth=depth)
 
 #different names:
@@ -138,11 +138,11 @@ class NeuronDimension(Behaviour):#width height depth
 
     def set_variables(self, neurons):
         self.def_dtype=neurons.def_dtype
-        self.width = self.get_init_attr('width', 1, neurons)
-        self.height = self.get_init_attr('height', 1, neurons)
-        self.depth = self.get_init_attr('depth', 1, neurons)
+        self.width = self.parameter('width', 1, neurons)
+        self.height = self.parameter('height', 1, neurons)
+        self.depth = self.parameter('depth', 1, neurons)
 
-        for pg in self.get_init_attr('input_patterns', [], neurons):
+        for pg in self.parameter('input_patterns', [], neurons):
             dim = pg.get_pattern_dimension()#.reconstruct_pattern(None)
             if len(dim) > 0: self.height = np.maximum(self.height, dim[0])
             if len(dim) > 1: self.width = np.maximum(self.width, dim[1])
@@ -158,7 +158,7 @@ class NeuronDimension(Behaviour):#width height depth
         neurons.depth = self.depth
         neurons.size=self.width*self.height*self.depth
         self.set_positions(self.width, self.height, self.depth)
-        if self.get_init_attr('centered', True, neurons):
+        if self.parameter('centered', True, neurons):
             self.move(-(self.width-1)/2,-(self.height-1)/2,-(self.depth-1)/2)
 
     def new_iteration(self, neurons):

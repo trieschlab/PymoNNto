@@ -11,15 +11,15 @@ from PymoNNto import *
 class Izhikevich_main(Behaviour):
 
     def set_variables(self, n):
-        self.set_init_attrs_as_variables(n)
-        n.I = n.get_neuron_vec()
-        n.a += n.get_neuron_vec()
-        n.b += n.get_neuron_vec()
-        n.c += n.get_neuron_vec()
-        n.d += n.get_neuron_vec()
-        n.v *= n.get_neuron_vec('uniform')
-        n.u *= n.get_neuron_vec('uniform')
-        n.fired = n.get_neuron_vec() > 0
+        self.set_parameters_as_variables(n)
+        n.I = n.vector()
+        n.a += n.vector()
+        n.b += n.vector()
+        n.c += n.vector()
+        n.d += n.vector()
+        n.v *= n.vector('uniform')
+        n.u *= n.vector('uniform')
+        n.fired = n.vector() > 0
         n.dt = 0.5
 
     def new_iteration(self, n):
@@ -36,11 +36,11 @@ class Izhikevich_input(Behaviour):
 
     def set_variables(self, n):
         for s in n.afferent_synapses['All']:
-            s.W = s.get_synapse_mat('uniform')
+            s.W = s.matrix('uniform')
 
     def new_iteration(self, n):
 
-        n.I = 20 * n.get_neuron_vec('uniform')
+        n.I = 20 * n.vector('uniform')
 
         for s in n.afferent_synapses['GLUTAMATE']:
             n.I += 0.5 * np.sum(s.W[:, s.src.fired], axis=1)
@@ -58,13 +58,13 @@ My_Network = Network()
 N_e = NeuronGroup(net=My_Network, tag='excitatory_neurons', size=get_squared_dim(800), behaviour={
     1: Izhikevich_main(a=0.02, b=0.2, c=-65, d=8.0, v='0;-65', u='0;-8.0'),
     2: Izhikevich_input(),
-    9: Recorder(tag='my_recorder', variables=['n.v', 'n.u', 'n.fired'])
+    9: Recorder(['v', 'u', 'fired'], tag='my_recorder')
 })
 
 N_i = NeuronGroup(net=My_Network, tag='inhibitory_neurons', size=get_squared_dim(200), behaviour={
     1: Izhikevich_main(a=0.02, b=0.2, c=-65, d=8.0, v='0;-65', u='0;-8.0'),
     2: Izhikevich_input(),
-    9: Recorder(tag='my_recorder', variables=['n.v', 'n.u', 'n.fired'])
+    9: Recorder(['v', 'u', 'fired'], tag='my_recorder')
 })
 
 SynapseGroup(net=My_Network, src=N_e, dst=N_e, tag='GLUTAMATE')
@@ -77,13 +77,13 @@ My_Network.initialize()
 My_Network.simulate_iterations(1000, measure_block_time=True)
 
 import matplotlib.pyplot as plt
-plt.plot(My_Network['n.v', 0])
+plt.plot(My_Network['v', 0])
 plt.show()
 
-plt.plot(My_Network['n.u', 0])
+plt.plot(My_Network['u', 0])
 plt.show()
 
-plt.imshow(My_Network['n.fired', 0, 'np'].transpose(), cmap='gray', aspect='auto')
+plt.imshow(My_Network['fired', 0, 'np'].transpose(), cmap='gray', aspect='auto')
 plt.show()
 
 

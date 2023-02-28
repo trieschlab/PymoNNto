@@ -135,8 +135,8 @@ class sidebar_grammar_module(TabBase):
                 item = pg.InfiniteLine(pos=Network_UI.network.iteration, movable=False, angle=90)
                 self.wnr_plot.addItem(item)
 
-                Network_UI.network.add_behaviours_to_neuron_groups({100: Recorder(['n.output'], tag='pediction_rec')}, Network_UI.network['prediction_source'])
-                Network_UI.network.add_behaviours_to_neuron_groups({101: Recorder(['n.pattern_index'], tag='index_rec')}, Network_UI.network['text_input_group'])
+                Network_UI.network.add_behaviours_to_neuron_groups({100: Recorder('output', tag='pediction_rec')}, Network_UI.network['prediction_source'])
+                Network_UI.network.add_behaviours_to_neuron_groups({101: Recorder('pattern_index', tag='index_rec')}, Network_UI.network['text_input_group'])
 
                 Network_UI.network['grammar_act', 0].behaviour_enabled = True
 

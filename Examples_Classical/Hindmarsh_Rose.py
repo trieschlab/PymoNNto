@@ -11,13 +11,13 @@ def exprel(x):
 class HR_main(Behaviour):
 
     def set_variables(self, n):
-        self.set_init_attrs_as_variables(self)
+        self.set_parameters_as_variables(self)
         self.dt = 0.01# * ms
         self.I=np.array(self.I)
 
-        n.x = n.get_neuron_vec()+self.x_1
-        n.y = n.get_neuron_vec()+self.c - self.d*n.x**2
-        n.z = n.get_neuron_vec()+self.r*(self.s*(n.x - self.x_1))
+        n.x = n.vector()+self.x_1
+        n.y = n.vector()+self.c - self.d*n.x**2
+        n.z = n.vector()+self.r*(self.s*(n.x - self.x_1))
 
 
     def new_iteration(self, neurons):
@@ -32,7 +32,7 @@ My_Network = Network()
 
 N_e = NeuronGroup(net=My_Network, tag='excitatory_neurons', size=3, behaviour={
     1: HR_main(x_1=-1.6, a=1, b=3, c=1, d=5, r=0.001, s=4, I=[0.4, 2, 4]),
-    9: Recorder(tag='my_recorder', variables=['n.x'])
+    9: Recorder('x', tag='my_recorder')
 })
 
 My_Network.initialize()
@@ -41,9 +41,9 @@ My_Network.simulate_iterations(200000, measure_block_time=True)
 
 import matplotlib.pyplot as plt
 
-plt.plot(My_Network['n.x', 0, 'np'][:, 0])
+plt.plot(My_Network['x', 0, 'np'][:, 0])
 plt.show()
-plt.plot(My_Network['n.x', 0, 'np'][:, 1])
+plt.plot(My_Network['x', 0, 'np'][:, 1])
 plt.show()
-plt.plot(My_Network['n.x', 0, 'np'][:, 2])
+plt.plot(My_Network['x', 0, 'np'][:, 2])
 plt.show()

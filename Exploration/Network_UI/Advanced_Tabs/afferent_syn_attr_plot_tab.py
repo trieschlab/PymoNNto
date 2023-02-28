@@ -40,7 +40,7 @@ class afferent_syn_attr_plot_tab(TabBase):
                     self.plots[syn_var].clear()
 
                     recorded = group['[np.sum(s.'+syn_var+') for s in n.afferent_synapses["All"]]'][-self.timesteps:]
-                    iterations = group['n.iteration', 0, 'np'][-self.timesteps:]
+                    iterations = group['iteration', 0, 'np'][-self.timesteps:]
                     if len(recorded) > 0:
                         inputs = np.array(recorded[0])
                         ident=[s.src.group_without_subGroup() for s in group.afferent_synapses["All"]]

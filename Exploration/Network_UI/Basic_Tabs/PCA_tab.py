@@ -10,7 +10,7 @@ class PCA_tab(TabBase):
 
     def add_recorder_variables(self, neuron_group, Network_UI):
         if hasattr(neuron_group, self.parameter):
-            Network_UI.add_recording_variable(neuron_group, 'n.'+self.parameter, timesteps=self.timesteps)
+            Network_UI.add_recording_variable(neuron_group, self.parameter, timesteps=self.timesteps)
 
     def initialize(self, Network_UI):
         self.pca_tab = Network_UI.add_tab(title=self.title) #Network_UI.Next_Tab(self.title)
@@ -33,7 +33,7 @@ class PCA_tab(TabBase):
             group = Network_UI.selected_neuron_group()
 
             try:
-                act = group['n.'+self.parameter, 0, 'np'][-self.timesteps:]
+                act = group[self.parameter, 0, 'np'][-self.timesteps:]
 
                 pca = get_PCA(act, 100)
                 svs = pca.singular_values_

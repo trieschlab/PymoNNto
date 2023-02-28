@@ -6,7 +6,7 @@ from Examples_Paper.STDP_Hom_Norm.Homeostasis import *
 class Basic_Behaviour(Behaviour):
 
     def set_variables(self, neurons):
-        neurons.voltage = neurons.get_neuron_vec('uniform')
+        neurons.voltage = neurons.vector('uniform')
         self.leak_factor = 0.9
 
     def new_iteration(self, neurons):
@@ -16,13 +16,13 @@ class Input_Behaviour(Behaviour):
 
     def set_variables(self, neurons):
         for synapse in neurons.afferent_synapses['GLUTAMATE']:
-            synapse.W = synapse.get_synapse_mat('uniform', density=0.1)
+            synapse.W = synapse.matrix('uniform', density=0.1)
 
     def new_iteration(self, neurons):
         for synapse in neurons.afferent_synapses['GLUTAMATE']:
             neurons.voltage += synapse.W.dot(synapse.src.voltage)/synapse.src.size
 
-        neurons.voltage += neurons.get_neuron_vec('uniform',density=0.01)
+        neurons.voltage += neurons.vector('uniform',density=0.01)
 
 My_Network = Network()
 
@@ -32,7 +32,7 @@ My_Neurons1 = NeuronGroup(net=My_Network, tag='my_neurons', size=get_squared_dim
     3: Homeostasis(target_voltage=0.05),
     4: STDP(stdp_factor=0.00015),
     5: Normalization(norm_factor=10),
-    9: Recorder(tag='my_recorder', variables=['n.voltage', 'np.mean(n.voltage)'])
+    9: Recorder(['voltage', 'np.mean(voltage)'], tag='my_recorder')
 })
 
 my_syn = SynapseGroup(net=My_Network, src=My_Neurons1, dst=My_Neurons1, tag='GLUTAMATE')
@@ -44,7 +44,7 @@ My_Neurons2 = NeuronGroup(net=My_Network, tag='my_neurons2', size=get_squared_di
     3: Homeostasis(target_voltage=0.05),
     4: STDP(stdp_factor=0.00015),
     5: Normalization(norm_factor=10),
-    9: Recorder(tag='my_recorder', variables=['n.voltage', 'np.mean(n.voltage)'])
+    9: Recorder(['voltage', 'np.mean(voltage)'], tag='my_recorder')
 })
 
 My_Neurons2['structure',0].stretch_to_equal_size(My_Neurons1)

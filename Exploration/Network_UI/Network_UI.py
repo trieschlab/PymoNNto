@@ -60,7 +60,7 @@ class Network_UI(UI_Base):
         self.neuron_visible_groups = []
 
         self._neuron_select_group = network[group_tags[0], 0]
-        self._neuron_select_mask = self._neuron_select_group.get_neuron_vec().astype(bool)#np.array([0])
+        self._neuron_select_mask = self._neuron_select_group.vector().astype(bool)#np.array([0])
         self._neuron_select_mask[0] = True
 
         self.neuron_select_x = 0
@@ -109,7 +109,7 @@ class Network_UI(UI_Base):
         group_changed = group != self._neuron_select_group
         self._neuron_select_group = group
         if group_changed or not add_to_select_group:
-            self._neuron_select_mask = self._neuron_select_group.get_neuron_vec().astype(bool)
+            self._neuron_select_mask = self._neuron_select_group.vector().astype(bool)
         self._neuron_select_mask[mask] = True
 
         print(np.where(self._neuron_select_mask>0)[0])
@@ -139,20 +139,13 @@ class Network_UI(UI_Base):
         return np.where(self._neuron_select_mask)[0]
 
     def add_recording_variable(self, group, var, timesteps):
+        old_ts=0
+        if var in group._rec_dict:
+            old_ts=group._rec_dict[var]
 
-        try:
-            n = group  # for eval
-            eval(var) #produce error when not evaluable
-
-            old_ts=0
-            if var in group._rec_dict:
-                old_ts=group._rec_dict[var]
-
-            group._rec_dict[var] = max(timesteps,old_ts)
-            #recorder.add_varable('n.output')
-            return True
-        except:
-            return False
+        group._rec_dict[var] = max(timesteps,old_ts)
+        #recorder.add_varable('output')
+        return True
 
     def init_recoders(self):
         for group_tag in self.group_tags:
@@ -166,7 +159,7 @@ class Network_UI(UI_Base):
                     rec_time_dict[rec_length].append(variable)
 
                 for rec_length in rec_time_dict:
-                    rec = Recorder(rec_time_dict[rec_length] + ['n.iteration'], tag='UI_rec,rec_' + str(rec_length), max_length=rec_length)
+                    rec = Recorder(rec_time_dict[rec_length] + ['iteration'], tag='UI_rec,rec_' + str(rec_length), max_length=rec_length)
                     group.add_behaviour(10000+rec_length, rec)
                     #self.network.add_behaviours_to_object({10000+rec_length: rec}, group)
 

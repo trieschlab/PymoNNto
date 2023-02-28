@@ -11,7 +11,7 @@ class Brian2_embedding(Behaviour):
         self.add_tag('Brian2_embedding')
         brian2.defaultclock.dt = 1 * ms
 
-        eqs = self.get_init_attr('eqs', '')
+        eqs = self.parameter('eqs', '')
 
         self.G = brian2.NeuronGroup(1, eqs, method='euler')      #this is a Biran2 NeuronGroup!
         self.net = brian2.Network(self.G)                          #this is a Biran2 Network!

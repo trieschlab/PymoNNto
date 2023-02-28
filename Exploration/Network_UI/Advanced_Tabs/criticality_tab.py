@@ -15,9 +15,9 @@ class criticality_tab(TabBase):
 
     def add_recorder_variables(self, neuron_group, Network_UI):
         if hasattr(neuron_group, self.param):
-            Network_UI.add_recording_variable(neuron_group, 'n.' + self.param, timesteps=self.timesteps)
+            Network_UI.add_recording_variable(neuron_group, self.param, timesteps=self.timesteps)
         if hasattr(neuron_group, self.param):
-            self.sum_tag='np.sum(n.'+self.param+')'
+            self.sum_tag='np.sum('+self.param+')'
             Network_UI.add_recording_variable(neuron_group, self.sum_tag, timesteps=1000)
 
     def initialize(self, Network_UI):

@@ -6,7 +6,7 @@ class sidebar_drumbeat_module(TabBase):
 
     def add_recorder_variables(self, neuron_group, Network_UI):
         if hasattr(neuron_group, 'pattern_index'):
-            Network_UI.add_recording_variable(neuron_group, 'n.pattern_index', timesteps=100)
+            Network_UI.add_recording_variable(neuron_group, 'pattern_index', timesteps=100)
 
     def initialize(self, Network_UI):
         if len(Network_UI.network['drum_act'])>0:
@@ -36,7 +36,7 @@ class sidebar_drumbeat_module(TabBase):
 
             network = Network_UI.network
             source = network['drum_act', 0]
-            curr_output = np.array(network['n.pattern_index', 0][-self.n_notes_shown:])
+            curr_output = np.array(network['pattern_index', 0][-self.n_notes_shown:])
 
             y=[]
             x=[]

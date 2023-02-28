@@ -31,15 +31,15 @@ The following code creates a network of 100 neurons with recurrent connections a
 ```python
 from PymoNNto import *
 
-My_Network = Network()
+net = Network()
 
-My_Neurons = NeuronGroup(net=My_Network, tag='my_neurons', size=100, behaviour={})
+NeuronGroup(net=net, tag='my_neurons', size=100, behaviour={})
 
-SynapseGroup(net=My_Network, src=My_Neurons, dst=My_Neurons, tag='GLUTAMATE')
+SynapseGroup(net=net, src='my_neurons', dst='my_neurons', tag='GLUTAMATE')
 
-My_Network.initialize()
+net.initialize()
 
-My_Network.simulate_iterations(1000)
+net.simulate_iterations(1000)
 ```
 
 ## Behaviour
@@ -54,7 +54,7 @@ In this example we define a variable `activity` and a `decay_factor`. The activi
 class Basic_Behaviour(Behaviour):
 
   def set_variables(self, neurons):
-    neurons.activity = neurons.get_neuron_vec('uniform')
+    neurons.activity = neurons.vector('uniform')
     self.decay_factor = 0.99
 
   def new_iteration(self, neurons):
@@ -78,7 +78,7 @@ from PymoNNto import *
 class Basic_Behaviour(Behaviour):
 
   def set_variables(self, neurons):
-    neurons.activity = neurons.get_neuron_vec('uniform')
+    neurons.activity = neurons.vector('uniform')
     self.decay_factor = 0.99
 
   def new_iteration(self, neurons):
@@ -86,24 +86,24 @@ class Basic_Behaviour(Behaviour):
 
 
 
-My_Network = Network()
+net = Network()
 
-My_Neurons = NeuronGroup(net=My_Network, tag='my_neurons', size=100, behaviour={
+NeuronGroup(net=net, tag='my_neurons', size=100, behaviour={
     1: Basic_Behaviour(),
-    9: Recorder(tag='my_recorder', variables=['n.activity', 'np.mean(n.activity)'])
+    9: Recorder(['activity', 'np.mean(activity)'], tag='my_recorder')
 })
 
-SynapseGroup(net=My_Network, src=My_Neurons, dst=My_Neurons, tag='GLUTAMATE')
+SynapseGroup(net=My_Network, src='my_neurons', dst='my_neurons', tag='GLUTAMATE')
 
-My_Network.initialize()
+net.initialize()
 
-My_Network.simulate_iterations(1000)
+net.simulate_iterations(1000)
 
 
 
 import matplotlib.pyplot as plt
-plt.plot(My_Network['n.activity', 0])
-plt.plot(My_Network['np.mean(n.activity)', 0], color='black')
+plt.plot(net['activity', 0])
+plt.plot(net['np.mean(activity)', 0], color='black')
 plt.show()
 ```
 ![User interface example](https://raw.githubusercontent.com/trieschlab/PymoNNto/Images/both.png)
@@ -113,20 +113,21 @@ plt.show()
 To access the tagged objects we can use the `[]` operator. `['my_tag']` gives you a list of all objects tagged with `my_tag`. Here are some examples:
 
 ```python
-My_Network['my_neurons']
+My_Network = net
+My_Neurons = net['my_neurons']
 => [<PymoNNto.NetworkCore.Neuron_Group.NeuronGroup object at 0x00000195F4878670>]
 
 My_Network['my_recorder']
 My_Neurons['my_recorder'] 
 => [<PymoNNto.NetworkBehaviour.Recorder.Recorder.Recorder object at 0x0000021F1B61D5E0>]
 
-My_Neurons['n.activity']
-My_Neurons['my_recorder', 0]['n.activity']
+My_Neurons['activity']
+My_Neurons['my_recorder', 0]['activity']
 => [[array(data iteration 1), array(data iteration 2), array(data iteration 3), ...]]
 
-My_Neurons['n.activity', 0] 
+My_Neurons['activity', 0] 
 is equivalent to 
-My_Neurons['n.activity'][0] 
+My_Neurons['activity'][0] 
 ```
 
 # Synapses and Input
@@ -142,20 +143,20 @@ class Input_Behaviour(Behaviour):
 
   def set_variables(self, neurons):
     for synapse in neurons.afferent_synapses['GLUTAMATE']:
-        synapse.W = synapse.get_synapse_mat('uniform',density=0.1)
+        synapse.W = synapse.matrix('uniform',density=0.1)
 
   def new_iteration(self, neurons):
     for synapse in neurons.afferent_synapses['GLUTAMATE']:
         neurons.activity += synapse.W.dot(synapse.src.activity)/synapse.src.size
 
-    neurons.activity += neurons.get_neuron_vec('uniform',density=0.01)
+    neurons.activity += neurons.vector('uniform',density=0.01)
 
 
 
 class Basic_Behaviour(Behaviour):
 
   def set_variables(self, neurons):
-    neurons.activity = neurons.get_neuron_vec('uniform')
+    neurons.activity = neurons.vector('uniform')
     self.decay_factor = 0.99
 
   def new_iteration(self, neurons):
@@ -163,25 +164,25 @@ class Basic_Behaviour(Behaviour):
 
 
 
-My_Network = Network()
+net = Network()
 
-My_Neurons = NeuronGroup(net=My_Network, tag='my_neurons', size=100, behaviour={
+NeuronGroup(net=net, tag='my_neurons', size=100, behaviour={
     1: Basic_Behaviour(),
     2: Input_Behaviour(),
-    9: Recorder(tag='my_recorder', variables=['n.activity', 'np.mean(n.activity)'])
+    9: Recorder(['activity', 'np.mean(activity)'], tag='my_recorder')
 })
 
-SynapseGroup(net=My_Network, src=My_Neurons, dst=My_Neurons, tag='GLUTAMATE')
+SynapseGroup(net=net, src='my_neurons', dst='my_neurons', tag='GLUTAMATE')
 
-My_Network.initialize()
+net.initialize()
 
-My_Network.simulate_iterations(1000)
+net.simulate_iterations(1000)
 
 
 
 import matplotlib.pyplot as plt
-plt.plot(My_Network['n.activity', 0])
-plt.plot(My_Network['np.mean(n.activity)', 0], color='black')
+plt.plot(My_Network['activity', 0])
+plt.plot(My_Network['np.mean(activity)', 0], color='black')
 plt.show()
 ```
 
@@ -201,20 +202,20 @@ class Input_Behaviour(Behaviour):
 
   def set_variables(self, neurons):
     for synapse in neurons.afferent_synapses['GLUTAMATE']:
-        synapse.W = synapse.get_synapse_mat('uniform',density=0.1)
+        synapse.W = synapse.matrix('uniform',density=0.1)
 
   def new_iteration(self, neurons):
     for synapse in neurons.afferent_synapses['GLUTAMATE']:
         neurons.activity += synapse.W.dot(synapse.src.activity)/synapse.src.size
 
-    neurons.activity += neurons.get_neuron_vec('uniform',density=0.01)
+    neurons.activity += neurons.vector('uniform',density=0.01)
 
 
 
 class Basic_Behaviour(Behaviour):
 
   def set_variables(self, neurons):
-    neurons.activity = neurons.get_neuron_vec('uniform')
+    neurons.activity = neurons.vector('uniform')
     self.decay_factor = 0.99
 
   def new_iteration(self, neurons):
@@ -222,23 +223,23 @@ class Basic_Behaviour(Behaviour):
 
 
 
-My_Network = Network()
+net = Network()
 
-My_Neurons = NeuronGroup(net=My_Network, tag='my_neurons', size=get_squared_dim(100), behaviour={
+NeuronGroup(net=net, tag='my_neurons', size=get_squared_dim(100), behaviour={
     1: Basic_Behaviour(),
     2: Input_Behaviour(),
-    9: Recorder(tag='my_recorder', variables=['n.activity', 'np.mean(n.activity)'])
+    9: Recorder(['activity', 'np.mean(activity)'], tag='my_recorder')
 })
 
-SynapseGroup(net=My_Network, src=My_Neurons, dst=My_Neurons, tag='GLUTAMATE')
+SynapseGroup(net=net, src='my_neurons', dst='my_neurons', tag='GLUTAMATE')
 
-My_Network.initialize()
+net.initialize()
 
 #My_Network.simulate_iterations(1000)
 
 from PymoNNto.Exploration.Network_UI import *
 my_UI_modules=get_default_UI_modules(['activity'], ['W'])
-Network_UI(My_Network, modules=my_UI_modules, label='My_Network_UI', group_display_count=1).show()
+Network_UI(net, modules=my_UI_modules, label='My_Network_UI', group_display_count=1).show()
 ```
 
 

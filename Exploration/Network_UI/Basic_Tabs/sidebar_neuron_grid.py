@@ -90,7 +90,7 @@ class sidebar_neuron_grid_submodule(TabBase):
 
             group.classification = self.color_select_box.get_selected_result()
             if group.classification is None:
-                group.classification = group.get_neuron_vec()
+                group.classification = group.vector()
             image = np.array(group['Neuron_Classification_Colorizer', 0].get_color_list(group.classification, format='[r,g,b]'))
 
             #selected
