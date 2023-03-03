@@ -32,11 +32,15 @@ def get_partitioned_synapse_matrix(neurons, synapse_tag, synapse_var, return_fir
             shapes[key] = (base_src.height, base_src.width)
         try:
             syn_mat = eval('s.' + synapse_var)
+            if type(syn_mat) is not bool:
+                w = s.ignore_transpose_mode(syn_mat)
+            else:
+                w = syn_mat
             if base_src == s.src and base_dst == s.dst:
-                results[key] += syn_mat  # .copy()
+                results[key] += w  # .copy()
             else:
                 mat_mask = s.dst.mask[:, None] * s.src.mask[None, :]
-                results[key][mat_mask] += np.array(syn_mat).flatten()  # np.array required if syn_mat is bool (enabled)
+                results[key][mat_mask] += np.array(w).flatten()  # np.array required if syn_mat is bool (enabled)
         except:
             print(synapse_var, "cannot be evaluated")
 
@@ -114,11 +118,15 @@ def get_combined_syn_mats(synapses, neuron_id=None, attr='W'):
             shapes[key] = (base_src.height, base_src.width)
         try:
             syn_mat = eval('s.' + attr)
+            if type(syn_mat) is not bool:
+                w = s.ignore_transpose_mode(syn_mat)
+            else:
+                w = syn_mat
             if base_src == s.src and base_dst == s.dst:
-                results[key] += syn_mat  # .copy()
+                results[key] += w # .copy()
             else:
                 mat_mask = s.dst.mask[:, None] * s.src.mask[None, :]
-                results[key][mat_mask] += np.array(syn_mat).flatten()  # np.array required if syn_mat is bool (enabled)
+                results[key][mat_mask] += np.array(w).flatten()  # np.array required if syn_mat is bool (enabled)
         except:
             print(attr, "cannot be evaluated")
 

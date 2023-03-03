@@ -44,8 +44,8 @@ class PCA_tab(TabBase):
                         self.singular_value_histories[i].append(svs[i])
                         self.sv_curves[i].setData(self.singular_value_iterations, self.singular_value_histories[i])
 
-                    self.pca_curve.setData(svs)
-                    self.evr_curve.setData(np.cumsum(np.round(evr, decimals=3)*100))
+                    self.pca_curve[0].setData(svs)
+                    self.evr_curve[0].setData(np.cumsum(np.round(evr, decimals=3)*100))
 
             except:
                 print(self.parameter, "cannot be evaluated")

@@ -1,6 +1,8 @@
 from PymoNNto.NetworkCore.Base_Tagable_Object import *
 from PymoNNto.Exploration.Evolution.Interface_Functions import *
 
+
+
 class Behaviour(TaggableObjectBase):
     set_variables_on_init = False
     set_variables_last = False
@@ -13,6 +15,7 @@ class Behaviour(TaggableObjectBase):
         self.used_attr_keys = []
         self.behaviour_enabled = self.parameter('behaviour_enabled', True, None)
         super().__init__(tag=self.parameter('tag', None, None))
+        self.empty_new_iteration_function = self.is_empty_new_iteration_function()
 
 
     def set_variables(self, neurons):
@@ -149,5 +152,22 @@ class Behaviour(TaggableObjectBase):
         #[np.random.rand(291, 291, 3)] image
         #[np.random.rand(291, 291, 3), [np.sin(x) for x in range(100)]] image and plot
         return None
-    
+
+    def is_empty_new_iteration_function(self):
+        f = self.new_iteration
+
+        #Returns true if f is an empty function.
+        def empty_func():
+            pass
+
+        def empty_func_with_docstring():
+            #Empty function with docstring.
+            pass
+
+        def constants(f):
+            #Return a tuple containing all the constants of a function without: * docstring
+            return tuple(x for x in f.__code__.co_consts if x != f.__doc__)
+
+        return (f.__code__.co_code == empty_func.__code__.co_code and constants(f) == constants(empty_func)) or \
+               (f.__code__.co_code == empty_func_with_docstring.__code__.co_code and constants(f) == constants(empty_func_with_docstring))
     

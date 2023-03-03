@@ -56,18 +56,22 @@ class weight_tab(TabBase):
 
             if afferent:
                 for s in group.afferent_synapses['All']:
+                    w = s.ignore_transpose_mode(s.W)
+
                     if single:
-                        data = np.rot90(s.W[selected].reshape(s.src.height, s.src.width), 3)
+                        data = np.rot90(w[selected].reshape(s.src.height, s.src.width), 3)
                     else:
-                        data=s.W
+                        data = w
                     syns.append(data)
                     syn_tags.append(s.tags)
             else:
                 for s in group.efferent_synapses['All']:
+                    w = s.ignore_transpose_mode(s.W)
+
                     if single:
-                        data = np.rot90(s.W[:, selected].reshape(s.dst.height, s.dst.width), 3)
+                        data = np.rot90(w[:, selected].reshape(s.dst.height, s.dst.width), 3)
                     else:
-                        data = s.W
+                        data = w
                     syns.append(data)
                     syn_tags.append(s.tags)
 

@@ -106,7 +106,9 @@ class DrawItem2(pg.GraphicsObject):
             #xdiff_mat=xdiff_mat*xdiff_mat*xdiff_mat
             #ydiff_mat=ydiff_mat*ydiff_mat*ydiff_mat
 
-            weights = np.power(sg.W, weight_exp)
+            w = sg.ignore_transpose_mode(sg.W)
+
+            weights = np.power(w, weight_exp)
             weights = weights/np.sum(weights)*len(weights)
 
             ax = 0
@@ -202,7 +204,8 @@ class DrawItem2(pg.GraphicsObject):
                 indx = temp[0]
                 x = sg.dst.buffer_posx[indx]
                 y = sg.dst.buffer_posy[indx]
-                weights = sg.W[indx, :]
+
+                weights = sg.ignore_transpose_mode(sg.W)[indx, :]
                 max_w = np.max(weights)
                 # painter.drawEllipse(QtCore.QPointF(x, y), 0.1, 0.1)
                 for i, w in enumerate(weights):

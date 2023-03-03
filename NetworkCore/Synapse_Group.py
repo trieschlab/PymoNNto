@@ -44,7 +44,10 @@ class SynapseGroup(NetworkObjectBase):
         self.group_weighting = 1
 
     def __str__(self):
-        result = 'SynapseGroup'+str(self.tags)+'(D'+str(self.dst.size)+'xS'+str(self.src.size)+'){'
+        if self.network.transposed_synapse_matrix_mode:
+            result = 'SynapseGroup' + str(self.tags) + '(S' + str(self.src.size) + 'xD' + str(self.dst.size) + '){'
+        else:
+            result = 'SynapseGroup'+str(self.tags)+'(D'+str(self.dst.size)+'xS'+str(self.src.size)+'){'
         for k in sorted(list(self.behaviour.keys())):
             result += str(k) + ':' + str(self.behaviour[k])+','
         return result+'}'
@@ -57,8 +60,15 @@ class SynapseGroup(NetworkObjectBase):
     def def_dtype(self):
         return self.network.def_dtype
 
+    @property
+    def iteration(self):
+        return self.network.iteration
+
     def matrix_dim(self):
-        return self.dst.size, self.src.size
+        if self.network.transposed_synapse_matrix_mode:
+            return self.src.size, self.dst.size
+        else:
+            return self.dst.size, self.src.size
 
     def get_random_synapse_mat_fixed(self, min_number_of_synapses=0):
         dim = self.matrix_dim()
@@ -169,4 +179,10 @@ class SynapseGroup(NetworkObjectBase):
                 setattr(result, key, copy.copy(sgd[key]))
 
         return result
+
+    def ignore_transpose_mode(self, W):# always returns DxS matrix
+        if self.network.transposed_synapse_matrix_mode:
+            return W.T
+        else:
+            return W
 

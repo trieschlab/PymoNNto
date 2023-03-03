@@ -48,15 +48,26 @@ class NetworkObjectBase(TaggableObjectBase):
                 if not hasattr(self, tag):
                     setattr(self, tag, b)
 
+        for k,b in self.behaviour.items():
+            self.network._add_behaviour_to_sorted_execution_list(k, self, b)
+
         for k in sorted(list(self.behaviour.keys())):
             if self.behaviour[k].set_variables_on_init:
-                network._set_variables_check(self, k)
+                self.behaviour[k].set_variables(self)
+                #behaviour.check_unused_attrs()
+                #network._set_variables_check(self, k)
 
         #self.learning = True
         self.recording = True
 
         self.analysis_modules = []
 
+    def add_behaviours(self, behaviour_dict):
+        for key in behaviour_dict:
+            self.add_behaviour(key, behaviour_dict[key])
+        return behaviour_dict
+
+    '''
     def add_behaviour(self, key, behaviour, initialize=True):
         self.behaviour[key] = behaviour
         self.network._add_key_to_sorted_behaviour_timesteps(key)
@@ -66,11 +77,6 @@ class NetworkObjectBase(TaggableObjectBase):
             behaviour.check_unused_attrs()
         return behaviour
 
-    def add_behaviours(self, behaviour_dict):
-        for key in behaviour_dict:
-            self.add_behaviour(key, behaviour_dict[key])
-        return behaviour_dict
-
     def remove_behaviour(self, key_tag_behaviour_or_type):
         remove_keys=[]
         for key in self.behaviour:
@@ -79,6 +85,34 @@ class NetworkObjectBase(TaggableObjectBase):
                 remove_keys.append(key)
         for key in remove_keys:
             self.behaviour.pop(key)
+    '''
+
+    def add_behaviour(self, key, behaviour, initialize=True):
+        #check key already exists!!!
+        if not key in self.behaviour:
+            self.behaviour[key] = behaviour
+            self.network._add_behaviour_to_sorted_execution_list(key, self, self.behaviour[key])
+            self.network._add_key_to_sorted_behaviour_timesteps(key)#remove!!!
+            self.network.clear_tag_cache()
+            if initialize:
+                #behaviour.set_variables_init(self)
+                behaviour.set_variables(self)
+                #behaviour.set_variables_last(self)
+                behaviour.check_unused_attrs()
+            return behaviour
+        else:
+            raise Exception('Error: Key already exists.'+str(key))
+
+    def remove_behaviour(self, key_tag_behaviour_or_type):
+        remove_keys=[]
+        for key in self.behaviour:
+            b = self.behaviour[key]
+            if key_tag_behaviour_or_type == key or key_tag_behaviour_or_type in b.tags or key_tag_behaviour_or_type == b or key_tag_behaviour_or_type == type(b):
+                remove_keys.append(key)
+        for key in remove_keys:
+            b=self.behaviour.pop(key)
+            self.network._remove_behaviour_from_sorted_execution_list(self, b)
+
 
     def set_behaviours(self, tag, enabeled):
         if enabeled:

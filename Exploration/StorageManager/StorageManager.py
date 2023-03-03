@@ -91,6 +91,10 @@ def get_settings(section):
             pass
     return result
 
+
+
+
+
 #searches for "Data" folder in project by default
 #default folder: .../Data/StorageManager/main_folder_name/folder_name/
 #example:

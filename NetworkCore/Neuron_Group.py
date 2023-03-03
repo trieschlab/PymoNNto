@@ -56,6 +56,10 @@ class NeuronGroup(NetworkObjectBase):
     def def_dtype(self):
         return self.network.def_dtype
 
+    @property
+    def iteration(self):
+        return self.network.iteration
+
     def require_synapses(self, name, afferent=True, efferent=True, warning=True):
         if afferent and not name in self.afferent_synapses:
             if warning:
