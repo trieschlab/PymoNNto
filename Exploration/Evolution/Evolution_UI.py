@@ -358,6 +358,7 @@ if __name__ == '__main__':
 
     def add_additional_tab_elements(self, tab, name):
 
+        '''
         def send(genome):
             return
             #TODO
@@ -372,6 +373,7 @@ if __name__ == '__main__':
 
         insert_btn = self.tab.add_widget(QPushButton("insert genome"))
         insert_btn.clicked.connect(insert_click)
+        '''
 
         self.tab.add_row(stretch=10)
         #self.Next_H_Block(stretch=10)

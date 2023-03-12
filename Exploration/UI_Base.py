@@ -39,6 +39,7 @@ def deprecated_warning(message):
 
 default_colors=[(0, 0, 0),(255, 0, 0),(0, 0, 255),(0, 250, 150),(255, 0, 255)]
 
+
 class UI_Base(QApplication):
 
     def __init__(self, title="Network_Test", create_sidebar=True, create_tab_grid=True):#network
@@ -101,6 +102,7 @@ class UI_Base(QApplication):
     def add_tab_grid(self, create_tab_grid=True):
 
         self.tabs = MyTabWidget(new=True)
+
         self._tab_widgets = [self.tabs]
 
         if not create_tab_grid:
@@ -526,6 +528,8 @@ class QRow_Column_Widget(QWidget):
         plot = PymoNNto_PlotItem(axisItems=axisItems)
         graphics_layout_widget.addItem(plot, row=0, col=0)
 
+        plot._glayout=graphics_layout_widget
+
         if not self._parent.reduced_layout:
 
             if x_label is not None:
@@ -596,7 +600,11 @@ class PymoNNto_PlotItem(PlotItem):
 
         return curves
 
-    def add_image(self):
+    def add_image(self, no_border=True):
+        if no_border:
+            self._glayout.ci.layout.setContentsMargins(0, 0, 0, 0)
+            self._glayout.ci.layout.setSpacing(0)
+
         self.hideAxis('left')
         self.hideAxis('bottom')
         image_item = pg.ImageItem()#np.zeros((100, 100, 3))
@@ -609,10 +617,69 @@ class PymoNNto_PlotItem(PlotItem):
         return text_item
 
 
+
+
+
+
+########################
+
+from PyQt5 import QtCore, QtGui, QtWidgets
+
+
+class TabBar(QtWidgets.QTabBar):
+    def tabSizeHint(self, index):
+        s = QtWidgets.QTabBar.tabSizeHint(self, index)
+        s.transpose()
+        return s
+
+    def paintEvent(self, event):
+        painter = QtWidgets.QStylePainter(self)
+        opt = QtWidgets.QStyleOptionTab()
+
+        for i in range(self.count()):
+            self.initStyleOption(opt, i)
+            painter.drawControl(QtWidgets.QStyle.CE_TabBarTabShape, opt)
+            painter.save()
+
+            s = opt.rect.size()
+            s.transpose()
+            r = QtCore.QRect(QtCore.QPoint(), s)
+            r.moveCenter(opt.rect.center())
+            opt.rect = r
+
+            c = self.tabRect(i).center()
+            painter.translate(c)
+            painter.rotate(90)
+            painter.translate(-c)
+            painter.drawControl(QtWidgets.QStyle.CE_TabBarTabLabel, opt);
+            painter.restore()
+
+class ProxyStyle(QtWidgets.QProxyStyle):
+    def drawControl(self, element, opt, painter, widget):
+        if element == QtWidgets.QStyle.CE_TabBarTabLabel:
+            ic = self.pixelMetric(QtWidgets.QStyle.PM_TabBarIconSize)
+            r = QtCore.QRect(opt.rect)
+            w =  0 if opt.icon.isNull() else opt.rect.width() + self.pixelMetric(QtWidgets.QStyle.PM_TabBarIconSize)
+            r.setHeight(opt.fontMetrics.width(opt.text) + w)
+            r.moveBottom(opt.rect.bottom())
+            opt.rect = r
+        QtWidgets.QProxyStyle.drawControl(self, element, opt, painter, widget)
+
+################
+
+
+
+
+
 class MyTabWidget(QTabWidget):
 
    def __init__(self, parent=None, new=None):
       super().__init__(parent)
+
+      if 'sideTab' in sys.argv:
+          self.setTabBar(TabBar(self))
+          self.setTabPosition(QtWidgets.QTabWidget.West)
+
       self.setAcceptDrops(True)
       self.tabBar().setMouseTracking(True)
       self.setMovable(True)

@@ -43,6 +43,25 @@ class SynapseGroup(NetworkObjectBase):
         self.enabled = True
         self.group_weighting = 1
 
+        for ng in self.network.NeuronGroups:
+            for tag in self.tags + ['All']:
+                if tag not in ng.afferent_synapses:
+                    ng.afferent_synapses[tag] = []
+                if tag not in ng.efferent_synapses:
+                    ng.efferent_synapses[tag] = []
+
+        if self.dst.BaseNeuronGroup == self.dst: #only add to NeuronGroup not to NeuronSubGroup
+            for tag in self.tags+['All']:
+                self.dst.afferent_synapses[tag].append(self)
+
+        if self.src.BaseNeuronGroup == self.src:
+            for tag in self.tags+['All']:
+                self.src.efferent_synapses[tag].append(self)
+
+
+
+
+
     def __str__(self):
         if self.network.transposed_synapse_matrix_mode:
             result = 'SynapseGroup' + str(self.tags) + '(S' + str(self.src.size) + 'xD' + str(self.dst.size) + '){'

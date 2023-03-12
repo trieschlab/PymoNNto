@@ -17,24 +17,22 @@ class scatter_tab(TabBase):
 
         p = Network_UI.tab.add_plot(x_label=self.x_var, y_label=self.y_var)
         self.scatter_items=[]
-        for i, _ in enumerate(Network_UI.neuron_visible_groups):
+        for i, _ in enumerate(Network_UI.get_visible_neuron_groups()):
             spi = pg.ScatterPlotItem()
             self.scatter_items.append(spi)
             p.addItem(spi)
 
     def update(self, Network_UI):
         if self.scatter_tab.isVisible():
-            for i, group_tag in enumerate(Network_UI.neuron_visible_groups):
-                if len(Network_UI.network[group_tag]) > 0:
-                    group = Network_UI.network[group_tag, 0]
+            for i, group in enumerate(Network_UI.get_visible_neuron_groups()):
 
-                    try:
-                        x_values = group[self.x_var, 0, 'np'][-self.timesteps:]
-                        y_values = group[self.y_var, 0, 'np'][-self.timesteps:]
+                try:
+                    x_values = group[self.x_var, 0, 'np'][-self.timesteps:]
+                    y_values = group[self.y_var, 0, 'np'][-self.timesteps:]
 
-                        x_val = np.mean(x_values, axis=1)
-                        y_val = np.mean(y_values, axis=1)
+                    x_val = np.mean(x_values, axis=1)
+                    y_val = np.mean(y_values, axis=1)
 
-                        self.scatter_items[i].setData(x_val.copy(), y_val.copy(), brush=group.color)
-                    except:
-                        pass
+                    self.scatter_items[i].setData(x_val.copy(), y_val.copy(), brush=group.color)
+                except:
+                    pass

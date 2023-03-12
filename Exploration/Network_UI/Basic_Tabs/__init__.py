@@ -25,9 +25,13 @@ from PymoNNto.Exploration.Network_UI.Basic_Tabs.event_tab import *
 from PymoNNto.Exploration.Network_UI.Basic_Tabs.sidebar_module_quick_access import *
 
 
+from PymoNNto.Exploration.Network_UI.Basic_Tabs.sidebar_network_selector import *
+
 def get_default_UI_modules(neuron_parameters=['output'], synapse_parameters=['W'], quick_access_tags=[]):
     return [
-    UI_sidebar_neuron_grid_module(1, neuron_parameters[0]),
+    UI_sidebar_network_selector(neuron_parameters[0]),
+
+    #UI_sidebar_neuron_grid_module(1, neuron_parameters[0]),
     multi_group_plot_tab(neuron_parameters),#['output', 'TH', 'weight_norm_factor', 'nox', 'refractory_counter']
     spiketrain_tab(parameter=neuron_parameters[0]),
     weight_tab(weight_attrs=synapse_parameters),#, 'W_temp', 'W_stable'

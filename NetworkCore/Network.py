@@ -108,7 +108,7 @@ class Network(NetworkObjectBase):
             if storage_manager is not None:
                 storage_manager.save_param('info', desc)
 
-        self.set_synapses_to_neuron_groups()
+        #self.set_synapses_to_neuron_groups()
 
         self.set_variables()
         self.check_unique_tags(warnings)
@@ -141,12 +141,11 @@ class Network(NetworkObjectBase):
 
     def set_synapses_to_neuron_groups(self):# todo: move to synapse group __init__
         for ng in self.NeuronGroups:
-
-            ng.afferent_synapses = {'All':[]}
-            ng.efferent_synapses = {'All':[]}
+            ng.afferent_synapses = {}
+            ng.efferent_synapses = {}
 
             for sg in self.SynapseGroups:
-                for tag in sg.tags:
+                for tag in sg.tags+['All']:
                     ng.afferent_synapses[tag] = []
                     ng.efferent_synapses[tag] = []
 
@@ -247,7 +246,7 @@ class Network(NetworkObjectBase):
             return self.time_measures
 
 
-    def simulate_iterations(self, iterations, batch_size=-1, measure_block_time=True, disable_recording=False, batch_progress_update_func=None):
+    def simulate_iterations(self, iterations, batch_size=100, measure_block_time=True, disable_recording=False, batch_progress_update_func=None):
 
         if type(iterations) is str:
             iterations=self['Clock', 0].time_to_iterations(iterations)

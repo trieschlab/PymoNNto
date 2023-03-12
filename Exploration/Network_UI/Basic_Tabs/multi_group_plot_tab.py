@@ -43,7 +43,7 @@ class multi_group_plot_tab(TabBase):
     def initialize(self, Network_UI):
         self.main_tab = Network_UI.add_tab(title=self.title)
 
-        group_count = len(Network_UI.neuron_visible_groups)
+        group_count = len(Network_UI.get_visible_neuron_groups())
 
         self.net_plot_dicts = []
 
@@ -98,41 +98,40 @@ class multi_group_plot_tab(TabBase):
 
 
 
-        if Network_UI.group_display_count > 1:
-            Network_UI.tab.add_row()
+        #if Network_UI.group_display_count > 1:
+        #    Network_UI.tab.add_row()
 
-            self.group_sliders = []
-            for group_index in range(Network_UI.group_display_count):
-                self.group_sliders.append(QSlider(1))  # QtCore.Horizontal
-                self.group_sliders[-1].setMinimum(0)
-                self.group_sliders[-1].setMaximum(100)
-                self.group_sliders[-1].setSliderPosition(100)
-                self.group_sliders[-1].mouseReleaseEvent = Network_UI.static_update_func
-                self.group_sliders[-1].setToolTip('scale neuron-group plots up and down (only visualization)')
+        #    self.group_sliders = []
+        #    for group_index in range(Network_UI.group_display_count):
+        #        self.group_sliders.append(QSlider(1))  # QtCore.Horizontal
+        #        self.group_sliders[-1].setMinimum(0)
+        #        self.group_sliders[-1].setMaximum(100)
+        #        self.group_sliders[-1].setSliderPosition(100)
+        #        self.group_sliders[-1].mouseReleaseEvent = Network_UI.static_update_func
+        #        self.group_sliders[-1].setToolTip('scale neuron-group plots up and down (only visualization)')
 
-                Network_UI.tab.add_widget(self.group_sliders[-1])
+        #        Network_UI.tab.add_widget(self.group_sliders[-1])
 
 
     def update(self, Network_UI):
         if self.main_tab.isVisible():
 
-            lg=len(Network_UI.neuron_visible_groups)
             for curve_dict in self.net_plot_dicts:
                 for variable in curve_dict:
                     for group_id, curve in enumerate(curve_dict[variable]):
-                        group_tag=Network_UI.neuron_visible_groups[group_id]
-                        group = Network_UI.network[group_tag, 0]
+                        group = Network_UI.network.NeuronGroups[group_id]#get_visible_neuron_groups()[group_id]
+                        if group.is_visible:
+                            #group = Network_UI.network[group_tag, 0]
 
-                        if hasattr(self, 'group_sliders'):
-                            squeeze = self.group_sliders[group_id].sliderPosition() / 100
+                            squeeze = group.slider.sliderPosition() / 100
+
+                            try:
+                                net_data = group['np.mean(' + variable + ')', 0, 'np'][-self.timesteps:]
+                                iterations = group['iteration', 0, 'np'][-self.timesteps:]
+                                curve.setData(iterations, net_data * squeeze, pen=group.color)
+                            except:  # else:
+                                curve.clear()
                         else:
-                            squeeze = 1
-
-                        try:
-                            net_data = group['np.mean(' + variable + ')', 0, 'np'][-self.timesteps:]
-                            iterations = group['iteration', 0, 'np'][-self.timesteps:]
-                            curve.setData(iterations, net_data * squeeze, pen=group.color)
-                        except:  # else:
                             curve.clear()
 
             group = Network_UI.selected_neuron_group()

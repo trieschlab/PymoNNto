@@ -42,7 +42,7 @@ class NeuronGroup(NetworkObjectBase):
                 if not hasattr(net, tag):
                     setattr(net, tag, self)
 
-        self.afferent_synapses = {} #set by Network
+        self.afferent_synapses = {} #set by SynapseGroup
         self.efferent_synapses = {}
 
         self.mask = True#np.array([True for _ in range(size)]).astype(bool)#True#used for subgroup reconstruction

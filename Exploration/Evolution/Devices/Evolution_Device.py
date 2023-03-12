@@ -63,5 +63,5 @@ class Evolution_Device():#one device per thread
     #        self.parent.error_event(genome, message+' (from previous generation)')
 
     def get_score(self, evo_name, evo_id):
-        sm = StorageManager(main_folder_name=evo_name, folder_name=get_gene_file(evo_name, evo_id), add_new_when_exists=False, use_evolution_path=False)#, print_msg=False
+        sm = StorageManager(main_folder_name=evo_name, folder_name=get_gene_file(evo_name, evo_id), add_new_when_exists=False, use_evolution_path=False, last=True)#, print_msg=False
         return float(sm.load_param('score', default=None))

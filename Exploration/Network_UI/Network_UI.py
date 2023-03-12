@@ -20,6 +20,8 @@ class Network_UI(UI_Base):
         self.render_every_x_frames = 1
 
         for ng in network.NeuronGroups:
+            ng.is_visible = True
+
             if ng['NeuronDimension', 0] is None:
                 ng.add_behaviour(0, get_squared_dim(ng.size))
                 #network.add_behaviours_to_object({0: get_squared_dim(ng.size)}, ng)
@@ -57,8 +59,6 @@ class Network_UI(UI_Base):
         self.update_without_state_change = False
         self.storage_manager = storage_manager
 
-        self.neuron_visible_groups = []
-
         self._neuron_select_group = network[group_tags[0], 0]
         self._neuron_select_mask = self._neuron_select_group.vector().astype(bool)#np.array([0])
         self._neuron_select_mask[0] = True
@@ -95,6 +95,9 @@ class Network_UI(UI_Base):
         self.timer = QtCore.QTimer(self)
         self.timer.timeout.connect(self.on_timer)
         self.timer.start(40)
+
+    def get_visible_neuron_groups(self):# = [] neuron_visible_groups
+        return [ng for ng in self.network.NeuronGroups if ng.is_visible]
 
     def select_neuron_class(self, group, class_id, add_to_select_group=False):
         return self.select_neurons(group, group.classification == class_id, add_to_select_group)

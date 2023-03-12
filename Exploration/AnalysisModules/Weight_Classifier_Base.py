@@ -44,7 +44,7 @@ class Classifier_base(AnalysisModule):
         idx_to_cluster_array = sch.fcluster(linkage, cluster_distance_threshold, criterion='distance')
         self.update_progress(90)
 
-        result = np.zeros(data.shape[0]) - 1
+        #result = np.zeros(data.shape[0]) - 1
         #result = np.zeros(data.shape[1]) - 1#test!
 
         #print(result.shape, mask, idx_to_cluster_array)

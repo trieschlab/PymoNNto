@@ -204,6 +204,7 @@ class Execution_Manager_UI_Base(UI_Base):
         delete_btn = self.tab.add_widget(QPushButton('delete'))
         delete_btn.clicked.connect(on_delete_click)
 
+
         self.update_archive()
 
         for dir in os.listdir(get_epc_folder(self.folder)):
@@ -402,34 +403,58 @@ class Execution_Manager_UI_Base(UI_Base):
 
         self.tab.add_widget(QLabel(tab.server))
 
-        def archive():
-            try:
-                if  tab.server is not None and 'ssh ' in tab.server:
-                    ssh_stop_evo(tab.server, name, remove_evo=False)
+        if 'local' in tab.server:
+            def on_rename_click():
+                self.rename(tab)
 
-                if  tab.server is not None and 'local' in tab.server:
-                    if tab.process is not None:
-                        print('Please close terminal manually')
-                        tab.process.kill()
-                        tab.process.terminate()
-                        tab.process.close()
-                        tab.process = None
-            except:
-                print('evo cannot be stopped')
+            rename_btn = self.tab.add_widget(QPushButton('rename'))
+            rename_btn.clicked.connect(on_rename_click)
 
-            zipDir(get_epc_folder(self.folder) + '/' + name, get_epc_folder(self.folder) + '/' + name + '.zip')
-            shutil.rmtree(get_epc_folder(self.folder) + '/' + name + '/')
-            #self.tabs.removeTab(self.tabs.currentIndex())
-            self.remove_tab(tab)
 
-            self.update_archive()
+        if 'ssh' in tab.server:
+            def on_connect_click():
+                self.show_screen_session(tab.server, name)
 
-        archive_btn = self.tab.add_widget(QPushButton('archive'))
-        archive_btn.clicked.connect(archive)
+            connect_btn = self.tab.add_widget(QPushButton('connect'))
+            connect_btn.clicked.connect(on_connect_click)
+
+
+            def on_localize_click():
+                self.localize(tab)
+
+            localize_btn = self.tab.add_widget(QPushButton('localize'))
+            localize_btn.clicked.connect(on_localize_click)
+
+        if 'local' in tab.server:
+            def archive():
+                try:
+                    if  tab.server is not None and 'ssh ' in tab.server:
+                        ssh_stop_evo(tab.server, name)
+
+                    if  tab.server is not None and 'local' in tab.server:
+                        if tab.process is not None:
+                            print('Please close terminal manually')
+                            tab.process.kill()
+                            tab.process.terminate()
+                            tab.process.close()
+                            tab.process = None
+                except:
+                    print('evo cannot be stopped')
+
+                zipDir(get_epc_folder(self.folder) + '/' + name, get_epc_folder(self.folder) + '/' + name + '.zip')
+                shutil.rmtree(get_epc_folder(self.folder) + '/' + name + '/')
+                #self.tabs.removeTab(self.tabs.currentIndex())
+                self.remove_tab(tab)
+
+                self.update_archive()
+
+            archive_btn = self.tab.add_widget(QPushButton('archive'))
+            archive_btn.clicked.connect(archive)
 
         def remove():
             if tab.server is not None and 'ssh ' in tab.server:
-                ssh_stop_evo(tab.server, name, remove_evo=True)
+                ssh_stop_evo(tab.server, name)
+                ssh_remove_evo(tab.server, name)
 
             if tab.server is not None and 'local' in tab.server:
                 if tab.process is not None:
@@ -451,8 +476,6 @@ class Execution_Manager_UI_Base(UI_Base):
 
         self.On_Tab_Changed(None)
 
-
-
         # TODO: remove
         #smg = StorageManagerGroup(tab.name, data_folder=get_data_folder() + '/' + self.folder + '/' + tab.name + '/Data')
         #params = smg.get_all_params()
@@ -460,6 +483,87 @@ class Execution_Manager_UI_Base(UI_Base):
         #    for sm in smg.StorageManagerList:
         #        g = sm.load_param('gen')
         #        sm.save_param('generation', g)
+
+
+    def localize(self, tab):
+        name = tab.name
+        if tab.server is not None and 'ssh ' in tab.server:
+            ssh_stop_evo(tab.server, name)
+        transfer_project_back(name, tab.server, main_folder=self.get_folder())
+        tab.ssm.save_param('server', 'local')
+        ssh_remove_evo(tab.server, name)
+        self.remove_tab(tab)
+        self.add_common_tab(name)
+
+
+    def rename(self, tab):
+        name = tab.name
+
+        def rename_func(new):
+            src = name
+            dst = new
+
+            main_folder = get_data_folder() + '/'+self.get_folder()+'/'
+            df = main_folder+src+'/Data/StorageManager/'
+            data_f = df+src+'/'
+
+            if os.path.exists(data_f):
+                for sub_folder in os.listdir(data_f):
+                    if src in sub_folder:
+                        os.rename(data_f + sub_folder, data_f + sub_folder.replace(src, dst))
+
+                os.rename(df + src, df + dst)
+
+            os.rename(main_folder + src, main_folder + dst)
+
+            self.remove_tab(tab)
+            self.add_common_tab(new)
+
+        self.text_input_dialog('type in new name', 'rename', rename_func, 'new_name')
+
+    def show_screen_session(self, server, name):
+        ssh = get_ssh_connection(server)
+        channel = ssh.invoke_shell(width=500, height=240)
+
+        channel.send(f"screen -r "+name+"\n")
+        time.sleep(1)
+        output = ''
+        # while not channel.exit_status_ready():
+        # for i in range(6):
+        #    #if channel.recv_ready():
+        for i in range(100):
+            if channel.recv_ready():
+                output += channel.recv(1024).decode('utf-8')
+        #print(output)
+        channel.close()
+
+        while 'H[J' in output:
+            pos = output.find('H[J')
+            output=output[pos+4:]
+
+
+        output = output.replace('min', 'min<br/>').replace('\n', '<br/>')
+
+
+        dlg = QDialog()
+        dlg.setWindowTitle('ssh screen '+name)
+        layout = QVBoxLayout()
+
+        edit = QTextEdit(output)
+        layout.addWidget(edit)
+
+        def btn_clicked():
+            dlg.close()
+
+        btn = QPushButton('close')
+        btn.clicked.connect(btn_clicked)
+
+        layout.addWidget(btn)
+        dlg.setLayout(layout)
+        dlg.resize(1000, 800)
+        dlg.exec()
+
+
 
     def on_server_delete(self):
         txt = self.listwidget2.currentText()

@@ -15,7 +15,7 @@ class spiketrain_tab(TabBase):
         self.scatter_tab = Network_UI.add_tab(title=self.title)
 
         self.spiketrain_images=[]
-        for i, group_tag in enumerate(Network_UI.neuron_visible_groups):
+        for i, group in enumerate(Network_UI.get_visible_neuron_groups()):
             if i!=0:
                 Network_UI.tab.add_row()
             self.spiketrain_images.append(Network_UI.tab.add_plot(tooltip_message=self.parameter+' of each neuron(rows) at each timestep(columns)').add_image())
@@ -23,18 +23,17 @@ class spiketrain_tab(TabBase):
 
     def update(self, Network_UI):
         if self.scatter_tab.isVisible():
-            for i, group_tag in enumerate(Network_UI.neuron_visible_groups):
-                group = Network_UI.network[group_tag, 0]
+            for i, group in enumerate(Network_UI.get_visible_neuron_groups()):
 
-
-                try:
+                #try:
+                if True:
                     data = group[self.parameter, 0, 'np'][-self.timesteps:].astype(np.float64)
                     mi=0#np.min(data)
                     ma=np.max(data)
-                    if group_tag == Network_UI.selected_neuron_group().tags[0]:
+                    if group == Network_UI.selected_neuron_group():
                         id=Network_UI.selected_neuron_id()
                         data[:, id-1:id+2] += 0.2*ma
                         data[:, id] += 0.3*ma
                     self.spiketrain_images[i].setImage(data, levels=(mi, ma))#np.rot90(, 3)
-                except:
-                    print(self.parameter, "cannot be evaluated")
+                #except:
+                #    print(self.parameter, "cannot be evaluated")

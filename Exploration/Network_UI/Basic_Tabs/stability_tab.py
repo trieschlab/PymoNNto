@@ -19,12 +19,12 @@ class stability_tab(TabBase):
 
         self.image_items = []
 
-        for group_tag1 in Network_UI.neuron_visible_groups:
+        for group1 in Network_UI.get_visible_neuron_groups():
             self.image_items.append([])
-            for group_tag2 in Network_UI.neuron_visible_groups:
+            for group2 in Network_UI.get_visible_neuron_groups():
                 tooltip_msg='x-axis:network average '+self.parameter+' at timestep t\r\ny-axis:corresponding network average '+self.parameter+' at tiemstp t+1'
 
-                image = Network_UI.tab.add_plot(title=group_tag1 + self.parameter +'(t) vs ' + group_tag2 + self.parameter +'(t+1)', tooltip_message=tooltip_msg).add_image()
+                image = Network_UI.tab.add_plot(title=group1.tag + self.parameter +'(t) vs ' + group2.tag + self.parameter +'(t+1)', tooltip_message=tooltip_msg).add_image()
 
                 self.image_items[-1].append(image)
             Network_UI.tab.add_row()
@@ -40,16 +40,12 @@ class stability_tab(TabBase):
     def update(self, Network_UI):
         if self.stab_tab.isVisible():
 
-            for y, group_tag1 in enumerate(Network_UI.neuron_visible_groups):
-                for x, group_tag2 in enumerate(Network_UI.neuron_visible_groups):
+            for y, group1 in enumerate(Network_UI.get_visible_neuron_groups()):
+                for x, group2 in enumerate(Network_UI.get_visible_neuron_groups()):
 
-                    if len(Network_UI.network[group_tag1]) >= 0 and len(Network_UI.network[group_tag2]) >= 0:
-                        group1 = Network_UI.network[group_tag1, 0]
-                        group2 = Network_UI.network[group_tag2, 0]
-
-                        try:
-                            act1 = np.mean(np.array(group1[self.parameter, 0][-self.timesteps:]), axis=1)
-                            act2 = np.mean(np.array(group2[self.parameter, 0][-self.timesteps:]), axis=1)
-                            self.image_items[y][x].setImage(get_t_vs_tp1_mat(act1, act2, self.resolution_slider.sliderPosition(), False))
-                        except:
-                            print(self.parameter, 'cannot be evaluated')
+                    try:
+                        act1 = np.mean(np.array(group1[self.parameter, 0][-self.timesteps:]), axis=1)
+                        act2 = np.mean(np.array(group2[self.parameter, 0][-self.timesteps:]), axis=1)
+                        self.image_items[y][x].setImage(get_t_vs_tp1_mat(act1, act2, self.resolution_slider.sliderPosition(), False))
+                    except:
+                        print(self.parameter, 'cannot be evaluated')

@@ -103,7 +103,7 @@ def clone_project(name, folder):
     else:
         print('Error No root "Data" folder found')
 
-def transfer_project(name, device_string, password=None):
+def transfer_project(name, device_string):
     # search main project folder
     Data_Folder = get_data_folder()
     if Data_Folder != './Data':
@@ -133,6 +133,44 @@ def transfer_project(name, device_string, password=None):
         cmd += 'rm ' + name + '.zip'  # remove zip
         ssh_stdin, ssh_stdout, ssh_stderr = ssh.exec_command(cmd)
         print(get_response(ssh_stdout, ssh_stderr))
+
+        scp.close()
+        ssh.close()
+    else:
+        print('Error No root "Data" folder found')
+
+def transfer_project_back(name, device_string, main_folder='Evolution_Project_Clones'):
+    # search main project folder
+    Data_Folder = get_data_folder()
+    if Data_Folder != './Data':
+
+        src = '_transfer.zip'
+        dst_path = get_epc_folder(main_folder)+'/'#+name+'/' #test.zip
+        dst = dst_path + '_transfer.zip'
+
+        print(src,dst_path,dst)
+
+        ssh = get_ssh_connection(device_string)
+
+        # zip project
+        #cmd = 'cd ' + name + ' ; '
+        cmd = 'zip -r _transfer.zip '+ name +' ;'
+        ssh_stdin, ssh_stdout, ssh_stderr = ssh.exec_command(cmd)
+        print(get_response(ssh_stdout, ssh_stderr))
+
+        # transfer
+        print('Transfer zip from', device_string)
+        scp = SCPClient(ssh.get_transport())
+        scp.get(src, dst)
+
+        with zipfile.ZipFile(dst, "r") as zip_ref:
+            zip_ref.extractall(dst_path)
+
+        # remove zip
+        cmd = 'rm _transfer.zip; '
+        ssh_stdin, ssh_stdout, ssh_stderr = ssh.exec_command(cmd)
+        print(get_response(ssh_stdout, ssh_stderr))
+        os.remove(dst)
 
         scp.close()
         ssh.close()
@@ -191,6 +229,16 @@ def ssh_execute_evo(server, name):
 
     ssh.close()
 
+def ssh_remove_evo(server, name):
+    ssh = get_ssh_connection(server)
+
+    command = 'rm -r ' + name
+    ssh_stdin, ssh_stdout, ssh_stderr = ssh.exec_command(command)
+    response = get_response(ssh_stdout, ssh_stderr)
+    print(response)
+
+    ssh.close()
+
 def ssh_stop_evo(server, name, remove_evo=False):
     ssh = get_ssh_connection(server)
 
@@ -199,11 +247,11 @@ def ssh_stop_evo(server, name, remove_evo=False):
     response = get_response(ssh_stdout, ssh_stderr)
     print(response)
 
-    if remove_evo:
-        command = 'rm -r ' + name
-        ssh_stdin, ssh_stdout, ssh_stderr = ssh.exec_command(command)
-        response = get_response(ssh_stdout, ssh_stderr)
-        print(response)
+    #if remove_evo:
+    #    command = 'rm -r ' + name
+    #    ssh_stdin, ssh_stdout, ssh_stderr = ssh.exec_command(command)
+    #    response = get_response(ssh_stdout, ssh_stderr)
+    #    print(response)
 
     ssh.close()
 

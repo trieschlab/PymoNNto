@@ -113,6 +113,8 @@ class AnalysisModule(TaggableObjectBase):
     def last_call_result(self):
         return self.current_result
 
+    result=last_call_result
+
     def get_results(self):
         return self.result_storage
 

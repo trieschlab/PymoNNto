@@ -7,6 +7,9 @@ __evo_id__ = None
 __evo_generation__ = None
 __get_gene_mode__ = False
 
+def is_evolution_mode():
+    return not gene('__evo_name__', None) == None
+
 def get_gene_mode():
     return __get_gene_mode__
 

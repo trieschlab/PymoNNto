@@ -97,4 +97,6 @@ class single_group_plot_tab(TabBase):
                             self.neuron_curves[var].setData([],[])
                     except:
                         self.neuron_curves[var].setData([],[])
-
+                else:
+                    self.neuron_curves[var].setData([], [])
+                    self.net_curves[var].setData([], [])

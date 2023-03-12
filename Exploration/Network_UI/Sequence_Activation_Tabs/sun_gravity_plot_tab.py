@@ -519,7 +519,7 @@ class sun_gravity_plot_tab(TabBase):
 
 
     def update(self, Network_UI):
-        groups = [Network_UI.network[tag, 0] for tag in Network_UI.neuron_visible_groups]
+        groups = Network_UI.get_visible_neuron_groups()
         alphabet = []
 
         if self.sun_gravity_plot_tab is not None and self.sun_gravity_plot_tab.isVisible():

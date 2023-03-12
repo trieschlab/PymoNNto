@@ -62,7 +62,7 @@ class sidebar_neuron_grid_submodule(TabBase):
         self.image_item = Network_UI.sidebar.add_plot(tooltip_message='white: active neurons\r\ncolor: neuron classification or base color\r\ngreen: selected neuron', stretch=100).add_image()
 
         self.image_item.neuron_group_tag = Network_UI.group_tags[index]
-        Network_UI.neuron_visible_groups.append(Network_UI.group_tags[index])
+        Network_UI.get_visible_neuron_groups().append(Network_UI.group_tags[index])
         self.image_item.mouseClickEvent = mce
 
         self.image_item.mouseDoubleClickEvent = mdce
@@ -73,7 +73,7 @@ class sidebar_neuron_grid_submodule(TabBase):
             Network_UI.select_neuron(Network_UI.network[tag, 0], 0)
             self.color_select_box.change_main_object(Network_UI.network[tag, 0])
             self.image_item.neuron_group_tag = tag
-            Network_UI.neuron_visible_groups[index] = tag
+            Network_UI.get_visible_neuron_groups()[index] = tag
 
         group_select_box.addItems(Network_UI.group_tags)
         group_select_box.setCurrentIndex(index)

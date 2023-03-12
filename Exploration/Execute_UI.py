@@ -112,6 +112,7 @@ All genomes generate a file with the results and the genes when set_score is cal
 
         exec_file = """from PymoNNto import *
 from PymoNNto.Exploration.Evolution.Interface_Functions import *
+from PymoNNto.Exploration.HelperFunctions.IteratorFunctions import *
 
 ids = StorageManagerGroup('evo_name').get_param_list('id', remove_None=True)
 if len(ids) == 0:
@@ -160,7 +161,7 @@ def file_exec(genes):
 
         #tab.plot = self.Add_plot(title='results')
 
-        tab.interactive_scatter = self.tab.add_widget(InteractiveScatter(default_x='id', default_y='score'))
+        tab.interactive_scatter = self.tab.add_widget(InteractiveScatter(default_x='id', default_y='score', coloration_param='score'))
 
         #add_evolution_plot_items(self, tab)
         #tab.folder = get_epc_folder(self.folder) + '/' + name + '/'

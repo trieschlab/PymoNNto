@@ -120,7 +120,7 @@ class StorageManager:
 
         return storage_manager_folder
 
-    def __init__(self, main_folder_name, folder_name=None, random_nr=False, print_msg=True, add_new_when_exists=True, data_folder=get_data_folder(), use_evolution_path=True):
+    def __init__(self, main_folder_name, folder_name=None, random_nr=False, print_msg=True, add_new_when_exists=True, data_folder=get_data_folder(), use_evolution_path=True, last=False):
 
         #when evolution is active, all storage managers with use_evolution_path=True will automatically save all data in the right evolution folder
         if use_evolution_path:
@@ -165,6 +165,13 @@ class StorageManager:
                 while os.path.isdir(storage_manager_folder+main_folder_name+'/'+self.folder_name+'_{}/'.format(count)):
                     count += 1
                 self.folder_name += '_{}'.format(count)
+        elif last:#get last exisiting folder
+            if os.path.isdir(storage_manager_folder+main_folder_name+'/'+self.folder_name+'/'):
+                count = -1
+                while os.path.isdir(storage_manager_folder+main_folder_name+'/'+self.folder_name+'_{}/'.format(count+1)):
+                    count += 1
+                if count>-1:
+                    self.folder_name += '_{}'.format(count)
 
         #self.foldername += '_'+count#int(np.random.rand() * 10*add_randum_number)
 
