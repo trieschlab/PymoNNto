@@ -1,12 +1,12 @@
-from PymoNNto.NetworkBehaviour.Structure.Structure import *
-from PymoNNto.NetworkCore.Behaviour import *
+from PymoNNto.NetworkBehavior.Structure.Structure import *
+from PymoNNto.NetworkCore.Behavior import *
 from PymoNNto.NetworkCore.Synapse_Group import *
 
 
-class Remove_Autapses(Behaviour):
-    set_variables_on_init = True
+class Remove_Autapses(Behavior):
+    initialize_on_init = True
 
-    def set_variables(self, synapses):
+    def initialize(self, synapses):
         src = synapses.src
         dst = synapses.dst
 
@@ -16,16 +16,16 @@ class Remove_Autapses(Behaviour):
         synapses.enabled *= (s_id != d_id)
 
 
-class Receptive_Fields(Behaviour):
+class Receptive_Fields(Behavior):
     visualization_module_inputs = ['s.src.x', 's.src.y', 's.src.z', 's.dst.x', 's.dst.y', 's.dst.z']
 
-    set_variables_on_init = True
+    initialize_on_init = True
 
     def get_enabled_mat(self, synapses, s_id, sx, sy, sz, d_id, dx, dy, dz):
         print('not implemented. Please use inherited classes below.')
         return synapses.enabled
 
-    def set_variables(self, synapses):
+    def initialize(self, synapses):
         src = synapses.src
         dst = synapses.dst
         #synapses.enabled = synapses.matrix()

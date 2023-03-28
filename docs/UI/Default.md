@@ -81,11 +81,11 @@ fourier_tab(parameter='output')
 ```
 ![Fourier_Tab](https://raw.githubusercontent.com/trieschlab/PymoNNto/Images/Fourier_Tab.png)
 #Info Tab
-The info tab can monitor and change the NeuronGroup behaviour attributes during the simulation. 
-All attributes passed to the behaviour during its construction can be seen and changed by clicking on the blue link-like text. 
+The info tab can monitor and change the NeuronGroup behavior attributes during the simulation. 
+All attributes passed to the behavior during its construction can be seen and changed by clicking on the blue link-like text. 
 This opens a drop down menu where we can change the individual attributes. 
-When we click the update button we basically call the set_variables function of the given behaviour a second time, which should reset and re-initialize the given behaviour. 
-Note that only the set_variables functions of the selected behaviours is updated, which can lead to problems, when different behaviours have to be initialized in a specific order.
+When we click the update button we basically call the initialize function of the given behavior a second time, which should reset and re-initialize the given behavior. 
+Note that only the initialize functions of the selected behaviors is updated, which can lead to problems, when different behaviors have to be initialized in a specific order.
 
 ```python
 info_tab()

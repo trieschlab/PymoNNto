@@ -1,9 +1,9 @@
 from PymoNNto import *
 import nest
 
-class Nest_embedding(Behaviour):
+class Nest_embedding(Behavior):
 
-    def set_variables(self, neurons):
+    def initialize(self, neurons):
         # define resolution
         nest.SetKernelStatus({'resolution':1.0})
 
@@ -21,14 +21,14 @@ class Nest_embedding(Behaviour):
         nest.SetStatus(self.G, 'V_m', 0.0)
         nest.SetStatus(self.G, 'tau_m', 100.0)
 
-    def new_iteration(self, n):
+    def iteration(self, n):
         nest.Simulate(1.0)
         n.v = nest.GetStatus(self.G, 'V_m')
 
 
 My_Network = Network()
 
-My_Neurons = NeuronGroup(net=My_Network, tag='my_neurons', size=get_squared_dim(1), behaviour={
+My_Neurons = NeuronGroup(net=My_Network, tag='my_neurons', size=get_squared_dim(1), behavior={
     1: Nest_embedding()
 })
 

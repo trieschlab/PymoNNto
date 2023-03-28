@@ -2,16 +2,16 @@ from PymoNNto import *
 
 #https://brian2.readthedocs.io/en/stable/examples/frompapers.Diesmann_et_al_1999.html
 
-class Diesmann_main(Behaviour):
+class Diesmann_main(Behavior):
 
-    def set_variables(self, n):
+    def initialize(self, n):
         self.set_parameters_as_variables(self)
         n.dt = 0.01
         n.v = n.vector() - self.Vr + n.vector('uniform') * (self.Vt - self.Vr)
         n.x = n.vector()
         n.y = n.vector()
 
-    def new_iteration(self, n):
+    def iteration(self, n):
         v, x, y = n.v.copy(), n.x.copy(), n.y.copy()
 
         n.v += (-(v - self.Vr) + x) * (1. / self.taum) * n.dt#: volt
@@ -22,9 +22,9 @@ class Diesmann_main(Behaviour):
         n.v[n.spike] = self.Vr
 
 
-class Diesmann_input(Behaviour):
+class Diesmann_input(Behavior):
 
-    def set_variables(self, n):
+    def initialize(self, n):
         self.set_parameters_as_variables(self)
 
         for s in n.afferent_synapses['GLUTAMATE']:
@@ -32,7 +32,7 @@ class Diesmann_input(Behaviour):
 
         #[k for k in range((int(i/group_size)+1)*group_size, (int(i/group_size)+2)*group_size) if i<N_pre-group_size]
 
-    def new_iteration(self, n):
+    def iteration(self, n):
         for s in n.afferent_synapses['GLUTAMATE']:
             n.v += np.sum(s.W[:, s.src.spike], axis=1)
 
@@ -49,7 +49,7 @@ group_size = 100
 groups=[]
 
 for group in range(n_groups):
-    N_e = NeuronGroup(net=My_Network, tag='excitatory_neurons'+str(group), size=get_squared_dim(group_size), behaviour={
+    N_e = NeuronGroup(net=My_Network, tag='excitatory_neurons'+str(group), size=get_squared_dim(group_size), behavior={
         1: Diesmann_main(Vr=-70, Vt=-55, taum=10, taupsp=0.325, weight=4.86),
         2: Diesmann_input(external_noise=group==0),
         9: Recorder(['v', 'spike'], tag='my_recorder')

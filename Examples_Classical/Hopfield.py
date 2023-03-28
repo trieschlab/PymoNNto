@@ -15,20 +15,20 @@ from PymoNNto import *
 
 
 
-class Hopfield_main(Behaviour):
+class Hopfield_main(Behavior):
 
-    def set_variables(self, n):
+    def initialize(self, n):
         n.v = n.vector()
         n.learning = True
 
-    def new_iteration(self, n):
+    def iteration(self, n):
         if n.iteration % 100 == 0:
             n.learning = not n.learning
 
 
-class Hopfield_weights(Behaviour):
+class Hopfield_weights(Behavior):
 
-    def set_variables(self, n):
+    def initialize(self, n):
         for s in n.afferent_synapses['GLUTAMATE']:
             s.W = s.matrix()
             s.enabeled = s.matrix() == 0.0
@@ -40,7 +40,7 @@ class Hopfield_weights(Behaviour):
     def energy(self, s, W):
         return -0.5 * s @ W @ s + np.sum(s * self.threshold)
 
-    def new_iteration(self, n):
+    def iteration(self, n):
         n.energy=0
         for s in n.afferent_synapses['GLUTAMATE']:
             n.energy += self.energy(n.v, s.W)
@@ -79,9 +79,9 @@ class Hopfield_weights(Behaviour):
 #4
 #9
 
-class Hopfield_input(Behaviour):
+class Hopfield_input(Behavior):
 
-    def set_variables(self, n):
+    def initialize(self, n):
         #self.mnist_images=np.array([np.zeros(28*28),np.zeros(28*28),np.zeros(28*28),np.zeros(28*28)])
         #self.mnist_images[0][0:28 * 7] = 255
         #self.mnist_images[1][28 * 7:28 * 14] = 255
@@ -106,7 +106,7 @@ class Hopfield_input(Behaviour):
 
         #self.nr=0
 
-    def new_iteration(self, n):
+    def iteration(self, n):
         if n.iteration % self.display_length == 0 or n.learning:
 
             n.v = self.mnist_images[np.random.randint(0, len(self.mnist_images))].copy()
@@ -125,7 +125,7 @@ class Hopfield_input(Behaviour):
 
 My_Network = Network()
 
-N_e = NeuronGroup(net=My_Network, tag='excitatory_neurons', size=NeuronDimension(width=28, height=28), behaviour={
+N_e = NeuronGroup(net=My_Network, tag='excitatory_neurons', size=NeuronDimension(width=28, height=28), behavior={
     1: Hopfield_main(),
     2: Hopfield_input(),
     3: Hopfield_weights(),

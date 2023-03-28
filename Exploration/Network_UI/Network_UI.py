@@ -1,7 +1,7 @@
 from PymoNNto.Exploration.UI_Base import *
-from PymoNNto.NetworkBehaviour.Recorder.Recorder import *
+from PymoNNto.NetworkBehavior.Recorder.Recorder import *
 from PymoNNto.Exploration.Network_UI.Neuron_Classification_Colorizer import *
-from PymoNNto.NetworkBehaviour.Structure.Structure import *
+from PymoNNto.NetworkBehavior.Structure.Structure import *
 
 import numpy as np
 
@@ -23,8 +23,8 @@ class Network_UI(UI_Base):
             ng.is_visible = True
 
             if ng['NeuronDimension', 0] is None:
-                ng.add_behaviour(0, get_squared_dim(ng.size))
-                #network.add_behaviours_to_object({0: get_squared_dim(ng.size)}, ng)
+                ng.add_behavior(0, get_squared_dim(ng.size))
+                #network.add_behaviors_to_object({0: get_squared_dim(ng.size)}, ng)
 
             if not hasattr(ng, 'color'):
                 ng.color = (0, 0, 255, 255)
@@ -73,7 +73,7 @@ class Network_UI(UI_Base):
         if type(self.modules) is dict:
             self.modules = self.modules.values()
 
-        for beh in network.all_behaviours():
+        for beh in network.all_behaviors():
             for module in beh.get_UI_Tabs():
                 self.modules.append(module)
 
@@ -163,8 +163,8 @@ class Network_UI(UI_Base):
 
                 for rec_length in rec_time_dict:
                     rec = Recorder(rec_time_dict[rec_length] + ['iteration'], tag='UI_rec,rec_' + str(rec_length), max_length=rec_length)
-                    group.add_behaviour(10000+rec_length, rec)
-                    #self.network.add_behaviours_to_object({10000+rec_length: rec}, group)
+                    group.add_behavior(10000+rec_length, rec)
+                    #self.network.add_behaviors_to_object({10000+rec_length: rec}, group)
 
 
     def static_update_func(self, event=None):

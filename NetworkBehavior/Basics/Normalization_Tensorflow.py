@@ -1,10 +1,10 @@
-from PymoNNto.NetworkCore.Behaviour import *
+from PymoNNto.NetworkCore.Behavior import *
 import numpy as np
 import tensorflow as tf
 
-class Synaptic_Normalization_TF(Behaviour):
+class Synaptic_Normalization_TF(Behavior):
 
-    def set_variables(self, neurons):
+    def initialize(self, neurons):
         self.syn_type = self.parameter('syn_type', 'GLU', neurons)
 
         neurons.require_synapses(self.syn_type, warning=False)#suppresses error when synapse group does not exist
@@ -16,7 +16,7 @@ class Synaptic_Normalization_TF(Behaviour):
 
         neurons.temp_weight_sum = tf.Variable(neurons.vector(), dtype='float32')
 
-    def new_iteration(self, neurons):
+    def iteration(self, neurons):
         neurons.temp_weight_sum.assign(tf.multiply(neurons.temp_weight_sum, 0.0))
 
         for s in neurons.afferent_synapses[self.syn_type]:

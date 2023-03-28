@@ -4,9 +4,9 @@ sys.path.append('../../')
 start_time=time_p.time()
 from PymoNNto import *
 from matplotlib.pyplot import *
-from NetworkBehaviour.EulerEquationModules.VariableInitializer import *
-from NetworkBehaviour.EulerEquationModules.Equation import *
-from NetworkBehaviour.EulerEquationModules.EulerClock import *
+from NetworkBehavior.EulerEquationModules.VariableInitializer import *
+from NetworkBehavior.EulerEquationModules.Equation import *
+from NetworkBehavior.EulerEquationModules.EulerClock import *
 
 
 
@@ -17,7 +17,7 @@ from NetworkBehaviour.EulerEquationModules.EulerClock import *
 
 net = Network()
 
-ng = NeuronGroup(net=net, size=100, behaviour={
+ng = NeuronGroup(net=net, size=100, behavior={
     1: Clock(step='0.1*ms'),
     2: Variable(eq='v=1*mV'),
     3: Variable(eq='tau=100*ms'),

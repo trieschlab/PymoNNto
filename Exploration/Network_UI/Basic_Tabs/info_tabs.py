@@ -42,26 +42,26 @@ class info_tab(TabBase):
         Network_UI.tab.add_widget(caption)
         Network_UI.tab.add_row()
 
-        for key in groups[0].behaviour:
-            main_tag = groups[0].behaviour[key].tags[0]
+        for key in groups[0].behavior:
+            main_tag = groups[0].behavior[key].tags[0]
 
-            behaviours = [g.behaviour[key] for g in groups]
+            behaviors = [g.behavior[key] for g in groups]
 
-            self.add_line(Network_UI, str(key) + ' ' + main_tag, behaviours, groups)
+            self.add_line(Network_UI, str(key) + ' ' + main_tag, behaviors, groups)
             h += 60
 
         infotab.setMaximumHeight(h)
 
-    def add_line(self, Network_UI, text, behaviours=None, groups=None):
+    def add_line(self, Network_UI, text, behaviors=None, groups=None):
 
         element = QCheckBox()
-        element.setChecked(behaviours[0].behaviour_enabled)
+        element.setChecked(behaviors[0].behavior_enabled)
         element.setText(text)
 
         def click(event):
-            for behaviour in behaviours:
-                behaviour.behaviour_enabled = element.isChecked()
-                Network_UI.add_event(behaviour.tags[0]+' ('+str(element.isChecked())+')')
+            for behavior in behaviors:
+                behavior.behavior_enabled = element.isChecked()
+                Network_UI.add_event(behavior.tags[0]+' ('+str(element.isChecked())+')')
 
         def cut_length(s):
             result = ''
@@ -72,7 +72,7 @@ class info_tab(TabBase):
             return result
 
         element.stateChanged.connect(click)
-        element2 = QLabel(cut_length(str(behaviours[0].init_kwargs)))
+        element2 = QLabel(cut_length(str(behaviors[0].init_kwargs)))
 
         container = QVBoxLayout()  # self.main_window
 
@@ -80,12 +80,12 @@ class info_tab(TabBase):
             h_container = QHBoxLayout()
             h_container.addWidget(QLabel(arg), stretch=1)
 
-            edit = QLineEdit(str(behaviours[0].init_kwargs[arg]))
+            edit = QLineEdit(str(behaviors[0].init_kwargs[arg]))
             edit.arg = arg
 
             def change_param(event):
-                for behaviour in behaviours:
-                    behaviour.init_kwargs[edit.arg] = edit.text()
+                for behavior in behaviors:
+                    behavior.init_kwargs[edit.arg] = edit.text()
 
             edit.textChanged.connect(change_param)
 
@@ -98,7 +98,7 @@ class info_tab(TabBase):
 
 
 
-        plot_data_list = behaviours[0].get_UI_Preview_Plots()
+        plot_data_list = behaviors[0].get_UI_Preview_Plots()
         if plot_data_list is not None:
             h_container = QHBoxLayout()
 
@@ -135,13 +135,13 @@ class info_tab(TabBase):
             #curve.setData(x=list(range(len(plot_data))),y=plot_data)
 
 
-        for arg in behaviours[0].init_kwargs:
+        for arg in behaviors[0].init_kwargs:
             addArg(arg)
 
         def update(event):
-            for neurons,behaviour in zip(groups, behaviours):
-                behaviour.set_variables(neurons)
-                element2.setText(cut_length(str(behaviour.init_kwargs)))
+            for neurons,behavior in zip(groups, behaviors):
+                behavior.initialize(neurons)
+                element2.setText(cut_length(str(behavior.init_kwargs)))
 
         h_container = QHBoxLayout()
         btn = QPushButton('update')
@@ -160,7 +160,7 @@ class info_tab(TabBase):
             else:
                 frame.show()
 
-        if not 'structure' in behaviours[0].tags:
+        if not 'structure' in behaviors[0].tags:
             element2.mousePressEvent = hide_show
             link_font = QFont()  # 'SansSerif', 12
             link_font.setUnderline(True)

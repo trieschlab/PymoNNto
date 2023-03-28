@@ -11,16 +11,16 @@ class module_visualizer_tab(TabBase):
         self.di_modules=[]
         group_tags=[group.tags[0] for group in get_unique_non_partitioned_Groups(Network_UI.network.all_objects())]
 
-        for t,timestep in enumerate(Network_UI.network.behaviour_timesteps):
+        for t,timestep in enumerate(Network_UI.network.behavior_timesteps):
             for i, net_obj in enumerate(get_unique_non_partitioned_Groups(Network_UI.network.all_objects())):
 
-                if timestep in net_obj.behaviour:
-                    beh=net_obj.behaviour[timestep]
+                if timestep in net_obj.behavior:
+                    beh=net_obj.behavior[timestep]
                     module_name, inputs, outputs, attributes, module_type = analyze_module_and_get_info(beh)
                     mdi = Module_draw_item(module_name, inputs, outputs, attributes, module_type, x=t*1200, y=i*1200, onlyff=True)
                     self.di_modules.append(mdi)
 
-        self.add_flow_chart(Network_UI, self.di_modules, group_tags, Network_UI.network.behaviour_timesteps)
+        self.add_flow_chart(Network_UI, self.di_modules, group_tags, Network_UI.network.behavior_timesteps)
 
         Network_UI.Next_H_Block()
         self.connections_cb = Network_UI.Add_element(QCheckBox('connections'))

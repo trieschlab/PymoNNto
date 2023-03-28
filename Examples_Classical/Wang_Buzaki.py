@@ -8,9 +8,9 @@ def exp(x):
 def exprel(x):
     return (exp(x) - 1)/x
 
-class Wang_Buzaki_main(Behaviour):
+class Wang_Buzaki_main(Behavior):
 
-    def set_variables(self, n):
+    def initialize(self, n):
         self.set_parameters_as_variables(self)
         self.dt = 0.01# * ms
 
@@ -28,7 +28,7 @@ class Wang_Buzaki_main(Behaviour):
         n.n = n.vector()
 
 
-    def new_iteration(self, neurons):
+    def iteration(self, neurons):
         v, h, n=neurons.v.copy(), neurons.h.copy(), neurons.n.copy()
 
         alpha_m = 0.1 * 10 / exprel(-(v + 35) / 10)#: Hz
@@ -46,7 +46,7 @@ class Wang_Buzaki_main(Behaviour):
 
 My_Network = Network()
 
-N_e = NeuronGroup(net=My_Network, tag='excitatory_neurons', size=1, behaviour={
+N_e = NeuronGroup(net=My_Network, tag='excitatory_neurons', size=1, behavior={
     1: Wang_Buzaki_main(Cm=1, Iapp=2, gL=0.1, EL=-65, ENa=55, EK=-90, gNa=35, gK=9),
     9: Recorder('v', tag='my_recorder')
 })

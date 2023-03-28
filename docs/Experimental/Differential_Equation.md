@@ -12,13 +12,13 @@ sys.path.append('../../')
 start_time=time_p.time()
 from PymoNNto import *
 from matplotlib.pyplot import *
-from NetworkBehaviour.EulerEquationModules import *
-from NetworkBehaviour.EulerEquationModules import *
-from NetworkBehaviour.EulerEquationModules.Equation import *
+from NetworkBehavior.EulerEquationModules import *
+from NetworkBehavior.EulerEquationModules import *
+from NetworkBehavior.EulerEquationModules.Equation import *
 
 net = Network()
 
-ng = NeuronGroup(net=net, size=100, behaviour={
+ng = NeuronGroup(net=net, size=100, behavior={
     1: ClockModule(step='0.1*ms'),
     2: Variable(eq='v=1*mV'),
     3: Variable(eq='tau=100*ms'),
@@ -72,34 +72,31 @@ show()
 
 #PymoNNto Brian 2 hybrid
 
-There is also an option to embedd Brian2 inside of PymoNNto whcih we can see below. The new_iteration block creates some kind of bridge between the simulators which can be used for reading and writing into the embedded NeuronGroup.
+There is also an option to embedd Brian2 inside of PymoNNto whcih we can see below. The iteration block creates some kind of bridge between the simulators which can be used for reading and writing into the embedded NeuronGroup.
 
 ```python
 import PymoNNto as pmnt
 from brian2 import *
-from PymoNNto.NetworkCore.Behaviour import *
+from PymoNNto.NetworkCore.Behavior import *
 
 
+class Brian2_embedding(Behavior):
 
-class Brian2_embedding(Behaviour):
-
-    def set_variables(self, neurons):
+    def initialize(self, neurons):
         self.add_tag('Brian2_embedding')
         defaultclock.dt = 1 * ms
 
         eqs = self.parameter('eqs', '')
 
-        self.G = NeuronGroup(100, eqs, method='euler')      #this is a Biran2 NeuronGroup!
-        self.net = Network(self.G)                          #this is a Biran2 Network!
+        self.G = NeuronGroup(100, eqs, method='euler')  # this is a Biran2 NeuronGroup!
+        self.net = Network(self.G)  # this is a Biran2 Network!
 
         self.G.v = (np.random.rand(100) + 1) * mV
         self.G.tau = 100 * ms
 
-
-    def new_iteration(self, neurons):
-        self.net.run(1*ms)
+    def iteration(self, neurons):
+        self.net.run(1 * ms)
         neurons.v = self.G.v / volt
-
 
 
 My_Network = pmnt.Network()
@@ -109,13 +106,14 @@ dv/dt=(0*mV-v)/tau : volt
 tau : second
 '''
 
-My_Neurons = pmnt.NeuronGroup(net=My_Network, tag='my_neurons', size=pmnt.get_squared_dim(100), behaviour={
+My_Neurons = pmnt.NeuronGroup(net=My_Network, tag='my_neurons', size=pmnt.get_squared_dim(100), behavior={
     1: Brian2_embedding(eqs=eqs)
 })
 
 My_Network.initialize()
 
 from PymoNNto.Exploration.Network_UI import *
+
 my_UI_modules = get_default_UI_modules(['v'], ['W'])
 Network_UI(My_Network, modules=my_UI_modules, label='My_Network_UI', group_display_count=1).show()
 ```

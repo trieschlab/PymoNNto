@@ -11,7 +11,7 @@ class sidebar_image_module(TabBase):
         if Network_UI.network['image_act', 0] is not None:
 
             def image_activator_on_off(event):
-                Network_UI.network['image_act', 0].behaviour_enabled = self.input_select_box.currentText() != 'None'
+                Network_UI.network['image_act', 0].behavior_enabled = self.input_select_box.currentText() != 'None'
 
             self.input_select_box = QComboBox()
             self.input_select_box.addItem("Images")

@@ -19,11 +19,12 @@ All this requires only minor modifications.
 
 ```python
 
-from PymoNNto.NetworkCore.Behaviour import *
+from PymoNNto.NetworkCore.Behavior import *
 
-class Homeostasis(Behaviour):
 
-    def set_variables(self, neurons):
+class Homeostasis(Behavior):
+
+    def initialize(self, neurons):
         self.add_tag('Homeostatic_Mechanism')
 
         target_act = self.parameter('target_voltage', 0.05, neurons)
@@ -35,10 +36,7 @@ class Homeostasis(Behaviour):
 
         neurons.exhaustion = neurons.vector()
 
-
-
-    def new_iteration(self, neurons):
-
+    def iteration(self, neurons):
         greater = ((neurons.voltage > self.max_ta) * -1).astype(neurons.def_dtype)
         smaller = ((neurons.voltage < self.min_ta) * 1).astype(neurons.def_dtype)
 

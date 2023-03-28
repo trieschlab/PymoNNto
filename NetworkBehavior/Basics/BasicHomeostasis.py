@@ -1,6 +1,6 @@
-from PymoNNto.NetworkCore.Behaviour import *
+from PymoNNto.NetworkCore.Behavior import *
 
-class Instant_Homeostasis(Behaviour):
+class Instant_Homeostasis(Behavior):
 
     def get_measurement_param(self, n):
         if self.compiled_mp is None:
@@ -42,7 +42,7 @@ class Instant_Homeostasis(Behaviour):
                 self.max_th += self.max_th/100*gap_percent
 
 
-    def set_variables(self, neurons):
+    def initialize(self, neurons):
 
         self.compiled_mp=None
 
@@ -71,7 +71,7 @@ class Instant_Homeostasis(Behaviour):
         self.target_clip_max = self.parameter('target_clip_max', None, neurons)         #target clip max
 
 
-    def new_iteration(self, neurons):
+    def iteration(self, neurons):
         measure_or_average = self.get_measurement_param(neurons)
         self.add = self.get_target_adjustment(measure_or_average)
         self.add_to_target_param(neurons, self.add)
@@ -85,8 +85,8 @@ class Time_Integration_Homeostasis(Instant_Homeostasis):
         self.average = (self.average * self.integration_length + value) / (self.integration_length+1)
         return self.average
 
-    def set_variables(self, neurons):
-        super().set_variables(neurons)
+    def initialize(self, neurons):
+        super().initialize(neurons)
 
         self.integration_length = self.parameter('integration_length', 1, neurons)      #factor that determines the inertia of the leaky integrator (0=instant) (a*i)/(1+i)
 

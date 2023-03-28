@@ -1,10 +1,10 @@
 # Tensorflow Modules
 
 ```python
-class STDP_TF(TensorflowBehaviour):
+class STDP_TF(TensorflowBehavior):
 
-    def set_variables(self, neurons):
-        super().set_variables(neurons)
+    def initialize(self, neurons):
+        super().initialize(neurons)
         self.add_tag('STDP_TF')
 
         neurons.output = tf.Variable(neurons.vector(), dtype='float32')
@@ -14,7 +14,7 @@ class STDP_TF(TensorflowBehaviour):
 
         self.syn_type = self.parameter('syn_type', 'GLU', neurons)
 
-    def new_iteration(self, neurons):
+    def iteration(self, neurons):
 
         for s in neurons.afferent_synapses[self.syn_type]:
 

@@ -1,11 +1,11 @@
-from PymoNNto.NetworkCore.Behaviour import *
+from PymoNNto.NetworkCore.Behavior import *
 from PymoNNto.NetworkCore.Synapse_Group import *
 
-class Partition(Behaviour):
+class Partition(Behavior):
     visualization_module_inputs = ['s.src.x', 's.src.y', 's.src.z', 's.dst.x', 's.dst.y', 's.dst.z']
     visualization_module_outputs = ['s.network.SynapseGroups']
 
-    set_variables_on_init = True
+    initialize_on_init = True
 
     def partition(self, synapses, dst_group_masks):  # todo:auto receptive field extraction (blocks dont need to be squared!)
 
@@ -45,7 +45,7 @@ class Partition(Behaviour):
         return syn_sub_groups
 
 
-    def set_variables(self, synapses):
+    def initialize(self, synapses):
 
         split_size = self.parameter('split_size', 'auto')
 
@@ -63,7 +63,7 @@ class Partition(Behaviour):
         self.partition(synapses, dst_sub_masks)#this removes "synapses" from network and adds new SynapseGroups!
 
 
-    def new_iteration(self, synapses):
+    def iteration(self, synapses):
         return
 
 #p=Partition()

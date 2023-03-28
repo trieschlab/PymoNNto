@@ -1,5 +1,5 @@
 from PymoNNto.Exploration.Network_UI.TabBase import *
-from PymoNNto.NetworkBehaviour.Recorder.Recorder import *
+from PymoNNto.NetworkBehavior.Recorder.Recorder import *
 
 #from Testing.Common.Grammar_Helper import *
 
@@ -13,23 +13,23 @@ class sidebar_module_quick_access(TabBase):
     def initialize(self, Network_UI):
         if Network_UI.network['STDP', 0] is not None:
             def learning_on_off(event):
-                Network_UI.network.set_behaviours('STDP', self.stdp_cb.isChecked())
+                Network_UI.network.set_behaviors('STDP', self.stdp_cb.isChecked())
                 Network_UI.add_event('STDP ('+str(self.stdp_cb.isChecked())+')')
 
             self.stdp_cb = QCheckBox()
             self.stdp_cb.setText('STDP')
-            self.stdp_cb.setChecked(Network_UI.network['STDP',0].behaviour_enabled)
+            self.stdp_cb.setChecked(Network_UI.network['STDP',0].behavior_enabled)
             self.stdp_cb.stateChanged.connect(learning_on_off)
             Network_UI.Add_Sidebar_Element(self.stdp_cb)
 
         if Network_UI.network['TextActivator', 0] is not None:
             def activator_on_off(event):
-                Network_UI.network['TextActivator', 0].behaviour_enabled = self.act_cb.isChecked()
+                Network_UI.network['TextActivator', 0].behavior_enabled = self.act_cb.isChecked()
                 Network_UI.add_event('TextActivator (' + str(self.act_cb.isChecked()) + ')')
 
             self.act_cb = QCheckBox()
             self.act_cb.setText('Text input:')
-            self.act_cb.setChecked(Network_UI.network['TextActivator',0].behaviour_enabled)
+            self.act_cb.setChecked(Network_UI.network['TextActivator',0].behavior_enabled)
             self.act_cb.stateChanged.connect(activator_on_off)
             Network_UI.Add_Sidebar_Element(self.act_cb)
 
@@ -66,7 +66,7 @@ class sidebar_grammar_module_new(TabBase):
     def update(self, Network_UI):
 
         if Network_UI.network['TextGenerator', 0] is not None and Network_UI.network['TextActivator', 0] is not None:
-            if Network_UI.network['TextActivator', 0].behaviour_enabled:
+            if Network_UI.network['TextActivator', 0].behavior_enabled:
                 inp_text = Network_UI.network['TextGenerator', 0].history[-self.text_length:]
             else:
                 inp_text = 'deactivated'
@@ -102,7 +102,7 @@ class sidebar_grammar_module(TabBase):
             # self.Add_Sidebar_Spacing()
 
             def learning_on_off(event):
-                Network_UI.network.set_behaviours('STDP', self.stdp_cb.isChecked())
+                Network_UI.network.set_behaviors('STDP', self.stdp_cb.isChecked())
 
             self.stdp_cb = QCheckBox()
             self.stdp_cb.setText('STDP')
@@ -112,9 +112,9 @@ class sidebar_grammar_module(TabBase):
 
             def grammar_activator_on_off(event):
                 if Network_UI.network['grammar_act', 0] is not None:
-                    Network_UI.network['grammar_act', 0].behaviour_enabled = self.input_select_box.currentText() != 'None'
+                    Network_UI.network['grammar_act', 0].behavior_enabled = self.input_select_box.currentText() != 'None'
                 if Network_UI.network['TextActivator', 0] is not None:
-                    Network_UI.network['TextActivator', 0].behaviour_enabled = self.input_select_box.currentText() != 'None'
+                    Network_UI.network['TextActivator', 0].behavior_enabled = self.input_select_box.currentText() != 'None'
 
             self.input_select_box = QComboBox()
             self.input_select_box.addItem("Grammar Act.")
@@ -135,10 +135,10 @@ class sidebar_grammar_module(TabBase):
                 item = pg.InfiniteLine(pos=Network_UI.network.iteration, movable=False, angle=90)
                 self.wnr_plot.addItem(item)
 
-                Network_UI.network.add_behaviours_to_neuron_groups({100: Recorder('output', tag='pediction_rec')}, Network_UI.network['prediction_source'])
-                Network_UI.network.add_behaviours_to_neuron_groups({101: Recorder('pattern_index', tag='index_rec')}, Network_UI.network['text_input_group'])
+                Network_UI.network.add_behaviors_to_neuron_groups({100: Recorder('output', tag='pediction_rec')}, Network_UI.network['prediction_source'])
+                Network_UI.network.add_behaviors_to_neuron_groups({101: Recorder('pattern_index', tag='index_rec')}, Network_UI.network['text_input_group'])
 
-                Network_UI.network['grammar_act', 0].behaviour_enabled = True
+                Network_UI.network['grammar_act', 0].behavior_enabled = True
 
                 steps = 5000
                 Network_UI.network.simulate_iterations(steps, 100, measure_block_time=True)
@@ -150,8 +150,8 @@ class sidebar_grammar_module(TabBase):
                     self.readout_simu = train_same_step(Network_UI.network['pediction_rec'], 'n.output', Network_UI.network['index_rec', 0], 'n.pattern_index', 0, steps)
 
 
-                Network_UI.network.remove_behaviours_from_neuron_groups(Network_UI.network['prediction_source'], tags=['pediction_rec'])
-                Network_UI.network.remove_behaviours_from_neuron_groups(Network_UI.network['text_input_group'], tags=['index_rec'])
+                Network_UI.network.remove_behaviors_from_neuron_groups(Network_UI.network['prediction_source'], tags=['pediction_rec'])
+                Network_UI.network.remove_behaviors_from_neuron_groups(Network_UI.network['text_input_group'], tags=['index_rec'])
 
 
                 self.input_select_box.setCurrentIndex(1)

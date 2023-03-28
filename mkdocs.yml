@@ -27,24 +27,24 @@ nav:
         - -Evolution: Tools/Evolution.md
         - -Cython: Tools/cython.md
 
-    - Complex Behaviour Tutorial:
+    - Complex Behavior Tutorial:
         - -Homeostasis <!--- Examples_Paper/STDP_Hom_Norm/Homeostasis.py -->: Complex_Tutorial/Homeostasis.md
         - -Normalization <!--- Examples_Paper/STDP_Hom_Norm/Normalization.py -->: Complex_Tutorial/Normalization.md
         - -STDP <!--- Examples_Paper/STDP_Hom_Norm/STDP.py -->: Complex_Tutorial/STDP.md
         - -Complex Network <!--- Examples_Paper/STDP_Hom_Norm/Complex.py -->: Complex_Tutorial/Complex.md
 
-    - Behaviours:
-        - -Neuron Dimension: Behaviours/Neuron_Dimension.md
-        - -Recorder: Behaviours/Recorder.md
-        - -Event Recorder: Behaviours/Event_Recorder.md
+    - Behaviors:
+        - -Neuron Dimension: Behaviors/Neuron_Dimension.md
+        - -Recorder: Behaviors/Recorder.md
+        - -Event Recorder: Behaviors/Event_Recorder.md
 
-        - -Default Homeostatic Mechanism: Behaviours/Default_homeostatic_mechanism.md
-        - -Refractory Period: Behaviours/Refractory_Period.md
-        - -NOX Diffusion: Behaviours/NOX_Diffusion.md
+        - -Default Homeostatic Mechanism: Behaviors/Default_homeostatic_mechanism.md
+        - -Refractory Period: Behaviors/Refractory_Period.md
+        - -NOX Diffusion: Behaviors/NOX_Diffusion.md
 
-    - Synapse Behaviours:
-        - -Receptive fields and connectivity: Synapse_Behaviours/Receptive_Fields.md
-        - -Partition: Synapse_Behaviours/Partition.md
+    - Synapse Behaviors:
+        - -Receptive fields and connectivity: Synapse_Behaviors/Receptive_Fields.md
+        - -Partition: Synapse_Behaviors/Partition.md
 
     - User Interface Tabs:
         - -Custom UI Tab <!--- Examples_Paper/Basic/Basic_Tab.py -->: UI/cutom_ui_tab.md

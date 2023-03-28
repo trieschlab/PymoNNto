@@ -1,7 +1,7 @@
 
 ```python
 
-from PymoNNto.NetworkBehaviour.Basics.BasicHomeostasis import *
+from PymoNNto.NetworkBehavior.Basics.BasicHomeostasis import *
 
 
 
@@ -13,8 +13,8 @@ class NOX_Diffusion(Instant_Homeostasis):
             sg._temp_act_sum += np.mean(sg_rf.output_new)
         return neurons._temp_act_sum
 
-    def set_variables(self, neurons):
-        super().set_variables(neurons)
+    def initialize(self, neurons):
+        super().initialize(neurons)
 
         self.subgroups = self.split_grid_into_sub_group_blocks(steps=[5, 5, 1])
 
@@ -32,9 +32,9 @@ class NOX_Diffusion(Instant_Homeostasis):
         self.set_threshold(self.parameter('th_nox', 0, neurons))
         self.adj_strength = -self.parameter('eta_nox', 0.002, neurons)
 
-    def new_iteration(self, neurons):
+    def iteration(self, neurons):
         neurons.nox.fill(0)
-        super().new_iteration(neurons)
+        super().iteration(neurons)
 
 
 ```

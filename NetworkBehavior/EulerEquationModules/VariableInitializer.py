@@ -1,9 +1,9 @@
-from PymoNNto.NetworkCore.Behaviour import *
-from PymoNNto.NetworkBehaviour.EulerEquationModules.Helper import *
+from PymoNNto.NetworkCore.Behavior import *
+from PymoNNto.NetworkBehavior.EulerEquationModules.Helper import *
 
-class Variable(Behaviour):
+class Variable(Behavior):
 
-    def set_variables(self, neurons):
+    def initialize(self, neurons):
         n = neurons
 
         eq_parts = eq_split(self.parameter('eq', None))
@@ -23,13 +23,13 @@ class Variable(Behaviour):
 
         setattr(n, self.var_name+'_new', neurons.vector() + eval(self.var_init))
 
-    def new_iteration(self, n):
+    def iteration(self, n):
         setattr(n, self.var_name, getattr(n, self.var_name+'_new'))#apply the new value to variable
 
 
-class Syn_Variable(Behaviour):
+class Syn_Variable(Behavior):
 
-    def set_variables(self, synapse):
+    def initialize(self, synapse):
         s = synapse
 
         eq_parts = eq_split(self.parameter('eq', None))
@@ -49,6 +49,6 @@ class Syn_Variable(Behaviour):
 
         setattr(s, self.var_name+'_new', synapse.matrix() + eval(self.var_init))
 
-    def new_iteration(self, s):
+    def iteration(self, s):
         setattr(s, self.var_name, getattr(s, self.var_name+'_new'))#apply the new value to variable
 

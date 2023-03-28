@@ -3,13 +3,13 @@ from Examples_Paper.STDP_Hom_Norm.Normalization import *
 from Examples_Paper.STDP_Hom_Norm.STDP import *
 from Examples_Paper.STDP_Hom_Norm.Homeostasis import *
 
-class Basic_Behaviour(Behaviour):
+class Basic_Behavior(Behavior):
 
-    def set_variables(self, neurons):
+    def initialize(self, neurons):
         neurons.voltage = neurons.vector()
         self.threshold = 0.5
 
-    def new_iteration(self, neurons):
+    def iteration(self, neurons):
         firing = neurons.voltage > self.threshold
         neurons.spike = firing.astype(neurons.def_dtype) #spikes
         neurons.voltage[firing] = 0.0#reset
@@ -17,22 +17,22 @@ class Basic_Behaviour(Behaviour):
         neurons.voltage *= 0.9 #voltage decay
         neurons.voltage += neurons.vector('uniform',density=0.01) #noise
 
-class Input_Behaviour(Behaviour):
+class Input_Behavior(Behavior):
 
-    def set_variables(self, neurons):
+    def initialize(self, neurons):
         for synapse in neurons.afferent_synapses['GLUTAMATE']:
             synapse.W = synapse.matrix('uniform', density=0.1)
             synapse.enabled = synapse.W > 0
 
-    def new_iteration(self, neurons):
+    def iteration(self, neurons):
         for synapse in neurons.afferent_synapses['GLUTAMATE']:
             neurons.voltage += synapse.W.dot(synapse.src.spike)/synapse.src.size*10
 
 My_Network = Network()
 
-My_Neurons = NeuronGroup(net=My_Network, tag='my_neurons', size=get_squared_dim(100), behaviour={
-    1: Basic_Behaviour(),
-    2: Input_Behaviour(),
+My_Neurons = NeuronGroup(net=My_Network, tag='my_neurons', size=get_squared_dim(100), behavior={
+    1: Basic_Behavior(),
+    2: Input_Behavior(),
     3: Homeostasis(target_voltage=0.05),
     4: STDP(stdp_factor=0.00015),
     5: Normalization(norm_factor=10),
@@ -52,7 +52,7 @@ My_Network.simulate_iterations(200)
 import matplotlib.pyplot as plt
 plt.plot(My_Network['voltage', 0, 'np'][:,0:10])
 plt.plot(My_Network['np.mean(voltage)', 0], color='black')
-plt.axhline(My_Neurons['Basic_Behaviour', 0].threshold, color='black')
+plt.axhline(My_Neurons['Basic_Behavior', 0].threshold, color='black')
 plt.xlabel('iterations')
 plt.ylabel('voltage')
 plt.show()

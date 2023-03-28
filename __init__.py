@@ -10,14 +10,14 @@ add_project_root_path()
 np.set_string_function(lambda x: repr(x), repr=False)
 
 from PymoNNto.NetworkCore.Network import *
-from PymoNNto.NetworkCore.Behaviour import *
+from PymoNNto.NetworkCore.Behavior import *
 from PymoNNto.NetworkCore.Neuron_Group import *
 from PymoNNto.NetworkCore.Synapse_Group import *
 from PymoNNto.NetworkCore.Analysis_Module import *
-from PymoNNto.NetworkBehaviour.Structure.Structure import *
-from PymoNNto.NetworkBehaviour.Structure.Partition import *
-from PymoNNto.NetworkBehaviour.Structure.Receptive_Fields import *
-from PymoNNto.NetworkBehaviour.Recorder.Recorder import *
+from PymoNNto.NetworkBehavior.Structure.Structure import *
+from PymoNNto.NetworkBehavior.Structure.Partition import *
+from PymoNNto.NetworkBehavior.Structure.Receptive_Fields import *
+from PymoNNto.NetworkBehavior.Recorder.Recorder import *
 from PymoNNto.Exploration.HelperFunctions import *
 
 

@@ -86,24 +86,3 @@ class TaggableObjectBase:
         for subtag in tag.split(','):
             self.tags.append(subtag)
         return self
-
-    #def __getattr__(self, attr_name):
-    #    super().__getattr__(attr_name)
-
-    '''
-    def __getattr__(self, attr_name):
-        print(attr_name)#, self._searching
-        if hasattr(self, attr_name) or attr_name=='_searching' or  self._searching:
-            return self.__getattr__(attr_name)
-        else:
-            print('search')
-            self._searching = True
-            try:
-                obj = self[attr_name, 0] #tagging search
-            except Exception:
-                traceback.print_exc()
-            self._searching = False
-            if obj!=None:
-                return obj
-        return self.__getattr__(attr_name)#to throw exception
-    '''

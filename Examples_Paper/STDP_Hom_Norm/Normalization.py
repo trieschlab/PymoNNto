@@ -1,13 +1,13 @@
-from PymoNNto.NetworkCore.Behaviour import *
+from PymoNNto.NetworkCore.Behavior import *
 
-class Normalization(Behaviour):
+class Normalization(Behavior):
 
-    def set_variables(self, neurons):
+    def initialize(self, neurons):
         self.syn_type = self.parameter('syn_type', 'GLUTAMATE', neurons)
         self.norm_factor = self.parameter('norm_factor', 1.0, neurons)
         neurons.temp_weight_sum = neurons.vector()
 
-    def new_iteration(self, neurons):
+    def iteration(self, neurons):
 
         neurons.temp_weight_sum *= 0.0
 

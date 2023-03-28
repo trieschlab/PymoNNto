@@ -1,6 +1,6 @@
 import numpy as np
 from PymoNNto.NetworkCore.Network import *
-from PymoNNto.NetworkCore.Behaviour import *
+from PymoNNto.NetworkCore.Behavior import *
 from PymoNNto.NetworkCore.Neuron_Group import *
 from PymoNNto.NetworkCore.Synapse_Group import *
 from PymoNNto.NetworkCore.Analysis_Module import *
@@ -29,16 +29,16 @@ def clear_folder(f):
         shutil.rmtree(folder+f+'/')
 
 
-class Counter(Behaviour):
-    def set_variables(self, neurons):
+class Counter(Behavior):
+    def initialize(self, neurons):
         self.inc = self.parameter('inc', 1)
         neurons.count = neurons.vector()
-    def new_iteration(self, neurons):
+    def iteration(self, neurons):
         neurons.count += self.inc
 
 def get_sample_network():
     My_Network = Network()
-    My_Neurons = NeuronGroup(net=My_Network, tag='my_neurons', size=100, behaviour={
+    My_Neurons = NeuronGroup(net=My_Network, tag='my_neurons', size=100, behavior={
         1: Counter(inc='[2#I]'),
         2: Recorder('count')
     })
@@ -51,9 +51,9 @@ def get_sample_network():
 
 def test_basics():
     net = Network()
-    NeuronGroup(net=net, tag='neurons', size=100, behaviour={})
-    NeuronGroup(net=net, tag='neurons2', size=50, behaviour={})
-    SynapseGroup(net=net, tag='syn', src='neurons', dst='neurons2', behaviour={})
+    NeuronGroup(net=net, tag='neurons', size=100, behavior={})
+    NeuronGroup(net=net, tag='neurons2', size=50, behavior={})
+    SynapseGroup(net=net, tag='syn', src='neurons', dst='neurons2', behavior={})
 
     net.initialize()
 
@@ -108,7 +108,7 @@ def test_basics():
     assert log_mat.shape[0] == 50 and log_mat.shape[1] == 100
     assert norm_mat.shape[0] == 50 and norm_mat.shape[1] == 100
 
-def test_behaviour_and_tagging():
+def test_behavior_and_tagging():
     print()
 
     # basic network
@@ -117,10 +117,10 @@ def test_behaviour_and_tagging():
 
     My_Network.simulate_iterations(1000)
 
-    My_Network.deactivate_behaviours('Counter')
+    My_Network.deactivate_behaviors('Counter')
     My_Network.simulate_iterations(10)
 
-    My_Network.activate_behaviours('Counter')
+    My_Network.activate_behaviors('Counter')
     My_Network.simulate_iterations(20)
 
     My_Network.recording_off()
@@ -190,23 +190,23 @@ def test_storage_manager():
     clear_folder('test')
 
 
-def test_add_remove_behaviours():
+def test_add_remove_behaviors():
     print()
 
     set_genome({'I': 1})
     My_Network, My_Neurons, My_Synapses, sm = get_sample_network()
 
     My_Neurons.count *= 0
-    My_Neurons.remove_behaviour('Counter')
+    My_Neurons.remove_behavior('Counter')
     My_Network.simulate_iterations(10)
     assert np.mean(My_Neurons.count) == 0
 
-    My_Neurons.add_behaviour(0.5, Counter(inc='2'), initialize=True)
+    My_Neurons.add_behavior(0.5, Counter(inc='2'), initialize=True)
     My_Network.simulate_iterations(10)
     assert np.mean(My_Neurons.count) == 2*10
 
-    My_Neurons.remove_behaviour('Counter')
-    My_Neurons.add_behaviour(4, Counter(inc='2'), initialize=False)
+    My_Neurons.remove_behavior('Counter')
+    My_Neurons.add_behavior(4, Counter(inc='2'), initialize=False)
     assert np.mean(My_Neurons.count) == 2*10
 
     if os.path.isdir(folder+'test/'):

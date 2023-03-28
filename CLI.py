@@ -1,6 +1,6 @@
-def Behaviour_UI():
-    from PymoNNto.Exploration.Behaviour_UI import Behaviour_UI
-    Behaviour_UI().show()
+def Behavior_UI():
+    from PymoNNto.Exploration.Behavior_UI import Behavior_UI
+    Behavior_UI().show()
 
 def Execute_UI():
     from PymoNNto.Exploration.Execute_UI import Execute_UI

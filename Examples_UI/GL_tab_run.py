@@ -3,22 +3,22 @@ from Examples_Paper.STDP_Hom_Norm.Normalization import *
 from Examples_Paper.STDP_Hom_Norm.STDP import *
 from Examples_Paper.STDP_Hom_Norm.Homeostasis import *
 
-class Basic_Behaviour(Behaviour):
+class Basic_Behavior(Behavior):
 
-    def set_variables(self, neurons):
+    def initialize(self, neurons):
         neurons.voltage = neurons.vector('uniform')
         self.leak_factor = 0.9
 
-    def new_iteration(self, neurons):
+    def iteration(self, neurons):
         neurons.voltage *= self.leak_factor
 
-class Input_Behaviour(Behaviour):
+class Input_Behavior(Behavior):
 
-    def set_variables(self, neurons):
+    def initialize(self, neurons):
         for synapse in neurons.afferent_synapses['GLUTAMATE']:
             synapse.W = synapse.matrix('uniform', density=0.1)
 
-    def new_iteration(self, neurons):
+    def iteration(self, neurons):
         for synapse in neurons.afferent_synapses['GLUTAMATE']:
             neurons.voltage += synapse.W.dot(synapse.src.voltage)/synapse.src.size
 
@@ -26,9 +26,9 @@ class Input_Behaviour(Behaviour):
 
 My_Network = Network()
 
-My_Neurons1 = NeuronGroup(net=My_Network, tag='my_neurons', size=get_squared_dim(100), behaviour={
-    1: Basic_Behaviour(),
-    2: Input_Behaviour(),
+My_Neurons1 = NeuronGroup(net=My_Network, tag='my_neurons', size=get_squared_dim(100), behavior={
+    1: Basic_Behavior(),
+    2: Input_Behavior(),
     3: Homeostasis(target_voltage=0.05),
     4: STDP(stdp_factor=0.00015),
     5: Normalization(norm_factor=10),
@@ -38,9 +38,9 @@ My_Neurons1 = NeuronGroup(net=My_Network, tag='my_neurons', size=get_squared_dim
 my_syn = SynapseGroup(net=My_Network, src=My_Neurons1, dst=My_Neurons1, tag='GLUTAMATE')
 My_Neurons1.z+=1.0+np.random.rand(My_Neurons1.size)-0.5
 
-My_Neurons2 = NeuronGroup(net=My_Network, tag='my_neurons2', size=get_squared_dim(100), behaviour={
-    1: Basic_Behaviour(),
-    2: Input_Behaviour(),
+My_Neurons2 = NeuronGroup(net=My_Network, tag='my_neurons2', size=get_squared_dim(100), behavior={
+    1: Basic_Behavior(),
+    2: Input_Behavior(),
     3: Homeostasis(target_voltage=0.05),
     4: STDP(stdp_factor=0.00015),
     5: Normalization(norm_factor=10),

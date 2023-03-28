@@ -3,26 +3,34 @@ from PymoNNto.Exploration.Evolution.Interface_Functions import *
 
 
 
-class Behaviour(TaggableObjectBase):
-    set_variables_on_init = False
-    set_variables_last = False
+class Behavior(TaggableObjectBase):
+
+    initialize_on_init = False
+    initialize_last = False
     attached_UI_Tabs = []
+
+
+    def initialize(self, neurons):
+        return
+
+    def iteration(self, neurons):
+        return
+
 
     def __init__(self, *args, **kwargs):
         self.init_kwargs = kwargs
         for i, arg in enumerate(args):
            self.init_kwargs['arg_'+str(i)]=arg
         self.used_attr_keys = []
-        self.behaviour_enabled = self.parameter('behaviour_enabled', True, None)
+        self.behavior_enabled = self.parameter('behavior_enabled', True, None)
         super().__init__(tag=self.parameter('tag', None, None))
-        self.empty_new_iteration_function = self.is_empty_new_iteration_function()
+        self.empty_iteration_function = self.is_empty_iteration_function()
 
+        if hasattr(self, 'set_variables'):
+            raise Exception('"set_variables" is deprecated. Please rename function to "initialize"')
+        if hasattr(self, 'new_iteration'):
+            raise Exception('"new_iteration" is deprecated. Please rename function to "iteration"')
 
-    def set_variables(self, neurons):
-        return
-
-    def new_iteration(self, neurons):
-        return
 
     def set_gene_variables(self):
 
@@ -93,19 +101,19 @@ class Behaviour(TaggableObjectBase):
     def check_unused_attrs(self):
         for key in self.init_kwargs:
             if not key in self.used_attr_keys:
-                print('Warning: "'+key+'" not used in set_variables of '+str(self)+' behaviour! Make sure that "'+key+'" is spelled correctly and parameter('+key+',...) is called in set_variables. Valid attributes are:'+str(self.used_attr_keys))
+                print('Warning: "'+key+'" not used in initialize of '+str(self)+' behavior! Make sure that "'+key+'" is spelled correctly and parameter('+key+',...) is called in initialize. Valid attributes are:'+str(self.used_attr_keys))
 
-    def parameter(self, key, default, neurons=None, do_not_diversify=False, search_other_behaviours=False, required=False):
+    def parameter(self, key, default=None, neurons=None, do_not_diversify=False, search_other_behaviors=False, required=False):
 
         if required and not key in self.init_kwargs:
-            print('Warning:',key,'has to be specified for the behaviour to run properly.', self)
+            print('Warning:',key,'has to be specified for the behavior to run properly.', self)
 
         self.used_attr_keys.append(key)
 
         result = self.init_kwargs.get(key, default)
 
-        if key not in self.init_kwargs and neurons is not None and search_other_behaviours:
-            for b in neurons.behaviours:
+        if key not in self.init_kwargs and neurons is not None and search_other_behaviors:
+            for b in neurons.behaviors:
                 if key in b.init_kwargs:
                     result = b.init_kwargs.get(key, result)
 
@@ -153,8 +161,8 @@ class Behaviour(TaggableObjectBase):
         #[np.random.rand(291, 291, 3), [np.sin(x) for x in range(100)]] image and plot
         return None
 
-    def is_empty_new_iteration_function(self):
-        f = self.new_iteration
+    def is_empty_iteration_function(self):
+        f = self.iteration
 
         #Returns true if f is an empty function.
         def empty_func():
@@ -170,4 +178,9 @@ class Behaviour(TaggableObjectBase):
 
         return (f.__code__.co_code == empty_func.__code__.co_code and constants(f) == constants(empty_func)) or \
                (f.__code__.co_code == empty_func_with_docstring.__code__.co_code and constants(f) == constants(empty_func_with_docstring))
-    
+
+
+class Behaviour(Behavior):
+    def __init__(self, *args, **kwargs):
+        raise Exception("Warning: 'Behaviour' is depreciated. Please use 'Behavior' instead!")
+

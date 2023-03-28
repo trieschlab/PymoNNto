@@ -1,10 +1,10 @@
-from PymoNNto.NetworkCore.Behaviour import *
+from PymoNNto.NetworkCore.Behavior import *
 import numpy as np
 
 
-class neuron_event(Behaviour):
+class neuron_event(Behavior):
 
-    def set_variables(self, neurons):
+    def initialize(self, neurons):
         self.condition = self.parameter('condition', 'False', None)#'s.src.spike==1'
         self.compiled_condition = compile(self.condition, '<string>', 'eval')
 
@@ -20,13 +20,13 @@ class neuron_event(Behaviour):
         for indx in np.where(condition_mask):
             exec(self.compiled_formula)
 
-    def new_iteration(self, neurons):
+    def iteration(self, neurons):
         n=neurons
         self.event(neurons, condition_mask=eval(self.compiled_condition))
 
-class syn_event(Behaviour):
+class syn_event(Behavior):
 
-    def set_variables(self, synapse):
+    def initialize(self, synapse):
         s=synapse
         self.src_condition = self.parameter('src_condition', 'True', None)#'s.src.spike==1'
         self.compiled_src_condition = compile(self.src_condition, '<string>', 'eval')
@@ -70,7 +70,7 @@ class syn_event(Behaviour):
         #print(s.src.v)
 
 class on_pre(syn_event):
-    def new_iteration(self, synapse):
+    def iteration(self, synapse):
         destiantion = synapse.dst
         source = synapse.src
         dst = synapse.dst
@@ -78,7 +78,7 @@ class on_pre(syn_event):
         self.event(synapse, src_mask=eval(self.compiled_src_condition))
 
 class on_post(syn_event):
-    def new_iteration(self, synapse):
+    def iteration(self, synapse):
         destiantion = synapse.dst
         source = synapse.src
         dst = synapse.dst
@@ -86,7 +86,7 @@ class on_post(syn_event):
         self.event(synapse, dst_mask=eval(self.compiled_dst_condition))
 
 class on_simu(syn_event):
-    def new_iteration(self, synapse):
+    def iteration(self, synapse):
         destiantion = synapse.dst
         source = synapse.src
         dst = synapse.dst
@@ -96,10 +96,10 @@ class on_simu(syn_event):
 
 #class on_pre(EquationModule):
 
-#    def set_variables(self, synapse):
+#    def initialize(self, synapse):
 #        formula = eq_split(self.parameter('eq', None))
 
-#    def new_iteration(self, synapse):
+#    def iteration(self, synapse):
 #        pre_mask = synapse.src.spike
 
 

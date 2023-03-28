@@ -16,7 +16,7 @@ but the slave_file variable has to be set relative to the execution directory of
 
 In this toy example we see a simple evolution setup where the score is just the sum of all the genes in the genome.
 We can access the genes with get_gene(key, default) and gene(key, default) anywhere in the slave file. 
-Alternatively we can use [default#key] inside of a string attribute of a behaviour for easier access inside of NeuronGroup-, SynapseGroup- and Network-behaviours.
+Alternatively we can use [default#key] inside of a string attribute of a behavior for easier access inside of NeuronGroup-, SynapseGroup- and Network-behaviors.
 The whole genome is a dictionary which can be accessed with get_genome(). 
 Note, that some of the values in this dict are only casted when the get_gene() or gene() function is called.
 
@@ -30,11 +30,11 @@ from PymoNNto.Exploration.Evolution.Interface_Functions import *
 #print('gene a: ', get_gene('a', None))
 #print('gene b: ', gene('b', 1))
 
-#NeuronGroup(...behaviours={
-#   1:my_behaviour(my_attribute='10+[5#a]')
+#NeuronGroup(...behaviors={
+#   1:my_behavior(my_attribute='10+[5#a]')
 # })
 
-# [5#a] can be used as a short version of get_gene('a', 5) or gene('a', 5) that can be used inside of behaviour attribute strings
+# [5#a] can be used as a short version of get_gene('a', 5) or gene('a', 5) that can be used inside of behavior attribute strings
 
 score = get_gene('a', 0) + get_gene('b', 0) + get_gene('c', 0) + get_gene('d', 0)
 

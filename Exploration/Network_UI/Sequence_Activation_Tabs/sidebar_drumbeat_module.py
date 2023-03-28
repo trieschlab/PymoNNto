@@ -14,7 +14,7 @@ class sidebar_drumbeat_module(TabBase):
             self.readout = None
 
             def learning_on_off(event):
-                Network_UI.network.set_behaviours('STDP', self.stdp_cb.isChecked())
+                Network_UI.network.set_behaviors('STDP', self.stdp_cb.isChecked())
 
             network = Network_UI.network
             source = network['drum_act', 0]

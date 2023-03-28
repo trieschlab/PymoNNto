@@ -15,7 +15,6 @@ def uniform_gap(mean=1.0, gap_percent=10, size=1):
     return uniform(low=mean-mean*gap_percent, high=mean+-mean*gap_percent, size=size)
 
 def is_number(s):
-    """ Returns True if string is a number. """
     try:
         float(s)
         return True
@@ -34,111 +33,92 @@ def deprecated_warning(message):
 
 class NetworkObjectBase(TaggableObjectBase):
 
-    def __init__(self, tag, network, behaviour):
+    def __init__(self, tag, network, behavior):
         super().__init__(tag)
 
         self.network = network
 
-        self.behaviour = behaviour
-        if type(behaviour) == list:
-            self.behaviour = dict(zip(range(len(self.behaviour)), self.behaviour))
+        self.behavior = behavior
+        if type(behavior) == list:
+            self.behavior = dict(zip(range(len(self.behavior)), self.behavior))
 
-        for b in self.behaviour.values():
+        for b in self.behavior.values():
             for tag in b.tags:
                 if not hasattr(self, tag):
                     setattr(self, tag, b)
 
-        for k,b in self.behaviour.items():
-            self.network._add_behaviour_to_sorted_execution_list(k, self, b)
+        for k,b in self.behavior.items():
+            self.network._add_behavior_to_sorted_execution_list(k, self, b)
 
-        for k in sorted(list(self.behaviour.keys())):
-            if self.behaviour[k].set_variables_on_init:
-                self.behaviour[k].set_variables(self)
-                #behaviour.check_unused_attrs()
-                #network._set_variables_check(self, k)
+        for k in sorted(list(self.behavior.keys())):
+            if self.behavior[k].initialize_on_init:
+                self.behavior[k].initialize(self)
+                #behavior.check_unused_attrs()
+                #network._initialize_check(self, k)
 
         #self.learning = True
         self.recording = True
 
         self.analysis_modules = []
 
-    def add_behaviours(self, behaviour_dict):
-        for key in behaviour_dict:
-            self.add_behaviour(key, behaviour_dict[key])
-        return behaviour_dict
+    def add_behaviors(self, behavior_dict):
+        for key in behavior_dict:
+            self.add_behavior(key, behavior_dict[key])
+        return behavior_dict
 
-    '''
-    def add_behaviour(self, key, behaviour, initialize=True):
-        self.behaviour[key] = behaviour
-        self.network._add_key_to_sorted_behaviour_timesteps(key)
-        self.network.clear_tag_cache()
-        if initialize:
-            behaviour.set_variables(self)
-            behaviour.check_unused_attrs()
-        return behaviour
 
-    def remove_behaviour(self, key_tag_behaviour_or_type):
-        remove_keys=[]
-        for key in self.behaviour:
-            b = self.behaviour[key]
-            if key_tag_behaviour_or_type == key or key_tag_behaviour_or_type in b.tags or key_tag_behaviour_or_type == b or key_tag_behaviour_or_type == type(b):
-                remove_keys.append(key)
-        for key in remove_keys:
-            self.behaviour.pop(key)
-    '''
 
-    def add_behaviour(self, key, behaviour, initialize=True):
+    def add_behavior(self, key, behavior, initialize=True):
         #check key already exists!!!
-        if not key in self.behaviour:
-            self.behaviour[key] = behaviour
-            self.network._add_behaviour_to_sorted_execution_list(key, self, self.behaviour[key])
-            self.network._add_key_to_sorted_behaviour_timesteps(key)#remove!!!
+        if not key in self.behavior:
+            self.behavior[key] = behavior
+            self.network._add_behavior_to_sorted_execution_list(key, self, self.behavior[key])
+            self.network._add_key_to_sorted_behavior_timesteps(key)#remove!!!
             self.network.clear_tag_cache()
             if initialize:
-                #behaviour.set_variables_init(self)
-                behaviour.set_variables(self)
-                #behaviour.set_variables_last(self)
-                behaviour.check_unused_attrs()
-            return behaviour
+                #behavior.initialize_init(self)
+                behavior.initialize(self)
+                #behavior.initialize_last(self)
+                behavior.check_unused_attrs()
+            return behavior
         else:
             raise Exception('Error: Key already exists.'+str(key))
 
-    def remove_behaviour(self, key_tag_behaviour_or_type):
+    def remove_behavior(self, key_tag_behavior_or_type):
         remove_keys=[]
-        for key in self.behaviour:
-            b = self.behaviour[key]
-            if key_tag_behaviour_or_type == key or key_tag_behaviour_or_type in b.tags or key_tag_behaviour_or_type == b or key_tag_behaviour_or_type == type(b):
+        for key in self.behavior:
+            b = self.behavior[key]
+            if key_tag_behavior_or_type == key or key_tag_behavior_or_type in b.tags or key_tag_behavior_or_type == b or key_tag_behavior_or_type == type(b):
                 remove_keys.append(key)
         for key in remove_keys:
-            b=self.behaviour.pop(key)
-            self.network._remove_behaviour_from_sorted_execution_list(self, b)
+            b=self.behavior.pop(key)
+            self.network._remove_behavior_from_sorted_execution_list(self, b)
 
-
-    def set_behaviours(self, tag, enabeled):
+    def set_behaviors(self, tag, enabeled):
         if enabeled:
             print('activating', tag)
         else:
             print('deactivating', tag)
         for b in self[tag]:
-            b.behaviour_enabled = enabeled
+            b.behavior_enabled = enabeled
 
 
-    def deactivate_behaviours(self, tag):
-        self.set_behaviours(tag, False)
+    def deactivate_behaviors(self, tag):
+        self.set_behaviors(tag, False)
 
-    def activate_behaviours(self, tag):
-        self.set_behaviours(tag, True)
+    def activate_behaviors(self, tag):
+        self.set_behaviors(tag, True)
 
 
     def find_objects(self, key):
         result = []
 
-        if key in self.behaviour:
-            result.append(self.behaviour[key])
+        if key in self.behavior:
+            result.append(self.behavior[key])
 
-        for bk in self.behaviour:
-            behaviour = self.behaviour[bk]
-            result += behaviour[key]
+        for bk in self.behavior:
+            behavior = self.behavior[bk]
+            result += behavior[key]
 
         for am in self.analysis_modules:
             result += am[key]
@@ -161,17 +141,6 @@ class NetworkObjectBase(TaggableObjectBase):
         else:
             return result
 
-    def buffer_roll(self, mat, new=None):
-        #return np.roll(mat, 1, axis=0)
-        mat[1:len(mat)] = mat[0:len(mat) - 1]
-
-        if new is not None:
-            mat[0]=new
-
-        return mat
-
-    def get_nparray(self, dim):
-        return np.zeros(dim).astype(self.def_dtype)
 
     def _get_mat(self, mode, dim, density=None, scale=None, plot=False):
         if mode not in self._mat_eval_dict:
@@ -227,94 +196,60 @@ class NetworkObjectBase(TaggableObjectBase):
 
         return result
 
-    '''
-    def _get_mat(self, mode, dim, scale=None, density=None, plot=False, kwargs={}, args=[]): # mode in ['zeros', 'zeros()', 'ones', 'ones()', 'uniform(...)', 'lognormal(...)', 'normal(...)']
-
-        if mode == 'random' or mode == 'rand' or mode == 'rnd':
-            mode = 'uniform'
-
-        if type(mode) == int or type(mode) == float:
-            mode = 'ones()*'+str(mode)
-
-        if '(' not in mode and ')' not in mode:
-            mode += '()'
-
-        if mode not in self._mat_eval_dict:
-            if 'zeros' in mode or 'ones' in mode:
-                a1 = 'shape=dim'
-            else:
-                a1 = 'size=dim'
-            if '()' in mode:#no arguments => no comma
-                ev_str = mode.replace(')', '*args,'+a1+',**kwargs)')
-            else:
-                if args!=[]:
-                    print('Warning: args cannot be used when arguments are passed as strings')
-                ev_str = mode.replace(')', ','+a1+',**kwargs)')
-
-            self._mat_eval_dict[mode] = compile(ev_str, '<string>', 'eval')
-
-        result = eval(self._mat_eval_dict[mode])
-
-        if density is not None:
-            if type(density) == int or type(density) == float:
-                result = (result * (random_sample(dim) <= density))
-            elif type(density) is np.ndarray:
-                result = (result * (random_sample(dim) <= density[:, None]))
-
-        if scale is not None:
-            result *= scale
-
-        if plot:
-            import matplotlib.pyplot as plt
-            plt.hist(result.flatten(), bins=30)
-            plt.show()
-
-        return result.astype(self.def_dtype)
-    '''
-
-    def get_random_nparray(self, dim, density=None, clone_along_first_axis=False, rnd_code=None):#rnd_code=random_sample(dim)
-        if rnd_code is None:
-            result = random_sample(dim)
-        else:
-            if 'dim' not in rnd_code:
-                if rnd_code[-1] == ')':
-                    rnd_code = rnd_code[:-1]+',size=dim)'
-                else:
-                    rnd_code = rnd_code+'(size=dim)'
-            result = eval(rnd_code)
-
-        if density is None:
-            result = result.astype(self.def_dtype)
-        elif type(density) == int or type(density) == float:
-            result = (result * (random_sample(dim) <= density)).astype(self.def_dtype)
-        elif type(density) is np.ndarray:
-            result = (result * (random_sample(dim) <= density[:, None])).astype(self.def_dtype)
-
-
-        if not clone_along_first_axis:
-            return result
-        else:
-            return np.array([result[0] for _ in range(dim[0])])
-
+    def get_nparray(self, dim):
+        return np.zeros(dim).astype(self.def_dtype)
 
     def get_buffer_mat(self, dim, size):
         return np.array([self.get_nparray(dim) for _ in range(size)])
+
+    def buffer_roll(self, mat, new=None):
+        #return np.roll(mat, 1, axis=0)
+        mat[1:len(mat)] = mat[0:len(mat) - 1]
+
+        if new is not None:
+            mat[0]=new
+
+        return mat
 
     ################################################################################################
     #deprecated#####################################################################################
     ################################################################################################
 
-    @deprecated_warning("set_mechanisms function will be removed in coming versions. Please use set_behaviours instead.")
+    @deprecated_warning("set_mechanisms function will be removed in coming versions. Please use set_behaviors instead.")
     def set_mechanisms(self, tag):
         if tag is str:
             tag=[tag]
         for t in tag:
-            set_behaviours(t)
+            set_behaviors(t)
 
-    @deprecated_warning("deactivate_mechanisms function will be removed in coming versions. Please use deactivate_behaviours instead.")
+    @deprecated_warning("deactivate_mechanisms function will be removed in coming versions. Please use deactivate_behaviors instead.")
     def deactivate_mechanisms(self, tag):
-        self.set_behaviours(tag, False)
+        self.set_behaviors(tag, False)
 
-    @deprecated_warning("activate_mechanisms function will be removed in coming versions. Please use activate_behaviours instead.")
+    @deprecated_warning("activate_mechanisms function will be removed in coming versions. Please use activate_behaviors instead.")
     def activate_mechanisms(self, tag):
-        self.set_behaviours(tag, True)
+        self.set_behaviors(tag, True)
+
+    @deprecated_warning("add_behaviours function will be removed in coming versions. Please use add_behaviors instead.")
+    def add_behaviours(self, behavior_dict):
+        return self.add_behaviors(behavior_dict)
+
+    @deprecated_warning("add_behaviour function will be removed in coming versions. Please use add_behavior instead.")
+    def add_behaviour(self, key, behavior, initialize=True):
+        return self.add_behavior(key, behavior, initialize)
+
+    @deprecated_warning("remove_behaviour function will be removed in coming versions. Please use remove_behavior instead.")
+    def remove_behaviour(self, key_tag_behavior_or_type):
+        return self.remove_behavior(key_tag_behavior_or_type)
+
+    @deprecated_warning("set_behaviours function will be removed in coming versions. Please use set_behaviors instead.")
+    def set_behaviours(self, tag, enabeled):
+        return self.set_behaviors(tag, enabeled)
+
+    @deprecated_warning("deactivate_behaviours function will be removed in coming versions. Please use deactivate_behaviors instead.")
+    def deactivate_behaviours(self, tag):
+        return self.deactivate_behaviors(tag)
+
+    @deprecated_warning("activate_behaviours function will be removed in coming versions. Please use activate_behaviors instead.")
+    def activate_behaviours(self,tag):
+        return self.activate_behaviors(tag)

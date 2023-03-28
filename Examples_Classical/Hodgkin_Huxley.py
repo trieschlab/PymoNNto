@@ -6,7 +6,7 @@ import matplotlib.pyplot as plt
 #https://hodgkin-huxley-tutorial.readthedocs.io/en/latest/_static/Hodgkin%20Huxley.html
 #with a simplified version of the cable theory to connect compartments
 
-class HH_main(Behaviour):
+class HH_main(Behavior):
 
     def alpha_m(self, V):#Channel gating kinetics. Functions of membrane voltage
         return 0.1*(V+40.0)/(1.0 - np.exp(-(V+40.0) / 10.0))
@@ -38,7 +38,7 @@ class HH_main(Behaviour):
     def I_inj(self, i): #External Current
         return 5*(i*self.dt>100) - 5*(i*self.dt>200) + 10*(i*self.dt>300) - 10*(i*self.dt>400)
 
-    def set_variables(self, n):
+    def initialize(self, n):
         self.set_parameters_as_variables(self)
         #C_m = 1.0  # membrane capacitance, in uF/cm^2
         #g_Na = 120.0  # Sodium (Na) maximum conductances, in mS/cm^2
@@ -61,7 +61,7 @@ class HH_main(Behaviour):
 
 
 
-    def new_iteration(self, neurons):
+    def iteration(self, neurons):
 
         v, h, m, n = neurons.v.copy(), neurons.h.copy(), neurons.m.copy(), neurons.n.copy()
 
@@ -95,7 +95,7 @@ class HH_main(Behaviour):
 
 My_Network = Network()
 
-N_e = NeuronGroup(net=My_Network, tag='excitatory_neurons', size=1, behaviour={
+N_e = NeuronGroup(net=My_Network, tag='excitatory_neurons', size=1, behavior={
     1: HH_main(blocks=20, b_r=0.15, v=-65, m=0.05, h=0.6, n=0.32, C_m=1.0, g_Na=120.0, g_K=36.0, g_L=0.3, E_Na=50.0, E_K=-77.0, E_L=-54.387),
     9: Recorder(['v','m','h','n'], tag='my_recorder')
 })

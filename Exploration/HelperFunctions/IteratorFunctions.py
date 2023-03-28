@@ -6,20 +6,19 @@ import numpy as np
 #The longer you let the for loop run, the more detail you will get.
 
 def infinite_resolution_1D(minx, maxx, max_resolution=-1):
-    result = []
+    points = np.array([-100000])
     dx = maxx - minx
     r = -1
     while max_resolution==-1 or r<max_resolution:
         r += 1
         resolution = 5*np.power(2, r)
         for a in np.arange(minx, maxx, dx/resolution):
-            new = a
-            if new not in result:
-                result.append(new)
-                yield new
+            if np.min(np.abs(points-a)) > 0.00001:
+                points = np.concatenate([points, [a]])
+                yield a
 
 def infinite_resolution_2D(minx, maxx, miny, maxy, max_resolution=-1):
-    result = []
+    points = np.array([[-100000,-100000]])
     dx = maxx - minx
     dy = maxy - miny
     r = -1
@@ -29,12 +28,12 @@ def infinite_resolution_2D(minx, maxx, miny, maxy, max_resolution=-1):
         for a in np.arange(minx, maxx, dx/resolution):
             for b in np.arange(miny, maxy, dy/resolution):
                 new = [a, b]
-                if new not in result:
-                    result.append(new)
+                if np.min(np.sum(np.abs(points - np.array(new)), axis=1)) > 0.00001:
+                    points = np.concatenate([points, [new]])
                     yield new
 
 def infinite_resolution_3D(minx, maxx, miny, maxy, minz, maxz, max_resolution=-1):
-    result = []
+    points = np.array([[-100000,-100000,-100000]])
     dx = maxx - minx
     dy = maxy - miny
     dz = maxz - minz
@@ -46,9 +45,10 @@ def infinite_resolution_3D(minx, maxx, miny, maxy, minz, maxz, max_resolution=-1
             for b in np.arange(miny, maxy, dy/resolution):
                 for c in np.arange(minz, maxz, dz/resolution):
                     new = [a, b, c]
-                    if new not in result:
-                        result.append(new)
+                    if np.min(np.sum(np.abs(points - np.array(new)), axis=1)) > 0.00001:
+                        points = np.concatenate([points, [new]])
                         yield new
+
 
 '''
 def nth_sqrt(x, n):

@@ -6,6 +6,9 @@ import inspect
 #Other "normal" functions can be added as well.
 #Via the add_tag function, the modules can be categorized into groups
 
+#results are returned when exec is called, but they are also saved in a result_storage dictionary
+#where the key is the argument and the value is the result of the last call
+
 class AnalysisModule(TaggableObjectBase):
 
     def __init__(self, parent=None, **kwargs):

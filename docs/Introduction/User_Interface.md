@@ -24,39 +24,40 @@ The size of the grid is specified as a property of the neuron group via a Neuron
 ```python
 from PymoNNto import *
 
-class Basic_Behaviour(Behaviour):
 
-    def set_variables(self, neurons):
+class Basic_Behavior(Behavior):
+
+    def initialize(self, neurons):
         neurons.voltage = neurons.vector()
         self.leak_factor = 0.9
         self.threshold = 0.5
 
-    def new_iteration(self, neurons):
+    def iteration(self, neurons):
         firing = neurons.voltage > self.threshold
-        neurons.spike = firing.astype(neurons.def_dtype) #spikes
-        neurons.voltage[firing] = 0.0#reset
+        neurons.spike = firing.astype(neurons.def_dtype)  # spikes
+        neurons.voltage[firing] = 0.0  # reset
 
-        neurons.voltage *= self.leak_factor #voltage decay
-        neurons.voltage += neurons.vector('uniform',density=0.01) #noise
+        neurons.voltage *= self.leak_factor  # voltage decay
+        neurons.voltage += neurons.vector('uniform', density=0.01)  # noise
 
-class Input_Behaviour(Behaviour):
 
-    def set_variables(self, neurons):
+class Input_Behavior(Behavior):
+
+    def initialize(self, neurons):
         for synapse in neurons.afferent_synapses['GLUTAMATE']:
             synapse.W = synapse.matrix('uniform', density=0.1)
             synapse.enabled = synapse.W > 0
 
-    def new_iteration(self, neurons):
+    def iteration(self, neurons):
         for synapse in neurons.afferent_synapses['GLUTAMATE']:
-            neurons.voltage += synapse.W.dot(synapse.src.spike)/synapse.src.size*10
-
+            neurons.voltage += synapse.W.dot(synapse.src.spike) / synapse.src.size * 10
 
 
 My_Network = Network()
 
-My_Neurons = NeuronGroup(net=My_Network, tag='my_neurons', size=get_squared_dim(100), behaviour={
-    1: Basic_Behaviour(),
-    2: Input_Behaviour()
+My_Neurons = NeuronGroup(net=My_Network, tag='my_neurons', size=get_squared_dim(100), behavior={
+    1: Basic_Behavior(),
+    2: Input_Behavior()
 })
 
 My_Neurons.visualize_module()
@@ -67,8 +68,8 @@ My_Network.initialize()
 
 My_Network.simulate_iterations(1000, measure_block_time=True)
 
-
 from PymoNNto.Exploration.Network_UI import *
+
 my_UI_modules = get_default_UI_modules(['voltage', 'spike'], ['W'])
 Network_UI(My_Network, modules=my_UI_modules, label='My_Network_UI', group_display_count=1).show()
 

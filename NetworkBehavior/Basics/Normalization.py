@@ -1,14 +1,14 @@
-from PymoNNto.NetworkCore.Behaviour import *
+from PymoNNto.NetworkCore.Behavior import *
 import numpy as np
 
-class Synaptic_Normalization(Behaviour):
+class Synaptic_Normalization(Behavior):
 
-    def set_variables(self, neurons):
+    def initialize(self, neurons):
         self.syn_type = self.parameter('syn_type', 'GLU', neurons)
         self.clip_max = self.parameter('clip_max', None, neurons)
         neurons.weight_norm_factor = neurons.vector()+self.parameter('norm_factor', 1.0, neurons)
 
-    def new_iteration(self, neurons):
+    def iteration(self, neurons):
         normalize_synapse_attr('W', 'W', neurons.weight_norm_factor, neurons, self.syn_type)
         for s in neurons.afferent_synapses[self.syn_type]:
             s.W = np.clip(s.W, 0, self.clip_max)
@@ -48,8 +48,8 @@ from PymoNNto import *
 
 net = Network(tag='Network')
 
-ng = NeuronGroup(tag='Neuron', net=net, behaviour={}, size=10)
-sg = SynapseGroup(tag='GLU', src=ng, dst=ng, net=net, behaviour={})
+ng = NeuronGroup(tag='Neuron', net=net, behavior={}, size=10)
+sg = SynapseGroup(tag='GLU', src=ng, dst=ng, net=net, behavior={})
 
 net.initialize()
 

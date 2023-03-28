@@ -1,11 +1,11 @@
-from PymoNNto.NetworkCore.Behaviour import *
-from PymoNNto.NetworkBehaviour.EulerEquationModules.Helper import *
+from PymoNNto.NetworkCore.Behavior import *
+from PymoNNto.NetworkBehavior.EulerEquationModules.Helper import *
 from sympy import symbols
 
 
-class Equation(Behaviour):
+class Equation(Behavior):
 
-    def set_variables(self, neurons):
+    def initialize(self, neurons):
         n=neurons
         self.add_tag('EquationModule')
         self.step_size = self.parameter('step_size', '1*ms', neurons)
@@ -33,7 +33,7 @@ class Equation(Behaviour):
         #print('conv:',convert_to(eval(self.evaluation),second))
 
 
-    def new_iteration(self, n):
+    def iteration(self, n):
         new = eval(self.compiled_evaluation)
         setattr(n, self.variable+'_new', new)
 

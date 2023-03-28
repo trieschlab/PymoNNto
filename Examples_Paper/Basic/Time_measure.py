@@ -9,15 +9,15 @@ steps=[100*1.2**(i+1) for i in range(26)]
 
 '''
 
-class Basic_Behaviour_Tensorflow(Behaviour):
+class Basic_Behavior_Tensorflow(Behavior):
 
-    def set_variables(self, neurons):
+    def initialize(self, neurons):
         neurons.voltage = tf.Variable(neurons.vector(), dtype='float32')
         neurons.spike = tf.Variable(neurons.vector(), dtype='float32')
         self.threshold = tf.constant(0.5, dtype='float32')
         self.decay_factor = tf.constant(0.9, dtype='float32')
 
-    def new_iteration(self, neurons):
+    def iteration(self, neurons):
         firing = tf.greater(neurons.voltage, self.threshold)
         neurons.spike.assign(tf.cast(firing, dtype='float32'))#spikes
 
@@ -29,13 +29,13 @@ class Basic_Behaviour_Tensorflow(Behaviour):
         neurons.voltage.assign(tf.add(new_voltage, rnd_act)) #noise
 
 
-class Input_Behaviour_Tensorflow(Behaviour):
+class Input_Behavior_Tensorflow(Behavior):
 
-    def set_variables(self, neurons):
+    def initialize(self, neurons):
         for syn in neurons.afferent_synapses['GLUTAMATE']:
             syn.W = tf.Variable(syn.matrix('uniform', density=0.1), dtype='float32')
 
-    def new_iteration(self, neurons):
+    def iteration(self, neurons):
         for synapse in neurons.afferent_synapses['GLUTAMATE']:
             W_act_mul = tf.linalg.matvec(synapse.W, synapse.src.spike)
             delta_act = tf.divide(W_act_mul, synapse.src.size/10.0)
@@ -44,14 +44,14 @@ class Input_Behaviour_Tensorflow(Behaviour):
 
 
 
-class Basic_Behaviour(Behaviour):
+class Basic_Behavior(Behavior):
 
-    def set_variables(self, neurons):
+    def initialize(self, neurons):
         neurons.voltage = neurons.vector()
         self.threshold = 0.5
         self.leak_factor = self.parameter('leak_factor', 0.9, neurons)
 
-    def new_iteration(self, neurons):
+    def iteration(self, neurons):
         firing = neurons.voltage > self.threshold
         neurons.spike = firing.astype(neurons.def_dtype) #spikes
         neurons.voltage[firing] = 0.0 #reset
@@ -60,14 +60,14 @@ class Basic_Behaviour(Behaviour):
         neurons.voltage += neurons.vector('uniform',density=0.01) #noise
 
 
-class Input_Behaviour(Behaviour):
+class Input_Behavior(Behavior):
 
-    def set_variables(self, neurons):
+    def initialize(self, neurons):
         for synapse in neurons.afferent_synapses['GLUTAMATE']:
             synapse.W = synapse.matrix('uniform', density=0.1)
             #synapse.enabled = synapse.W > 0
 
-    def new_iteration(self, neurons):
+    def iteration(self, neurons):
         for synapse in neurons.afferent_synapses['GLUTAMATE']:
             neurons.voltage += synapse.W.dot(synapse.src.spike)/synapse.src.size*10
 
@@ -84,9 +84,9 @@ for r in range(10):
 
         My_Network = Network()
 
-        My_Neurons = NeuronGroup(net=My_Network, tag='my_neurons', size=int(N_e), behaviour={#get_squared_dim()
-            1: Basic_Behaviour(),
-            2: Input_Behaviour(),
+        My_Neurons = NeuronGroup(net=My_Network, tag='my_neurons', size=int(N_e), behavior={#get_squared_dim()
+            1: Basic_Behavior(),
+            2: Input_Behavior(),
             # 9: Recorder(['voltage', 'np.mean(voltage)'], tag='my_recorder'),
             # 10: EventRecorder('spike', tag='my_event_recorder')
         })
@@ -111,9 +111,9 @@ for r in range(10):
 
         My_Network = Network()
 
-        My_Neurons = NeuronGroup(net=My_Network, tag='my_neurons', size=int(N_e), behaviour={#get_squared_dim()
-            1: Basic_Behaviour_Tensorflow(),
-            2: Input_Behaviour_Tensorflow(),
+        My_Neurons = NeuronGroup(net=My_Network, tag='my_neurons', size=int(N_e), behavior={#get_squared_dim()
+            1: Basic_Behavior_Tensorflow(),
+            2: Input_Behavior_Tensorflow(),
             #9: Recorder(['voltage.numpy()', 'np.mean(voltage.numpy())'], tag='my_recorder')
         })
 

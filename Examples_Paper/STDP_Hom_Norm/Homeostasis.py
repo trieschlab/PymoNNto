@@ -1,8 +1,8 @@
-from PymoNNto.NetworkCore.Behaviour import *
+from PymoNNto.NetworkCore.Behavior import *
 
-class Homeostasis(Behaviour):
+class Homeostasis(Behavior):
 
-    def set_variables(self, neurons):
+    def initialize(self, neurons):
         target_act = self.parameter('target_voltage', 0.05, neurons)
 
         self.max_ta = self.parameter('max_ta', target_act, neurons)
@@ -14,7 +14,7 @@ class Homeostasis(Behaviour):
 
 
 
-    def new_iteration(self, neurons):
+    def iteration(self, neurons):
 
         greater = ((neurons.voltage > self.max_ta) * -1).astype(neurons.def_dtype)
         smaller = ((neurons.voltage < self.min_ta) * 1).astype(neurons.def_dtype)

@@ -1,5 +1,5 @@
 from PymoNNto.NetworkCore.Base_Attachable_Modules import *
-from PymoNNto.NetworkBehaviour.Recorder.Recorder import *
+from PymoNNto.NetworkBehavior.Recorder.Recorder import *
 import copy
 
 blue = (0.0, 0.0, 255.0, 255.0)
@@ -12,26 +12,28 @@ orange = (255.0, 150.0, 0.0, 255.0)
 black = (0.0, 0.0, 0.0, 255.0)
 white = (255.0, 255.0, 255.0, 255.0)
 
+afferent = pre = preSynaptic = dendrite = 0
+efferent = post = postSynaptic = axon = 1
 
 class NeuronGroup(NetworkObjectBase):
 
-    def __init__(self, size, behaviour, net, tag=None, color=None):
+    def __init__(self, net, size, behavior, tag=None, color=None):
 
         if tag is None and net is not None:
             tag = 'NeuronGroup_'+str(len(net.NeuronGroups)+1)
 
-        if isinstance(size, Behaviour):
-            if type(behaviour) is dict:
-                if 0 in behaviour:
-                    print('warning: 0 index behaviour will be overwritten by size behaviour')
-                behaviour[0] = size
-            if type(behaviour) is list:
-                behaviour.insert(0, size)
-            size = -1#will be overwritten by size-behaviour
+        if isinstance(size, Behavior):
+            if type(behavior) is dict:
+                if 0 in behavior:
+                    print('warning: 0 index behavior will be overwritten by size behavior')
+                behavior[0] = size
+            if type(behavior) is list:
+                behavior.insert(0, size)
+            size = -1#will be overwritten by size-behavior
 
         self.size = size
 
-        super().__init__(tag, net, behaviour)
+        super().__init__(tag, net, behavior)
         self.add_tag('ng')
 
         self.BaseNeuronGroup = self#used for subgroup reconstruction
@@ -51,6 +53,12 @@ class NeuronGroup(NetworkObjectBase):
 
         if color is not None:
             self.color = color
+
+    def synapses(self, mode, tag):#afferent=0, efferent=1
+        if mode==afferent:
+            return self.afferent_synapses[tag]
+        if mode==efferent:
+            return self.efferent_synapses[tag]
 
     @property
     def def_dtype(self):
@@ -80,9 +88,6 @@ class NeuronGroup(NetworkObjectBase):
     vec = vector
     array = vector
 
-    #def vector(self, mode='zeros()', scale=None, density=None, plot=False, kwargs={}, args=[]):# mode in ['zeros', 'zeros()', 'ones', 'ones()', 'uniform(...)', 'lognormal(...)', 'normal(...)', ...]
-    #    return self._get_mat(mode=mode, dim=(self.size), scale=scale, density=density, plot=plot, kwargs=kwargs, args=args)
-
     def vector_buffer(self, buffer_size):
         return self.get_buffer_mat((self.size), buffer_size)
 
@@ -95,8 +100,8 @@ class NeuronGroup(NetworkObjectBase):
 
     def __str__(self):
         result = 'NeuronGroup'+str(self.tags)+'('+str(self.size)+'){'
-        for k in sorted(list(self.behaviour.keys())):
-            result += str(k) + ':' + str(self.behaviour[k])
+        for k in sorted(list(self.behavior.keys())):
+            result += str(k) + ':' + str(self.behavior[k])
         return result+'}'
 
     def subGroup(self, mask=None):
@@ -108,7 +113,7 @@ class NeuronGroup(NetworkObjectBase):
     def get_masked_dict(self, dict_name, key):
         return getattr(self, dict_name)[key]
 
-    def connected_NG_param_list(self, param_name, syn_tag='All', afferent_NGs=False, efferent_NGs=False, same_NG=False, search_behaviours=False):
+    def connected_NG_param_list(self, param_name, syn_tag='All', afferent_NGs=False, efferent_NGs=False, same_NG=False, search_behaviors=False):
         result = []
 
         def search_NG(NG):
@@ -118,10 +123,10 @@ class NeuronGroup(NetworkObjectBase):
                     result.append(attr(NG))
                 else:
                     result.append(attr)
-            if search_behaviours:
-                for key, behaviour in NG.behaviour.items():
-                    if hasattr(behaviour, param_name):
-                        attr = getattr(behaviour, param_name)
+            if search_behaviors:
+                for key, behavior in NG.behavior.items():
+                    if hasattr(behavior, param_name):
+                        attr = getattr(behavior, param_name)
                         if callable(attr):
                             result.append(attr(NG))
                         else:
@@ -208,8 +213,8 @@ class NeuronGroup(NetworkObjectBase):
         from PymoNNto.Exploration.Visualization import Module_visualizer as drawer
         md = drawer.module_drawer()
 
-        for k in sorted(list(self.behaviour.keys())):
-            b = self.behaviour[k]
+        for k in sorted(list(self.behavior.keys())):
+            b = self.behavior[k]
             b.set_gene_variables()
             if (b.__class__.__name__ != 'Recorder' or show_recorder) and (b.__class__.__name__ != 'NeuronDimension' or show_dimension):
                 md.add_module(b)

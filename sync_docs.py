@@ -83,7 +83,7 @@ content = [
 ]
 
 for n in content:
-    py_to_md(py_file_name='Examples_Behaviour/'+n+'.py', md_file_name='docs/Behaviours/'+n+'.md')
+    py_to_md(py_file_name='Examples_Behavior/'+n+'.py', md_file_name='docs/Behaviors/'+n+'.md')
 
 
 

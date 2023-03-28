@@ -8,9 +8,9 @@ def exp(x):
 def exprel(x):
     return (exp(x) - 1)/x
 
-class HR_main(Behaviour):
+class HR_main(Behavior):
 
-    def set_variables(self, n):
+    def initialize(self, n):
         self.set_parameters_as_variables(self)
         self.dt = 0.01# * ms
         self.I=np.array(self.I)
@@ -20,7 +20,7 @@ class HR_main(Behaviour):
         n.z = n.vector()+self.r*(self.s*(n.x - self.x_1))
 
 
-    def new_iteration(self, neurons):
+    def iteration(self, neurons):
         x, y, z = neurons.x.copy(), neurons.y.copy(), neurons.z.copy()
 
         neurons.x += (y - self.a*x**3 + self.b*x**2 + self.I - z)*self.dt
@@ -30,7 +30,7 @@ class HR_main(Behaviour):
 My_Network = Network()
 
 
-N_e = NeuronGroup(net=My_Network, tag='excitatory_neurons', size=3, behaviour={
+N_e = NeuronGroup(net=My_Network, tag='excitatory_neurons', size=3, behavior={
     1: HR_main(x_1=-1.6, a=1, b=3, c=1, d=5, r=0.001, s=4, I=[0.4, 2, 4]),
     9: Recorder('x', tag='my_recorder')
 })

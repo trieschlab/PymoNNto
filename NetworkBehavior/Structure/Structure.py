@@ -1,5 +1,5 @@
 from PymoNNto import *
-from PymoNNto.NetworkCore.Behaviour import *
+from PymoNNto.NetworkCore.Behavior import *
 import math
 import numpy as np
 
@@ -49,9 +49,9 @@ getGrid=get_squared_dim
 
 
 
-class NeuronDimension(Behaviour):#width height depth
+class NeuronDimension(Behavior):#width height depth
 
-    set_variables_on_init = True
+    initialize_on_init = True
 
     #def __init__(self, width=1, height=1, depth=1):
     #    super().__init__()
@@ -136,7 +136,7 @@ class NeuronDimension(Behaviour):#width height depth
             self.neurons.z *= z_stretch
 
 
-    def set_variables(self, neurons):
+    def initialize(self, neurons):
         self.def_dtype=neurons.def_dtype
         self.width = self.parameter('width', 1, neurons)
         self.height = self.parameter('height', 1, neurons)
@@ -161,7 +161,7 @@ class NeuronDimension(Behaviour):#width height depth
         if self.parameter('centered', True, neurons):
             self.move(-(self.width-1)/2,-(self.height-1)/2,-(self.depth-1)/2)
 
-    def new_iteration(self, neurons):
+    def iteration(self, neurons):
         return
 
 #different names

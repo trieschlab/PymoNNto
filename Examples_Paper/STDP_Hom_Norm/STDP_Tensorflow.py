@@ -1,16 +1,16 @@
-from PymoNNto.NetworkCore.Behaviour import *
+from PymoNNto.NetworkCore.Behavior import *
 import tensorflow as tf
 
-class STDP_TF(Behaviour):
+class STDP_TF(Behavior):
 
-    def set_variables(self, neurons):
+    def initialize(self, neurons):
         self.add_tag('STDP_TF')
         eta_stdp = self.parameter('eta_stdp', 0.0015, neurons)
         neurons.eta_stdp = tf.constant(eta_stdp, dtype='float32')
         self.syn_type = self.parameter('syn_type', 'GLU', neurons)
         neurons.spike_old = neurons.vector()
 
-    def new_iteration(self, neurons):
+    def iteration(self, neurons):
 
         for s in neurons.afferent_synapses[self.syn_type]:
 

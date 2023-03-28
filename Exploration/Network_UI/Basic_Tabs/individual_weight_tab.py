@@ -1,5 +1,5 @@
 from PymoNNto.Exploration.Network_UI.TabBase import *
-from PymoNNto.NetworkBehaviour.Recorder.Recorder import *
+from PymoNNto.NetworkBehavior.Recorder.Recorder import *
 
 class individual_weight_tab(TabBase):
 
@@ -44,7 +44,7 @@ class individual_weight_tab(TabBase):
             for s in self.current_ng.afferent_synapses["All"]:
                 s.UI_recorder = None
                 s.cb = None
-                self.Network_UI.network.remove_behaviours_from_object(s, tags=[self.key])
+                self.Network_UI.network.remove_behaviors_from_object(s, tags=[self.key])
 
             self.listWidget.clear()
             self.plot.clear()
@@ -68,8 +68,8 @@ class individual_weight_tab(TabBase):
 
             for s in group.afferent_synapses["All"]:
                 s.UI_recorder = Recorder([self.key, 'iteration'], tag=self.rec_name, gapwidth=10, save_as_numpy=True)
-                s.add_behaviour(10001, s.UI_recorder)
-                #self.Network_UI.network.add_behaviours_to_object({10001: s.UI_recorder}, s)
+                s.add_behavior(10001, s.UI_recorder)
+                #self.Network_UI.network.add_behaviors_to_object({10001: s.UI_recorder}, s)
 
                 s.UI_curves = []
                 syn_data = eval(self.key)
@@ -95,8 +95,8 @@ class individual_weight_tab(TabBase):
             self.start_rec(group)
 
             for s in self.current_ng.afferent_synapses["All"]:
-                if not s.UI_recorder.behaviour_enabled:
-                    s.UI_recorder.behaviour_enabled = True
+                if not s.UI_recorder.behavior_enabled:
+                    s.UI_recorder.behavior_enabled = True
                     print('recorder started')
                 if s.cb.checkState() == 2:
                     if s.UI_recorder.is_new_data_available():
@@ -109,6 +109,6 @@ class individual_weight_tab(TabBase):
         else:
             if self.current_ng is not None:
                 for s in self.current_ng.afferent_synapses["All"]:
-                    if s.UI_recorder.behaviour_enabled:
-                        s.UI_recorder.behaviour_enabled=False
+                    if s.UI_recorder.behavior_enabled:
+                        s.UI_recorder.behavior_enabled=False
                         print('recorder paused')

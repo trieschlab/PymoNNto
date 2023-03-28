@@ -409,14 +409,14 @@ def analyze_module_and_get_info(module):
     module_type = 'PymoNNto Neuron-Group Module'
     synapse_beh_arg_names = ['s', 'S', 'syn', 'Syn', 'SYN', 'syns', 'Syns', 'SYNS', 'synapse', 'Synapse', 'SYNAPSE',
                              'synapses', 'Synapses', 'SYNAPSES']
-    func1_arg_names = inspect.getfullargspec(module_copy.set_variables).args
-    func2_arg_names = inspect.getfullargspec(module_copy.new_iteration).args
+    func1_arg_names = inspect.getfullargspec(module_copy.initialize).args
+    func2_arg_names = inspect.getfullargspec(module_copy.iteration).args
     for s in synapse_beh_arg_names:
         if s in func1_arg_names or s in func2_arg_names:
             main_arg = sg
             module_type = 'PymoNNto Synapse-Group Module'
 
-    if module_copy.set_variables_on_init:
+    if module_copy.initialize_on_init:
         module_type += ' (init set var)'
 
     # ng = NeuronGroup(1, {}, None)
@@ -461,7 +461,7 @@ def analyze_module_and_get_info(module):
     sg.set_read_event_function(read_sg)
     sg.set_write_event_function(write_sg)
 
-    created_vars_set = analyze_function(module_copy, 'set_variables', ng, sg, main_arg)
+    created_vars_set = analyze_function(module_copy, 'initialize', ng, sg, main_arg)
     write_vars_set = ng.variable_writes + sg.variable_writes  # [var for var in ng.variable_writes + sg.variable_writes if var not in created_vars_set]
     read_vars_set = ng.variable_reads + sg.variable_reads  # [var for var in ng.variable_reads + sg.variable_reads if var not in created_vars_set]
 
@@ -469,7 +469,7 @@ def analyze_module_and_get_info(module):
 
     reset_vars()
 
-    created_vars_it = analyze_function(module_copy, 'new_iteration', ng, sg, main_arg)
+    created_vars_it = analyze_function(module_copy, 'iteration', ng, sg, main_arg)
     write_vars_it = ng.variable_writes + sg.variable_writes  # [var for var in ng.variable_writes + sg.variable_writes if var not in created_vars_it]
     read_vars_it = ng.variable_reads + sg.variable_reads  # [var for var in ng.variable_reads + sg.variable_reads if var not in created_vars_it]
 
@@ -494,8 +494,8 @@ def analyze_module_and_get_info(module):
     attributes = module_copy.used_attr_keys.copy()  # ['transmitter', 'test', 'blub', 'param', 'dfsfa']
     if 'tag' in attributes:
         attributes.remove('tag')
-    if 'behaviour_enabled' in attributes:
-        attributes.remove('behaviour_enabled')
+    if 'behavior_enabled' in attributes:
+        attributes.remove('behavior_enabled')
 
     attributes = list(set(attributes))
 

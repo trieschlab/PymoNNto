@@ -6,9 +6,9 @@ tau = 20 #20 # ms
 dt=0.2
 
 
-class Brunel_Hakim_main(Behaviour):
+class Brunel_Hakim_main(Behavior):
 
-    def set_variables(self, n):
+    def initialize(self, n):
         self.Vr = 10 # mV
         self.theta = 20 # mV
 
@@ -33,7 +33,7 @@ class Brunel_Hakim_main(Behaviour):
 
         #n.xi = n.vector()
 
-    def new_iteration(self, n):
+    def iteration(self, n):
         #xi = (n.vector('uniform',density=0.5)>0)
         xi = np.random.normal(loc=0.0, scale=1.0, size=n.size)*13#*5
 
@@ -58,15 +58,15 @@ class Brunel_Hakim_main(Behaviour):
 
 
 
-class Brunel_Hakim_input(Behaviour):
+class Brunel_Hakim_input(Behavior):
 
-    def set_variables(self, n):
+    def initialize(self, n):
         for s in n.afferent_synapses['GLUTAMATE']:
             s.W = (s.matrix('uniform')<n.sparseness).astype(n.def_dtype) * (-n.J)#density=n.sparseness
 
             #print(s.W)
 
-    def new_iteration(self, n):
+    def iteration(self, n):
         for s in n.afferent_synapses['GLUTAMATE']:
             act = s.W.dot(n.spikes[-1])#
             #act = np.sum(s.W[:, s.src.spikes[-1]], axis=1)
@@ -79,7 +79,7 @@ class Brunel_Hakim_input(Behaviour):
 
 My_Network = Network()
 
-N_e = NeuronGroup(net=My_Network, tag='excitatory_neurons', size=get_squared_dim(1000), behaviour={
+N_e = NeuronGroup(net=My_Network, tag='excitatory_neurons', size=get_squared_dim(1000), behavior={
     1: Brunel_Hakim_main(),
     2: Brunel_Hakim_input(),
     9: Recorder(['np.sum(spike)', 'spike'], tag='my_recorder', )

@@ -12,7 +12,7 @@ class sidebar_fast_forward_module(TabBase):
 
     def recorder_on_off(self, Network_UI, enable):
         for rec in Network_UI.network['UI_rec']:
-            rec.behaviour_enabled = enable or self.rec_cb.isChecked()
+            rec.behavior_enabled = enable or self.rec_cb.isChecked()
 
     def update_progress(self, progress, network=None):
         QApplication.instance().processEvents()

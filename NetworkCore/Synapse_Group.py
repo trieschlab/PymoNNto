@@ -4,7 +4,7 @@ import copy
 
 class SynapseGroup(NetworkObjectBase):
 
-    def __init__(self, src, dst, net, tag=None, behaviour={}):
+    def __init__(self, net, src, dst, tag=None, behavior={}):
 
         if type(src) is str:
             s=src
@@ -21,7 +21,7 @@ class SynapseGroup(NetworkObjectBase):
         if tag is None and net is not None:
             tag = 'SynapseGroup_'+str(len(net.SynapseGroups)+1)
 
-        super().__init__(tag, net, behaviour)
+        super().__init__(tag, net, behavior)
         self.add_tag('syn')
 
         if src is not None and dst is not None:
@@ -67,8 +67,8 @@ class SynapseGroup(NetworkObjectBase):
             result = 'SynapseGroup' + str(self.tags) + '(S' + str(self.src.size) + 'xD' + str(self.dst.size) + '){'
         else:
             result = 'SynapseGroup'+str(self.tags)+'(D'+str(self.dst.size)+'xS'+str(self.src.size)+'){'
-        for k in sorted(list(self.behaviour.keys())):
-            result += str(k) + ':' + str(self.behaviour[k])+','
+        for k in sorted(list(self.behavior.keys())):
+            result += str(k) + ':' + str(self.behavior[k])+','
         return result+'}'
 
     def set_var(self, key, value):
@@ -104,17 +104,6 @@ class SynapseGroup(NetworkObjectBase):
     matrix = matrix
     mat = matrix
     get_synapse_mat = matrix
-
-    #def matrix(self, mode='zeros()', scale=None, density=None, only_enabled=True, clone_along_first_axis=False, plot=False, kwargs={}, args=[]):# mode in ['zeros', 'zeros()', 'ones', 'ones()', 'uniform(...)', 'lognormal(...)', 'normal(...)']
-    #    result = self._get_mat(mode=mode, dim=(self.matrix_dim()), scale=scale, density=density, plot=plot, kwargs=kwargs, args=args)
-
-    #    if clone_along_first_axis:
-    #        result = np.array([result[0] for _ in range(self.matrix_dim()[0])])
-
-    #    if only_enabled:
-    #        result *= self.enabled
-
-    #    return result
 
     def get_synapse_group_size_factor(self, synapse_group, synapse_type):
 
@@ -181,7 +170,7 @@ class SynapseGroup(NetworkObjectBase):
         return max_dx, max_dy, max_dz
 
     def get_sub_synapse_group(self, src_mask, dst_mask):
-        result = SynapseGroup(self.src.subGroup(src_mask), self.dst.subGroup(dst_mask), net=None, behaviour={})
+        result = SynapseGroup(self.src.subGroup(src_mask), self.dst.subGroup(dst_mask), net=None, behavior={})
 
         # partition enabled update
         if type(self.enabled) is np.ndarray:
@@ -191,9 +180,9 @@ class SynapseGroup(NetworkObjectBase):
         # copy al attributes
         sgd = self.__dict__
         for key in sgd:
-            if key == 'behaviour':
-                for k in self.behaviour:
-                    result.behaviour[k] = copy.copy(self.behaviour[k])
+            if key == 'behavior':
+                for k in self.behavior:
+                    result.behavior[k] = copy.copy(self.behavior[k])
             elif key not in ['src', 'dst', 'enabled', '_mat_eval_dict']:
                 setattr(result, key, copy.copy(sgd[key]))
 

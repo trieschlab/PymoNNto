@@ -1,12 +1,12 @@
-from PymoNNto.NetworkCore.Behaviour import *
+from PymoNNto.NetworkCore.Behavior import *
 import copy
 
-class Recorder(Behaviour):
-    set_variables_last = True
+class Recorder(Behavior):
+    initialize_last = True
 
     visualization_module_outputs = []
 
-    def set_variables(self, parent_obj):
+    def initialize(self, parent_obj):
         self.add_tag('recorder')
 
         variables = self.parameter('variables', None)
@@ -29,7 +29,7 @@ class Recorder(Behaviour):
         self.add_variables(variables)
         self.reset()
 
-    def new_iteration(self, parent_obj):
+    def iteration(self, parent_obj):
 
         if parent_obj.recording:
 

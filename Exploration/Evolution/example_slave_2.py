@@ -3,19 +3,19 @@ from PymoNNto.Exploration.Evolution.Interface_Functions import *
 import numpy as np
 import matplotlib.pyplot as plt
 
-class Counter(Behaviour):
-    def set_variables(self, neurons):
+class Counter(Behavior):
+    def initialize(self, neurons):
         self.inc = self.parameter('inc', 1.0)
         neurons.count = np.zeros(neurons.size)#neurons.vector()
         plt.plot([1,2,3])
         plt.show()
 
-    def new_iteration(self, neurons):
+    def iteration(self, neurons):
         neurons.count += self.inc
 
 
 My_Network = Network()
-My_Neurons = NeuronGroup(net=My_Network, tag='my_neurons', size=100, behaviour={
+My_Neurons = NeuronGroup(net=My_Network, tag='my_neurons', size=100, behavior={
     1: Counter(inc='[2.0#a]'),
     2: Recorder('count')
 })

@@ -7,7 +7,7 @@ from PymoNNto.Exploration.UI_Base import *
 from PymoNNto.Exploration.Network_UI.Basic_Tabs.Helper.syntax import *
 
 
-class Behaviour_Parser_Object:
+class Behavior_Parser_Object:
     md5_hash=''
     code=''
     name=''
@@ -30,7 +30,7 @@ class Behaviour_Parser_Object:
         return self.__str__()
 
 
-def get_behaviours(file, base_classes=['Behaviour']):
+def get_behaviors(file, base_classes=['Behavior']):
 
     result = []
 
@@ -62,7 +62,7 @@ def get_behaviours(file, base_classes=['Behaviour']):
 
     for r in result:
 
-        bpo = Behaviour_Parser_Object()
+        bpo = Behavior_Parser_Object()
 
         bpo.file = file
 
@@ -99,10 +99,10 @@ def get_behaviours(file, base_classes=['Behaviour']):
 
 
 
-class Behaviour_UI(UI_Base):
+class Behavior_UI(UI_Base):
 
     def __init__(self, path=get_root_folder()):#'.'
-        super().__init__(title='Behaviour overview')
+        super().__init__(title='Behavior overview')
 
         self.path=path
 
@@ -115,21 +115,21 @@ class Behaviour_UI(UI_Base):
                     if f.endswith('.py'):
                         file_list.append(dir_path + '\\' + f)
 
-        self.behaviours = []
-        base_classes = [['Behaviour']]
+        self.behaviors = []
+        base_classes = [['Behavior']]
         while len(base_classes[-1]) > 0 and len(base_classes)<20:
             beh_temp = []
             for file_path in file_list:
-                behaviours = get_behaviours(file_path, base_classes[-1])
-                beh_temp+=behaviours
+                behaviors = get_behaviors(file_path, base_classes[-1])
+                beh_temp+=behaviors
             base_classes.append([b.name for b in beh_temp])
-            self.behaviours += beh_temp
+            self.behaviors += beh_temp
             #print(beh_temp)
 
         self.sidebar.add_row()
         self.search_label = self.sidebar.add_widget(QLabel('Search:'), stretch=1)
         self.search = self.sidebar.add_widget(QLineEdit())
-        self.search.setToolTip('filter filepaths, tags and behaviour-names. Example: "MyBehaviourName -MyFolderName"')
+        self.search.setToolTip('filter filepaths, tags and behavior-names. Example: "MyBehaviorName -MyFolderName"')
         self.sidebar.set_parent_layout()
 
         def text_changed():
@@ -137,7 +137,7 @@ class Behaviour_UI(UI_Base):
 
         self.search.textChanged.connect(text_changed)
 
-        self.sidebar.add_widget(QLabel('Files with Behaviours:'), stretch=1)
+        self.sidebar.add_widget(QLabel('Files with Behaviors:'), stretch=1)
 
         self.beh_list = self.sidebar.add_widget(QListWidget())
 
@@ -147,16 +147,16 @@ class Behaviour_UI(UI_Base):
 
 
 
-        self.behaviours=sorted(self.behaviours, key=lambda x: x.last_modification_time, reverse=True)
+        self.behaviors=sorted(self.behaviors, key=lambda x: x.last_modification_time, reverse=True)
 
-        print(len(self.behaviours))
+        print(len(self.behaviors))
 
-        for b in self.behaviours:
+        for b in self.behaviors:
             b.same_name=[b]
             b.same_tag=[]
             b.base_or_derivative=[]
             b.duplicates=[]
-            for b2 in self.behaviours:
+            for b2 in self.behaviors:
                 if b is not b2:
                     if b.name==b2.name:
                         b.same_name.append(b2)
@@ -272,7 +272,7 @@ class Behaviour_UI(UI_Base):
 
         counter = 0
 
-        for b in self.behaviours:
+        for b in self.behaviors:
 
             if self.searched(b):
 
@@ -329,6 +329,6 @@ def except_hook(cls, exception, traceback):
 sys.excepthook = except_hook
 
 if __name__ == '__main__':
-    Behaviour_UI().show()
+    Behavior_UI().show()
 
 

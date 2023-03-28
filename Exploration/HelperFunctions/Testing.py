@@ -1,12 +1,12 @@
 from PymoNNto import *
 
-def behaviour_test_environment(behaviour, size=1, initialize=True, iteration=0):
+def behavior_test_environment(behavior, size=1, initialize=True, iteration=0):
     net = Network(tag='Network')
 
-    if type(behaviour) != dict:
-        behaviour={1:behaviour}
+    if type(behavior) != dict:
+        behavior={1:behavior}
 
-    ng = NeuronGroup(tag='Neuron', net=net, behaviour=behaviour, size=size)
+    ng = NeuronGroup(tag='Neuron', net=net, behavior=behavior, size=size)
 
     if initialize:
         net.initialize()
@@ -14,4 +14,4 @@ def behaviour_test_environment(behaviour, size=1, initialize=True, iteration=0):
     for i in range(iteration):
         net.simulate_iteration()
 
-    return net, ng, behaviour
+    return net, ng, behavior

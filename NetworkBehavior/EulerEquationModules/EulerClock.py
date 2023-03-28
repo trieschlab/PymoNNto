@@ -1,12 +1,12 @@
-from PymoNNto.NetworkCore.Behaviour import *
+from PymoNNto.NetworkCore.Behavior import *
 import numpy as np
 from sympy import symbols
 from sympy.physics.units import *
 
 
-class Clock(Behaviour):
+class Clock(Behavior):
 
-    def set_variables(self, neuron_or_network):
+    def initialize(self, neuron_or_network):
         self.add_tag('Clock')
 
         #convert_to(seconds / tau, seconds)
@@ -16,7 +16,7 @@ class Clock(Behaviour):
         print(neuron_or_network.clock_step_size)
         neuron_or_network.t = 0.0
 
-    def new_iteration(self, neuron_or_network):
+    def iteration(self, neuron_or_network):
         neuron_or_network.t += neuron_or_network.clock_step_size
 
     def time_to_iterations(self, time_str):

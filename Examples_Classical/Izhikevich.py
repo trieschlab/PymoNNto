@@ -1,8 +1,8 @@
 from PymoNNto import *
 
-class Izhikevich_main(Behaviour):
+class Izhikevich_main(Behavior):
 
-    def set_variables(self, n):
+    def initialize(self, n):
         self.set_parameters_as_variables(n)
         n.I = n.vector()
         n.a += n.vector()
@@ -14,7 +14,7 @@ class Izhikevich_main(Behaviour):
         n.fired = n.vector() > 0
         n.dt = 0.5
 
-    def new_iteration(self, n):
+    def iteration(self, n):
         n.fired = n.v > 30
         if np.sum(n.fired) > 0:
             n.v[n.fired] = n.c[n.fired]
@@ -24,13 +24,13 @@ class Izhikevich_main(Behaviour):
         n.u += n.dt * (n.a * (n.b * n.v - n.u))
 
 
-class Izhikevich_input(Behaviour):
+class Izhikevich_input(Behavior):
 
-    def set_variables(self, n):
+    def initialize(self, n):
         for s in n.afferent_synapses['All']:
             s.W = s.matrix('uniform')
 
-    def new_iteration(self, n):
+    def iteration(self, n):
 
         n.I = 20 * n.vector('uniform')
 
@@ -47,13 +47,13 @@ class Izhikevich_input(Behaviour):
 
 My_Network = Network()
 
-N_e = NeuronGroup(net=My_Network, tag='excitatory_neurons', size=get_squared_dim(800), behaviour={
+N_e = NeuronGroup(net=My_Network, tag='excitatory_neurons', size=get_squared_dim(800), behavior={
     1: Izhikevich_main(a=0.02, b=0.2, c=-65, d=8.0, v='0;-65', u='0;-8.0'),
     2: Izhikevich_input(),
     9: Recorder(['v', 'u', 'fired'], tag='my_recorder')
 })
 
-N_i = NeuronGroup(net=My_Network, tag='inhibitory_neurons', size=get_squared_dim(200), behaviour={
+N_i = NeuronGroup(net=My_Network, tag='inhibitory_neurons', size=get_squared_dim(200), behavior={
     1: Izhikevich_main(a=0.02, b=0.2, c=-65, d=8.0, v='0;-65', u='0;-8.0'),
     2: Izhikevich_input(),
     9: Recorder(['v', 'u', 'fired'], tag='my_recorder')

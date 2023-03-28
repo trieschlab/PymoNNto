@@ -2,27 +2,27 @@ import matplotlib
 matplotlib.use('Qt5Agg')
 import matplotlib.pyplot as plt
 
-from PymoNNto.NetworkBehaviour.Input.Activator import *
+from PymoNNto.NetworkBehavior.Input.Activator import *
 from PymoNNto.NetworkCore.Neuron_Group import *
 
 import PymoNNto.Exploration.Evolution_Old.NetworkEvaluationFunctions as EvalF
 
 
 
-class visualization_recorder(Behaviour):
+class visualization_recorder(Behavior):
     def __init__(self):
         self.recorderlist = []
         self.neurons = None
 
-    def set_variables(self, neurons):
+    def initialize(self, neurons):
         self.neurons=neurons
         for recorder in self.recorderlist:
-            recorder.set_variables(neurons)
+            recorder.initialize(neurons)
 
-    def new_iteration(self, neurons):
+    def iteration(self, neurons):
         self.neurons = neurons
         for recorder in self.recorderlist:
-            recorder.new_iteration(neurons)
+            recorder.iteration(neurons)
 
 class score_visualization_recorder(visualization_recorder):
 
@@ -334,10 +334,10 @@ def matshow(data):
 def imshow(data):
     plt.imshow(data, cmap=plt.cm.gist_gray, interpolation='nearest')
 
-def run_and_visualize(behaviours, network, Cortex_PC_Neurons, iterations):
-    network.add_behaviours_to_neuron_group(behaviours, Cortex_PC_Neurons)
+def run_and_visualize(behaviors, network, Cortex_PC_Neurons, iterations):
+    network.add_behaviors_to_neuron_group(behaviors, Cortex_PC_Neurons)
     network.simulate_iterations(100, iterations / 100, True)
-    for b in behaviours:
+    for b in behaviors:
         b.visualize()
 
 

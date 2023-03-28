@@ -8,7 +8,7 @@ add_recording_variables()<br>
 initialize()<br>
 update()<br>
 
-These modules have a similar layout as Behaviour modules.
+These modules have a similar layout as Behavior modules.
 The update function is called at every timestep.
 To access the parent user interface, we use an additional initialization function.
 Here, the __init__ function is only defined to give the tab a name which can be done before the parent user interface is initialized.

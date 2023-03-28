@@ -7,72 +7,78 @@ import copy
 import time
 import sys
 
+float32 = np.float32
+float64 = np.float64
+
+SxD = 0
+DxS = 1
+
 class Network(NetworkObjectBase):
 
-    def __init__(self, tag=None, behaviour={}, settings={}):
+    def __init__(self, tag=None, behavior={}, settings={}):
         self.apply_settings(settings)
-        super().__init__(tag, self, behaviour)
+        super().__init__(tag, self, behavior)
 
         self.NeuronGroups = []
         self.SynapseGroups = []
 
         self.iteration = 0
 
-        self.behaviour_timesteps = []
-        self.sorted_behaviour_execution_list = [] #stores (key, beh_parent, behaviour) triplets
+        self.behavior_timesteps = []
+        self.sorted_behavior_execution_list = [] #stores (key, beh_parent, behavior) triplets
 
-    def apply_settings(self, settings):#{'def_dtype':np.float32, 'transposed_synapse_matrix_mode':True}
-        self.def_dtype = settings.get('def_dtype', np.float32)
-        self.transposed_synapse_matrix_mode = settings.get('transposed_synapse_matrix_mode', False)
-
+    # {'dtype':float32, 'syn_dim':DxS}
+    def apply_settings(self, settings):
+        self.def_dtype = settings.get('dtype', float32)
+        self.transposed_synapse_matrix_mode = settings.get('syn_dim', DxS)!=DxS
 
     def all_objects(self):
         return [self]+self.NeuronGroups+self.SynapseGroups
 
-    def _add_key_to_sorted_behaviour_timesteps(self, key):
-        if key not in self.behaviour_timesteps:
-            self.behaviour_timesteps.append(key)
-            self.behaviour_timesteps.sort()
+    def _add_key_to_sorted_behavior_timesteps(self, key):
+        if key not in self.behavior_timesteps:
+            self.behavior_timesteps.append(key)
+            self.behavior_timesteps.sort()
 
 
-    def _add_behaviour_to_sorted_execution_list(self, key, beh_parent, behaviour):
+    def _add_behavior_to_sorted_execution_list(self, key, beh_parent, behavior):
         insert_indx=0
-        for i,kpb in enumerate(self.sorted_behaviour_execution_list):
+        for i,kpb in enumerate(self.sorted_behavior_execution_list):
             k, p, b = kpb
             if key>=k:
                 insert_indx = i+1
-        self.sorted_behaviour_execution_list.insert(insert_indx, (key, beh_parent, behaviour))
-        #print([k for k,_,_ in self.sorted_behaviour_execution_list])
+        self.sorted_behavior_execution_list.insert(insert_indx, (key, beh_parent, behavior))
+        #print([k for k,_,_ in self.sorted_behavior_execution_list])
         
-    def _remove_behaviour_from_sorted_execution_list(self, beh_parent, behaviour):# removes SINGLE behaviour!
+    def _remove_behavior_from_sorted_execution_list(self, beh_parent, behavior):# removes SINGLE behavior!
         rm_indx = -1
-        for i,kpb in enumerate(self.sorted_behaviour_execution_list):
+        for i,kpb in enumerate(self.sorted_behavior_execution_list):
             k, p, b = kpb
-            if beh_parent==p and behaviour==b:
+            if beh_parent==p and behavior==b:
                 rm_indx = i
         if rm_indx>-1:
-            self.sorted_behaviour_execution_list.pop(rm_indx)
+            self.sorted_behavior_execution_list.pop(rm_indx)
         else:
-            raise Exception('behaviour not found')
+            raise Exception('behavior not found')
 
 
     #######################################
-    #Behaviour Management
+    #Behavior Management
     #######################################
 
-    def set_behaviours(self, tag, enabeled):
+    def set_behaviors(self, tag, enabeled):
         if enabeled:
             print('activating', tag)
         else:
             print('deactivating', tag)
         for obj in self.all_objects():
             for b in obj[tag]:
-                b.behaviour_enabled = enabeled
+                b.behavior_enabled = enabeled
 
-    def all_behaviours(self):
+    def all_behaviors(self):
         result = []
         for obj in self.all_objects():
-            for beh in obj.behaviour.values():
+            for beh in obj.behavior.values():
                 result.append(beh)
         return result
 
@@ -90,9 +96,9 @@ class Network(NetworkObjectBase):
 
     def clear_recorder(self, keys=None):
         for obj in self.all_objects():
-            for key in obj.behaviour:
-                if (keys is None or key in keys) and hasattr(obj.behaviour[key], 'clear_recorder'):
-                    obj.behaviour[key].clear_recorder()
+            for key in obj.behavior:
+                if (keys is None or key in keys) and hasattr(obj.behavior[key], 'clear_recorder'):
+                    obj.behavior[key].clear_recorder()
 
 
     #######################################
@@ -110,53 +116,34 @@ class Network(NetworkObjectBase):
 
         #self.set_synapses_to_neuron_groups()
 
-        self.set_variables()
+        self.initialize_behaviors()
         self.check_unique_tags(warnings)
 
-    #def _set_variables_check(self, obj, key):##set as decorator
+    #def _initialize_check(self, obj, key):##set as decorator
     #    obj_keys_before = list(obj.__dict__.keys())
-    #    beh_keys_before = list(obj.behaviour[key].__dict__.keys())
-    #    obj.behaviour[key].set_variables(obj)
+    #    beh_keys_before = list(obj.behavior[key].__dict__.keys())
+    #    obj.behavior[key].initialize(obj)
     #    obj_keys_after = list(obj.__dict__.keys())
-    #    beh_keys_after = list(obj.behaviour[key].__dict__.keys())
-    #    obj.behaviour[key]._created_obj_variables = list(set(obj_keys_after) - set(obj_keys_before))
-    #    obj.behaviour[key]._created_beh_variables = list(set(beh_keys_after) - set(beh_keys_before))
+    #    beh_keys_after = list(obj.behavior[key].__dict__.keys())
+    #    obj.behavior[key]._created_obj_variables = list(set(obj_keys_after) - set(obj_keys_before))
+    #    obj.behavior[key]._created_beh_variables = list(set(beh_keys_after) - set(beh_keys_before))
 
-    def set_variables(self):
+    def initialize_behaviors(self):
 
-        for key, parent, behaviour in self.sorted_behaviour_execution_list:
-            if not behaviour.set_variables_on_init and not behaviour.set_variables_last:
-                behaviour.set_variables(parent)
-                behaviour.check_unused_attrs()
+        for key, parent, behavior in self.sorted_behavior_execution_list:
+            if not behavior.initialize_on_init and not behavior.initialize_last:
+                behavior.initialize(parent)
+                behavior.check_unused_attrs()
 
-        for key, parent, behaviour in self.sorted_behaviour_execution_list:
-            if behaviour.set_variables_last:
-                behaviour.set_variables(parent)
-                behaviour.check_unused_attrs()
+        for key, parent, behavior in self.sorted_behavior_execution_list:
+            if behavior.initialize_last:
+                behavior.initialize(parent)
+                behavior.check_unused_attrs()
 
 
     #######################################
     #Initialization helper
     #######################################
-
-    def set_synapses_to_neuron_groups(self):# todo: move to synapse group __init__
-        for ng in self.NeuronGroups:
-            ng.afferent_synapses = {}
-            ng.efferent_synapses = {}
-
-            for sg in self.SynapseGroups:
-                for tag in sg.tags+['All']:
-                    ng.afferent_synapses[tag] = []
-                    ng.efferent_synapses[tag] = []
-
-            for sg in self.SynapseGroups:
-                if sg.dst.BaseNeuronGroup == ng:
-                    for tag in sg.tags+['All']:
-                        ng.afferent_synapses[tag].append(sg)
-
-                if sg.src.BaseNeuronGroup == ng:
-                    for tag in sg.tags+['All']:
-                        ng.efferent_synapses[tag].append(sg)
 
     def set_gene_variables(self, info=True, storage_manager=None):
 
@@ -164,8 +151,8 @@ class Network(NetworkObjectBase):
             sys.exit()
 
         for obj in self.all_objects():
-            for key in obj.behaviour:
-                b = obj.behaviour[key]
+            for key in obj.behavior:
+                b = obj.behavior[key]
                 b.set_gene_variables()
 
         if info:
@@ -185,8 +172,8 @@ class Network(NetworkObjectBase):
         basic_info = '(Neurons: '+str(neuron_count)+'|'+str(len(self.NeuronGroups))+' groups, Synapses: '+str(synapse_count)+'|'+str(len(self.SynapseGroups))+' groups)'
 
         result = 'Network'+str(self.tags)+basic_info+'{'
-        for k in sorted(list(self.behaviour.keys())):
-            result += str(k)+':'+str(self.behaviour[k])
+        for k in sorted(list(self.behavior.keys())):
+            result += str(k)+':'+str(self.behavior[k])
         result += '}'+'\r\n'
 
         for ng in self.NeuronGroups:
@@ -225,24 +212,24 @@ class Network(NetworkObjectBase):
     #Iteration simulation
     #######################################
 
-    def simulate_iteration(self, measure_behaviour_execution_time=False):
+    def simulate_iteration(self, measure_behavior_execution_time=False):
 
-        if measure_behaviour_execution_time:
+        if measure_behavior_execution_time:
             if not hasattr(self, 'time_measures'):
-                self.time_measures={key:0.0 for key, _, _ in self.sorted_behaviour_execution_list}
+                self.time_measures={key:0.0 for key, _, _ in self.sorted_behavior_execution_list}
 
         self.iteration += 1
 
-        for key, parent, behaviour in self.sorted_behaviour_execution_list:
-            if behaviour.behaviour_enabled and not behaviour.empty_new_iteration_function:
-                if measure_behaviour_execution_time:
+        for key, parent, behavior in self.sorted_behavior_execution_list:
+            if behavior.behavior_enabled and not behavior.empty_iteration_function:
+                if measure_behavior_execution_time:
                     start_time = time.time()
-                    behaviour.new_iteration(parent)
+                    behavior.iteration(parent)
                     self.time_measures[key] += (time.time() - start_time) * 1000
                 else:
-                    behaviour.new_iteration(parent)
+                    behavior.iteration(parent)
 
-        if measure_behaviour_execution_time:
+        if measure_behavior_execution_time:
             return self.time_measures
 
 
@@ -316,19 +303,40 @@ class Network(NetworkObjectBase):
         for obj in self.all_objects():
             obj.clear_cache()
 
-            for k in obj.behaviour:
-                obj.behaviour[k].clear_cache()
+            for k in obj.behavior:
+                obj.behavior[k].clear_cache()
 
 
     ################################################################################################
     #deprecated#####################################################################################
     ################################################################################################
 
-    @deprecated_warning("add_behaviours_to_object function will be removed in coming versions. Please use obj.add_behaviours or obj.add_behaviour instead.")
-    def add_behaviours_to_object(self, b_dict, obj):
-        obj.add_behaviours(b_dict)
+    @deprecated_warning("add_behaviors_to_object function will be removed in coming versions. Please use obj.add_behaviors or obj.add_behavior instead.")
+    def add_behaviors_to_object(self, b_dict, obj):
+        obj.add_behaviors(b_dict)
 
-    @deprecated_warning("add_behaviours_to_objects function will be removed in coming versions. Please use obj.add_behaviours or obj.add_behaviour instead.")
-    def add_behaviours_to_objects(self, b_dict, objs):
+    @deprecated_warning("add_behaviors_to_objects function will be removed in coming versions. Please use obj.add_behaviors or obj.add_behavior instead.")
+    def add_behaviors_to_objects(self, b_dict, objs):
         for obj in objs:
-            obj.add_behaviours(b_dict)
+            obj.add_behaviors(b_dict)
+
+    '''
+    def set_synapses_to_neuron_groups(self):# todo: move to synapse group __init__
+        for ng in self.NeuronGroups:
+            ng.afferent_synapses = {}
+            ng.efferent_synapses = {}
+
+            for sg in self.SynapseGroups:
+                for tag in sg.tags+['All']:
+                    ng.afferent_synapses[tag] = []
+                    ng.efferent_synapses[tag] = []
+
+            for sg in self.SynapseGroups:
+                if sg.dst.BaseNeuronGroup == ng:
+                    for tag in sg.tags+['All']:
+                        ng.afferent_synapses[tag].append(sg)
+
+                if sg.src.BaseNeuronGroup == ng:
+                    for tag in sg.tags+['All']:
+                        ng.efferent_synapses[tag].append(sg)
+    '''

@@ -1,13 +1,13 @@
-from PymoNNto.NetworkCore.Behaviour import *
+from PymoNNto.NetworkCore.Behavior import *
 
-class STDP(Behaviour):
+class STDP(Behavior):
 
-    def set_variables(self, neurons):
+    def initialize(self, neurons):
         self.stdp_factor = self.parameter('stdp_factor', 0.0015, neurons)
         self.syn_type = self.parameter('syn_type', 'GLUTAMATE', neurons)
         neurons.spike_old = neurons.vector()
 
-    def new_iteration(self, neurons):
+    def iteration(self, neurons):
 
         for s in neurons.afferent_synapses[self.syn_type]:
 
