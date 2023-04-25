@@ -17,7 +17,6 @@ class Network(NetworkObjectBase):
 
     def __init__(self, tag=None, behavior={}, settings={}):
         self.apply_settings(settings)
-        super().__init__(tag, self, behavior)
 
         self.NeuronGroups = []
         self.SynapseGroups = []
@@ -26,6 +25,8 @@ class Network(NetworkObjectBase):
 
         self.behavior_timesteps = []
         self.sorted_behavior_execution_list = [] #stores (key, beh_parent, behavior) triplets
+        
+        super().__init__(tag, self, behavior)
 
     # {'dtype':float32, 'syn_dim':DxS}
     def apply_settings(self, settings):
