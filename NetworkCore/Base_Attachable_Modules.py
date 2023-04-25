@@ -92,7 +92,7 @@ class NetworkObjectBase(TaggableObjectBase):
                 remove_keys.append(key)
         for key in remove_keys:
             b=self.behavior.pop(key)
-            self.network._remove_behavior_from_sorted_execution_list(self, b)
+            self.network._remove_behavior_from_sorted_execution_list(key, self, b)
 
     def set_behaviors(self, tag, enabeled):
         if enabeled:
