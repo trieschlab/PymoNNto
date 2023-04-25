@@ -171,15 +171,11 @@ class EventRecorder(Recorder): #10: EventRecorder(tag='my_event_recorder', varia
         synapse = parent_obj
 
         data = eval(self.compiled[variable])
-        indices = np.where(data != 0)[0]
 
-        if len(indices) > 0:
-            result = []
-            for i in indices:
-                result.append([parent_obj.iteration, i])
-            return result
-        else:
-            return None
+        indices = np.where(data != 0)
+        iteration = np.ones_like(indices[0]) * parent_obj.iteration
+
+        return np.stack((iteration, *indices), axis=1)
 
     def save_data_v(self, data, variable):
         if len(self.variables[variable]) == 0:
