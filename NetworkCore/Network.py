@@ -51,14 +51,16 @@ class Network(NetworkObjectBase):
         self.sorted_behavior_execution_list.insert(insert_indx, (key, beh_parent, behavior))
         #print([k for k,_,_ in self.sorted_behavior_execution_list])
         
-    def _remove_behavior_from_sorted_execution_list(self, beh_parent, behavior):# removes SINGLE behavior!
-        rm_indx = -1
+    def _remove_behavior_from_sorted_execution_list(self, behavior, beh_parent=None): # removes SINGLE behavior if beh_parent is not None and only one key has behavior!
+        rm_indices = []
         for i,kpb in enumerate(self.sorted_behavior_execution_list):
             k, p, b = kpb
-            if beh_parent==p and behavior==b:
-                rm_indx = i
-        if rm_indx>-1:
-            self.sorted_behavior_execution_list.pop(rm_indx)
+            if behavior==b:
+                if beh_parent is None or beh_parent==p:
+                    rm_indices.append(i)
+        if rm_indices:
+            for rm_indx in rm_indices[::-1]:
+                self.sorted_behavior_execution_list.pop(rm_indx)
         else:
             raise Exception('behavior not found')
 
