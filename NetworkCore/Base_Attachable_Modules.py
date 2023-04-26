@@ -92,7 +92,7 @@ class NetworkObjectBase(TaggableObjectBase):
                 remove_keys.append(key)
         for key in remove_keys:
             b=self.behavior.pop(key)
-            self.network._remove_behavior_from_sorted_execution_list(self, b)
+            self.network._remove_behavior_from_sorted_execution_list(key, self, b)
 
     def set_behaviors(self, tag, enabeled):
         if enabeled:
@@ -202,12 +202,12 @@ class NetworkObjectBase(TaggableObjectBase):
     def get_buffer_mat(self, dim, size):
         return np.array([self.get_nparray(dim) for _ in range(size)])
 
-    def buffer_roll(self, mat, new=None):
+    def buffer_roll(self, mat, new=None, counter=False):
         #return np.roll(mat, 1, axis=0)
-        mat[1:len(mat)] = mat[0:len(mat) - 1]
+        mat[1-counter : len(mat)-counter] = mat[0+counter : len(mat)-1+counter]
 
         if new is not None:
-            mat[0]=new
+            mat[0-counter]=new
 
         return mat
 
