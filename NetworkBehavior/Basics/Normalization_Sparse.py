@@ -1,4 +1,6 @@
+from PymoNNto.NetworkCore.Neuron_Group import *
 import numpy as np
+
 
 def normalize_synapse_attr_sparse(src_attr, target_attr, target_value, neurons, synapse_type):
 

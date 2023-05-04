@@ -1,3 +1,4 @@
+from PymoNNto.NetworkCore.Neuron_Group import *
 from PymoNNto.NetworkCore.Behavior import *
 import numpy as np
 import tensorflow as tf
