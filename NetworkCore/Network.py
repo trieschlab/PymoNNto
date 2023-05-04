@@ -61,7 +61,6 @@ class Network(NetworkObjectBase):
         else:
             raise Exception('behavior not found')
 
-
     #######################################
     #Behavior Management
     #######################################
@@ -328,13 +327,13 @@ class Network(NetworkObjectBase):
 
             for sg in self.SynapseGroups:
                 for tag in sg.tags+['All']:
-                    ng.afferent_synapses[tag] = []
+                    ng.synapses(afferent, tag) = []
                     ng.efferent_synapses[tag] = []
 
             for sg in self.SynapseGroups:
                 if sg.dst.BaseNeuronGroup == ng:
                     for tag in sg.tags+['All']:
-                        ng.afferent_synapses[tag].append(sg)
+                        ng.synapses(afferent, tag).append(sg)
 
                 if sg.src.BaseNeuronGroup == ng:
                     for tag in sg.tags+['All']:

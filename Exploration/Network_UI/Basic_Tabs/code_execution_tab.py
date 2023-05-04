@@ -13,7 +13,7 @@ class code_execution_tab(TabBase):
 synapse_tag='GLU'
 synapse_var='W'
 
-combined = get_combined_syn_mats(n.afferent_synapses[synapse_tag], None,synapse_var)
+combined = get_combined_syn_mats(n.synapses(afferent, synapse_tag), None,synapse_var)
 
 for mat in combined.values():
 
@@ -23,7 +23,7 @@ for mat in combined.values():
 
     sample_code2='''num=0
 
-for syn in n.afferent_synapses['GLU']:
+for syn in n.synapses(afferent, 'GLU'):
 
 	num+=np.sum(syn.W>0.001)
 

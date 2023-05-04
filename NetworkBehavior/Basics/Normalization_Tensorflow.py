@@ -19,12 +19,12 @@ class Synaptic_Normalization_TF(Behavior):
     def iteration(self, neurons):
         neurons.temp_weight_sum.assign(tf.multiply(neurons.temp_weight_sum, 0.0))
 
-        for s in neurons.afferent_synapses[self.syn_type]:
+        for s in neurons.synapses(afferent, self.syn_type):
             s.dst.temp_weight_sum.assign(tf.add(s.dst.temp_weight_sum, tf.math.reduce_sum(s.W, axis=1)))
 
         neurons.temp_weight_sum.assign(tf.divide(neurons.temp_weight_sum, self.norm_factor))
 
-        for s in neurons.afferent_synapses[self.syn_type]:
+        for s in neurons.synapses(afferent, self.syn_type):
             #d = tf.add(s.dst.temp_weight_sum, tf.cast(tf.math.equal(s.dst.temp_weight_sum, 0.0), dtype='float32'))
             d = s.dst.temp_weight_sum
             s.W.assign(tf.transpose(tf.divide(tf.transpose(s.W), d)))

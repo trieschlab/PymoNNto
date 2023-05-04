@@ -12,7 +12,7 @@ class STDP_TF(Behavior):
 
     def iteration(self, neurons):
 
-        for s in neurons.afferent_synapses[self.syn_type]:
+        for s in neurons.synapses(afferent, self.syn_type):
 
             pre_post = tf.tensordot(s.dst.spike, s.src.spike_old, axes=0)
             simu = tf.tensordot(s.dst.spike, s.src.spike, axes=0)

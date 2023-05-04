@@ -27,13 +27,13 @@ class Diesmann_input(Behavior):
     def initialize(self, n):
         self.set_parameters_as_variables(self)
 
-        for s in n.afferent_synapses['GLUTAMATE']:
+        for s in n.synapses(afferent, 'GLUTAMATE'):
             s.W = s.matrix('uniform')
 
         #[k for k in range((int(i/group_size)+1)*group_size, (int(i/group_size)+2)*group_size) if i<N_pre-group_size]
 
     def iteration(self, n):
-        for s in n.afferent_synapses['GLUTAMATE']:
+        for s in n.synapses(afferent, 'GLUTAMATE'):
             n.v += np.sum(s.W[:, s.src.spike], axis=1)
 
         if self.external_noise:

@@ -4,7 +4,7 @@ def normalize_synapse_attr_sparse(src_attr, target_attr, target_value, neurons, 
 
     neurons.temp_weight_sum = neurons.vector()
 
-    for s in neurons.afferent_synapses[synapse_type]:
+    for s in neurons.synapses(afferent, synapse_type):
         if 'sparse' in s.tags:
             s.dst.temp_weight_sum += np.array(getattr(s, src_attr).sum(1)).flatten()
         else:
@@ -12,7 +12,7 @@ def normalize_synapse_attr_sparse(src_attr, target_attr, target_value, neurons, 
 
     neurons.temp_weight_sum /= target_value
 
-    for s in neurons.afferent_synapses[synapse_type]:
+    for s in neurons.synapses(afferent, synapse_type):
         if 'sparse' in s.tags:
             W = getattr(s, target_attr)
             W.data /= np.array(neurons.temp_weight_sum[W.indices]).reshape(W.data.shape)

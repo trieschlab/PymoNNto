@@ -35,17 +35,17 @@ class Izhikevich_main(Behavior):
 class Izhikevich_input(Behavior):
 
     def initialize(self, n):
-        for s in n.afferent_synapses['All']:
+        for s in n.synapses(afferent):
             s.W = s.matrix('uniform')
 
     def iteration(self, n):
 
         n.I = 20 * n.vector('uniform')
 
-        for s in n.afferent_synapses['GLUTAMATE']:
+        for s in n.synapses(afferent, 'GLUTAMATE'):
             n.I += 0.5 * np.sum(s.W[:, s.src.fired], axis=1)
 
-        for s in n.afferent_synapses['GABA']:
+        for s in n.synapses(afferent, 'GABA'):
             n.I -= np.sum(s.W[:, s.src.fired], axis=1)
 
 

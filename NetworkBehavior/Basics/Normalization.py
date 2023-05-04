@@ -10,7 +10,7 @@ class Synaptic_Normalization(Behavior):
 
     def iteration(self, neurons):
         normalize_synapse_attr('W', 'W', neurons.weight_norm_factor, neurons, self.syn_type)
-        for s in neurons.afferent_synapses[self.syn_type]:
+        for s in neurons.synapses(afferent, self.syn_type):
             s.W = np.clip(s.W, 0, self.clip_max)
 
 
@@ -21,12 +21,12 @@ class Synaptic_Normalization(Behavior):
 def normalize_synapse_attr(src_attr, target_attr, target_value, neurons, synapse_type):
     neurons.temp_weight_sum = neurons.vector()
 
-    for s in neurons.afferent_synapses[synapse_type]:
+    for s in neurons.synapses(afferent, synapse_type):
         s.dst.temp_weight_sum += np.sum(np.abs(getattr(s, src_attr)), axis=1)
 
     neurons.temp_weight_sum /= target_value
 
-    for s in neurons.afferent_synapses[synapse_type]:
+    for s in neurons.synapses(afferent, synapse_type):
         setattr(s, target_attr, getattr(s, target_attr) / (s.dst.temp_weight_sum[:, None] + (s.dst.temp_weight_sum[:, None] == 0)))
 
 

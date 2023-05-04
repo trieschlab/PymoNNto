@@ -54,7 +54,7 @@ class NeuronGroup(NetworkObjectBase):
         if color is not None:
             self.color = color
 
-    def synapses(self, mode, tag):#afferent=0, efferent=1
+    def synapses(self, mode, tag='All'):#afferent=0, efferent=1
         if mode==afferent:
             return self.afferent_synapses[tag]
         if mode==efferent:
@@ -140,7 +140,7 @@ class NeuronGroup(NetworkObjectBase):
                 search_NG(syn.dst)
 
         if afferent_NGs:
-            for syn in self.afferent_synapses[syn_tag]:
+            for syn in self.synapses(afferent, syn_tag):
                 search_NG(syn.src)
 
         return result

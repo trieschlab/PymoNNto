@@ -12,11 +12,11 @@ class afferent_syn_attr_plot_tab(TabBase):
         self.check={}
         for syn_var in self.syn_vars:
             self.check[syn_var] = True
-            for syn in neuron_group.afferent_synapses["All"]:
+            for syn in neuron_group.synapses(afferent):
                 if not hasattr(syn, syn_var):
                     self.check[syn_var] = False
             if self.check[syn_var]:
-                Network_UI.add_recording_variable(neuron_group, '[np.sum(s.'+syn_var+') for s in n.afferent_synapses["All"]]', timesteps=self.timesteps)
+                Network_UI.add_recording_variable(neuron_group, '[np.sum(s.'+syn_var+') for s in n.synapses(afferent)]', timesteps=self.timesteps)
 
     def initialize(self, Network_UI):
         self.weight_tab = Network_UI.Next_Tab(self.title)
@@ -39,11 +39,11 @@ class afferent_syn_attr_plot_tab(TabBase):
 
                     self.plots[syn_var].clear()
 
-                    recorded = group['[np.sum(s.'+syn_var+') for s in n.afferent_synapses["All"]]'][-self.timesteps:]
+                    recorded = group['[np.sum(s.'+syn_var+') for s in n.synapses(afferent)]'][-self.timesteps:]
                     iterations = group['iteration', 0, 'np'][-self.timesteps:]
                     if len(recorded) > 0:
                         inputs = np.array(recorded[0])
-                        ident=[s.src.group_without_subGroup() for s in group.afferent_synapses["All"]]
+                        ident=[s.src.group_without_subGroup() for s in group.synapses(afferent)]
                         single_ident = list(set(ident))
 
                         for i, si in enumerate(single_ident):

@@ -311,10 +311,16 @@ class Reconstruct_Analyze_Label_Network():
                             w_mul = np.greater(w, np.tile(w.max(axis=1) * synapse_filter, (w.shape[1], 1)))
 
                         if propagation_mode == 'backward':
-                            syn.src.recon_temp += (w * w_mul).transpose().dot(syn.dst.recon)  # disabled???
+                            if self.network.transposed_synapse_matrix_mode:
+                                syn.dst.recon_temp += (w * w_mul).dot(syn.src.recon)  # disabled???
+                            else:
+                                syn.src.recon_temp += (w * w_mul).transpose().dot(syn.dst.recon)  # disabled???
 
                         if propagation_mode == 'forward':
-                            syn.dst.recon_temp += (w * w_mul).dot(syn.src.recon)  # disabled???
+                            if self.network.transposed_synapse_matrix_mode:
+                                syn.src.recon_temp += (w * w_mul).transpose().dot(syn.dst.recon)  # disabled???
+                            else:
+                                syn.dst.recon_temp += (w * w_mul).dot(syn.src.recon)  # disabled???
 
             if exponent is not None:
                 syn.dst.recon_temp = np.power(syn.dst.recon_temp, exponent)

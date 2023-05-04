@@ -26,7 +26,7 @@ class STDP(Behavior):
         neurons.voltage_old = neurons.vector()
 
     def iteration(self, neurons):
-        for s in neurons.afferent_synapses[self.syn_type]:
+        for s in neurons.synapses(afferent, self.syn_type):
             pre_post = s.dst.voltage[:, None] * s.src.voltage_old[None, :]
             simu = s.dst.voltage[:, None] * s.src.voltage[None, :]
             post_pre = s.dst.voltage_old[:, None] * s.src.voltage[None, :]

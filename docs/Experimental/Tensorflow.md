@@ -16,7 +16,7 @@ class STDP_TF(TensorflowBehavior):
 
     def iteration(self, neurons):
 
-        for s in neurons.afferent_synapses[self.syn_type]:
+        for s in neurons.synapses(afferent, self.syn_type):
 
             pre_post = tf.tensordot(s.dst.output, s.src.output_old, axes=0)
             simu = tf.tensordot(s.dst.output, s.src.output, axes=0)

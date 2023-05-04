@@ -181,7 +181,7 @@ class Network_UI(UI_Base):
     def get_selected_synapses(self):
         result = []
         group = self.selected_neuron_group()
-        synapse_groups = group.afferent_synapses['All']
+        synapse_groups = group.synapses(afferent)
         for i, s in enumerate(synapse_groups):
             if (type(s.dst.mask) == np.ndarray and s.dst.mask[self.selected_neuron_id()]) or (type(s.dst.mask) is bool and s.dst.mask == True):
                 result.append(synapse_groups[i].dst)

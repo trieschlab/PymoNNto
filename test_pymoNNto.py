@@ -132,7 +132,7 @@ def test_behavior_and_tagging():
     assert My_Synapses.src == My_Neurons
     assert My_Synapses.dst == My_Neurons
 
-    assert My_Neurons.afferent_synapses['GLUTAMATE'] == [My_Synapses]
+    assert My_Neurons.synapses(afferent, 'GLUTAMATE') == [My_Synapses]
 
     assert len(My_Network.all_objects()) == 3
 

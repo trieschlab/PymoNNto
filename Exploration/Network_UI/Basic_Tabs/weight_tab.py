@@ -55,7 +55,7 @@ class weight_tab(TabBase):
             min_s = []
 
             if afferent:
-                for s in group.afferent_synapses['All']:
+                for s in group.synapses(afferent):
                     w = s.ignore_transpose_mode(s.W)
 
                     if single:

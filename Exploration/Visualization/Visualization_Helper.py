@@ -146,9 +146,9 @@ def get_whole_Network_weight_image(neuron_dst_group, plot_inh_synapses=False, ne
 
     shapes = []
 
-    temp_inh_syns = neuron_dst_group.afferent_synapses['GABA']
+    temp_inh_syns = neuron_dst_group.synapses(afferent, 'GABA')
 
-    for syn in neuron_dst_group.afferent_synapses['GLU']:
+    for syn in neuron_dst_group.synapses(afferent, 'GLU'):
         if neuron_src_groups is None or syn.src in neuron_src_groups:
 
             found = None

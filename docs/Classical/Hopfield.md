@@ -37,7 +37,7 @@ class Hopfield_main(Behavior):
 class Hopfield_weights(Behavior):
 
     def initialize(self, n):
-        for s in n.afferent_synapses['GLUTAMATE']:
+        for s in n.synapses(afferent, 'GLUTAMATE'):
             s.W = s.matrix()
             s.enabeled = s.matrix() == 0.0
             np.fill_diagonal(s.enabeled, False)
@@ -50,11 +50,11 @@ class Hopfield_weights(Behavior):
 
     def iteration(self, n):
         n.energy = 0
-        for s in n.afferent_synapses['GLUTAMATE']:
+        for s in n.synapses(afferent, 'GLUTAMATE'):
             n.energy += self.energy(n.v, s.W)
 
         if n.learning:
-            for s in n.afferent_synapses['GLUTAMATE']:
+            for s in n.synapses(afferent, 'GLUTAMATE'):
                 s.W += np.outer(s.src.v, s.dst.v) / 1000
                 s.W *= s.enabeled
                 # s.W -= np.mean(s.W)
@@ -65,7 +65,7 @@ class Hopfield_weights(Behavior):
                 # s.W *= n.size
                 # print(s.W[0:10])
         else:
-            for s in n.afferent_synapses['GLUTAMATE']:
+            for s in n.synapses(afferent, 'GLUTAMATE'):
                 # print(np.max(s.W @ n.v))
                 n.v = (n.v * 9 + np.sign(s.W @ n.v - self.threshold)) / 10
 

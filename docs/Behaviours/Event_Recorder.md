@@ -18,10 +18,10 @@ EventRecorder('spikes', tag='my_recorder')
 
 ...
 
-result = MyNeuronGroup['n.spikes', 0]
+result = MyNeuronGroup['spikes', 0]
 
-MyNeuronGroup['n.spike.t', 0] # equivalent to result[:,0]
-MyNeuronGroup['n.spike.i', 0] # equivalent to result[:,1]
+MyNeuronGroup['spikes.t', 0] # equivalent to result[:,0]
+MyNeuronGroup['spikes.i', 0] # equivalent to result[:,1]
 
-plt.plot(MyNeuronGroup['n.spike.t', 0], MyNeuronGroup['n.spike.i', 0], '.k')
+plt.plot(MyNeuronGroup['spikes.t', 0], MyNeuronGroup['spikes.i', 0], '.k')
 ```

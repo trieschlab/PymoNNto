@@ -61,13 +61,13 @@ class Brunel_Hakim_main(Behavior):
 class Brunel_Hakim_input(Behavior):
 
     def initialize(self, n):
-        for s in n.afferent_synapses['GLUTAMATE']:
+        for s in n.synapses(afferent, 'GLUTAMATE'):
             s.W = (s.matrix('uniform')<n.sparseness).astype(n.def_dtype) * (-n.J)#density=n.sparseness
 
             #print(s.W)
 
     def iteration(self, n):
-        for s in n.afferent_synapses['GLUTAMATE']:
+        for s in n.synapses(afferent, 'GLUTAMATE'):
             act = s.W.dot(n.spikes[-1])#
             #act = np.sum(s.W[:, s.src.spikes[-1]], axis=1)
             print(np.sum(act), np.sum(n.spike))

@@ -32,11 +32,11 @@ class Basic_Behavior_Tensorflow(Behavior):
 class Input_Behavior_Tensorflow(Behavior):
 
     def initialize(self, neurons):
-        for syn in neurons.afferent_synapses['GLUTAMATE']:
+        for syn in neurons.synapses(afferent, 'GLUTAMATE'):
             syn.W = tf.Variable(syn.matrix('uniform', density=0.1), dtype='float32')
 
     def iteration(self, neurons):
-        for synapse in neurons.afferent_synapses['GLUTAMATE']:
+        for synapse in neurons.synapses(afferent, 'GLUTAMATE'):
             W_act_mul = tf.linalg.matvec(synapse.W, synapse.src.spike)
             delta_act = tf.divide(W_act_mul, synapse.src.size/10.0)
             neurons.voltage.assign(tf.add(neurons.voltage, delta_act))
@@ -63,12 +63,12 @@ class Basic_Behavior(Behavior):
 class Input_Behavior(Behavior):
 
     def initialize(self, neurons):
-        for synapse in neurons.afferent_synapses['GLUTAMATE']:
+        for synapse in neurons.synapses(afferent, 'GLUTAMATE'):
             synapse.W = synapse.matrix('uniform', density=0.1)
             #synapse.enabled = synapse.W > 0
 
     def iteration(self, neurons):
-        for synapse in neurons.afferent_synapses['GLUTAMATE']:
+        for synapse in neurons.synapses(afferent, 'GLUTAMATE'):
             neurons.voltage += synapse.W.dot(synapse.src.spike)/synapse.src.size*10
 
 

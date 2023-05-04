@@ -28,12 +28,12 @@ class Normalization(Behavior):
 
         neurons.temp_weight_sum *= 0.0
 
-        for s in neurons.afferent_synapses[self.syn_type]:
+        for s in neurons.synapses(afferent, self.syn_type):
             s.dst.temp_weight_sum += np.sum(np.abs(s.W), axis=1)
 
         neurons.temp_weight_sum /= self.norm_factor
 
-        for s in neurons.afferent_synapses[self.syn_type]:
+        for s in neurons.synapses(afferent, self.syn_type):
             s.W = s.W / (s.dst.temp_weight_sum[:, None] + (s.dst.temp_weight_sum[:, None] == 0))
 
 ```

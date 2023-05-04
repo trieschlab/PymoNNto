@@ -108,11 +108,11 @@ class SynapseGroup(NetworkObjectBase):
     def get_synapse_group_size_factor(self, synapse_group, synapse_type):
 
         total_weighting = 0
-        for s in synapse_group.dst.afferent_synapses[synapse_type]:
+        for s in synapse_group.dst.synapses(afferent, synapse_type):
             total_weighting += s.group_weighting
 
         total = 0
-        for s in synapse_group.dst.afferent_synapses[synapse_type]:
+        for s in synapse_group.dst.synapses(afferent, synapse_type):
             total += s.src.size*s.src.group_weighting
 
         return total_weighting/total*synapse_group.src.size*synapse_group.group_weighting

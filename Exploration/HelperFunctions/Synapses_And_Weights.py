@@ -23,7 +23,7 @@ def get_unique_non_partitioned_Groups(groups):
 def get_partitioned_synapse_matrix(neurons, synapse_tag, synapse_var, return_first=True):
     results = {}
     shapes = {}
-    for s in neurons.afferent_synapses[synapse_tag]:
+    for s in neurons.synapses(afferent, synapse_tag):
         base_src = s.src.group_without_subGroup()
         base_dst = s.dst.group_without_subGroup()
         key = ','.join(s.tags)
@@ -50,7 +50,7 @@ def get_partitioned_synapse_matrix(neurons, synapse_tag, synapse_var, return_fir
         return results
 
 def set_partitioned_synapse_matrix(neurons, synapse_tag, synapse_var, mat):#warning! synapse_tag has to be unique and only used by partition synapses
-    for s in neurons.afferent_synapses[synapse_tag]:
+    for s in neurons.synapses(afferent, synapse_tag):
         try:
             mask = s.dst.mask[:, None] * s.src.mask[None, :]
             setattr(s, synapse_var, mat[mask].reshape(s.matrix_dim()))
@@ -60,7 +60,7 @@ def set_partitioned_synapse_matrix(neurons, synapse_tag, synapse_var, mat):#warn
 
 def SingleNeuron_attached_SubSGs(neuron_group, synapse_tag, neuron_id):
     result = []
-    for s in neuron_group.afferent_synapses[synapse_tag]:
+    for s in neuron_group.synapses(afferent, synapse_tag):
         if neuron_id in s.dst.id:
             result.append(s)
     return result
@@ -95,7 +95,7 @@ def get_single_neuron_combined_partition_matrix(neurons, synapse_tag, synapse_va
 
 
 #def get_partitioned_matrix(neuron, synapse_tag, synapse_var):
-#    return list(get_combined_syn_mats(neuron.afferent_synapses[synapse_tag], None, synapse_var).values())[0]
+#    return list(get_combined_syn_mats(neuron.synapses(afferent, synapse_tag), None, synapse_var).values())[0]
 
 #def set_partitioned_matrix(neuron, synapse_tag, synapse_var, mat):
 

@@ -69,7 +69,7 @@ class hist_tab(TabBase):
             self.net_weight_hist_plots[transmitter].clear()
             self.weight_hist_plots[transmitter].clear()
 
-            glu_syns = group.afferent_synapses[transmitter]
+            glu_syns = group.synapses(afferent, transmitter)
             if len(glu_syns) > 0:
 
                 GLU_syn_list = get_combined_syn_mats(glu_syns, None, self.weight_attr)

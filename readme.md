@@ -140,11 +140,11 @@ from PymoNNto import *
 class Input_Behavior(Behavior):
 
     def initialize(self, neurons):
-        for synapse in neurons.afferent_synapses['GLUTAMATE']:
+        for synapse in neurons.synapses(afferent,'GLUTAMATE'):
             synapse.W = synapse.matrix('uniform', density=0.1)
 
     def iteration(self, neurons):
-        for synapse in neurons.afferent_synapses['GLUTAMATE']:
+        for synapse in neurons.synapses(afferent,'GLUTAMATE'):
             neurons.activity += synapse.W.dot(synapse.src.activity) / synapse.src.size
 
         neurons.activity += neurons.vector('uniform', density=0.01)
@@ -194,11 +194,11 @@ from PymoNNto import *
 class Input_Behavior(Behavior):
 
     def initialize(self, neurons):
-        for synapse in neurons.afferent_synapses['GLUTAMATE']:
+        for synapse in neurons.synapses(afferent,'GLUTAMATE'):
             synapse.W = synapse.matrix('uniform', density=0.1)
 
     def iteration(self, neurons):
-        for synapse in neurons.afferent_synapses['GLUTAMATE']:
+        for synapse in neurons.synapses(afferent,'GLUTAMATE'):
             neurons.activity += synapse.W.dot(synapse.src.activity) / synapse.src.size
 
         neurons.activity += neurons.vector('uniform', density=0.01)

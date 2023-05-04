@@ -41,7 +41,7 @@ class individual_weight_tab(TabBase):
 
         if self.current_ng is not None and (self.neuron_index != self.Network_UI.selected_neuron_id() or self.current_ng != group):
 
-            for s in self.current_ng.afferent_synapses["All"]:
+            for s in self.current_ng.synapses(afferent):
                 s.UI_recorder = None
                 s.cb = None
                 self.Network_UI.network.remove_behaviors_from_object(s, tags=[self.key])
@@ -66,7 +66,7 @@ class individual_weight_tab(TabBase):
             self.checkboxes={}
             self.listWidget.clear()
 
-            for s in group.afferent_synapses["All"]:
+            for s in group.synapses(afferent):
                 s.UI_recorder = Recorder([self.key, 'iteration'], tag=self.rec_name, gapwidth=10, save_as_numpy=True)
                 s.add_behavior(10001, s.UI_recorder)
                 #self.Network_UI.network.add_behaviors_to_object({10001: s.UI_recorder}, s)
@@ -94,7 +94,7 @@ class individual_weight_tab(TabBase):
             group = Network_UI.selected_neuron_group()
             self.start_rec(group)
 
-            for s in self.current_ng.afferent_synapses["All"]:
+            for s in self.current_ng.synapses(afferent):
                 if not s.UI_recorder.behavior_enabled:
                     s.UI_recorder.behavior_enabled = True
                     print('recorder started')
@@ -108,7 +108,7 @@ class individual_weight_tab(TabBase):
                                 curve.setData(x_data, y_data[:, curve.index])
         else:
             if self.current_ng is not None:
-                for s in self.current_ng.afferent_synapses["All"]:
+                for s in self.current_ng.synapses(afferent):
                     if s.UI_recorder.behavior_enabled:
                         s.UI_recorder.behavior_enabled=False
                         print('recorder paused')

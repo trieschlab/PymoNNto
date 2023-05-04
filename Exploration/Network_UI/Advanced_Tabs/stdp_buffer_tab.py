@@ -134,7 +134,7 @@ class stdp_buffer_tab(TabBase):
         if self.stdp_tab.isVisible():
 
             group = Network_UI.selected_neuron_group()
-            synapse_groups = group.afferent_synapses['All']
+            synapse_groups = group.synapses(afferent)
             #print(synapse_groups)
 
             if self.current_selector_group != group:

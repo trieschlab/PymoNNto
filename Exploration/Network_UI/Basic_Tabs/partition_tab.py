@@ -118,5 +118,5 @@ class partition_tab(TabBase):
         if self.partition_tab.isVisible():
             group=Network_UI.selected_neuron_group()
             for transmitter in Network_UI.transmitters:
-                self.draw_items[transmitter].update_pic(group.afferent_synapses[transmitter],group)
+                self.draw_items[transmitter].update_pic(group.synapses(afferent, transmitter),group)
                 self.plots[transmitter].update()

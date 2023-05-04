@@ -57,7 +57,7 @@ class DrawItem2(pg.GraphicsObject):
         group.add_x = (group.vector('uniform') - 0.5) * random_movement_fac# + (-group.buffer_posx)*p2
         group.add_y = (group.vector('uniform') - 0.5) * random_movement_fac# + (-group.buffer_posy)*p2#np.sin(group.buffer_posy/lb*2*np.pi)*10*p2
 
-        for sg in group.afferent_synapses['GLU']:
+        for sg in group.synapses(afferent, 'GLU'):
             theta_src, rho_src = cart2pol(sg.src.buffer_posx, sg.src.buffer_posy)
 
             if hasattr(group, 'timescale'):
@@ -198,7 +198,7 @@ class DrawItem2(pg.GraphicsObject):
         painter.setPen(pg.mkPen(color=(255, 0, 0, 255)))
         painter.setBrush(pg.mkBrush(color=(0, 0, 0, 0)))
 
-        for sg in group.afferent_synapses['GLU']:
+        for sg in group.synapses(afferent, 'GLU'):
             temp = np.where(sg.dst.id == selected_neuron_id)[0]
             if len(temp) > 0:
                 indx = temp[0]
@@ -254,7 +254,7 @@ class DrawItem2(pg.GraphicsObject):
 
     #def compute_similarity(self, group, neuron_index):
     #    group._syn_differences_ = group.vector()
-    #    for sg in group.afferent_synapses['GLU']:
+    #    for sg in group.synapses(afferent, 'GLU'):
     #        if neuron_index in sg.dst.id:
     #            sg.dst._syn_differences_ += np.sum(sg.W * sg.W[:,np.where(sg.dst.id==neuron_index)[0]], axis=1)
 

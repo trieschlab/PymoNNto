@@ -9,7 +9,7 @@ class STDP(Behavior):
 
     def iteration(self, neurons):
 
-        for s in neurons.afferent_synapses[self.syn_type]:
+        for s in neurons.synapses(afferent, self.syn_type):
 
             pre_post = s.dst.spike[:, None] * s.src.spike_old[None, :]
             simu = s.dst.spike[:, None] * s.src.spike[None, :]
