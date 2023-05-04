@@ -17,7 +17,6 @@ class Network(NetworkObjectBase):
 
     def __init__(self, tag=None, behavior={}, settings={}):
         self.apply_settings(settings)
-        super().__init__(tag, self, behavior)
 
         self.NeuronGroups = []
         self.SynapseGroups = []
@@ -26,6 +25,8 @@ class Network(NetworkObjectBase):
 
         self.behavior_timesteps = []
         self.sorted_behavior_execution_list = [] #stores (key, beh_parent, behavior) triplets
+        
+        super().__init__(tag, self, behavior)
 
     # {'dtype':float32, 'syn_dim':DxS}
     def apply_settings(self, settings):
@@ -50,12 +51,13 @@ class Network(NetworkObjectBase):
         self.sorted_behavior_execution_list.insert(insert_indx, (key, beh_parent, behavior))
         #print([k for k,_,_ in self.sorted_behavior_execution_list])
         
-    def _remove_behavior_from_sorted_execution_list(self, beh_parent, behavior):# removes SINGLE behavior!
+    def _remove_behavior_from_sorted_execution_list(self, key, beh_parent, behavior):
         rm_indx = -1
         for i,kpb in enumerate(self.sorted_behavior_execution_list):
             k, p, b = kpb
-            if beh_parent==p and behavior==b:
+            if key==k and beh_parent==p and behavior==b:
                 rm_indx = i
+                break
         if rm_indx>-1:
             self.sorted_behavior_execution_list.pop(rm_indx)
         else:
