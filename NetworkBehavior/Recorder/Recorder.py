@@ -6,6 +6,11 @@ class Recorder(Behavior):
 
     visualization_module_outputs = []
 
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.variables = {}
+
+
     def initialize(self, parent_obj):
         self.add_tag('recorder')
 
@@ -23,7 +28,6 @@ class Recorder(Behavior):
         self.max_length = self.parameter('max_length', None)
         self.counter = 0
         self.new_data_available=False
-        self.variables = {}
         self.compiled = {}
 
         self.add_variables(variables)

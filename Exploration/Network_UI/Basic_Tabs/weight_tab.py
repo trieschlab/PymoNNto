@@ -43,7 +43,7 @@ class weight_tab(TabBase):
 
             self.main_plot.clear()
 
-            afferent=self.select_aff_eff.currentText() == 'afferent'
+            aff=self.select_aff_eff.currentText() == 'afferent'
             single = self.select_mode.currentText() != 'all'
             max_mode = self.select_max_box.currentText()
             min_mode = self.select_min_box.currentText()
@@ -54,7 +54,7 @@ class weight_tab(TabBase):
             max_s = []
             min_s = []
 
-            if afferent:
+            if aff:
                 for s in group.synapses(afferent):
                     w = s.ignore_transpose_mode(s.W)
 
@@ -65,7 +65,7 @@ class weight_tab(TabBase):
                     syns.append(data)
                     syn_tags.append(s.tags)
             else:
-                for s in group.efferent_synapses['All']:
+                for s in group.synapses(efferent):#efferent_synapses['All']:
                     w = s.ignore_transpose_mode(s.W)
 
                     if single:
