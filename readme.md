@@ -1,5 +1,7 @@
-https://pymonnto.readthedocs.io/
-
+https://pymonnto.readthedocs.io/
+
+
+
 
 
 # PymoNNto
@@ -18,7 +20,8 @@ Examples for this are the Evolution package for parameter optimization or the St
 
 
 
-
+
+
 # PIP Installation
 
 PymoNNto requires Python3 and can be installen via pip with the following command:
@@ -34,7 +37,8 @@ If you want to extend the PymoNNto code you can also clone the git repository wi
 
 and manually install the packages defined in requirements.txt
 
-
+
+
 # Basic Code Structure
 
 The following code creates a network of 100 neurons with recurrent connections and simulates them for 1000 iterations. What is still missing are some behavior modules. This modules have to be passed to the NeuronGrop to definde what the neurons are supposed to do at each timestep.
@@ -165,7 +169,8 @@ plt.show()
 
 <img width="300" src="https://raw.githubusercontent.com/trieschlab/PymoNNto/Images/basics2_2.png"><img width="300" src="https://raw.githubusercontent.com/trieschlab/PymoNNto/Images/basics2_3.png"><br>
 
-<img width="600" src="https://raw.githubusercontent.com/trieschlab/PymoNNto/Images/basics2_4.png"><br>
+<img width="600" src="https://raw.githubusercontent.com/trieschlab/PymoNNto/Images/basics2_4.png"><br>
+
 ## Tagging System
 
 To access the tagged objects we can use the `[]` operator which returns a list of objects tagged with the given tag.
@@ -211,7 +216,8 @@ My_Network.my_neurons.my_recorder['np.mean(voltage)']
 My_Neurons['voltage', 0] 
 #is equivalent to 
 My_Neurons['voltage'][0] 
-```
+```
+
 #User Interface
 
 To control and evaluate the model from the "Basics" section with PymoNNto's interactive graphical user interface we can replace the pyplot functions, the recorder and the simulate_iterations with code to launch the Network_UI.
@@ -289,6 +295,7 @@ Network_UI(My_Network, modules=my_UI_modules, label='My_Network_UI', group_displ
 
 ```
 
+
 <img width="600" src="https://raw.githubusercontent.com/trieschlab/PymoNNto/Images/Basic_Tab.png"><br>
 
 
@@ -300,7 +307,8 @@ There is a huge variety of useful UI Tabs. Examples can be seen here:
 
 ![User interface example](https://raw.githubusercontent.com/trieschlab/PymoNNto/Images/OpenGLTab.png)
 
-![User interface example](https://raw.githubusercontent.com/trieschlab/PymoNNto/Images/Sun_Gravity_Plot_Tab.png)
+![User interface example](https://raw.githubusercontent.com/trieschlab/PymoNNto/Images/Sun_Gravity_Plot_Tab.png)
+
 # Input switching
 
 This is an example how to implement an experiment with alternating training and testing stimuli.
@@ -335,4 +343,5 @@ for loop in range(loop_count):
 
 #increase the self.index variable inside of the InputStimulus module at each step.
 ```
-
+
+
