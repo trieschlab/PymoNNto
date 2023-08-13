@@ -37,7 +37,7 @@ This is possible, because the Network_UI adds this recorder automatically.
 To display the custom tab, we can add it to the list of ui_modules from the first examples, which is shown at the bottom of the code block.
 
 ```python
-
+# /Examples_Paper/Basic/Basic_Tab.py
 from PymoNNto.Exploration.Network_UI.TabBase import *
 
 class MyUITab(TabBase):
@@ -62,7 +62,6 @@ class MyUITab(TabBase):
         #...
 #ui_modules = [MyUITab()] + get_default_UI_modules()
 #Network_UI(my_network, modules=ui_modules, ...).show()
-
 ```
 
 

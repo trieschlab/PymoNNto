@@ -140,6 +140,11 @@ class Network(NetworkObjectBase):
             if behavior.initialize_last:
                 behavior.initialize(parent)
                 behavior.check_unused_attrs()
+                
+        for key, parent, behavior in self.sorted_behavior_execution_list:# add quick access
+            for tag in behavior.tags:
+                if not hasattr(parent, tag):
+                    setattr(parent, tag, behavior)
 
 
     #######################################

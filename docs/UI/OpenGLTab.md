@@ -6,7 +6,7 @@ The code creates a GLViewWidget with multiple GLBarGraphItems for each neuron. t
 ![User interface example](https://raw.githubusercontent.com/trieschlab/PymoNNto/Images/OpenGLTab.png)
 
 ```python
-
+# /Examples_UI/OpenGLTab.py
 from PymoNNto.Exploration.Network_UI.TabBase import *
 import pyqtgraph.opengl as gl
 
@@ -70,6 +70,5 @@ class OpenGLTab(TabBase):
 
 #from PymoNNto.Exploration.Network_UI.Advanced_Tabs.OpenGLTab import *
 #+ [OpenGLTab()]
-
 
 ```

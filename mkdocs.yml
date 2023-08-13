@@ -18,51 +18,55 @@ nav:
 
     - Introduction:
         - -Installation: Introduction/installation.md
-        - -Basics: Introduction/basics2.md
+        - -Basics: Introduction/basics.md
+        - -Tagging System ['tag']: Introduction/Tagging.md
         - -User Interface: Introduction/User_Interface.md
+        - -Input switching: Introduction/input_switch.md
+        - -Neuron Dimension: Introduction/Neuron_Dimension.md
+        - -Recorder: Introduction/Recorder.md
+        - -Event Recorder: Introduction/Event_Recorder.md
 
-    - Tools:
-        - -Tagging System ['tag']: Tools/Tagging.md
-        - -Storage Manager: Tools/StorageManager.md
-        - -Evolution: Tools/Evolution.md
-        - -Cython: Tools/cython.md
+    - Fast and efficient code:
 
-    - Complex Behavior Tutorial:
-        - -Homeostasis <!--- Examples_Paper/STDP_Hom_Norm/Homeostasis.py -->: Complex_Tutorial/Homeostasis.md
-        - -Normalization <!--- Examples_Paper/STDP_Hom_Norm/Normalization.py -->: Complex_Tutorial/Normalization.md
-        - -STDP <!--- Examples_Paper/STDP_Hom_Norm/STDP.py -->: Complex_Tutorial/STDP.md
-        - -Complex Network <!--- Examples_Paper/STDP_Hom_Norm/Complex.py -->: Complex_Tutorial/Complex.md
+        - -Fast processing: Efficiency/fast_processing.md
+        - -Storage Manager: Efficiency/StorageManager.md
+        - -Evolution: Efficiency/Evolution.md
+        - -Cython: Efficiency/cython.md
+        - -Conditional Behavior: Efficiency/Conditional_Behavior_Attachment.md
 
-    - Behaviors:
-        - -Neuron Dimension: Behaviors/Neuron_Dimension.md
-        - -Recorder: Behaviors/Recorder.md
-        - -Event Recorder: Behaviors/Event_Recorder.md
+    - Complex Example:
+        - -Homeostasis: Complex_Tutorial/Homeostasis.md
+        - -Normalization: Complex_Tutorial/Normalization.md
+        - -STDP: Complex_Tutorial/STDP.md
+        - -Complex Network: Complex_Tutorial/Complex.md
 
+    - Behavior Examples:
         - -Default Homeostatic Mechanism: Behaviors/Default_homeostatic_mechanism.md
         - -Refractory Period: Behaviors/Refractory_Period.md
         - -NOX Diffusion: Behaviors/NOX_Diffusion.md
 
     - Synapse Behaviors:
+        - -Weight initialization: Synapse_Behaviors/Weight_Initialization.md
         - -Receptive fields and connectivity: Synapse_Behaviors/Receptive_Fields.md
         - -Partition: Synapse_Behaviors/Partition.md
 
     - User Interface Tabs:
-        - -Custom UI Tab <!--- Examples_Paper/Basic/Basic_Tab.py -->: UI/cutom_ui_tab.md
+        - -Custom UI Tab: UI/cutom_ui_tab.md
         - -Default Tabs:  UI/Default.md
         - -Advanced Tabs: UI/Advanced_Tabs.md
         - -Text Input Tabs: UI/Text_Input_Tabs.md
-        - -Basic Tab <!--- Examples_Paper/Basic/Basic_Tab.py -->: UI/Basic_Tab.md
-        - -OpenGL Tab <!--- Examples_UI/OpenGLTab.py -->: UI/OpenGLTab.md
+        - -Basic Tab: UI/Basic_Tab.md
+        - -OpenGL Tab: UI/OpenGLTab.md
 
     - Classical Examples:
-        - -Brunel Hakim <!--- Examples_Classical/Brunel_Hakim.py -->: Classical/Brunel_Hakim.md
-        - -Diesmann_Synfire <!--- Examples_Classical/Diesmann_Synfire.py -->: Classical/Diesmann_Synfire.md
-        - -Hindmarsh Rose <!--- Examples_Classical/Hindmarsh_Rose.py -->: Classical/Hindmarsh_Rose.md
-        - -Hodgkin Huxley <!--- Examples_Classical/Hodgkin_Huxley.py -->: Classical/Hodgkin_Huxley.md
-        - -Hopfield <!--- Examples_Classical/Hopfield.py -->: Classical/Hopfield.md
-        - -Izhikevich <!--- Examples_Classical/Izhikevich.py -->: Classical/Izhikevich.md
-        - -Leaky Integrate And Fire <!--- Examples_Classical/LeakyIntegrateAndFire.py -->: Classical/LeakyIntegrateAndFire.md
-        - -Wang Buzaki <!--- Examples_Classical/Wang_Buzaki.py -->: Classical/Wang_Buzaki.md
+        - -Brunel Hakim: Classical/Brunel_Hakim.md
+        - -Diesmann_Synfire: Classical/Diesmann_Synfire.md
+        - -Hindmarsh Rose: Classical/Hindmarsh_Rose.md
+        - -Hodgkin Huxley: Classical/Hodgkin_Huxley.md
+        - -Hopfield: Classical/Hopfield.md
+        - -Izhikevich: Classical/Izhikevich.md
+        - -Leaky Integrate And Fire: Classical/LeakyIntegrateAndFire.md
+        - -Wang Buzaki: Classical/Wang_Buzaki.md
 
     - Experimental:
         - -Differential Equation - Brian 2 - Hybrid: Experimental/Differential_Equation.md

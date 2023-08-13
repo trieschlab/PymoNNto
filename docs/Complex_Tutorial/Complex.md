@@ -5,6 +5,7 @@
 The following network utilizes the Homeostasis, the Normalization and the STDP behavior from the current section.
 
 ```python
+# Examples_Paper/STDP_Hom_Norm/Complex.py
 from PymoNNto import *
 from Examples_Paper.STDP_Hom_Norm.Normalization import *
 from Examples_Paper.STDP_Hom_Norm.STDP import *

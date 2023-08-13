@@ -1,3 +1,5 @@
+
+
 # PymoNNto
 
 <img width="200" src="https://raw.githubusercontent.com/trieschlab/PymoNNto/Images/logo.png"><br>
@@ -11,12 +13,6 @@ Examples for this are the Evolution package for parameter optimization or the St
 
 ![User interface example](https://raw.githubusercontent.com/trieschlab/PymoNNto/Images/overview_vg.png)
 
-![User interface example](https://raw.githubusercontent.com/trieschlab/PymoNNto/Images/UI_Evolution_Manager.png)
 
-![Multi_Group_Tab](https://raw.githubusercontent.com/trieschlab/PymoNNto/Images/Multi_Group_Tab.png)
-
-![User interface example](https://raw.githubusercontent.com/trieschlab/PymoNNto/Images/OpenGLTab.png)
-
-![User interface example](https://raw.githubusercontent.com/trieschlab/PymoNNto/Images/Sun_Gravity_Plot_Tab.png)
 
 

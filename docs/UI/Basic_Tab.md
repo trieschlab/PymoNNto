@@ -5,7 +5,7 @@ Here we see the source code of a very minimalistic tab which is able to display 
 ![User interface example](https://raw.githubusercontent.com/trieschlab/PymoNNto/Images/Basic_Tab.png)
 
 ```python
-
+# /Examples_Paper/Basic/Basic_Tab.py
 from PymoNNto.Exploration.Network_UI.TabBase import *
 
 class MyUITab(TabBase):
@@ -30,5 +30,4 @@ class MyUITab(TabBase):
         #...
 #ui_modules = [MyUITab()] + get_default_UI_modules()
 #Network_UI(my_network, modules=ui_modules, ...).show()
-
 ```

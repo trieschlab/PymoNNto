@@ -76,3 +76,14 @@ Network_UI(My_Network, modules=my_UI_modules, label='My_Network_UI', group_displ
 ```
 
 <img width="600" src="https://raw.githubusercontent.com/trieschlab/PymoNNto/Images/Basic_Tab.png"><br>
+
+
+There is a huge variety of useful UI Tabs. Examples can be seen here:
+
+![User interface example](https://raw.githubusercontent.com/trieschlab/PymoNNto/Images/UI_Evolution_Manager.png)
+
+![Multi_Group_Tab](https://raw.githubusercontent.com/trieschlab/PymoNNto/Images/Multi_Group_Tab.png)
+
+![User interface example](https://raw.githubusercontent.com/trieschlab/PymoNNto/Images/OpenGLTab.png)
+
+![User interface example](https://raw.githubusercontent.com/trieschlab/PymoNNto/Images/Sun_Gravity_Plot_Tab.png)

@@ -1,6 +1,4 @@
-
-```python
-
+from PymoNNto import *
 from PymoNNto.NetworkBehavior.Basics.BasicHomeostasis import *
 
 
@@ -35,6 +33,3 @@ class NOX_Diffusion(Instant_Homeostasis):
     def iteration(self, neurons):
         neurons.nox.fill(0)
         super().iteration(neurons)
-
-
-```

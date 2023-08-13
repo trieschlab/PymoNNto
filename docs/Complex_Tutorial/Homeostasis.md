@@ -18,15 +18,12 @@ All this requires only minor modifications.
 <img width="300" src="https://raw.githubusercontent.com/trieschlab/PymoNNto/Images/Homeostasis.png"><img width="300" src="https://raw.githubusercontent.com/trieschlab/PymoNNto/Images/HM_vg.png"><br>
 
 ```python
-
+# /Examples_Paper/STDP_Hom_Norm/Homeostasis.py
 from PymoNNto.NetworkCore.Behavior import *
-
 
 class Homeostasis(Behavior):
 
     def initialize(self, neurons):
-        self.add_tag('Homeostatic_Mechanism')
-
         target_act = self.parameter('target_voltage', 0.05, neurons)
 
         self.max_ta = self.parameter('max_ta', target_act, neurons)
@@ -36,7 +33,10 @@ class Homeostasis(Behavior):
 
         neurons.exhaustion = neurons.vector()
 
+
+
     def iteration(self, neurons):
+
         greater = ((neurons.voltage > self.max_ta) * -1).astype(neurons.def_dtype)
         smaller = ((neurons.voltage < self.min_ta) * 1).astype(neurons.def_dtype)
 
@@ -47,5 +47,4 @@ class Homeostasis(Behavior):
         neurons.exhaustion += change
 
         neurons.voltage -= neurons.exhaustion
-
 ```

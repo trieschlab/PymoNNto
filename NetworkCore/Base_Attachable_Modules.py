@@ -37,18 +37,22 @@ class NetworkObjectBase(TaggableObjectBase):
         super().__init__(tag)
 
         self.network = network
+        self.behavior = {}#behavior
 
-        self.behavior = behavior
         if type(behavior) == list:
             self.behavior = dict(zip(range(len(self.behavior)), self.behavior))
 
-        for b in self.behavior.values():
-            for tag in b.tags:
-                if not hasattr(self, tag):
-                    setattr(self, tag, b)
+        for k,b in behavior.items():
+            self.add_behavior(k, b, initialize=False)
 
-        for k,b in self.behavior.items():
-            self.network._add_behavior_to_sorted_execution_list(k, self, b)
+        # quick access
+        #for b in self.behavior.values():
+        #    for tag in b.tags:
+        #        if not hasattr(self, tag):
+        #            setattr(self, tag, b)
+
+        #for k,b in self.behavior.items():
+        #    self.network._add_behavior_to_sorted_execution_list(k, self, b)
 
         for k in sorted(list(self.behavior.keys())):
             if self.behavior[k].initialize_on_init:
@@ -80,6 +84,12 @@ class NetworkObjectBase(TaggableObjectBase):
                 behavior.initialize(self)
                 #behavior.initialize_last(self)
                 behavior.check_unused_attrs()
+
+            #quick access
+            for tag in behavior.tags:
+                if not hasattr(self, tag):
+                    setattr(self, tag, behavior)
+
             return behavior
         else:
             raise Exception('Error: Key already exists.'+str(key))
@@ -93,6 +103,10 @@ class NetworkObjectBase(TaggableObjectBase):
         for key in remove_keys:
             b=self.behavior.pop(key)
             self.network._remove_behavior_from_sorted_execution_list(key, self, b)
+            #remove quick access
+            for tag in b.tags:
+                if hasattr(self, tag) and getattr(self, tag)==b:
+                    delattr(self, tag)
 
     def set_behaviors(self, tag, enabeled):
         if enabeled:

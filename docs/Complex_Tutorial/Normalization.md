@@ -12,14 +12,12 @@ To avoid division by zero, each calculated normalization value is increased by o
 <img width="300" src="https://raw.githubusercontent.com/trieschlab/PymoNNto/Images/Normalization_beh.png"><br>
 
 ```python
-
+# /Examples_Paper/STDP_Hom_Norm/Normalization.py
 from PymoNNto.NetworkCore.Behavior import *
-
 
 class Normalization(Behavior):
 
     def initialize(self, neurons):
-        self.add_tag('Normalization')
         self.syn_type = self.parameter('syn_type', 'GLUTAMATE', neurons)
         self.norm_factor = self.parameter('norm_factor', 1.0, neurons)
         neurons.temp_weight_sum = neurons.vector()
@@ -35,5 +33,4 @@ class Normalization(Behavior):
 
         for s in neurons.synapses(afferent, self.syn_type):
             s.W = s.W / (s.dst.temp_weight_sum[:, None] + (s.dst.temp_weight_sum[:, None] == 0))
-
 ```
