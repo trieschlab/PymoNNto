@@ -296,6 +296,7 @@ Network_UI(My_Network, modules=my_UI_modules, label='My_Network_UI', group_displ
 ```
 
 
+
 <img width="600" src="https://raw.githubusercontent.com/trieschlab/PymoNNto/Images/Basic_Tab.png"><br>
 
 
