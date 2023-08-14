@@ -55,13 +55,13 @@ class Izhikevich_input(Behavior):
 My_Network = Network()
 
 N_e = NeuronGroup(net=My_Network, tag='excitatory_neurons', size=get_squared_dim(800), behavior={
-    1: Izhikevich_main(a=0.02, b=0.2, c=-65, d=8.0, v='0;-65', u='0;-8.0'),
+    1: Izhikevich_main(a=0.02, b=0.2, c=-65, d=8.0, v=-65, u=-8.0),
     2: Izhikevich_input(),
     9: Recorder(['v', 'u', 'fired'], tag='my_recorder')
 })
 
 N_i = NeuronGroup(net=My_Network, tag='inhibitory_neurons', size=get_squared_dim(200), behavior={
-    1: Izhikevich_main(a=0.02, b=0.2, c=-65, d=8.0, v='0;-65', u='0;-8.0'),
+    1: Izhikevich_main(a=0.02, b=0.2, c=-65, d=8.0, v=-65, u=-8.0),
     2: Izhikevich_input(),
     9: Recorder(['v', 'u', 'fired'], tag='my_recorder')
 })

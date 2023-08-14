@@ -41,7 +41,6 @@ nav:
         - -Complex Network: Complex_Tutorial/Complex.md
 
     - Behavior Examples:
-        - -Default Homeostatic Mechanism: Behaviors/Default_homeostatic_mechanism.md
         - -Refractory Period: Behaviors/Refractory_Period.md
         - -NOX Diffusion: Behaviors/NOX_Diffusion.md
 
@@ -53,7 +52,6 @@ nav:
     - User Interface Tabs:
         - -Custom UI Tab: UI/cutom_ui_tab.md
         - -Default Tabs:  UI/Default.md
-        - -Advanced Tabs: UI/Advanced_Tabs.md
         - -Text Input Tabs: UI/Text_Input_Tabs.md
         - -Basic Tab: UI/Basic_Tab.md
         - -OpenGL Tab: UI/OpenGLTab.md
