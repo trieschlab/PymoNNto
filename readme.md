@@ -142,7 +142,7 @@ NeuronGroup(net=My_Network, tag='my_neurons', size=100, behavior={
     10: EventRecorder('spike', tag='my_event_recorder')
 })
 
-my_syn = SynapseGroup(net=My_Network, src=My_Neurons, dst=My_Neurons, tag='GLUTAMATE')
+my_syn = SynapseGroup(net=My_Network, src='my_neurons', dst='my_neurons', tag='GLUTAMATE')
 
 My_Network.initialize()
 
