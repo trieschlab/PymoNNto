@@ -7,7 +7,7 @@ import numpy as np
 add_project_root_path()
 
 #print numpy arrays with commas for easier copy paste
-np.set_string_function(lambda x: repr(x), repr=False)
+#np.set_string_function(lambda x: repr(x), repr=False)
 
 from PymoNNto.NetworkCore.Network import *
 from PymoNNto.NetworkCore.Behavior import *

@@ -69,10 +69,10 @@ class weight_tab(TabBase):
                     for key in syn_dict[transmitter][weight_attr]:
                         m = np.max(syn_dict[transmitter][weight_attr][key])
 
-                        tr_max[transmitter] = max(tr_max[transmitter], m)
-                        var_max[transmitter][weight_attr] = max(var_max[transmitter][weight_attr], m)
+                        tr_max[transmitter] = max([tr_max[transmitter], m])
+                        var_max[transmitter][weight_attr] = max([var_max[transmitter][weight_attr], m])
                         key_max[transmitter][weight_attr][key] = m
-                        glob_max = max(glob_max, m)
+                        glob_max = max([glob_max, m])
 
             if min_max_mode == 'Global':
                 max_w = glob_max

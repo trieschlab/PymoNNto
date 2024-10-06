@@ -146,7 +146,7 @@ class Network_UI(UI_Base):
         if var in group._rec_dict:
             old_ts=group._rec_dict[var]
 
-        group._rec_dict[var] = max(timesteps,old_ts)
+        group._rec_dict[var] = max([timesteps,old_ts])
         #recorder.add_varable('output')
         return True
 
@@ -209,7 +209,7 @@ class Network_UI(UI_Base):
         self.event_list.append(event(self.network.iteration, tag, self.network.iteration+duration))
 
 def get_color(type_index, layer=1):
-    dim_value = max(layer * 0.9, 1.0)
+    dim_value = max([layer * 0.9, 1.0])
 
     if type_index == 0:
         return (0.0, 0.0, 255.0 / dim_value, 255.0)

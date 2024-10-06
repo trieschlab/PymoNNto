@@ -155,10 +155,10 @@ class Radar_Plot_Item(pg.GraphicsObject):
 
     def boundingRect(self):
         br = self.picture.boundingRect()
-        br.setTop(max(br.top()-10, br.left()-10))
-        br.setLeft(min(br.top()-10, br.left()-10))
-        br.setRight(max(br.right()+10, br.bottom()+10))
-        br.setBottom(max(br.right()+10, br.bottom()+10))
+        br.setTop(max([br.top()-10, br.left()-10]))
+        br.setLeft(min([br.top()-10, br.left()-10]))
+        br.setRight(max([br.right()+10, br.bottom()+10]))
+        br.setBottom(max([br.right()+10, br.bottom()+10]))
         return QtCore.QRectF(br)
 
 def add_evolution_plot_items(ui, tab):

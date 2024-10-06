@@ -248,7 +248,7 @@ class StorageManager:
         self.backup(executed_file)
 
     def backup(self, file_or_folder):
-        file_or_folder.replace('\\','/')
+        file_or_folder = file_or_folder.replace('\\','/')
         if file_or_folder[-1]=='/':
             file_or_folder=file_or_folder[:-1]
         parts = file_or_folder.split('/')

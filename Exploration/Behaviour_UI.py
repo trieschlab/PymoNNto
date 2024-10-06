@@ -69,7 +69,7 @@ def get_behaviors(file, base_classes=['Behavior']):
         bpo.base_class = r.pop(0)
 
         name = r[0].replace('class ', '')
-        name = name[0:min(name.find('('), name.find(':'))]
+        name = name[0:min([name.find('('), name.find(':')])]
         bpo.name = name
 
         bpo.tags = []

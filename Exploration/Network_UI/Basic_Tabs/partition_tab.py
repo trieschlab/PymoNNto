@@ -83,10 +83,10 @@ class DrawItem(pg.GraphicsObject):
 
     def boundingRect(self):
         br=self.picture.boundingRect()
-        br.setTop(min(br.top(), br.left()))
-        br.setLeft(min(br.top(), br.left()))
-        br.setRight(max(br.right(), br.bottom()))
-        br.setBottom(max(br.right(), br.bottom()))
+        br.setTop(min([br.top(), br.left()]))
+        br.setLeft(min([br.top(), br.left()]))
+        br.setRight(max([br.right(), br.bottom()]))
+        br.setBottom(max([br.right(), br.bottom()]))
         return QtCore.QRectF(br)
 
 

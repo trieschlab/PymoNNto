@@ -366,10 +366,10 @@ class DrawItem2(pg.GraphicsObject):
 
     def boundingRect(self):
         br = self.picture.boundingRect()
-        br.setTop(max(br.top()-10, br.left()-10))
-        br.setLeft(min(br.top()-10, br.left()-10))
-        br.setRight(max(br.right()+10, br.bottom()+10))
-        br.setBottom(max(br.right()+10, br.bottom()+10))
+        br.setTop(max([br.top()-10, br.left()-10]))
+        br.setLeft(min([br.top()-10, br.left()-10]))
+        br.setRight(max([br.right()+10, br.bottom()+10]))
+        br.setBottom(max([br.right()+10, br.bottom()+10]))
         return QtCore.QRectF(br)
 
 class sun_gravity_plot_tab(TabBase):
