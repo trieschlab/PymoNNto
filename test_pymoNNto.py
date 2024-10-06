@@ -48,6 +48,17 @@ def get_sample_network():
 
     return My_Network, My_Neurons, My_Synapses, sm
 
+def get_sample_network_list():
+    My_Network = Network()
+    My_Neurons = NeuronGroup(net=My_Network, tag='my_neurons', size=100, behavior=[
+        Counter(inc='[2#I]'),
+        Recorder('count')
+    ])
+    My_Synapses = SynapseGroup(net=My_Network, src=My_Neurons, dst=My_Neurons, tag='GLUTAMATE')
+    sm = StorageManager('test', random_nr=False, print_msg=False)
+    My_Network.initialize(storage_manager=sm)
+
+    return My_Network, My_Neurons, My_Synapses, sm
 
 def test_basics():
     net = Network()
@@ -113,40 +124,40 @@ def test_behavior_and_tagging():
 
     # basic network
     set_genome({'I': 1})
-    My_Network, My_Neurons, My_Synapses, sm = get_sample_network()
+    for My_Network, My_Neurons, My_Synapses, sm in [get_sample_network(), get_sample_network_list()]:
 
-    My_Network.simulate_iterations(1000)
+        My_Network.simulate_iterations(1000)
 
-    My_Network.deactivate_behaviors('Counter')
-    My_Network.simulate_iterations(10)
+        My_Network.deactivate_behaviors('Counter')
+        My_Network.simulate_iterations(10)
 
-    My_Network.activate_behaviors('Counter')
-    My_Network.simulate_iterations(20)
+        My_Network.activate_behaviors('Counter')
+        My_Network.simulate_iterations(20)
 
-    My_Network.recording_off()
-    My_Network.simulate_iterations(30)
+        My_Network.recording_off()
+        My_Network.simulate_iterations(30)
 
-    assert My_Network.iteration == 1000+10+20+30
-    assert np.mean(My_Neurons.count) == 1000+20+30
+        assert My_Network.iteration == 1000+10+20+30
+        assert np.mean(My_Neurons.count) == 1000+20+30
 
-    assert My_Synapses.src == My_Neurons
-    assert My_Synapses.dst == My_Neurons
+        assert My_Synapses.src == My_Neurons
+        assert My_Synapses.dst == My_Neurons
 
-    assert My_Neurons.synapses(afferent, 'GLUTAMATE') == [My_Synapses]
+        assert My_Neurons.synapses(afferent, 'GLUTAMATE') == [My_Synapses]
 
-    assert len(My_Network.all_objects()) == 3
+        assert len(My_Network.all_objects()) == 3
 
-    #tagging system
-    assert My_Network['my_neurons'] == [My_Neurons]
-    assert len(My_Network['count', 0]) == My_Network.iteration-30
+        #tagging system
+        assert My_Network['my_neurons'] == [My_Neurons]
+        assert len(My_Network['count', 0]) == My_Network.iteration-30
 
-    My_Network.clear_recorder()
-    assert len(My_Neurons['count', 0]) == 0
+        My_Network.clear_recorder()
+        assert len(My_Neurons['count', 0]) == 0
 
-    assert My_Network.tag_shortcuts['my_neurons'] == My_Network['my_neurons']
+        assert My_Network.tag_shortcuts['my_neurons'] == My_Network['my_neurons']
 
-    if os.path.isdir(folder+'test/'):
-        shutil.rmtree(folder+'test/')
+        if os.path.isdir(folder+'test/'):
+            shutil.rmtree(folder+'test/')
 
 
 

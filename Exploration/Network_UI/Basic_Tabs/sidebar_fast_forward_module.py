@@ -32,7 +32,11 @@ class sidebar_fast_forward_module(TabBase):
     def initialize(self, Network_UI):
 
         self.iteration_display_label=Network_UI.sidebar.add_widget(QLabel())
-        self.iteration_display_label.setMaximumHeight(10)
+        #self.iteration_display_label.setMaximumHeight(20)
+
+        font_metrics = QFontMetrics(self.iteration_display_label.font())
+        text_height = font_metrics.height()
+        self.iteration_display_label.setFixedHeight(text_height)
 
         def start_pause_click(event):
             Network_UI.pause = not Network_UI.pause

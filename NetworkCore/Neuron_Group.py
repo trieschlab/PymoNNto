@@ -32,27 +32,23 @@ class NeuronGroup(NetworkObjectBase):
             size = -1#will be overwritten by size-behavior
 
         self.size = size
+        self.BaseNeuronGroup = self#used for subgroup reconstruction
+        self.afferent_synapses = {} #set by SynapseGroup
+        self.efferent_synapses = {}
+        self.mask = True#np.array([True for _ in range(size)]).astype(bool)#True#used for subgroup reconstruction
+        self.id = np.arange(self.size)
+
+        if color is not None:
+            self.color = color
 
         super().__init__(tag, net, behavior)
         self.add_tag('ng')
-
-        self.BaseNeuronGroup = self#used for subgroup reconstruction
 
         if net is not None:
             net.NeuronGroups.append(self)
             for tag in self.tags:
                 if not hasattr(net, tag):
                     setattr(net, tag, self)
-
-        self.afferent_synapses = {} #set by SynapseGroup
-        self.efferent_synapses = {}
-
-        self.mask = True#np.array([True for _ in range(size)]).astype(bool)#True#used for subgroup reconstruction
-
-        self.id = np.arange(self.size)
-
-        if color is not None:
-            self.color = color
 
     def synapses(self, mode, tag='All'):#afferent=0, efferent=1
         if mode==afferent:

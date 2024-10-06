@@ -66,14 +66,16 @@ class sidebar_grammar_module_new(TabBase):
     def update(self, Network_UI):
 
         if Network_UI.network['TextGenerator', 0] is not None and Network_UI.network['TextActivator', 0] is not None:
-            if Network_UI.network['TextActivator', 0].behavior_enabled:
-                inp_text = Network_UI.network['TextGenerator', 0].history[-self.text_length:]
+            if Network_UI.network['TextGenerator', 0].behavior_enabled and Network_UI.network['TextActivator', 0].behavior_enabled:
+                inp_text = Network_UI.network['TextGenerator', 0].get_str_history()[-self.text_length:]
             else:
                 inp_text = 'deactivated'
+            inp_text=inp_text.replace('\n', '<break>')
             self.inp_text_label.setText(inp_text)
 
         if Network_UI.network['TextReconstructor', 0] is not None:
             recon_text = Network_UI.network['TextReconstructor', 0].reconstruction_history[-self.text_length:]
+            recon_text=recon_text.replace('\n', '<break>')
             self.recon_text_label.setText(recon_text)
 '''
 

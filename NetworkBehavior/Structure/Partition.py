@@ -32,7 +32,7 @@ class Partition(Behavior):
 
             syn_sub_groups.append(synapses.get_sub_synapse_group(src_mask, dst_mask))
 
-        print('partitioned into', len(syn_sub_groups), 'SynapseGroups')
+        print('partitioned into', len(syn_sub_groups), 'SynapseGroups', str(int(rf_x)), 'x', str(int(rf_y)), 'x', str(int(rf_z)))
 
         # add sub Groups
         for sg in syn_sub_groups:

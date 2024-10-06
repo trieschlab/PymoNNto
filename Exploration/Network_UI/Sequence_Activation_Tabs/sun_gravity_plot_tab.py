@@ -156,10 +156,10 @@ class DrawItem2(pg.GraphicsObject):
 
         painter.setPen(0)
 
-        inactive = group.output <= 0
+        inactive = group.spike <= 0
         active = np.invert(inactive)
 
-        for c in unique(color, axis=0):
+        for c in np.unique(color, axis=0):
             mask = np.all(color == c[None,:], axis=1) * inactive #(color == c) np.all(a == b, axis=1)
             painter.setBrush(pg.mkBrush(color=c))
             for x, y in zip(group.buffer_posx[mask], group.buffer_posy[mask]):

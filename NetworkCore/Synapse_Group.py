@@ -194,3 +194,5 @@ class SynapseGroup(NetworkObjectBase):
         else:
             return W
 
+
+

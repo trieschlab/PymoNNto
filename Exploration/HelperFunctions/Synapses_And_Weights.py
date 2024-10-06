@@ -118,7 +118,8 @@ def get_combined_syn_mats(synapses, neuron_id=None, attr='W'):
             shapes[key] = (base_src.height, base_src.width)
         try:
             syn_mat = eval('s.' + attr)
-            if type(syn_mat) is not bool:
+
+            if type(syn_mat)!=bool:
                 w = s.ignore_transpose_mode(syn_mat)
             else:
                 w = syn_mat

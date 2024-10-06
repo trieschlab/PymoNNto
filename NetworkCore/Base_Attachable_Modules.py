@@ -3,6 +3,9 @@ import numpy as np
 from numpy.random import *
 from numpy import *
 from functools import wraps
+import builtins
+
+bool = builtins.bool
 
 def lognormal_real_mean(mean=1.0, sigma=1.0, size=1):
     mu = -np.power(sigma, 2) + np.log(mean)
@@ -40,7 +43,7 @@ class NetworkObjectBase(TaggableObjectBase):
         self.behavior = {}#behavior
 
         if type(behavior) == list:
-            self.behavior = dict(zip(range(len(self.behavior)), self.behavior))
+            behavior = dict(zip(range(len(behavior)), behavior))
 
         for k,b in behavior.items():
             self.add_behavior(k, b, initialize=False)
@@ -267,3 +270,5 @@ class NetworkObjectBase(TaggableObjectBase):
     @deprecated_warning("activate_behaviours function will be removed in coming versions. Please use activate_behaviors instead.")
     def activate_behaviours(self,tag):
         return self.activate_behaviors(tag)
+
+__all__ = ['lognormal_real_mean', 'lognormal_rm', 'uniform_gap', 'is_number', 'deprecated_warning', 'NetworkObjectBase'] # numpy functions are only accessible inside this file

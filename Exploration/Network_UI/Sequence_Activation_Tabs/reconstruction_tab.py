@@ -11,7 +11,7 @@ class reconstruction_tab(TabBase):
         return
 
     def initialize(self, Network_UI):
-        if Network_UI.network['TextActivator', 0] and Network_UI.network['TextGenerator', 0] is not None:
+        if Network_UI.network['TextActivator', 0] is not None and Network_UI.network['TextGenerator', 0] is not None:
             self.reconstruction_tab = Network_UI.add_tab(title=self.title) #Network_UI.Next_Tab(self.title)
 
             self.grid = QGridLayout()
@@ -70,7 +70,7 @@ class reconstruction_tab(TabBase):
 
 
     def update(self, Network_UI):
-        if Network_UI.network['TextActivator', 0] is not None and self.reconstruction_tab.isVisible():
+        if Network_UI.network['TextActivator', 0] is not None and Network_UI.network['TextGenerator', 0] is not None and self.reconstruction_tab.isVisible():
             group=Network_UI.selected_neuron_group()
 
             '''
